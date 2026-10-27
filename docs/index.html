@@ -182,6 +182,14 @@ input{font:inherit;color:inherit}
 .lock{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:650;color:var(--warn)}
 .search{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:0 12px;height:44px;color:var(--muted)}
 .search input{border:0;outline:0;background:none;flex:1;min-width:0;height:100%;color:var(--ink)}
+.searchrow{display:flex;gap:8px}.searchrow .search{flex:1;min-width:0}
+.sq-btn{position:relative;flex:none;width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--line);background:var(--surface);border-radius:12px;color:var(--ink)}
+.sq-btn.on{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.season-btn{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);min-height:44px;padding:0 12px 0 0;margin:-2px 0 -10px}
+.season-btn svg{color:var(--muted)}
+.fchip{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:5px 8px 5px 12px;border-radius:99px;background:var(--surface-2);border:1px solid var(--line);color:var(--ink)}
+.fchip svg{color:var(--muted)}
+.opt .row-side{color:var(--accent)}
 .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .pgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .pcard{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:8px 8px 12px;display:flex;flex-direction:column;gap:6px;min-width:0}
@@ -463,6 +471,14 @@ const PRODUCTS = [
   ['m-belt','EBUB237X02',"Essential belt",'Belts','M','acc',220,'belt','u',["Black", "Dark Cigar"],0,'D1',{rrp:530,img:{"Black": "EBUB237X02-1839", "Dark Cigar": "EBUB237X02-8779"}}],
   ['m-cap','K820358X88',"Patch cap",'Hats','M','acc',170,'hat','u',["Black", "Shell Grey"],0,'D2',{rrp:420,img:{"Black": "K820358X88-1100", "Shell Grey": "K820358X89-6579"}}],
 ].map(([id,code,name,family,div,cat,price,shape,sz,colours,min,drop,x]) => ({id,code,name,family,div,cat,price,shape,sizes:SZ[sz],colours,min,drop,...(x||{})}));
+// Collections a rep can browse in the showroom; ordering itself is not restricted by collection
+const SEASONS = [
+  {id:'SS27', name:'Spring Summer 2027', note:'Main collection · ordering now'},
+  {id:'PRE27', name:'Pre-Spring 2027', note:'Delivers in November · orders close Friday'},
+  {id:'PERM', name:'Permanent collection', note:'Icons and leather goods · reorder any time'},
+];
+const SEASON_OF = {PRE27:['w-puffer','w-short-coat','w-dive','w-beanie','w-scarf','m-puffer','m-sweater','m-cap'], PERM:['w-strap','w-sun','m-wallet','m-card','m-belt']};
+PRODUCTS.forEach(p => { p.season = Object.keys(SEASON_OF).find(k => SEASON_OF[k].includes(p.id)) || 'SS27'; });
 const P = Object.fromEntries(PRODUCTS.map(p => [p.id, p]));
 
 // Maison guidelines: target share of the order value per category, per cluster and division (±5 pts tolerance)
@@ -618,6 +634,7 @@ const IC = {
   user:'M12 12a4 4 0 100-8 4 4 0 000 8z M4 21c1-4 4-6 8-6s7 2 8 6', spark:'M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z',
   info:'M12 21a9 9 0 100-18 9 9 0 000 18z M12 11v6 M12 7.5v.01', history:'M4 12a8 8 0 108-8 8 8 0 00-6.5 3.3 M4 4v4h4 M12 8v4l3 2',
   copy:'M8 8h11v12H8z M5 16V4h11', alert:'M12 4l9 16H3z M12 10v4 M12 17v.01',
+  filter:'M4 7h16 M7 12h10 M10 17h4', down:'M6 9l6 6 6-6',
 };
 const Icon = ({n, s=22, w=1.8}) => html`<svg width=${s} height=${s} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width=${w} stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d=${IC[n]}/></svg>`;
 
@@ -807,10 +824,10 @@ function OtherSheet({id, act}) {
 /* =====================================================================
    Catalogue — browse with per-cluster availability
    ===================================================================== */
-function ProductList({div, q, cluster, onPick, grid}) {
+function ProductList({div, q, cluster, season, onPick, grid}) {
   const ql = q.trim().toLowerCase();
-  const items = PRODUCTS.filter(p => (!div || p.div === div) && (!ql || (p.name + ' ' + p.code + ' ' + p.family + ' ' + CAT_LABEL[p.cat]).toLowerCase().includes(ql)));
-  if (!items.length) return html`<div class="empty">No styles match “${q}”. Try a style name or code.</div>`;
+  const items = PRODUCTS.filter(p => (!div || p.div === div) && (!season || p.season === season) && (!ql || (p.name + ' ' + p.code + ' ' + p.family + ' ' + CAT_LABEL[p.cat]).toLowerCase().includes(ql)));
+  if (!items.length) return html`<div class="empty">${ql ? `No styles match “${q}”. Try a style name or code.` : `No ${DIV_LABEL[div].toLowerCase()} styles in this collection.`}</div>`;
   const lockOf = p => cluster && p.min > rank(cluster);
   if (grid) return html`<div class="pgrid">${items.map(p => html`<button class=${'pcard' + (lockOf(p) ? ' locked' : '')} onClick=${() => onPick(p)}>
     <${Thumb} pid=${p.id} colour=${p.colours[0]}/>
@@ -826,16 +843,42 @@ function ProductList({div, q, cluster, onPick, grid}) {
   </button>`)}</div>`;
 }
 
-function CatalogueTab({act}) {
-  const [q, setQ] = useState(''), [div, setDiv] = useState('W'), [cl, setCl] = useState('Gold');
+function CatalogueTab({ui, act}) {
+  const [q, setQ] = useState(''), [div, setDiv] = useState('W');
+  const season = SEASONS.find(x => x.id === ui.catSeason), cl = ui.catAvail;
   return html`
-    <header class="top"><div class="eyebrow">SS27 · ${PRODUCTS.length} styles</div><h1 class="h1">Collection</h1></header>
+    <header class="top">
+      <button class="season-btn" onClick=${() => act.sheet({type:'season'})} aria-label=${'Collection: ' + season.name + '. Change'}>${season.name}<${Icon} n="down" s=${15} w=${2.2}/></button>
+      <h1 class="h1">Collection</h1></header>
     <section class="sec">
-      <label class="search"><${Icon} n="search" s=${18}/><input id="cat-q" placeholder="Search style, code or family" value=${q} onInput=${e => setQ(e.target.value)}/></label>
+      <div class="searchrow">
+        <label class="search"><${Icon} n="search" s=${18}/><input id="cat-q" placeholder="Search style, code or family" value=${q} onInput=${e => setQ(e.target.value)}/></label>
+        <button class=${'sq-btn' + (cl ? ' on' : '')} onClick=${() => act.sheet({type:'filter'})} aria-label=${cl ? `Filters: ${cl} availability` : 'Filters'}><${Icon} n="filter" s=${20} w=${2}/></button>
+      </div>
       <${Seg} full opts=${[['W', DIV_TAB.W], ['M', DIV_TAB.M]]} val=${div} on=${setDiv}/>
-      <div class="filters"><span class="small muted">Show availability for</span>${CLUSTERS.map(c => html`<button class=${'cl'} style=${{...clusterVar(c), ...(c === cl ? {borderColor:'var(--ink)', boxShadow:'inset 0 0 0 1px var(--ink)'} : {})}} onClick=${() => setCl(c)}><i></i>${c}</button>`)}</div>
-      <${ProductList} grid div=${div} q=${q} cluster=${cl} onPick=${p => act.sheet({type:'product', pid:p.id})}/>
+      ${cl && html`<button class="fchip" onClick=${() => act.set({catAvail:null})} aria-label="Clear availability filter">Available to ${cl} clients<${Icon} n="x" s=${14} w=${2.2}/></button>`}
+      <${ProductList} grid div=${div} q=${q} season=${season.id} cluster=${cl} onPick=${p => act.sheet({type:'product', pid:p.id})}/>
     </section>`;
+}
+
+function SeasonSheet({ui, act}) {
+  return html`<${Sheet} title="Collection" sub="Choose which collection to browse" onClose=${act.close}>
+    <div class="list">${SEASONS.map(x => html`<button class="row opt" onClick=${() => { act.set({catSeason:x.id}); act.close(); }} aria-pressed=${x.id === ui.catSeason}>
+      <div class="row-main"><div class="row-title">${x.name}</div><div class="row-sub">${x.note}</div></div>
+      <div class="row-side">${x.id === ui.catSeason && html`<${Icon} n="check" s=${20} w=${2.4}/>`}</div>
+    </button>`)}</div>
+  <//>`;
+}
+
+function FilterSheet({ui, act}) {
+  const opts = [[null, 'All styles', 'No restrictions shown'], ...CLUSTERS.map(c => [c, c, `Dim styles ${c} clients can’t order`])];
+  return html`<${Sheet} title="Filters" onClose=${act.close}>
+    <div class="lbl">Show availability for</div>
+    <div class="list">${opts.map(([v, t, d]) => html`<button class="row opt" onClick=${() => { act.set({catAvail:v}); act.close(); }} aria-pressed=${v === ui.catAvail}>
+      <div class="row-main"><div class="row-title">${t}</div><div class="row-sub">${d}</div></div>
+      <div class="row-side">${v === ui.catAvail && html`<${Icon} n="check" s=${20} w=${2.4}/>`}</div>
+    </button>`)}</div>
+  <//>`;
 }
 
 function ProductSheet({pid, S, ui, act}) {
@@ -1212,6 +1255,7 @@ function makeActs(setS, setUi, onReset) {
     close: () => setUi(u => ({...u, sheet:null})),
     capture: on => setUi(u => ({...u, capture:on, sheet:null})),
     div: d => setUi(u => ({...u, div:d})),
+    set: patch => setUi(u => ({...u, ...patch})),
     mut: (id, fn) => setS(s => { const o = JSON.parse(JSON.stringify(s.orders[id])); fn(o); return {...s, orders:{...s.orders, [id]:o}, savedAt:Date.now()}; }),
     role: (r, id) => setUi(u => ({...u, role:r, buyerOrder:id || u.buyerOrder, sheet:null, capture:false})),
     reset: onReset,
@@ -1225,7 +1269,7 @@ function makeActs(setS, setUi, onReset) {
 
 function App({onReset}) {
   const [S, setS] = useState(loadState);
-  const [ui, setUi] = useState({tab:'today', view:null, sheet:null, capture:false, div:'W', role:'sales', toast:null, lastOrder:null});
+  const [ui, setUi] = useState({tab:'today', view:null, sheet:null, capture:false, div:'W', role:'sales', toast:null, lastOrder:null, catSeason:'SS27', catAvail:null});
   useEffect(() => { saveState(S); }, [S]);
   const act = useMemo(() => makeActs(setS, setUi, onReset), []);
   const order = ui.view && S.orders[ui.view];
@@ -1239,6 +1283,8 @@ function App({onReset}) {
     : sh.type === 'look' ? html`<${LookSheet} id=${sh.id} S=${S} ui=${ui} act=${act}/>`
     : sh.type === 'product' ? html`<${ProductSheet} key=${sh.pid} pid=${sh.pid} S=${S} ui=${ui} act=${act}/>`
     : sh.type === 'other' ? html`<${OtherSheet} id=${sh.id} act=${act}/>`
+    : sh.type === 'season' ? html`<${SeasonSheet} ui=${ui} act=${act}/>`
+    : sh.type === 'filter' ? html`<${FilterSheet} ui=${ui} act=${act}/>`
     : sh.type === 'about' ? html`<${AboutSheet} act=${act}/>` : null;
   const toast = ui.toast && html`<div class="toast" key=${ui.toastId} role="status"><${Icon} n="check" s=${16} w=${2.4}/>${ui.toast}</div>`;
 
@@ -1248,7 +1294,7 @@ function App({onReset}) {
       <div class="screen">
         ${ui.tab === 'today' && html`<${Today} S=${S} act=${act}/>`}
         ${ui.tab === 'orders' && html`<${OrdersTab} S=${S} act=${act}/>`}
-        ${ui.tab === 'catalogue' && html`<${CatalogueTab} act=${act}/>`}
+        ${ui.tab === 'catalogue' && html`<${CatalogueTab} ui=${ui} act=${act}/>`}
       </div>
       <${TabBar} tab=${ui.tab} act=${act}/>`}
     ${ui.capture && order && html`<${Capture} order=${order} div=${BUYERS[order.buyerId].divs.includes(ui.div) ? ui.div : BUYERS[order.buyerId].divs[0]} act=${act}/>`}
