@@ -146,14 +146,11 @@ input{font:inherit;color:inherit}
 
 /* ---------- today ---------- */
 .look{scroll-snap-align:start;flex:none;width:236px;text-align:left;display:flex;flex-direction:column;gap:8px}
-.look-tile{position:relative;height:150px;border-radius:16px;overflow:hidden;background:var(--studio)}
-.look-tile{display:grid;grid-template-columns:3fr 2fr;gap:2px}
+.look-tile{position:relative;border-radius:16px;overflow:hidden;background:var(--studio)}
+/* one large square plus two small squares: 3:2 overall, so no photo is cropped */
+.look-tile{display:grid;aspect-ratio:3/2;height:auto;grid-template-columns:2fr 1fr;grid-template-rows:repeat(2,minmax(0,1fr));gap:2px}
 .look-tile img{min-width:0;min-height:0}
-.look-tile.n4{grid-template-rows:repeat(3,minmax(0,1fr))}
-.look-tile.n3{grid-template-rows:repeat(2,minmax(0,1fr))}
-.look-tile.n2{grid-template-columns:1fr 1fr;grid-template-rows:minmax(0,1fr)}
-.look-tile.n4 img:first-child{grid-row:1 / span 3}
-.look-tile.n3 img:first-child{grid-row:1 / span 2}
+.look-tile img:first-child{grid-row:1 / span 2}
 .look-n{font:12px var(--f-mono);color:var(--muted)}
 .look-t{font:600 17px/1.2 var(--f-display);letter-spacing:-.01em}
 .look-vm{font-size:13px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -421,6 +418,7 @@ const SZ = {wr:['34','36','38','40','42'], mr:['46','48','50','52','54'], ws:['3
 const CATS = ['bags','rtw','shoes','acc'];
 const CAT_LABEL = {bags:'Bags', rtw:'Ready-to-wear', shoes:'Shoes', acc:'Accessories'};
 const DIV_LABEL = {W:"Women's", M:"Men's"};
+const DIV_TAB = {W:'Women', M:'Men'};
 const CLUSTERS = ['Silver','Gold','Platinum','Diamond'];
 const DROPS = {D1:'Drop 1 · delivers 15 Jan', D2:'Drop 2 · delivers 20 Feb'};
 const STATUS = {none:'Not started', draft:'In session', shared:'With buyer', submitted:'Submitted', confirmed:'Confirmed'};
@@ -681,9 +679,9 @@ function KpiPanel({order, div}) {
 /* =====================================================================
    Today (home): lookbooks first, then appointments, then the live event view
    ===================================================================== */
-function LookTile({look, h=150}) {
-  const items = look.items.slice(0, 4);
-  return html`<div class=${'look-tile n' + items.length} style=${{height: h + 'px'}}>
+function LookTile({look}) {
+  const items = look.items.slice(0, 3);
+  return html`<div class="look-tile">
     ${items.map(([pid, c]) => html`<${Art} pid=${pid} colour=${c}/>`)}
   </div>`;
 }
@@ -743,7 +741,7 @@ function LookSheet({id, S, ui, act}) {
   const b = o && BUYERS[o.buyerId];
   const canAdd = o && o.status !== 'confirmed' && b.divs.includes(l.div);
   return html`<${Sheet} title=${l.title} sub=${`${DIV_LABEL[l.div]} lookbook · Look ${String(l.n).padStart(2, '0')}`} onClose=${act.close}>
-    <${LookTile} look=${l} h=${190}/>
+    <${LookTile} look=${l}/>
     <div class="callout info"><${Icon} n="spark" s=${18}/><div><b>VM intent.</b> ${l.vm}</div></div>
     <div class="lbl">In this look</div>
     <div class="list">${l.items.map(([pid, c]) => { const p = P[pid]; const locked = b && p.min > rank(b.cluster);
@@ -834,7 +832,7 @@ function CatalogueTab({act}) {
     <header class="top"><div class="eyebrow">SS27 · ${PRODUCTS.length} styles</div><h1 class="h1">Collection</h1></header>
     <section class="sec">
       <label class="search"><${Icon} n="search" s=${18}/><input id="cat-q" placeholder="Search style, code or family" value=${q} onInput=${e => setQ(e.target.value)}/></label>
-      <div class="filters"><${Seg} opts=${[['W', "Women's"], ['M', "Men's"]]} val=${div} on=${setDiv}/></div>
+      <${Seg} full opts=${[['W', DIV_TAB.W], ['M', DIV_TAB.M]]} val=${div} on=${setDiv}/>
       <div class="filters"><span class="small muted">Show availability for</span>${CLUSTERS.map(c => html`<button class=${'cl'} style=${{...clusterVar(c), ...(c === cl ? {borderColor:'var(--ink)', boxShadow:'inset 0 0 0 1px var(--ink)'} : {})}} onClick=${() => setCl(c)}><i></i>${c}</button>`)}</div>
       <${ProductList} grid div=${div} q=${q} cluster=${cl} onPick=${p => act.sheet({type:'product', pid:p.id})}/>
     </section>`;
@@ -847,7 +845,7 @@ function ProductSheet({pid, S, ui, act}) {
   const looks = LOOKS.filter(l => l.items.some(([x]) => x === pid));
   return html`<${Sheet} title=${p.name} sub=${`${p.code} · ${fmt(p.price)} wholesale`} onClose=${act.close}
     foot=${o && html`<button class="btn primary" disabled=${!canAdd} onClick=${() => { act.openOrder(o.buyerId); act.sheet({type:'size', orderId:o.id, pid, colour:c, via:'search'}); }}>${canAdd ? `Add to ${b.shop}` : `Not available for ${b.shop}`}</button>`}>
-    <div class="thumb" style="width:100%;height:300px;border-radius:18px;background:#EDEDED"><${Art} pid=${pid} colour=${c} style=${{objectFit:'contain'}}/></div>
+    <div class="thumb" style="width:100%;max-width:360px;height:auto;aspect-ratio:1;margin:0 auto;border-radius:18px"><${Art} pid=${pid} colour=${c}/></div>
     <div class="colours">${p.colours.map(x => html`<button class=${'colour' + (x === c ? ' on' : '')} onClick=${() => setC(x)}><span class="sw" style=${{background:COL[x][0]}}></span>${x}<span class="code">${COL[x][1]}</span></button>`)}</div>
     <div class="panel">
       <div class="impact-row"><span class="muted">Retail</span><span>${fmt(p.rrp)} RRP</span></div>
@@ -1053,7 +1051,7 @@ function OrderView({S, ui, act, order}) {
     </div>
     <div class="ov-body">
       <div class="ov-kpi">
-        ${b.divs.length > 1 && html`<div style="margin-bottom:12px"><${Seg} full opts=${b.divs.map(d => [d, DIV_LABEL[d] + ' · ' + fmt(kpi(order, d).total)])} val=${div} on=${act.div}/></div>`}
+        ${b.divs.length > 1 && html`<div style="margin-bottom:12px"><${Seg} full opts=${b.divs.map(d => [d, DIV_TAB[d] + ' · ' + fmt(kpi(order, d).total)])} val=${div} on=${act.div}/></div>`}
         <${KpiPanel} order=${order} div=${div}/>
       </div>
       <div class="ov-lines">
@@ -1157,7 +1155,7 @@ function BuyerView({S, ui, act}) {
     </div>
     <div class="ov-body">
       <div class="ov-kpi">
-        ${b.divs.length > 1 && html`<div style="margin-bottom:12px"><${Seg} full opts=${b.divs.map(d => [d, DIV_LABEL[d]])} val=${div} on=${act.div}/></div>`}
+        ${b.divs.length > 1 && html`<div style="margin-bottom:12px"><${Seg} full opts=${b.divs.map(d => [d, DIV_TAB[d]])} val=${div} on=${act.div}/></div>`}
         <${KpiPanel} order=${o} div=${div}/>
       </div>
       <div class="ov-lines">
