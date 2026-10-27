@@ -16,9 +16,9 @@ On iPhone, open the link in Safari, tap Share, then **Add to Home Screen** to us
 
 ## Limits
 
-- Photo recognition is simulated against a fictional catalogue (Maison Aurore).
+- Photo recognition is simulated. The catalogue is 38 Loewe styles taken from loewe.com (names, style and colour codes, product photos); wholesale prices are indicative, derived from retail.
 - Orders are saved in each device's browser, not a shared database.
 
 ## Structure
 
-The whole app is `docs/index.html` (Preact + htm from a CDN, no build step). GitHub Pages serves the `docs/` folder.
+The whole app is `docs/index.html` (Preact + htm from a CDN, no build step), with product photos in `docs/img/`. GitHub Pages serves the `docs/` folder.

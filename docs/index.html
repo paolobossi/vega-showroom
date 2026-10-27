@@ -141,12 +141,19 @@ input{font:inherit;color:inherit}
 .thumb{flex:none;display:grid;place-items:center;background:var(--studio);border-radius:12px;overflow:hidden;width:56px;height:56px}
 .thumb.sm{width:44px;height:44px;border-radius:10px}
 .thumb.lg{width:96px;height:96px;border-radius:16px}
-.thumb svg{width:86%;height:86%}
+.thumb img,.ph{width:100%;height:100%;object-fit:cover;display:block}
+.ph{background:#EDEDED}
 
 /* ---------- today ---------- */
 .look{scroll-snap-align:start;flex:none;width:236px;text-align:left;display:flex;flex-direction:column;gap:8px}
 .look-tile{position:relative;height:150px;border-radius:16px;overflow:hidden;background:var(--studio)}
-.look-tile svg{position:absolute;width:58%;height:auto}
+.look-tile{display:grid;grid-template-columns:3fr 2fr;gap:2px}
+.look-tile img{min-width:0;min-height:0}
+.look-tile.n4{grid-template-rows:repeat(3,minmax(0,1fr))}
+.look-tile.n3{grid-template-rows:repeat(2,minmax(0,1fr))}
+.look-tile.n2{grid-template-columns:1fr 1fr;grid-template-rows:minmax(0,1fr)}
+.look-tile.n4 img:first-child{grid-row:1 / span 3}
+.look-tile.n3 img:first-child{grid-row:1 / span 2}
 .look-n{font:12px var(--f-mono);color:var(--muted)}
 .look-t{font:600 17px/1.2 var(--f-display);letter-spacing:-.01em}
 .look-vm{font-size:13px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -310,9 +317,9 @@ input{font:inherit;color:inherit}
 .vf-scene{position:relative;flex:1;min-height:0;margin:0 14px;border-radius:22px;overflow:hidden;background:radial-gradient(120% 90% at 50% 30%,#3a3c40 0%,#1b1c1f 70%)}
 .rail{position:absolute;left:-5%;right:-5%;top:13%;height:4px;background:linear-gradient(90deg,#555,#999,#555);border-radius:2px}
 .vf-sample{position:absolute;left:50%;top:52%;width:min(64%,46cqh);aspect-ratio:1;transform:translate(-50%,-50%);animation:sway 4s ease-in-out infinite;transition:filter .3s}
-.vf-sample svg{width:100%;height:100%;filter:drop-shadow(0 18px 24px rgba(0,0,0,.45))}
-.vf-sample.scan{animation:none}
-.vf-sample.match{animation:none;filter:brightness(.55)}
+.vf-sample img{width:100%;height:100%;object-fit:cover;border-radius:18px;box-shadow:0 18px 40px rgba(0,0,0,.5)}
+.vf-sample.s-scan{animation:none}
+.vf-sample.s-match{animation:none;filter:brightness(.55)}
 @keyframes sway{0%,100%{transform:translate(-50%,-50%) rotate(-1.2deg)}50%{transform:translate(-49%,-51%) rotate(1.2deg)}}
 .brackets i{position:absolute;width:34px;height:34px;border:3px solid var(--vf-ink);opacity:.85}
 .brackets i:nth-child(1){left:12%;top:20%;border-right:0;border-bottom:0;border-radius:10px 0 0 0}
@@ -328,7 +335,7 @@ input{font:inherit;color:inherit}
 .sample-rail{display:flex;gap:8px;overflow-x:auto;padding:0 16px;scrollbar-width:none}
 .sample-rail::-webkit-scrollbar{display:none}
 .sample{flex:none;width:52px;height:52px;border-radius:12px;background:#2a2c30;display:grid;place-items:center;border:2px solid transparent}
-.sample svg{width:84%;height:84%}
+.sample img{width:100%;height:100%;object-fit:cover}
 .sample.on{border-color:var(--vf-ink)}
 .shutter-row{display:flex;justify-content:center;padding-top:4px}
 .shutter{width:72px;height:72px;border-radius:36px;border:4px solid var(--vf-ink);display:grid;place-items:center}
@@ -390,16 +397,25 @@ input{font:inherit;color:inherit}
 const {html, render, useState, useEffect, useMemo, useRef} = window.htmPreact;
 
 /* =====================================================================
-   Data — fictional Maison and SS27 catalogue. Mirrors the shape of the
+   Data — catalogue built from loewe.com (styles, colour codes, photos; wholesale prices indicative). Mirrors the shape of the
    shared database the iOS app will write to (orders, lines, audit log).
    ===================================================================== */
 const REP = {name:'Alex R.', full:'Alex Rinaldi'};
 const COL = {
-  Tan:['#B07A4A','2530'], Black:['#1E1E1F','1100'], Chalk:['#E6E0D3','2160'], Olive:['#6E6D3B','4120'],
-  Rose:['#D8A39E','7410'], Burgundy:['#6E1F2B','7690'], Sky:['#9DB8D3','5210'], Silver:['#BFC3C7','1450'],
-  Lime:['#B6C25F','4310'], Ivory:['#EFE9DC','2100'], Cobalt:['#2F4BA8','5640'], White:['#F4F4F2','1000'],
-  Sand:['#C9B48F','2290'], Grey:['#8A8D91','1320'], Tortoise:['#6B4226','2740'], Natural:['#D9C3A0','2200'],
-  Navy:['#22304F','5900'], Khaki:['#8C8460','4200'],
+  'Carmine Red':['#9E1B24','0241'], 'Mineral Mist':['#B9BCB8','0371'], Black:['#1E1E1F','1100'], White:['#F4F4F2','2100'],
+  Mocha:['#6A4B3A','9579'], 'Sunrise Orange':['#E0662A','5557'], Sand:['#CDB892','2150'], Squirrel:['#8A6E55','4927'],
+  'Dark Burgundy':['#5A1A24','7240'], Pecan:['#8B5A3C','3565'], 'Dark Chestnut':['#4E2E22','0018'], 'Deep Saffron':['#E39A2D','4974'],
+  Tan:['#B07A4A','2530'], Chocolate:['#4A2F24','3606'], 'Stellar Blue':['#3C5A8C','5987'], Cognac:['#9A5A2E','3200'],
+  Vanilla:['#EFE4C6','8000'], Green:['#3F7A4B','4100'], 'Navy Blue':['#22304F','5110'], Red:['#B3262E','7100'],
+  Multicolor:['#9A8F7E','9990'], Blue:['#3E64A8','5100'], 'Dark Brown':['#4A3326','3110'], 'Light Sage':['#B7C2A6','0264'],
+  Ivory:['#EFE9DC','2110'], 'Taupe Grey':['#8C8277','3878'], Brown:['#6E4B33','3100'], Purple:['#5C3C6E','6100'],
+  Orange:['#D9662B','9100'], 'Hunter Green':['#2F4A35','4700'], 'Emerald Green':['#1F6B4E','4140'], 'Black White':['#3A3A3A','1102'],
+  'White Beige':['#E6DCC8','2112'], 'Blue White':['#7E9CC9','5102'], Beige:['#D3C2A2','2140'], 'Silver Gold':['#C9C1A3','1742'],
+  'Brown White':['#8A6A50','3102'], 'Blue Orange':['#4A6FA8','5109'], Tomette:['#A2482E','8853'], 'Lemon Zest':['#E4D84A','8304'],
+  Oxblood:['#5B1F22','3468'], Ecru:['#EDE5CF','2370'], 'Khaki Green':['#6B6A45','4160'], 'Grey Multi':['#8A8D91','1584'],
+  'White Navy':['#D9DCE3','4933'], 'White Black':['#E8E8E6','2101'], 'Brown Green':['#6A5A3C','0130'], 'Red Blue':['#B33A3A','0132'],
+  'Black Brown':['#2E2620','0202'], 'White Blue':['#DDE4EE','2105'], 'Khaki Yellow':['#8C8450','4157'], 'Blue Grey':['#6E7C8C','0362'],
+  'Dark Cigar':['#5A3A28','8779'], 'Shell Grey':['#BDB8AE','6579'],
 };
 const SZ = {wr:['34','36','38','40','42'], mr:['46','48','50','52','54'], ws:['36','37','38','39','40','41'], ms:['40','41','42','43','44','45'], u:['U']};
 const CATS = ['bags','rtw','shoes','acc'];
@@ -410,34 +426,44 @@ const DROPS = {D1:'Drop 1 · delivers 15 Jan', D2:'Drop 2 · delivers 20 Feb'};
 const STATUS = {none:'Not started', draft:'In session', shared:'With buyer', submitted:'Submitted', confirmed:'Confirmed'};
 
 const PRODUCTS = [
-  ['w-arc-tote','W27B0218','Arc Tote','Arc','W','bags',980,'tote','u',['Tan','Black','Chalk','Olive'],0,'D1'],
-  ['w-arc-mini','W27B0219','Arc Mini Tote','Arc','W','bags',720,'tote','u',['Tan','Black','Rose'],0,'D1',{small:true}],
-  ['w-arc-shoulder','W27B0224','Arc Shoulder Bag','Arc','W','bags',1150,'shoulder','u',['Black','Tan','Burgundy'],1,'D1'],
-  ['w-fold-bag','W27B0301','Fold Bucket','Fold','W','bags',1320,'bucket','u',['Chalk','Black','Sky'],2,'D2'],
-  ['w-fold-clutch','W27B0305','Fold Clutch','Fold','W','bags',640,'clutch','u',['Black','Silver','Sky'],1,'D2'],
-  ['w-studio-trunk','W27B0410','Studio Trunk','Studio','W','bags',2900,'trunk','u',['Black','Natural'],3,'D2'],
-  ['w-drape-dress','W27R1102','Draped Jersey Dress','Drape','W','rtw',690,'dress','wr',['Black','Ivory','Cobalt'],0,'D1'],
-  ['w-drape-top','W27R1108','Draped Top','Drape','W','rtw',340,'tee','wr',['Black','Ivory'],0,'D1'],
-  ['w-emblem-tee','W27R1210','Emblem Tee','Emblem','W','rtw',210,'tee','wr',['White','Black','Sky'],0,'D1'],
-  ['w-trench','W27R1401','Balloon Trench','Outerwear','W','rtw',1480,'coat','wr',['Sand','Black'],1,'D2'],
-  ['w-wide-trouser','W27R1305','Wide Wool Trousers','Tailoring','W','rtw',520,'trousers','wr',['Black','Grey'],0,'D2'],
-  ['w-comet','W27S2101','Comet Pump','Comet','W','shoes',560,'heel','ws',['Black','Silver','Rose'],0,'D1'],
-  ['w-comet-sandal','W27S2104','Comet Sandal','Comet','W','shoes',520,'heel','ws',['Silver','Tan'],1,'D2'],
-  ['w-runner','W27S2201','Flow Runner','Runner','W','shoes',430,'sneaker','ws',['White','Grey','Lime'],0,'D1'],
-  ['w-sun','W27A3101','Oval Sunglasses','Eyewear','W','acc',230,'glasses','u',['Black','Tortoise'],0,'D1'],
-  ['w-arc-card','W27A3204','Arc Cardholder','Arc','W','acc',190,'wallet','u',['Tan','Black','Rose'],0,'D1'],
-  ['w-silk','W27A3302','Silk Square','Silk','W','acc',260,'scarf','u',['Ivory','Cobalt'],0,'D2'],
-  ['m-messenger','M27B0510','Arc Messenger','Arc','M','bags',1180,'shoulder','u',['Tan','Black'],0,'D1'],
-  ['m-arc-tote','M27B0512','Arc Tote Large','Arc','M','bags',1050,'tote','u',['Black','Khaki'],0,'D1'],
-  ['m-backpack','M27B0601','Cube Backpack','Cube','M','bags',1260,'backpack','u',['Black','Navy'],1,'D2'],
-  ['m-tee','M27R1210','Emblem Tee','Emblem','M','rtw',220,'tee','mr',['White','Black','Navy'],0,'D1'],
-  ['m-overshirt','M27R1502','Boxy Overshirt','Tailoring','M','rtw',590,'shirt','mr',['Navy','Khaki'],0,'D1'],
-  ['m-pleated','M27R1505','Pleated Trousers','Tailoring','M','rtw',540,'trousers','mr',['Grey','Black'],0,'D1'],
-  ['m-car-coat','M27R1601','Wool Car Coat','Outerwear','M','rtw',1620,'coat','mr',['Navy','Sand'],2,'D2'],
-  ['m-runner','M27S2210','Flow Runner','Runner','M','shoes',450,'sneaker','ms',['Grey','White','Black'],0,'D1'],
-  ['m-loafer','M27S2302','Campo Loafer','Campo','M','shoes',610,'loafer','ms',['Black','Tan'],0,'D2'],
-  ['m-belt','M27A3401','Arc Belt','Arc','M','acc',260,'belt','u',['Black','Tan'],0,'D1'],
-  ['m-wallet','M27A3205','Arc Wallet','Arc','M','acc',260,'wallet','u',['Black','Tan'],0,'D1'],
+  ['w-amazona-s','A039AS0X01',"Small Amazona 180",'Amazona','W','bags',1610,'top','u',["Carmine Red", "Mineral Mist", "Black", "White", "Mocha"],0,'D1',{rrp:3870,img:{"Carmine Red": "A039AS0X01-0241", "Mineral Mist": "A039AS0X01-0371", "Black": "A039AS0X01-1100", "White": "A039AS0X01-2100", "Mocha": "A039AS0X01-9579"}}],
+  ['w-amazona-mini','A039AS4X12',"Mini Amazona 180",'Amazona','W','bags',1080,'top','u',["Black", "Sunrise Orange", "Mocha"],0,'D1',{rrp:2580,img:{"Black": "A039AS4X12-1100", "Sunrise Orange": "A039AS4X12-5557", "Mocha": "A039AS4X12-9579"}}],
+  ['w-puzzle-fold','A657G50X01',"Medium Puzzle Fold tote",'Puzzle','W','bags',760,'tote','u',["Black", "Sand", "Squirrel", "Dark Burgundy"],0,'D1',{rrp:1830,img:{"Black": "A657G50X01-1100", "Sand": "A657G50X01-2150", "Squirrel": "A657G50X01-4927", "Dark Burgundy": "A657G50X01-7240"}}],
+  ['w-puzzle-mini','A510PLIX04',"Mini Featherlight Puzzle",'Puzzle','W','bags',1300,'shoulder','u',["Black", "Pecan", "Dark Chestnut", "Deep Saffron"],1,'D1',{rrp:3120,img:{"Black": "A510PLIX04-1100", "Pecan": "A510PLIX04-3565", "Dark Chestnut": "A510PLIX18-0018", "Deep Saffron": "A510PLIX18-4974"}}],
+  ['w-puzzle-edge','A510P60X41',"Small Puzzle Edge",'Puzzle','W','bags',1340,'shoulder','u',["Black", "Tan"],1,'D2',{rrp:3220,img:{"Black": "A510P60X41-1100", "Tan": "A510P60XAC-2530"}}],
+  ['w-flamenco','A411FC2XA6',"Mini Flamenco clutch",'Flamenco','W','bags',900,'clutch','u',["Black", "Sand", "Chocolate", "Squirrel", "Sunrise Orange"],0,'D1',{rrp:2150,img:{"Black": "A411FC2XA6-1100", "Sand": "A411FC2XA6-2150", "Chocolate": "A411FC2XA6-3606", "Squirrel": "A411FC2XA6-4927", "Sunrise Orange": "A411FC2XA6-5557"}}],
+  ['w-bilbao','AWRAWRPX01',"Medium Bilbao bucket",'Bilbao','W','bags',1210,'bucket','u',["Black", "Stellar Blue", "Mocha"],2,'D2',{rrp:2910,img:{"Black": "AWRAWRPX01-1100", "Stellar Blue": "AWRAWRPX01-5987", "Mocha": "AWRAWRPX01-9579"}}],
+  ['w-whisker','ATBBTBBX01',"Small Whisker bag",'Whisker','W','bags',1210,'shoulder2','u',["Carmine Red", "Black", "Cognac", "Vanilla"],2,'D2',{rrp:2910,img:{"Carmine Red": "ATBBTBBX01-0241", "Black": "ATBBTBBX01-1100", "Cognac": "ATBBTBBX01-3200", "Vanilla": "ATBBTBBX01-8000"}}],
+  ['w-shirt-dress','S359Y09XKZ',"Shirt dress",'Dresses','W','rtw',600,'dress','wr',["Green", "Navy Blue", "Red", "Black", "Blue", "Multicolor"],0,'D1',{rrp:1430,img:{"Green": "S359Y09XKZ-4100", "Navy Blue": "S359Y09XKZ-5110", "Red": "S359Y09XKZ-7100", "Black": "S540Y09XXN-1100", "Blue": "S540Y09XXN-5100", "Multicolor": "S359Y09XMK-9990"}}],
+  ['w-viscose-dress','S540Y09XWV',"Viscose blend dress",'Dresses','W','rtw',690,'dress2','wr',["Dark Brown", "Black"],0,'D2',{rrp:1650,img:{"Dark Brown": "S540Y09XWV-3110", "Black": "S540Y09XWW-1100"}}],
+  ['w-puffer','S359Y02XHK',"Puffer jacket",'Outerwear','W','rtw',1290,'coat','wr',["Light Sage", "Black", "Ivory"],1,'D2',{rrp:3090,img:{"Light Sage": "S359Y02XHK-0264", "Black": "S359Y02XHK-1100", "Ivory": "S359Y02XHK-2110"}}],
+  ['w-short-coat','S540Y01XCL',"Short coat, wool & cashmere",'Outerwear','W','rtw',1700,'coat2','wr',["Black", "Taupe Grey"],1,'D2',{rrp:4080,img:{"Black": "S540Y01XCL-1100", "Taupe Grey": "S540Y01XCL-3878"}}],
+  ['w-balloon','S359Y08XBU',"Balloon skirt",'Skirts','W','rtw',410,'skirt','wr',["Ivory", "Red"],0,'D1',{rrp:980,img:{"Ivory": "S359Y08XBU-2110", "Red": "S359Y08XBU-7100"}}],
+  ['w-cord','S540Y04XOJ',"Corduroy trousers",'Trousers','W','rtw',410,'trousers','wr',["Brown", "Purple", "Orange"],0,'D1',{rrp:980,img:{"Brown": "S540Y04XOJ-3100", "Purple": "S540Y04XOJ-6100", "Orange": "S540Y04XOJ-9100"}}],
+  ['w-pebble-lace','L815284X18',"Pebble Soft lace-up",'Pebble','W','shoes',410,'flat','ws',["Black", "White", "Dark Burgundy"],0,'D1',{rrp:990,img:{"Black": "L815284X18-1100", "White": "L815284X18-2100", "Dark Burgundy": "L815284X18-7240"}}],
+  ['w-oval-loafer','LOVLS07X03',"Oval Double L loafer",'Oval','W','shoes',500,'loafer','ws',["Black", "Hunter Green"],0,'D1',{rrp:1210,img:{"Black": "LOVLS07X03-1100", "Hunter Green": "LOVLS07X03-4700"}}],
+  ['w-toy','LLST465X04',"Toy sandal",'Toy','W','shoes',410,'heel','ws',["Dark Brown", "Emerald Green"],0,'D2',{rrp:990,img:{"Dark Brown": "LLST465X04-3110", "Emerald Green": "LLST465X04-4140"}}],
+  ['w-dive','L814379X83',"Dive mule",'Dive','W','shoes',600,'mule','ws',["Black", "Deep Saffron"],1,'D2',{rrp:1430,img:{"Black": "L814379X83-1100", "Deep Saffron": "L814379X83-4974"}}],
+  ['w-scarf','F810487X17',"Wool & cashmere scarf",'Scarves','W','acc',210,'scarf','u',["Black White", "White Beige", "Blue", "Blue White"],0,'D1',{rrp:500,img:{"Black White": "F810487X17-1102", "White Beige": "F810487X17-2112", "Blue": "F810487X17-5100", "Blue White": "F810487X17-5102"}}],
+  ['w-beanie','KSA9OT1X01',"Cashmere beanie",'Hats','W','acc',180,'hat','u',["Black", "Beige"],0,'D2',{rrp:430,img:{"Black": "KSA9OT1X01-1100", "Beige": "KSA9OT1X01-2140"}}],
+  ['w-sun','G314MSKX01',"Speed Shield sunglasses",'Eyewear','W','acc',220,'glasses','u',["Black", "Silver Gold"],0,'D1',{rrp:530,img:{"Black": "G314MSKX01-1100", "Silver Gold": "G314MSKX01-1742"}}],
+  ['w-strap','CWS1ST0X07',"Woven leather strap",'Straps','W','acc',290,'strap','u',["Brown White", "Blue Orange"],0,'D1',{rrp:690,img:{"Brown White": "CWS1ST0X07-3102", "Blue Orange": "CWS1ST0X07-5109"}}],
+  ['m-puzzle-l','B510PNLX02',"Large Featherlight Puzzle",'Puzzle','M','bags',2020,'shoulder','u',["Dark Chestnut", "Black", "Tomette"],1,'D1',{rrp:4840,img:{"Dark Chestnut": "B510PNLX02-0018", "Black": "B510PZZX01-1100", "Tomette": "B510PZZX01-8853"}}],
+  ['m-puzzle-sling','B510PCSX02',"Puzzle Featherlight Sling",'Puzzle','M','bags',1250,'shoulder','u',["Dark Chestnut", "Black"],0,'D1',{rrp:3010,img:{"Dark Chestnut": "B510PCSX02-0018", "Black": "B510PCSX02-1100"}}],
+  ['m-squad','BSHOSTMX01',"Squad backpack",'Squad','M','bags',1480,'backpack','u',["Black", "Lemon Zest"],1,'D2',{rrp:3550,img:{"Black": "BSHOSTMX01-1100", "Lemon Zest": "BSHOSTMX01-8304"}}],
+  ['m-pebble','BANBBBHX06',"Large Pebble bucket",'Pebble','M','bags',1160,'bucket','u',["Black", "Oxblood"],0,'D1',{rrp:2790,img:{"Black": "BANBBBHX06-1100", "Oxblood": "BANBBBHX06-3468"}}],
+  ['m-tee','H526Y22JAJ',"Relaxed fit T-shirt",'Jersey','M','rtw',220,'tee','mr',["Navy Blue", "Ecru"],0,'D1',{rrp:530,img:{"Navy Blue": "H526Y22JAJ-5110", "Ecru": "H526Y22JAK-2370"}}],
+  ['m-sweater','H526Y14KH1',"Wool sweater",'Knitwear','M','rtw',330,'knit','mr',["Khaki Green", "Blue", "Grey Multi"],0,'D1',{rrp:790,img:{"Khaki Green": "H526Y14KH1-4160", "Blue": "H526Y14KH1-5100", "Grey Multi": "H526Y14KQU-1584"}}],
+  ['m-shirt','H526Y05WIN',"Twill & poplin shirt",'Shirts','M','rtw',450,'shirt','mr',["Navy Blue"],0,'D1',{rrp:1080,img:{"Navy Blue": "H526Y05WIN-5110"}}],
+  ['m-cord','H526Y04WKV',"Corduroy trousers",'Trousers','M','rtw',410,'trousers','mr',["Brown", "Orange"],0,'D1',{rrp:980,img:{"Brown": "H526Y04WKV-3100", "Orange": "H526Y04WKV-9100"}}],
+  ['m-puffer','H526Y02WF1',"Puffer jacket",'Outerwear','M','rtw',1290,'coat','mr',["White Navy"],1,'D2',{rrp:3090,img:{"White Navy": "H526Y02WF1-4933"}}],
+  ['m-ballet','MBR2282X09',"Ballet Runner 2.0",'Runner','M','shoes',320,'sneaker','ms',["Black White", "White Black"],0,'D1',{rrp:780,img:{"Black White": "MBR2282X09-1102", "White Black": "MBR2282X09-2101"}}],
+  ['m-pogo','M816282XCC',"Pogo sneaker",'Pogo','M','shoes',450,'sneaker2','ms',["Brown Green", "Red Blue", "Black Brown", "Beige"],0,'D1',{rrp:1080,img:{"Brown Green": "M816282XCC-0130", "Red Blue": "M816282XCC-0132", "Black Brown": "M816282XCC-0202", "Beige": "M816282XCC-2432"}}],
+  ['m-grip','M816282XCE',"Grip sneaker",'Grip','M','shoes',370,'sneaker3','ms',["Black", "White Blue", "Khaki Yellow"],1,'D2',{rrp:880,img:{"Black": "M816282XCE-1265", "White Blue": "M816282XCE-2105", "Khaki Yellow": "M816282XCE-4157"}}],
+  ['m-wallet','C510302X23',"Puzzle bifold wallet",'Puzzle','M','acc',210,'wallet','u',["Blue Grey", "Chocolate"],0,'D1',{rrp:500,img:{"Blue Grey": "C510302X23-0362", "Chocolate": "C510302X23-3606"}}],
+  ['m-card','C510Q77X12',"Puzzle cardholder",'Puzzle','M','acc',130,'wallet2','u',["Black", "Blue Grey", "Chocolate"],0,'D1',{rrp:310,img:{"Black": "C510Q77X12-1100", "Blue Grey": "C510Q77X14-0362", "Chocolate": "C510Q77X14-3606"}}],
+  ['m-belt','EBUB237X02',"Essential belt",'Belts','M','acc',220,'belt','u',["Black", "Dark Cigar"],0,'D1',{rrp:530,img:{"Black": "EBUB237X02-1839", "Dark Cigar": "EBUB237X02-8779"}}],
+  ['m-cap','K820358X88',"Patch cap",'Hats','M','acc',170,'hat','u',["Black", "Shell Grey"],0,'D2',{rrp:420,img:{"Black": "K820358X88-1100", "Shell Grey": "K820358X89-6579"}}],
 ].map(([id,code,name,family,div,cat,price,shape,sz,colours,min,drop,x]) => ({id,code,name,family,div,cat,price,shape,sizes:SZ[sz],colours,min,drop,...(x||{})}));
 const P = Object.fromEntries(PRODUCTS.map(p => [p.id, p]));
 
@@ -450,23 +476,23 @@ const GUIDE = {
 };
 
 const BUYERS = {
-  dubois: {id:'dubois', shop:'Maison Dubois', city:'Paris', buyer:'Claire Dubois', cluster:'Platinum', divs:['W','M'], budget:{W:45000, M:22000}, time:'10:00', code:'DUB01'},
-  linea:  {id:'linea', shop:'Linea Concept', city:'Milan', buyer:'Giulia Ferri', cluster:'Gold', divs:['W'], budget:{W:28000}, time:'12:30', code:'LIN04'},
-  harbour:{id:'harbour', shop:'Harbour & Co.', city:'London', buyer:'Tom Whitlock', cluster:'Silver', divs:['M'], budget:{M:15000}, time:'15:00', code:'HAR02'},
-  kanda:  {id:'kanda', shop:'Kanda Select', city:'Tokyo', buyer:'Aiko Mori', cluster:'Diamond', divs:['W','M'], budget:{W:90000, M:50000}, time:'17:00', code:'KAN07'},
+  dubois: {id:'dubois', shop:'Maison Dubois', city:'Paris', buyer:'Claire Dubois', cluster:'Platinum', divs:['W','M'], budget:{W:60000, M:30000}, time:'10:00', code:'DUB01'},
+  linea:  {id:'linea', shop:'Linea Concept', city:'Milan', buyer:'Giulia Ferri', cluster:'Gold', divs:['W'], budget:{W:40000}, time:'12:30', code:'LIN04'},
+  harbour:{id:'harbour', shop:'Harbour & Co.', city:'London', buyer:'Tom Whitlock', cluster:'Silver', divs:['M'], budget:{M:20000}, time:'15:00', code:'HAR02'},
+  kanda:  {id:'kanda', shop:'Kanda Select', city:'Tokyo', buyer:'Aiko Mori', cluster:'Diamond', divs:['W','M'], budget:{W:120000, M:65000}, time:'17:00', code:'KAN07'},
 };
 
 const LOOKS = [
-  {id:'L03', div:'W', n:3, title:'The tan story', items:[['w-drape-dress','Ivory'],['w-arc-tote','Tan'],['w-comet','Black']],
-   vm:'Window lead for SS27. Tan is the hero colour: aim for at least 30% of Arc units in Tan, shown with the Ivory drape.'},
-  {id:'L07', div:'W', n:7, title:'Cobalt evening', items:[['w-drape-dress','Cobalt'],['w-fold-clutch','Silver'],['w-comet-sandal','Silver']],
-   vm:'Evening capsule. Present as one full look on a mannequin, clutch carried rather than hung.'},
-  {id:'L12', div:'W', n:12, title:'Weekend utility', items:[['w-trench','Sand'],['w-wide-trouser','Black'],['w-runner','White'],['w-arc-mini','Tan']],
-   vm:'Outerwear-led table. The trench anchors the RTW wall in Platinum and Diamond doors.'},
-  {id:'M02', div:'M', n:2, title:'Soft tailoring', items:[['m-overshirt','Navy'],['m-pleated','Grey'],['m-loafer','Black'],['m-messenger','Tan']],
-   vm:'Lead men’s story. Sell the overshirt and pleated trouser as a pair, same size run.'},
-  {id:'M05', div:'M', n:5, title:'Runner club', items:[['m-tee','White'],['m-runner','Grey'],['m-backpack','Black']],
-   vm:'Entry price point for Silver and Gold. Runner in Grey is the bestseller target.'},
+  {id:'L04', div:'W', n:4, title:'Amazona in Mocha', items:[['w-amazona-s','Mocha'],['w-short-coat','Taupe Grey'],['w-balloon','Ivory'],['w-oval-loafer','Black']],
+   vm:'Window lead for the season. Mocha is the hero colour: aim for at least 30% of Amazona 180 units in Mocha, shown with the Taupe Grey coat.'},
+  {id:'L09', div:'W', n:9, title:'Colour pop', items:[['w-shirt-dress','Red'],['w-flamenco','Sunrise Orange'],['w-toy','Emerald Green']],
+   vm:'Evening capsule. Present as one full look on a mannequin, Flamenco carried by the knot rather than hung.'},
+  {id:'L15', div:'W', n:15, title:'City layers', items:[['w-puffer','Light Sage'],['w-puzzle-fold','Sand'],['w-cord','Brown'],['w-pebble-lace','Black']],
+   vm:'Outerwear-led table. The puffer anchors the RTW wall in Platinum and Diamond doors; Puzzle Fold sits at the front.'},
+  {id:'M03', div:'M', n:3, title:'Workwear ease', items:[['m-puzzle-l','Dark Chestnut'],['m-shirt','Navy Blue'],['m-cord','Brown'],['m-ballet','Black White']],
+   vm:'Lead men’s story. Sell the shirt and corduroy trouser as a pair, same size run. Puzzle in Dark Chestnut is the hero bag.'},
+  {id:'M06', div:'M', n:6, title:'Runner club', items:[['m-tee','Ecru'],['m-pogo','Brown Green'],['m-squad','Black']],
+   vm:'Entry price point for Silver and Gold. Pogo in Brown Green is the bestseller target.'},
 ];
 
 // Other reps' orders at the same event (sample rows for the shared live view)
@@ -489,7 +515,7 @@ const hhmm = t => new Date(t).toLocaleTimeString('en-GB', {hour:'2-digit', minut
 const todayAt = (h, m) => { const d = new Date(); d.setHours(h, m, 0, 0); return d.getTime(); };
 const hash = s => [...s].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
 const rank = c => CLUSTERS.indexOf(c);
-const orderNo = o => 'AUR-SS27-' + BUYERS[o.buyerId].code;
+const orderNo = o => 'LOE-SS27-' + BUYERS[o.buyerId].code;
 const whoName = (o, by) => by === 'client' ? BUYERS[o.buyerId].buyer : REP.name;
 const clusterVar = c => ({'--c': `var(--${c.toLowerCase()})`});
 
@@ -539,18 +565,18 @@ function newOrder(bid) {
 function seedState() {
   const L = (pid, colour, qty, h, m, via='photo') => ({id:uid(), pid, colour, qty, via, by:'salesperson', at:todayAt(h, m)});
   const lines = [
-    L('w-arc-tote','Tan',{U:4},10,6), L('w-arc-tote','Black',{U:3},10,7,'suggestion'),
-    L('w-arc-shoulder','Burgundy',{U:2},10,11), L('w-fold-bag','Chalk',{U:2},10,15),
-    L('w-drape-dress','Black',{'36':1,'38':2,'40':2,'42':1},10,21), L('w-emblem-tee','White',{'34':1,'36':2,'38':2,'40':1},10,26),
-    L('w-comet','Black',{'37':1,'38':2,'39':2,'40':1},10,33), L('w-arc-card','Tan',{U:6},10,36,'suggestion'),
-    L('m-tee','White',{'46':1,'48':2,'50':2,'52':1},10,44), L('m-runner','Grey',{'41':1,'42':2,'43':2,'44':1},10,48),
+    L('w-amazona-s','Mocha',{U:3},10,6), L('w-amazona-s','Black',{U:2},10,7,'suggestion'),
+    L('w-puzzle-fold','Sand',{U:2},10,11),
+    L('w-shirt-dress','Navy Blue',{'34':1,'36':2,'38':2,'40':1},10,21), L('w-short-coat','Taupe Grey',{'36':1,'38':1,'40':1},10,26),
+    L('w-pebble-lace','Black',{'37':1,'38':2,'39':2,'40':1},10,33), L('w-scarf','White Beige',{U:6},10,36,'suggestion'),
+    L('m-tee','Ecru',{'46':1,'48':2,'50':2,'52':1},10,44), L('m-pogo','Brown Green',{'41':1,'42':2,'43':2,'44':1},10,48),
   ];
   const o = {id:'o-dubois', buyerId:'dubois', rep:REP.name, status:'draft', submittedBy:null, lines,
     log:[{at:todayAt(10,2), by:'salesperson', text:'Session started in the showroom'},
       ...lines.map(l => ({at:l.at, by:'salesperson', text:`Added ${P[l.pid].name} · ${l.colour} ×${units(l.qty)}${l.via === 'photo' ? ' (photo match)' : ' (suggestion)'}`}))]};
   return {orders:{'o-dubois':o}, savedAt:null};
 }
-const KEY = 'vega-poc-v1';
+const KEY = 'vega-poc-v2';
 function loadState() { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.orders) return s; } catch (e) {} return seedState(); }
 function saveState(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
 function clearState() { try { localStorage.removeItem(KEY); } catch (e) {} }
@@ -597,38 +623,11 @@ const IC = {
 };
 const Icon = ({n, s=22, w=1.8}) => html`<svg width=${s} height=${s} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width=${w} stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d=${IC[n]}/></svg>`;
 
-function shade(hex, amt) {
-  const n = parseInt(hex.slice(1), 16), ch = [n >> 16, n >> 8 & 255, n & 255];
-  return '#' + ch.map(v => Math.round(amt < 0 ? v * (1 + amt) : v + (255 - v) * amt).toString(16).padStart(2, '0')).join('');
-}
-const lum = hex => { const n = parseInt(hex.slice(1), 16); return ((n >> 16) * .299 + (n >> 8 & 255) * .587 + (n & 255) * .114) / 255; };
-
-const SHAPES = {
-  tote:(c,d)=>html`<path d="M36 42 C36 16 64 16 64 42" fill="none" stroke=${d} stroke-width="4" stroke-linecap="round"/><path d="M20 40 H80 L75 86 H25 Z" fill=${c}/><path d="M20 40 H80 L79 47 H21 Z" fill=${d} opacity=".35"/>`,
-  shoulder:(c,d)=>html`<path d="M26 46 C26 12 74 12 74 46" fill="none" stroke=${d} stroke-width="3"/><rect x="18" y="44" width="64" height="40" rx="7" fill=${c}/><path d="M18 51 Q18 44 25 44 H75 Q82 44 82 51 V58 Q50 74 18 58 Z" fill=${d} opacity=".45"/><circle cx="50" cy="64" r="3" fill=${d}/>`,
-  bucket:(c,d)=>html`<path d="M40 34 C40 18 60 18 60 34" fill="none" stroke=${d} stroke-width="3"/><path d="M26 36 H74 L68 84 Q50 90 32 84 Z" fill=${c}/><ellipse cx="50" cy="36" rx="24" ry="5" fill=${d} opacity=".5"/><path d="M30 46 Q50 52 70 46" fill="none" stroke=${d} stroke-width="2" stroke-dasharray="3 3"/>`,
-  clutch:(c,d)=>html`<rect x="12" y="38" width="76" height="38" rx="5" fill=${c}/><path d="M12 43 Q12 38 17 38 H83 Q88 38 88 43 L50 62 Z" fill=${d} opacity=".4"/>`,
-  trunk:(c,d)=>html`<path d="M38 30 Q38 22 46 22 H54 Q62 22 62 30" fill="none" stroke=${d} stroke-width="4"/><rect x="18" y="30" width="64" height="52" rx="4" fill=${c}/><path d="M18 46 H82 M18 66 H82" stroke=${d} stroke-width="2.5" opacity=".6"/><rect x="45" y="42" width="10" height="9" rx="1.5" fill=${d}/>`,
-  backpack:(c,d)=>html`<path d="M42 26 Q42 16 50 16 Q58 16 58 26" fill="none" stroke=${d} stroke-width="3"/><rect x="26" y="24" width="48" height="64" rx="12" fill=${c}/><rect x="34" y="56" width="32" height="24" rx="5" fill=${d} opacity=".35"/>`,
-  dress:(c,d)=>html`<path d="M40 12 H60 L62 26 L56 32 L74 88 H26 L44 32 L38 26 Z" fill=${c}/><path d="M44 32 Q50 36 56 32" fill="none" stroke=${d} stroke-width="2"/><path d="M47 40 Q42 64 36 88 M53 40 Q60 64 64 88" fill="none" stroke=${d} stroke-width="1.5" opacity=".5"/>`,
-  tee:(c,d)=>html`<path d="M36 18 L16 28 L22 42 L30 38 V86 H70 V38 L78 42 L84 28 L64 18 Q50 28 36 18 Z" fill=${c}/><path d="M36 18 Q50 28 64 18" fill="none" stroke=${d} stroke-width="2"/>`,
-  shirt:(c,d)=>html`<path d="M36 16 L18 26 L12 72 L22 74 L30 42 V88 H70 V42 L78 74 L88 72 L82 26 L64 16 L50 24 Z" fill=${c}/><path d="M36 16 L50 30 L64 16 M50 30 V88" fill="none" stroke=${d} stroke-width="2"/>`,
-  coat:(c,d)=>html`<path d="M36 12 L20 22 L14 84 L26 86 L30 46 V92 H70 V46 L74 86 L86 84 L80 22 L64 12 L50 30 Z" fill=${c}/><path d="M36 12 L44 44 L50 30 L56 44 L64 12" fill=${d} opacity=".35"/><path d="M30 60 H70" stroke=${d} stroke-width="3" opacity=".5"/>`,
-  trousers:(c,d)=>html`<path d="M30 12 H70 L76 90 H60 L50 34 L40 90 H24 Z" fill=${c}/><path d="M30 18 H70" stroke=${d} stroke-width="3" opacity=".5"/>`,
-  heel:(c,d)=>html`<path d="M14 66 Q20 56 34 62 L72 72 Q86 76 86 82 L84 84 H44 Q34 76 26 74 L25 86 H19 L19 72 Q13 70 14 66 Z" fill=${c}/><path d="M44 84 H84" stroke=${d} stroke-width="2"/>`,
-  sneaker:(c,d)=>html`<path d="M12 72 Q12 52 26 50 L44 48 Q56 60 72 62 Q88 64 88 74 V78 H12 Z" fill=${c}/><rect x="10" y="76" width="80" height="7" rx="3" fill=${d} opacity=".45"/><path d="M34 54 L46 64 M40 52 L52 62" stroke=${d} stroke-width="2"/>`,
-  loafer:(c,d)=>html`<path d="M12 74 Q14 58 32 56 L60 58 Q86 62 88 76 V80 H12 Z" fill=${c}/><path d="M40 60 Q52 66 64 60" fill="none" stroke=${d} stroke-width="3"/><rect x="10" y="78" width="80" height="5" rx="2" fill=${d} opacity=".5"/>`,
-  glasses:(c,d)=>html`<ellipse cx="32" cy="52" rx="16" ry="12" fill=${c} fill-opacity=".35" stroke=${c} stroke-width="5"/><ellipse cx="68" cy="52" rx="16" ry="12" fill=${c} fill-opacity=".35" stroke=${c} stroke-width="5"/><path d="M47 50 Q50 46 53 50" fill="none" stroke=${c} stroke-width="4"/>`,
-  wallet:(c,d)=>html`<rect x="20" y="32" width="60" height="40" rx="5" fill=${c}/><path d="M20 46 H80" stroke=${d} stroke-width="2" opacity=".6"/><rect x="66" y="50" width="10" height="8" rx="2" fill=${d}/>`,
-  scarf:(c,d)=>html`<rect x="25" y="25" width="50" height="50" transform="rotate(45 50 50)" fill=${c}/><rect x="32" y="32" width="36" height="36" transform="rotate(45 50 50)" fill="none" stroke=${d} stroke-width="2" opacity=".6"/>`,
-  belt:(c,d)=>html`<rect x="8" y="44" width="70" height="12" rx="3" fill=${c}/><rect x="76" y="40" width="16" height="20" rx="3" fill="none" stroke=${d} stroke-width="3"/>`,
-};
+// Product photography from loewe.com, one front shot per colourway (docs/img/<style>-<colour code>.jpg)
+const imgSrc = (p, colour) => 'img/' + (p.img[colour] || p.img[p.colours[0]]) + '.jpg';
 function Art({pid, colour, style}) {
-  const p = P[pid], c = COL[colour][0], d = lum(c) < .3 ? shade(c, .35) : shade(c, -.42);
-  return html`<svg viewBox="0 0 100 100" style=${style} role="img" aria-label=${p.name + ', ' + colour}>
-    <ellipse cx="50" cy="91" rx="30" ry="3" fill="rgba(0,0,0,.14)"/>
-    <g stroke="rgba(0,0,0,.22)" stroke-width="0.8" transform=${p.small ? 'translate(14 22) scale(.72)' : 'translate(0 0)'}>${SHAPES[p.shape](c, d)}</g>
-  </svg>`;
+  const p = P[pid];
+  return html`<img class="ph" src=${imgSrc(p, colour)} alt=${p.name + ', ' + colour} loading="lazy" decoding="async" draggable="false" style=${style}/>`;
 }
 const Thumb = ({pid, colour, cls=''}) => html`<div class=${'thumb ' + cls}><${Art} pid=${pid} colour=${colour}/></div>`;
 const Cluster = ({c}) => html`<span class="cl" style=${clusterVar(c)}><i></i>${c}</span>`;
@@ -683,10 +682,9 @@ function KpiPanel({order, div}) {
    Today (home): lookbooks first, then appointments, then the live event view
    ===================================================================== */
 function LookTile({look, h=150}) {
-  const pos = [['4%','14%'],['40%','4%'],['22%','40%'],['56%','38%']];
-  const bg = shade(COL[look.items[0][1]][0], .55);
-  return html`<div class="look-tile" style=${{height: h + 'px', background: bg}}>
-    ${look.items.slice(0, 4).map(([pid, c], i) => html`<${Art} pid=${pid} colour=${c} style=${{left:pos[i][0], top:pos[i][1]}}/>`)}
+  const items = look.items.slice(0, 4);
+  return html`<div class=${'look-tile n' + items.length} style=${{height: h + 'px'}}>
+    ${items.map(([pid, c]) => html`<${Art} pid=${pid} colour=${c}/>`)}
   </div>`;
 }
 
@@ -696,7 +694,7 @@ function Today({S, act}) {
   const total = rows.reduce((a, r) => a + r.value, 0);
   return html`
     <header class="top">
-      <div class="brandline"><span class="maison">Maison Aurore</span>
+      <div class="brandline"><span class="maison">Loewe</span>
         <button class="icon-btn" onClick=${() => act.sheet({type:'about'})} aria-label="About this prototype"><${Icon} n="info"/></button></div>
       <div class="eyebrow">SS27 showroom · Paris · day 2 of 4</div>
       <h1 class="h1">Today</h1>
@@ -736,7 +734,7 @@ function Today({S, act}) {
         <button class="linkbtn" style="align-self:flex-start" onClick=${() => act.tab('orders')}>See every order →</button>
       </section>
     </div>
-    <div class="foot">Maison Aurore private showroom · powered by Vega</div>`;
+    <div class="foot">Loewe showroom · powered by Vega</div>`;
 }
 
 function LookSheet({id, S, ui, act}) {
@@ -849,9 +847,10 @@ function ProductSheet({pid, S, ui, act}) {
   const looks = LOOKS.filter(l => l.items.some(([x]) => x === pid));
   return html`<${Sheet} title=${p.name} sub=${`${p.code} · ${fmt(p.price)} wholesale`} onClose=${act.close}
     foot=${o && html`<button class="btn primary" disabled=${!canAdd} onClick=${() => { act.openOrder(o.buyerId); act.sheet({type:'size', orderId:o.id, pid, colour:c, via:'search'}); }}>${canAdd ? `Add to ${b.shop}` : `Not available for ${b.shop}`}</button>`}>
-    <div class="thumb" style="width:100%;height:220px;border-radius:18px"><${Art} pid=${pid} colour=${c} style=${{width:'60%', height:'90%'}}/></div>
+    <div class="thumb" style="width:100%;height:300px;border-radius:18px;background:#EDEDED"><${Art} pid=${pid} colour=${c} style=${{objectFit:'contain'}}/></div>
     <div class="colours">${p.colours.map(x => html`<button class=${'colour' + (x === c ? ' on' : '')} onClick=${() => setC(x)}><span class="sw" style=${{background:COL[x][0]}}></span>${x}<span class="code">${COL[x][1]}</span></button>`)}</div>
     <div class="panel">
+      <div class="impact-row"><span class="muted">Retail</span><span>${fmt(p.rrp)} RRP</span></div>
       <div class="impact-row"><span class="muted">Category</span><span>${DIV_LABEL[p.div]} ${CAT_LABEL[p.cat].toLowerCase()} · ${p.family} family</span></div>
       <div class="impact-row"><span class="muted">Sizes</span><span class="code" style="color:var(--ink)">${p.sizes.join(' · ')}</span></div>
       <div class="impact-row"><span class="muted">Delivery</span><span>${DROPS[p.drop]}</span></div>
@@ -965,7 +964,7 @@ function Capture({order, div, act}) {
     </div>
     <div class="vf-scene">
       <div class="rail"></div>
-      <div class=${'vf-sample ' + stage}><${Art} pid=${s.pid} colour=${s.colour}/></div>
+      <div class=${'vf-sample s-' + stage}><${Art} pid=${s.pid} colour=${s.colour}/></div>
       <div class="brackets"><i></i><i></i><i></i><i></i></div>
       ${stage === 'scan' && html`<div class="scanline"></div><div class="vf-status"><span>Matching against ${PRODUCTS.length} SS27 styles…</span></div>`}
       ${stage === 'aim' && html`<div class="vf-hint"><span>Frame the sample. No tag or barcode needed.</span></div>`}
@@ -1151,7 +1150,7 @@ function BuyerView({S, ui, act}) {
   return html`<div class="ov">
     <div class="demo-bar"><span>Demo: buyer view from the shared link</span><button onClick=${() => act.role('sales')}>Back to salesperson</button></div>
     <div class="bv-head">
-      <span class="maison">Maison Aurore</span>
+      <span class="maison">Loewe</span>
       <div class="ov-shop" style="font-size:24px">Your SS27 order</div>
       <div class="small muted">${b.shop} · prepared with ${REP.name}</div>
       <div class="row-sub">${open ? html`<span class="pill s-shared"><${Icon} n="clock" s=${13} w=${2}/>Closes in ${hoursLeft}h</span>` : html`<${Pill} s=${o.status}/><${By} by=${o.submittedBy}/>`}</div>
@@ -1192,7 +1191,7 @@ function AboutSheet({act}) {
     <p style="margin:0;line-height:1.5">Vega captures wholesale showroom orders on a phone. The salesperson photographs a sample, confirms the match and enters sizes, while the order is checked live against the Maison’s guidelines for the client’s cluster.</p>
     <div class="lbl">Try this</div>
     <ol class="steps">${GUIDE_STEPS.map(s => html`<li>${s}</li>`)}</ol>
-    <div class="callout info"><${Icon} n="info" s=${18}/><div>Photo recognition is simulated against a fictional catalogue. Orders save in this browser only.</div></div>
+    <div class="callout info"><${Icon} n="info" s=${18}/><div>Photo recognition is simulated against a catalogue built from loewe.com. Orders save in this browser only.</div></div>
     <button class="btn secondary block" onClick=${act.reset}>Reset demo data</button>
   <//>`;
 }
@@ -1270,7 +1269,7 @@ function Shell() {
       <div class="lbl">Try this</div>
       <ol class="steps">${GUIDE_STEPS.map(s => html`<li>${s}</li>`)}</ol>
       <div class="side-ctrls"><${Seg} opts=${[['portrait', 'Portrait'], ['landscape', 'Landscape']]} val=${orient} on=${setOrient}/><button class="linkbtn" onClick=${reset}>Reset demo</button></div>
-      <p class="fine">Prototype. Photo recognition is simulated against a fictional catalogue (Maison Aurore). Orders save in this browser only.</p>
+      <p class="fine">Prototype. Photo recognition is simulated against a catalogue built from loewe.com: real styles, colours and photos; wholesale prices are indicative. Orders save in this browser only.</p>
     </aside>
     <div class=${'device ' + orient}>
       <div class="statusbar"><span>9:41</span><span class="sb-r"><i style="height:5px"></i><i style="height:7px"></i><i style="height:9px"></i><i style="height:11px"></i><span class="sb-batt"><span></span></span></span></div>
