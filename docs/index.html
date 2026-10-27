@@ -1,0 +1,1284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vega Showroom</title>
+<meta name="description" content="Vega: showroom order capture for wholesale. Clickable prototype.">
+<meta name="theme-color" content="#EFF0EC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F1113" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Vega">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one phone-first app (portrait or landscape). On desktop it sits in a device frame beside a short demo guide. */
+:root{
+  --stage:#E1E2DE; --frame:#17181A;
+  --bg:#EFF0EC; --surface:#FFFFFF; --surface-2:#F5F6F2; --studio:#E3E4DF;
+  --ink:#141619; --muted:#62666B; --faint:#999DA1; --line:#DCDED8;
+  --accent:#2238A6; --accent-ink:#FFFFFF; --accent-soft:#E3E7F8;
+  --good:#1D7448; --good-bg:#E0EFE6; --warn:#946000; --warn-bg:#F7EAD2; --bad:#AE281C; --bad-bg:#F7E1DE;
+  --silver:#9AA1A8; --gold:#B8903A; --platinum:#7C97AB; --diamond:#4C7BD9;
+  --scrim:rgba(10,12,16,.42);
+  --vf-bg:#0C0D0F; --vf-ink:#F2F2EF; --vf-dim:rgba(242,242,239,.62);
+  --f-display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
+  --f-ui:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --stage:#050607; --frame:#2A2C30;
+  --bg:#0F1113; --surface:#181A1E; --surface-2:#202328; --studio:#43464B;
+  --ink:#ECEDEA; --muted:#A0A4A9; --faint:#6E7277; --line:#2C3036;
+  --accent:#8C9DFF; --accent-ink:#0F1113; --accent-soft:#222A4C;
+  --good:#58C48D; --good-bg:#15291E; --warn:#E5A93E; --warn-bg:#2E2414; --bad:#F27D72; --bad-bg:#331A18;
+  --scrim:rgba(0,0,0,.6); color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --stage:#050607; --frame:#2A2C30;
+  --bg:#0F1113; --surface:#181A1E; --surface-2:#202328; --studio:#43464B;
+  --ink:#ECEDEA; --muted:#A0A4A9; --faint:#6E7277; --line:#2C3036;
+  --accent:#8C9DFF; --accent-ink:#0F1113; --accent-soft:#222A4C;
+  --good:#58C48D; --good-bg:#15291E; --warn:#E5A93E; --warn-bg:#2E2414; --bad:#F27D72; --bad-bg:#331A18;
+  --scrim:rgba(0,0,0,.6); color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+html{padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px);background:var(--bg)}
+body{background:var(--bg);color:var(--ink);font:15px/1.4 var(--f-ui);-webkit-font-smoothing:antialiased;overscroll-behavior:none}
+@media (min-width:900px){html,body{background:var(--stage)}}
+[hidden]{display:none!important}
+#root{height:100%}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:disabled{cursor:default;opacity:.45}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+input{font:inherit;color:inherit}
+.num{font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.code{font:12px/1.3 var(--f-mono);color:var(--muted);letter-spacing:.01em}
+
+/* ---------- shell / device ---------- */
+.shell{height:100%;display:flex;align-items:center;justify-content:center;gap:48px}
+.device{position:relative;height:100%;width:100%;overflow:hidden;background:var(--bg);display:flex;flex-direction:column}
+.statusbar{display:none}
+.side{display:none}
+@media (min-width:900px){
+  .shell{padding:24px}
+  .device{height:min(844px,calc(100vh - 48px));width:auto;aspect-ratio:390/844;border-radius:46px;box-shadow:0 0 0 11px var(--frame),0 30px 80px rgba(0,0,0,.28)}
+  .device.landscape{height:auto;width:min(844px,calc(100vw - 440px));aspect-ratio:844/390}
+  .device.portrait .statusbar{display:flex;justify-content:space-between;align-items:center;height:44px;padding:0 30px 0 34px;font-weight:600;font-size:14px;flex:none;background:var(--bg)}
+  .side{display:flex;flex-direction:column;gap:18px;width:300px;flex:none}
+}
+.sb-r{display:flex;gap:5px;align-items:center}
+.sb-r i{display:block;width:4px;border-radius:1px;background:var(--ink)}
+.sb-batt{width:24px;height:11px;border:1.5px solid var(--ink);border-radius:3px;padding:1.5px}
+.sb-batt span{display:block;height:100%;width:70%;background:var(--ink);border-radius:1px}
+.side-brand{font:500 44px/1 var(--f-display);letter-spacing:-.01em}
+.side-lede{margin:0;color:var(--muted);line-height:1.5;text-wrap:pretty}
+.steps{margin:0;padding:0 0 0 20px;display:flex;flex-direction:column;gap:8px;line-height:1.45}
+.steps li::marker{font:12px var(--f-mono);color:var(--muted)}
+.side-ctrls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.fine{margin:0;font-size:12.5px;color:var(--muted);line-height:1.5}
+.linkbtn{color:var(--accent);font-weight:600;font-size:14px;padding:6px 2px}
+
+/* ---------- app frame ---------- */
+.app{position:relative;flex:1;min-height:0;display:flex;flex-direction:column;container-type:size;container-name:app;background:var(--bg)}
+.screen{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+.tabbar{flex:none;display:flex;justify-content:space-around;border-top:1px solid var(--line);background:var(--surface);padding:6px 8px 8px}
+.tab{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;font-weight:600;color:var(--faint);min-width:72px;padding:4px 0}
+.tab.on{color:var(--accent)}
+.top{padding:14px 18px 6px}
+.brandline{display:flex;justify-content:space-between;align-items:center;min-height:36px}
+.maison{font:500 13px var(--f-display);letter-spacing:.32em;text-transform:uppercase}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:10px}
+.h1{font:500 36px/1.05 var(--f-display);margin:4px 0 0;letter-spacing:-.01em}
+.sec{padding:16px 18px 6px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.sec-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.sec-head h2{margin:0;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.hscroll{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -18px;padding:2px 18px 8px;scrollbar-width:none}
+.hscroll::-webkit-scrollbar{display:none}
+.icon-btn{display:grid;place-items:center;width:40px;height:40px;border-radius:20px;color:var(--ink)}
+.icon-btn:active{background:var(--surface-2)}
+
+/* ---------- chips, pills ---------- */
+.cl{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:3px 8px 3px 6px;border-radius:99px;border:1px solid var(--line);background:var(--surface);white-space:nowrap}
+.cl i{width:8px;height:8px;border-radius:50%;background:var(--c);box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:99px;white-space:nowrap}
+.s-none{background:var(--surface-2);color:var(--muted)}
+.s-draft{background:var(--accent-soft);color:var(--accent)}
+.s-shared{background:var(--warn-bg);color:var(--warn)}
+.s-submitted{background:var(--good-bg);color:var(--good)}
+.s-confirmed{background:var(--good);color:var(--surface)}
+.by{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:600;color:var(--muted);white-space:nowrap}
+.by.client{color:var(--accent)}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:99px;background:var(--surface-2);color:var(--muted);white-space:nowrap}
+.chip.ok{background:var(--good-bg);color:var(--good)}
+.chip.warn{background:var(--warn-bg);color:var(--warn)}
+.chip.bad{background:var(--bad-bg);color:var(--bad)}
+.chip.ai{background:var(--accent-soft);color:var(--accent)}
+.seg{display:inline-flex;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:2px;gap:2px}
+.seg button{padding:6px 14px;border-radius:8px;font-size:13.5px;font-weight:600;color:var(--muted);white-space:nowrap}
+.seg button.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.seg.full{display:flex}.seg.full button{flex:1}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 18px;border-radius:14px;font-weight:650;font-size:15.5px}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.secondary{background:var(--surface-2);border:1px solid var(--line)}
+.btn.ghost{color:var(--accent)}
+.btn.danger{color:var(--bad)}
+.btn.block{width:100%}
+.btn:active:not(:disabled){transform:scale(.985)}
+
+/* ---------- product art ---------- */
+.thumb{flex:none;display:grid;place-items:center;background:var(--studio);border-radius:12px;overflow:hidden;width:56px;height:56px}
+.thumb.sm{width:44px;height:44px;border-radius:10px}
+.thumb.lg{width:96px;height:96px;border-radius:16px}
+.thumb svg{width:86%;height:86%}
+
+/* ---------- today ---------- */
+.look{scroll-snap-align:start;flex:none;width:236px;text-align:left;display:flex;flex-direction:column;gap:8px}
+.look-tile{position:relative;height:150px;border-radius:16px;overflow:hidden;background:var(--studio)}
+.look-tile svg{position:absolute;width:58%;height:auto}
+.look-n{font:12px var(--f-mono);color:var(--muted)}
+.look-t{font:500 19px/1.15 var(--f-display)}
+.look-vm{font-size:13px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.appt{display:flex;gap:14px;align-items:stretch;text-align:left;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px}
+.appt-time{font:500 13px var(--f-mono);color:var(--muted);padding-top:3px;width:42px;flex:none}
+.appt-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.appt-shop{font:500 20px/1.15 var(--f-display)}
+.appt-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.appt-side{display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;gap:6px;flex:none}
+.live{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px;min-width:0}
+.tile b{display:block;font-size:20px;font-weight:650;font-variant-numeric:tabular-nums}
+.tile span{font-size:12px;color:var(--muted)}
+.foot{padding:18px;font-size:12px;color:var(--faint);text-align:center}
+.today-grid{display:flex;flex-direction:column;padding-bottom:12px}
+
+/* ---------- lists ---------- */
+.list{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.row{display:flex;gap:12px;align-items:center;padding:12px 14px;text-align:left;width:100%;border-top:1px solid var(--line);min-width:0}
+.row:first-child{border-top:0}
+.row-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.row-title{font-weight:620;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-sub{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.row-side{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none;text-align:right}
+.row-val{font-weight:650;font-variant-numeric:tabular-nums}
+.sw{display:inline-block;width:11px;height:11px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.2);flex:none}
+.szs{display:flex;gap:4px;flex-wrap:wrap}
+.sz-chip{font:11.5px var(--f-mono);padding:1px 5px;border-radius:5px;background:var(--surface-2);color:var(--muted)}
+.lock{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:650;color:var(--warn)}
+.search{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:0 12px;height:44px;color:var(--muted)}
+.search input{border:0;outline:0;background:none;flex:1;min-width:0;height:100%;color:var(--ink)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.pcard{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:8px 8px 12px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.pcard .thumb{width:100%;height:auto;aspect-ratio:1;max-width:100%}
+.pcard.locked .thumb{opacity:.5}
+.pname{font-weight:620;font-size:14px;line-height:1.25}
+.dots{display:flex;gap:4px}
+.dots .sw{width:10px;height:10px}
+
+/* ---------- order view ---------- */
+.ov{display:flex;flex-direction:column;height:100%;min-height:0}
+.ov-nav{flex:none;display:flex;align-items:center;gap:4px;padding:4px 8px 0;min-height:48px}
+.ov-nav-t{flex:1;min-width:0;text-align:center}
+.ov-shop{font:500 19px/1.15 var(--f-display);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ov-id{font:11.5px var(--f-mono);color:var(--muted)}
+.saved{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;color:var(--good);font-weight:600;animation:pulse .6s ease}
+@keyframes pulse{from{opacity:.2}to{opacity:1}}
+.ov-sub{flex:none;display:flex;flex-direction:column;gap:10px;padding:6px 16px 10px;border-bottom:1px solid var(--line)}
+.ov-buyer{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13.5px}
+.track{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+.track div{display:flex;flex-direction:column;gap:4px;font-size:11px;font-weight:600;color:var(--faint);min-width:0}
+.track div::before{content:"";height:3px;border-radius:2px;background:var(--line)}
+.track div.done{color:var(--muted)}.track div.done::before{background:var(--good)}
+.track div.cur{color:var(--ink)}.track div.cur::before{background:var(--accent)}
+.track-note{font-size:12.5px;color:var(--muted);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.ov-body{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column}
+.ov-kpi{padding:14px 16px 4px}
+.ov-lines{padding:6px 16px 20px;display:flex;flex-direction:column;gap:14px}
+.lines-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:8px}
+.grp-head{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:0 2px 6px}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:16px;padding:22px 18px;text-align:center;color:var(--muted);display:flex;flex-direction:column;gap:8px;align-items:center}
+.ov-bar{flex:none;display:flex;gap:10px;align-items:center;padding:10px 14px 12px;border-top:1px solid var(--line);background:var(--surface)}
+.cap-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;height:54px;border-radius:27px;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:16px;white-space:nowrap;min-width:0}
+.round{width:54px;height:54px;border-radius:27px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line);flex:none}
+
+/* ---------- KPI ---------- */
+.kpi{display:flex;flex-direction:column;gap:16px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px}
+.kpi-label{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.kpi-label.row2{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.kpi-label .chip{text-transform:none;letter-spacing:0}
+.kpi-big{margin-top:4px;font-size:15px}
+.kpi-big .num{font-size:28px;font-weight:650;letter-spacing:-.01em}
+.bar{position:relative;height:8px;border-radius:4px;background:var(--surface-2);margin-top:10px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;background:var(--accent);transition:width .35s ease}
+.bar-fill.warn{background:var(--warn)}.bar-fill.bad{background:var(--bad)}
+.kpi-meta{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;color:var(--muted);margin-top:6px}
+.kpi-mix{display:flex;flex-direction:column;gap:12px}
+.mix-top{display:flex;justify-content:space-between;font-size:14px;gap:8px}
+.mix-val{font-variant-numeric:tabular-nums}
+.mix-track{position:relative;height:6px;border-radius:3px;background:var(--surface-2);margin-top:6px}
+.mix-fill{height:100%;border-radius:3px;background:var(--faint);transition:width .35s ease}
+.mix-fill.ok{background:var(--good)}.mix-fill.warn{background:var(--warn)}.mix-fill.bad{background:var(--bad)}
+.mix-target{position:absolute;top:-4px;bottom:-4px;width:2px;margin-left:-1px;background:var(--ink);border-radius:1px}
+.mix-note{font-size:12px;font-weight:600;margin-top:4px}
+.mix-note.warn{color:var(--warn)}.mix-note.bad{color:var(--bad)}
+.kpi-foot{font-size:12px;color:var(--faint);line-height:1.45}
+
+/* ---------- sheets ---------- */
+.scrim{position:absolute;inset:0;background:var(--scrim);z-index:40;animation:fade .2s ease}
+.sheet{position:absolute;left:0;right:0;bottom:0;margin:0 auto;max-width:640px;max-height:88%;z-index:41;background:var(--bg);border-radius:22px 22px 0 0;display:flex;flex-direction:column;animation:up .26s cubic-bezier(.2,.8,.2,1);box-shadow:0 -10px 40px rgba(0,0,0,.18)}
+.sheet.tall{height:88%}
+.sheet-grab{width:38px;height:5px;border-radius:3px;background:var(--line);margin:8px auto 0;flex:none}
+.sheet-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:8px 10px 6px 18px;flex:none}
+.sheet-title{font:500 23px/1.15 var(--f-display);text-wrap:balance}
+.sheet-sub{font:12px var(--f-mono);color:var(--muted);margin-top:3px}
+.sheet-body{flex:1;min-height:0;overflow-y:auto;padding:4px 18px 18px;display:flex;flex-direction:column;gap:14px}
+.sheet-body > *, .match > *, .ov-lines > *{flex-shrink:0}
+.sheet-foot{flex:none;display:flex;gap:10px;padding:10px 18px 14px;border-top:1px solid var(--line);background:var(--surface)}
+.sheet-foot .btn{flex:1}
+@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@keyframes fade{from{opacity:0}}
+.lbl{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.callout{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;line-height:1.4;padding:10px 12px;border-radius:12px}
+.callout.warn{background:var(--warn-bg);color:var(--warn)}
+.callout.bad{background:var(--bad-bg);color:var(--bad)}
+.callout.info{background:var(--accent-soft);color:var(--accent)}
+.callout.good{background:var(--good-bg);color:var(--good)}
+.callout svg{flex:none;margin-top:1px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px}
+
+/* size sheet */
+.ss-top{display:flex;gap:14px;align-items:center}
+.ss-info{display:flex;flex-direction:column;gap:6px;min-width:0}
+.ss-total{font-size:15px}.ss-total b{font-size:20px;font-variant-numeric:tabular-nums}
+.colours{display:flex;gap:8px;overflow-x:auto;margin:0 -18px;padding:0 18px 2px;scrollbar-width:none}
+.colour{display:flex;align-items:center;gap:7px;padding:0 12px;height:40px;border-radius:20px;border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:14px;white-space:nowrap;flex:none}
+.colour .sw{width:16px;height:16px}
+.colour.on{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.cnt{font-size:11.5px;font-weight:700;background:var(--accent);color:var(--accent-ink);border-radius:99px;padding:1px 6px}
+.sizes{display:flex;gap:6px;overflow-x:auto;margin:0 -18px;padding:0 18px 2px;scrollbar-width:none}
+.size-cell{flex:1 0 54px;display:flex;flex-direction:column;align-items:stretch;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.size-cell.has{border-color:var(--accent)}
+.sz{font:500 13px var(--f-mono);text-align:center;padding:7px 0 3px;color:var(--muted)}
+.size-cell.has .sz{color:var(--accent)}
+.step{height:42px;font-size:22px;font-weight:500;display:grid;place-items:center;color:var(--ink)}
+.step:active{background:var(--surface-2)}
+.qty{text-align:center;font-size:24px;font-weight:650;padding:2px 0}
+.size-cell .step:first-of-type{border-bottom:1px solid var(--line)}
+.size-cell .step:last-of-type{border-top:1px solid var(--line)}
+.single{display:flex;align-items:center;justify-content:center;gap:22px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:8px}
+.step.lg{width:64px;height:64px;border-radius:32px;font-size:30px;background:var(--surface-2)}
+.qty.xl{font-size:44px;min-width:70px}
+.quick{display:flex;gap:6px;flex-wrap:wrap}
+.qbtn{height:34px;padding:0 12px;border-radius:17px;border:1px solid var(--line);background:var(--surface);font-size:13px;font-weight:600}
+.qbtn:active{background:var(--surface-2)}
+.impact{display:flex;flex-direction:column;gap:6px;font-size:13.5px}
+.impact-row{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.sugs{display:flex;gap:10px;overflow-x:auto;margin:0 -18px;padding:0 18px 4px;scrollbar-width:none}
+.sug{flex:none;width:118px;text-align:left;display:flex;flex-direction:column;gap:5px}
+.sug .thumb{width:118px;height:118px}
+.sug-n{font-size:13px;font-weight:600;line-height:1.25}
+.pre{font:11.5px/1.5 var(--f-mono);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;overflow:auto;white-space:pre;max-height:340px;color:var(--ink);margin:0}
+.log{display:flex;flex-direction:column}
+.log-row{display:grid;grid-template-columns:44px minmax(0,1fr);gap:10px;padding:10px 0;border-top:1px solid var(--line);font-size:13.5px}
+.log-row:first-child{border-top:0}
+.log-t{font:12px var(--f-mono);color:var(--muted);padding-top:2px}
+.log-who{margin-top:3px}
+.linkbox{display:flex;gap:8px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:6px 6px 6px 12px}
+.linkbox code{flex:1;min-width:0;font:13px var(--f-mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;user-select:all}
+.linkbox .btn{min-height:38px;padding:0 14px;font-size:14px}
+.issue{display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:6px 0;border-top:1px solid var(--line)}
+.issue:first-of-type{border-top:0}
+
+/* ---------- capture ---------- */
+.capture{position:absolute;inset:0;z-index:30;background:var(--vf-bg);color:var(--vf-ink);display:flex;flex-direction:column;animation:fade .2s ease}
+.vf-top{flex:none;display:flex;align-items:center;justify-content:space-between;padding:8px 10px}
+.vf-btn{width:42px;height:42px;border-radius:21px;display:grid;place-items:center;background:rgba(255,255,255,.1);color:var(--vf-ink)}
+.vf-title{font-size:14px;font-weight:600;color:var(--vf-dim);text-align:center}
+.vf-scene{position:relative;flex:1;min-height:0;margin:0 14px;border-radius:22px;overflow:hidden;background:radial-gradient(120% 90% at 50% 30%,#3a3c40 0%,#1b1c1f 70%)}
+.rail{position:absolute;left:-5%;right:-5%;top:13%;height:4px;background:linear-gradient(90deg,#555,#999,#555);border-radius:2px}
+.vf-sample{position:absolute;left:50%;top:52%;width:min(64%,46cqh);aspect-ratio:1;transform:translate(-50%,-50%);animation:sway 4s ease-in-out infinite;transition:filter .3s}
+.vf-sample svg{width:100%;height:100%;filter:drop-shadow(0 18px 24px rgba(0,0,0,.45))}
+.vf-sample.scan{animation:none}
+.vf-sample.match{animation:none;filter:brightness(.55)}
+@keyframes sway{0%,100%{transform:translate(-50%,-50%) rotate(-1.2deg)}50%{transform:translate(-49%,-51%) rotate(1.2deg)}}
+.brackets i{position:absolute;width:34px;height:34px;border:3px solid var(--vf-ink);opacity:.85}
+.brackets i:nth-child(1){left:12%;top:20%;border-right:0;border-bottom:0;border-radius:10px 0 0 0}
+.brackets i:nth-child(2){right:12%;top:20%;border-left:0;border-bottom:0;border-radius:0 10px 0 0}
+.brackets i:nth-child(3){left:12%;bottom:10%;border-right:0;border-top:0;border-radius:0 0 0 10px}
+.brackets i:nth-child(4){right:12%;bottom:10%;border-left:0;border-top:0;border-radius:0 0 10px 0}
+.scanline{position:absolute;left:12%;right:12%;height:2px;background:#9fb0ff;box-shadow:0 0 18px 4px rgba(140,157,255,.6);animation:scan 1.1s ease-in-out infinite alternate}
+@keyframes scan{from{top:21%}to{top:89%}}
+.vf-status,.vf-hint{position:absolute;left:0;right:0;bottom:16px;text-align:center;font-size:13px;color:var(--vf-ink)}
+.vf-status span,.vf-hint span{background:rgba(0,0,0,.55);padding:6px 12px;border-radius:99px}
+.vf-bottom{flex:none;padding:10px 0 12px;display:flex;flex-direction:column;gap:8px}
+.rail-label{font-size:11.5px;color:var(--vf-dim);text-align:center;padding:0 16px}
+.sample-rail{display:flex;gap:8px;overflow-x:auto;padding:0 16px;scrollbar-width:none}
+.sample-rail::-webkit-scrollbar{display:none}
+.sample{flex:none;width:52px;height:52px;border-radius:12px;background:#2a2c30;display:grid;place-items:center;border:2px solid transparent}
+.sample svg{width:84%;height:84%}
+.sample.on{border-color:var(--vf-ink)}
+.shutter-row{display:flex;justify-content:center;padding-top:4px}
+.shutter{width:72px;height:72px;border-radius:36px;border:4px solid var(--vf-ink);display:grid;place-items:center}
+.shutter span{width:56px;height:56px;border-radius:28px;background:var(--vf-ink);transition:transform .15s}
+.shutter:active span{transform:scale(.9)}
+.match{position:absolute;left:0;right:0;bottom:0;margin:0 auto;max-width:640px;max-height:86%;overflow-y:auto;z-index:2;background:var(--bg);color:var(--ink);border-radius:22px 22px 0 0;padding:16px 18px 16px;display:flex;flex-direction:column;gap:12px;animation:up .26s cubic-bezier(.2,.8,.2,1)}
+.match-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.match-main{display:flex;gap:14px;align-items:center}
+.m-name{font:500 23px/1.15 var(--f-display)}
+.conf{font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums}
+.conf.hi{color:var(--good)}.conf.mid{color:var(--warn)}
+.alts{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+
+/* ---------- buyer view ---------- */
+.bv-head{flex:none;padding:12px 18px 12px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:8px;background:var(--surface)}
+.demo-bar{flex:none;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 12px 6px 16px;background:var(--ink);color:var(--bg);font-size:12.5px;font-weight:600}
+.demo-bar button{color:var(--bg);text-decoration:underline;font-weight:700;padding:6px 4px}
+.toast{position:absolute;left:50%;bottom:92px;transform:translateX(-50%);z-index:60;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:99px;font-size:14px;font-weight:600;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis;animation:up .2s ease;display:flex;gap:6px;align-items:center}
+
+/* ---------- landscape: horizontal working layout ---------- */
+@container app (orientation: landscape){
+  .ov-nav{min-height:40px;padding-top:2px}
+  .ov-sub{flex-direction:row;align-items:center;gap:12px;padding:2px 16px 6px}
+  .ov-sub .track{display:none}
+  .ov-bar{padding:6px 14px}
+  .cap-btn,.round{height:42px}
+  .round{width:42px}
+  .tabbar{padding:2px 8px 4px}
+  .tab{flex-direction:row;gap:6px;font-size:12.5px}
+}
+@container app (orientation: landscape) and (min-width: 600px){
+  .ov-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,38%);overflow:hidden}
+  .ov-lines{overflow-y:auto;order:1;min-height:0}
+  .ov-kpi{overflow-y:auto;order:2;min-height:0;border-left:1px solid var(--line);padding:12px 14px}
+  .ov-sub{flex-direction:row;align-items:center;justify-content:space-between;padding:4px 16px 8px}
+  .ov-sub .track{flex:1;max-width:420px}
+  .today-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start}
+  .today-grid .looks{grid-column:1 / -1}
+  .h1{font-size:28px}
+  .pgrid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .vf-scene{margin:0 14px}
+  .sheet,.match{max-height:94%}
+  .sheet.tall{height:94%}
+  .toast{bottom:80px}
+}
+@container app (min-width: 700px) and (orientation: portrait){
+  .pgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/preact/standalone.umd.js"></script>
+<script>
+const {html, render, useState, useEffect, useMemo, useRef} = window.htmPreact;
+
+/* =====================================================================
+   Data — fictional Maison and SS27 catalogue. Mirrors the shape of the
+   shared database the iOS app will write to (orders, lines, audit log).
+   ===================================================================== */
+const REP = {name:'Alex R.', full:'Alex Rinaldi'};
+const COL = {
+  Tan:['#B07A4A','2530'], Black:['#1E1E1F','1100'], Chalk:['#E6E0D3','2160'], Olive:['#6E6D3B','4120'],
+  Rose:['#D8A39E','7410'], Burgundy:['#6E1F2B','7690'], Sky:['#9DB8D3','5210'], Silver:['#BFC3C7','1450'],
+  Lime:['#B6C25F','4310'], Ivory:['#EFE9DC','2100'], Cobalt:['#2F4BA8','5640'], White:['#F4F4F2','1000'],
+  Sand:['#C9B48F','2290'], Grey:['#8A8D91','1320'], Tortoise:['#6B4226','2740'], Natural:['#D9C3A0','2200'],
+  Navy:['#22304F','5900'], Khaki:['#8C8460','4200'],
+};
+const SZ = {wr:['34','36','38','40','42'], mr:['46','48','50','52','54'], ws:['36','37','38','39','40','41'], ms:['40','41','42','43','44','45'], u:['U']};
+const CATS = ['bags','rtw','shoes','acc'];
+const CAT_LABEL = {bags:'Bags', rtw:'Ready-to-wear', shoes:'Shoes', acc:'Accessories'};
+const DIV_LABEL = {W:"Women's", M:"Men's"};
+const CLUSTERS = ['Silver','Gold','Platinum','Diamond'];
+const DROPS = {D1:'Drop 1 · delivers 15 Jan', D2:'Drop 2 · delivers 20 Feb'};
+const STATUS = {none:'Not started', draft:'In session', shared:'With buyer', submitted:'Submitted', confirmed:'Confirmed'};
+
+const PRODUCTS = [
+  ['w-arc-tote','W27B0218','Arc Tote','Arc','W','bags',980,'tote','u',['Tan','Black','Chalk','Olive'],0,'D1'],
+  ['w-arc-mini','W27B0219','Arc Mini Tote','Arc','W','bags',720,'tote','u',['Tan','Black','Rose'],0,'D1',{small:true}],
+  ['w-arc-shoulder','W27B0224','Arc Shoulder Bag','Arc','W','bags',1150,'shoulder','u',['Black','Tan','Burgundy'],1,'D1'],
+  ['w-fold-bag','W27B0301','Fold Bucket','Fold','W','bags',1320,'bucket','u',['Chalk','Black','Sky'],2,'D2'],
+  ['w-fold-clutch','W27B0305','Fold Clutch','Fold','W','bags',640,'clutch','u',['Black','Silver','Sky'],1,'D2'],
+  ['w-studio-trunk','W27B0410','Studio Trunk','Studio','W','bags',2900,'trunk','u',['Black','Natural'],3,'D2'],
+  ['w-drape-dress','W27R1102','Draped Jersey Dress','Drape','W','rtw',690,'dress','wr',['Black','Ivory','Cobalt'],0,'D1'],
+  ['w-drape-top','W27R1108','Draped Top','Drape','W','rtw',340,'tee','wr',['Black','Ivory'],0,'D1'],
+  ['w-emblem-tee','W27R1210','Emblem Tee','Emblem','W','rtw',210,'tee','wr',['White','Black','Sky'],0,'D1'],
+  ['w-trench','W27R1401','Balloon Trench','Outerwear','W','rtw',1480,'coat','wr',['Sand','Black'],1,'D2'],
+  ['w-wide-trouser','W27R1305','Wide Wool Trousers','Tailoring','W','rtw',520,'trousers','wr',['Black','Grey'],0,'D2'],
+  ['w-comet','W27S2101','Comet Pump','Comet','W','shoes',560,'heel','ws',['Black','Silver','Rose'],0,'D1'],
+  ['w-comet-sandal','W27S2104','Comet Sandal','Comet','W','shoes',520,'heel','ws',['Silver','Tan'],1,'D2'],
+  ['w-runner','W27S2201','Flow Runner','Runner','W','shoes',430,'sneaker','ws',['White','Grey','Lime'],0,'D1'],
+  ['w-sun','W27A3101','Oval Sunglasses','Eyewear','W','acc',230,'glasses','u',['Black','Tortoise'],0,'D1'],
+  ['w-arc-card','W27A3204','Arc Cardholder','Arc','W','acc',190,'wallet','u',['Tan','Black','Rose'],0,'D1'],
+  ['w-silk','W27A3302','Silk Square','Silk','W','acc',260,'scarf','u',['Ivory','Cobalt'],0,'D2'],
+  ['m-messenger','M27B0510','Arc Messenger','Arc','M','bags',1180,'shoulder','u',['Tan','Black'],0,'D1'],
+  ['m-arc-tote','M27B0512','Arc Tote Large','Arc','M','bags',1050,'tote','u',['Black','Khaki'],0,'D1'],
+  ['m-backpack','M27B0601','Cube Backpack','Cube','M','bags',1260,'backpack','u',['Black','Navy'],1,'D2'],
+  ['m-tee','M27R1210','Emblem Tee','Emblem','M','rtw',220,'tee','mr',['White','Black','Navy'],0,'D1'],
+  ['m-overshirt','M27R1502','Boxy Overshirt','Tailoring','M','rtw',590,'shirt','mr',['Navy','Khaki'],0,'D1'],
+  ['m-pleated','M27R1505','Pleated Trousers','Tailoring','M','rtw',540,'trousers','mr',['Grey','Black'],0,'D1'],
+  ['m-car-coat','M27R1601','Wool Car Coat','Outerwear','M','rtw',1620,'coat','mr',['Navy','Sand'],2,'D2'],
+  ['m-runner','M27S2210','Flow Runner','Runner','M','shoes',450,'sneaker','ms',['Grey','White','Black'],0,'D1'],
+  ['m-loafer','M27S2302','Campo Loafer','Campo','M','shoes',610,'loafer','ms',['Black','Tan'],0,'D2'],
+  ['m-belt','M27A3401','Arc Belt','Arc','M','acc',260,'belt','u',['Black','Tan'],0,'D1'],
+  ['m-wallet','M27A3205','Arc Wallet','Arc','M','acc',260,'wallet','u',['Black','Tan'],0,'D1'],
+].map(([id,code,name,family,div,cat,price,shape,sz,colours,min,drop,x]) => ({id,code,name,family,div,cat,price,shape,sizes:SZ[sz],colours,min,drop,...(x||{})}));
+const P = Object.fromEntries(PRODUCTS.map(p => [p.id, p]));
+
+// Maison guidelines: target share of the order value per category, per cluster and division (±5 pts tolerance)
+const GUIDE = {
+  Silver:  {W:{bags:50,rtw:20,shoes:15,acc:15}, M:{bags:25,rtw:45,shoes:20,acc:10}},
+  Gold:    {W:{bags:45,rtw:25,shoes:15,acc:15}, M:{bags:25,rtw:45,shoes:20,acc:10}},
+  Platinum:{W:{bags:40,rtw:30,shoes:15,acc:15}, M:{bags:30,rtw:40,shoes:20,acc:10}},
+  Diamond: {W:{bags:35,rtw:35,shoes:15,acc:15}, M:{bags:30,rtw:40,shoes:20,acc:10}},
+};
+
+const BUYERS = {
+  dubois: {id:'dubois', shop:'Maison Dubois', city:'Paris', buyer:'Claire Dubois', cluster:'Platinum', divs:['W','M'], budget:{W:45000, M:22000}, time:'10:00', code:'DUB01'},
+  linea:  {id:'linea', shop:'Linea Concept', city:'Milan', buyer:'Giulia Ferri', cluster:'Gold', divs:['W'], budget:{W:28000}, time:'12:30', code:'LIN04'},
+  harbour:{id:'harbour', shop:'Harbour & Co.', city:'London', buyer:'Tom Whitlock', cluster:'Silver', divs:['M'], budget:{M:15000}, time:'15:00', code:'HAR02'},
+  kanda:  {id:'kanda', shop:'Kanda Select', city:'Tokyo', buyer:'Aiko Mori', cluster:'Diamond', divs:['W','M'], budget:{W:90000, M:50000}, time:'17:00', code:'KAN07'},
+};
+
+const LOOKS = [
+  {id:'L03', div:'W', n:3, title:'The tan story', items:[['w-drape-dress','Ivory'],['w-arc-tote','Tan'],['w-comet','Black']],
+   vm:'Window lead for SS27. Tan is the hero colour: aim for at least 30% of Arc units in Tan, shown with the Ivory drape.'},
+  {id:'L07', div:'W', n:7, title:'Cobalt evening', items:[['w-drape-dress','Cobalt'],['w-fold-clutch','Silver'],['w-comet-sandal','Silver']],
+   vm:'Evening capsule. Present as one full look on a mannequin, clutch carried rather than hung.'},
+  {id:'L12', div:'W', n:12, title:'Weekend utility', items:[['w-trench','Sand'],['w-wide-trouser','Black'],['w-runner','White'],['w-arc-mini','Tan']],
+   vm:'Outerwear-led table. The trench anchors the RTW wall in Platinum and Diamond doors.'},
+  {id:'M02', div:'M', n:2, title:'Soft tailoring', items:[['m-overshirt','Navy'],['m-pleated','Grey'],['m-loafer','Black'],['m-messenger','Tan']],
+   vm:'Lead men’s story. Sell the overshirt and pleated trouser as a pair, same size run.'},
+  {id:'M05', div:'M', n:5, title:'Runner club', items:[['m-tee','White'],['m-runner','Grey'],['m-backpack','Black']],
+   vm:'Entry price point for Silver and Gold. Runner in Grey is the bestseller target.'},
+];
+
+// Other reps' orders at the same event (sample rows for the shared live view)
+const OTHERS = [
+  {id:'x1', shop:'Atelier Nove', city:'Rome', rep:'Sofia L.', cluster:'Gold', status:'submitted', by:'client', value:38450, units:96},
+  {id:'x2', shop:'Brun & Fils', city:'Lyon', rep:'Marc D.', cluster:'Silver', status:'shared', by:null, value:22100, units:58, hoursLeft:31},
+  {id:'x3', shop:'Sora Studio', city:'Seoul', rep:'Jin P.', cluster:'Diamond', status:'confirmed', by:'salesperson', value:74800, units:171},
+  {id:'x4', shop:'Nordlys', city:'Copenhagen', rep:'Ida H.', cluster:'Gold', status:'draft', by:null, value:12600, units:33},
+  {id:'x5', shop:'Casa Prisma', city:'Madrid', rep:'Sofia L.', cluster:'Platinum', status:'submitted', by:'salesperson', value:29900, units:77},
+  {id:'x6', shop:'Wren', city:'New York', rep:'Marc D.', cluster:'Platinum', status:'confirmed', by:'client', value:51300, units:120},
+];
+
+/* ---------- helpers ---------- */
+const fmt = n => '€' + Math.round(n).toLocaleString('en-GB');
+const units = q => Object.values(q || {}).reduce((a, b) => a + b, 0);
+const lineValue = l => units(l.qty) * P[l.pid].price;
+const qkey = q => Object.keys(q).sort().map(k => k + ':' + q[k]).join(',');
+const uid = () => Math.random().toString(36).slice(2, 9);
+const hhmm = t => new Date(t).toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
+const todayAt = (h, m) => { const d = new Date(); d.setHours(h, m, 0, 0); return d.getTime(); };
+const hash = s => [...s].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
+const rank = c => CLUSTERS.indexOf(c);
+const orderNo = o => 'AUR-SS27-' + BUYERS[o.buyerId].code;
+const whoName = (o, by) => by === 'client' ? BUYERS[o.buyerId].buyer : REP.name;
+const clusterVar = c => ({'--c': `var(--${c.toLowerCase()})`});
+
+function log(o, by, text) { o.log.push({at: Date.now(), by, text}); }
+
+function kpi(order, div) {
+  const b = BUYERS[order.buyerId], g = GUIDE[b.cluster][div];
+  const byCat = {bags:0, rtw:0, shoes:0, acc:0};
+  let total = 0, u = 0;
+  order.lines.forEach(l => { const p = P[l.pid]; if (p.div !== div) return; const v = lineValue(l); byCat[p.cat] += v; total += v; u += units(l.qty); });
+  const budget = b.budget[div] || 0;
+  const mix = CATS.map(c => {
+    const pct = total ? byCat[c] / total * 100 : 0, target = g[c], diff = pct - target;
+    const st = !total ? 'none' : Math.abs(diff) <= 5 ? 'ok' : Math.abs(diff) <= 10 ? 'warn' : 'bad';
+    return {cat:c, value:byCat[c], pct, target, diff, st};
+  });
+  const used = budget ? total / budget * 100 : 0;
+  return {total, units:u, budget, used, bst: used > 115 ? 'bad' : used > 105 ? 'warn' : 'ok', mix};
+}
+
+function applyDraft(o, pid, draft, via, by) {
+  const p = P[pid], now = Date.now();
+  const idx = o.lines.findIndex(l => l.pid === pid);
+  const old = o.lines.filter(l => l.pid === pid);
+  const rest = o.lines.filter(l => l.pid !== pid);
+  const fresh = [], msgs = [];
+  for (const c of p.colours) {
+    const q = {}; Object.entries(draft[c] || {}).forEach(([s, n]) => { if (n > 0) q[s] = n; });
+    const prev = old.find(l => l.colour === c), u = units(q), pu = prev ? units(prev.qty) : 0;
+    const same = prev && qkey(prev.qty) === qkey(q);
+    if (u > 0) fresh.push(same ? prev : {id: prev ? prev.id : uid(), pid, colour:c, qty:q, via: prev ? prev.via : via, by, at: now});
+    if (!prev && u > 0) msgs.push(`Added ${p.name} · ${c} ×${u}${via === 'photo' ? ' (photo match)' : via === 'suggestion' ? ' (suggestion)' : ''}`);
+    else if (prev && u === 0) msgs.push(`Removed ${p.name} · ${c}`);
+    else if (prev && !same) msgs.push(`Changed ${p.name} · ${c} ×${pu} → ×${u}`);
+  }
+  const at = idx < 0 ? rest.length : o.lines.slice(0, idx).filter(l => l.pid !== pid).length;
+  rest.splice(at, 0, ...fresh);
+  o.lines = rest;
+  msgs.forEach(m => log(o, by, m));
+  return msgs.length;
+}
+
+function newOrder(bid) {
+  return {id:'o-' + bid, buyerId:bid, rep:REP.name, status:'draft', submittedBy:null, lines:[], log:[{at:Date.now(), by:'salesperson', text:'Session started in the showroom'}]};
+}
+
+function seedState() {
+  const L = (pid, colour, qty, h, m, via='photo') => ({id:uid(), pid, colour, qty, via, by:'salesperson', at:todayAt(h, m)});
+  const lines = [
+    L('w-arc-tote','Tan',{U:4},10,6), L('w-arc-tote','Black',{U:3},10,7,'suggestion'),
+    L('w-arc-shoulder','Burgundy',{U:2},10,11), L('w-fold-bag','Chalk',{U:2},10,15),
+    L('w-drape-dress','Black',{'36':1,'38':2,'40':2,'42':1},10,21), L('w-emblem-tee','White',{'34':1,'36':2,'38':2,'40':1},10,26),
+    L('w-comet','Black',{'37':1,'38':2,'39':2,'40':1},10,33), L('w-arc-card','Tan',{U:6},10,36,'suggestion'),
+    L('m-tee','White',{'46':1,'48':2,'50':2,'52':1},10,44), L('m-runner','Grey',{'41':1,'42':2,'43':2,'44':1},10,48),
+  ];
+  const o = {id:'o-dubois', buyerId:'dubois', rep:REP.name, status:'draft', submittedBy:null, lines,
+    log:[{at:todayAt(10,2), by:'salesperson', text:'Session started in the showroom'},
+      ...lines.map(l => ({at:l.at, by:'salesperson', text:`Added ${P[l.pid].name} · ${l.colour} ×${units(l.qty)}${l.via === 'photo' ? ' (photo match)' : ' (suggestion)'}`}))]};
+  return {orders:{'o-dubois':o}, savedAt:null};
+}
+const KEY = 'vega-poc-v1';
+function loadState() { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.orders) return s; } catch (e) {} return seedState(); }
+function saveState(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
+function clearState() { try { localStorage.removeItem(KEY); } catch (e) {} }
+
+/* ---------- recognition (simulated for the POC) ---------- */
+const sibling = p => PRODUCTS.find(x => x.id !== p.id && x.div === p.div && x.shape === p.shape);
+const confidence = p => sibling(p) ? 78 + hash(p.id) % 7 : 91 + hash(p.id) % 7;
+function alternatives(p) {
+  return PRODUCTS.filter(x => x.id !== p.id && x.div === p.div)
+    .map(x => ({x, s:(x.shape === p.shape ? 3 : 0) + (x.family === p.family ? 2 : 0) + (x.cat === p.cat ? 1 : 0) + (hash(x.id) % 10) / 100}))
+    .sort((a, b) => b.s - a.s).slice(0, 3).map(a => a.x);
+}
+
+/* ---------- export ---------- */
+function exportRows(o) {
+  const b = BUYERS[o.buyerId], rows = [];
+  o.lines.forEach(l => { const p = P[l.pid]; p.sizes.forEach(s => { const n = l.qty[s]; if (!n) return;
+    rows.push({order:orderNo(o), buyer_shop:b.shop, buyer:b.buyer, cluster:b.cluster, salesperson:REP.name, submitted_by:o.submittedBy || 'not submitted', status:o.status,
+      division:DIV_LABEL[p.div], category:CAT_LABEL[p.cat], style_code:p.code, style:p.name, colour_code:COL[l.colour][1], colour:l.colour, size:s, qty:n,
+      unit_wholesale_eur:p.price, line_value_eur:n * p.price, delivery:p.drop, captured_via:l.via, captured_by:l.by, captured_at:new Date(l.at).toISOString()}); }); });
+  return rows;
+}
+function toTSV(o) { const r = exportRows(o); if (!r.length) return 'No lines yet.'; const h = Object.keys(r[0]); return [h.join('\t'), ...r.map(x => h.map(k => x[k]).join('\t'))].join('\n'); }
+function toXML(o) {
+  const b = BUYERS[o.buyerId], esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  const lines = o.lines.map(l => { const p = P[l.pid];
+    return `    <line style="${p.code}" colour="${COL[l.colour][1]}" delivery="${p.drop}" capturedVia="${l.via}" capturedBy="${l.by}">\n      <name>${esc(p.name)} · ${l.colour}</name>\n` +
+      p.sizes.filter(s => l.qty[s]).map(s => `      <size code="${s}" qty="${l.qty[s]}" unitEur="${p.price}"/>`).join('\n') + `\n    </line>`; }).join('\n');
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<order id="${orderNo(o)}" season="SS27" status="${o.status}" submittedBy="${o.submittedBy || ''}">\n  <buyer shop="${esc(b.shop)}" name="${esc(b.buyer)}" cluster="${b.cluster}"/>\n  <salesperson>${REP.full}</salesperson>\n  <lines>\n${lines}\n  </lines>\n</order>`;
+}
+
+/* =====================================================================
+   Visual primitives
+   ===================================================================== */
+const IC = {
+  back:'M15 5l-7 7 7 7', cam:'M4 8h3l2-3h6l2 3h3v11H4z M12 17a4 4 0 100-8 4 4 0 000 8z',
+  today:'M4 6h16v14H4z M4 10h16 M8 3v4 M16 3v4', orders:'M6 4h12v16H6z M9 9h6 M9 13h6 M9 17h3',
+  grid:'M4 4h7v7H4z M13 4h7v7h-7z M4 13h7v7H4z M13 13h7v7h-7z', search:'M11 18a7 7 0 100-14 7 7 0 000 14z M16 16l5 5',
+  lock:'M6 11h12v9H6z M9 11V8a3 3 0 016 0v3', x:'M6 6l12 12 M18 6L6 18', share:'M12 15V4 M8 8l4-4 4 4 M5 13v7h14v-7',
+  check:'M5 12l5 5 9-10', export:'M12 4v11 M8 11l4 4 4-4 M5 20h14', clock:'M12 21a9 9 0 100-18 9 9 0 000 18z M12 7v5l3 2',
+  user:'M12 12a4 4 0 100-8 4 4 0 000 8z M4 21c1-4 4-6 8-6s7 2 8 6', spark:'M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z',
+  info:'M12 21a9 9 0 100-18 9 9 0 000 18z M12 11v6 M12 7.5v.01', history:'M4 12a8 8 0 108-8 8 8 0 00-6.5 3.3 M4 4v4h4 M12 8v4l3 2',
+  copy:'M8 8h11v12H8z M5 16V4h11', alert:'M12 4l9 16H3z M12 10v4 M12 17v.01',
+};
+const Icon = ({n, s=22, w=1.8}) => html`<svg width=${s} height=${s} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width=${w} stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d=${IC[n]}/></svg>`;
+
+function shade(hex, amt) {
+  const n = parseInt(hex.slice(1), 16), ch = [n >> 16, n >> 8 & 255, n & 255];
+  return '#' + ch.map(v => Math.round(amt < 0 ? v * (1 + amt) : v + (255 - v) * amt).toString(16).padStart(2, '0')).join('');
+}
+const lum = hex => { const n = parseInt(hex.slice(1), 16); return ((n >> 16) * .299 + (n >> 8 & 255) * .587 + (n & 255) * .114) / 255; };
+
+const SHAPES = {
+  tote:(c,d)=>html`<path d="M36 42 C36 16 64 16 64 42" fill="none" stroke=${d} stroke-width="4" stroke-linecap="round"/><path d="M20 40 H80 L75 86 H25 Z" fill=${c}/><path d="M20 40 H80 L79 47 H21 Z" fill=${d} opacity=".35"/>`,
+  shoulder:(c,d)=>html`<path d="M26 46 C26 12 74 12 74 46" fill="none" stroke=${d} stroke-width="3"/><rect x="18" y="44" width="64" height="40" rx="7" fill=${c}/><path d="M18 51 Q18 44 25 44 H75 Q82 44 82 51 V58 Q50 74 18 58 Z" fill=${d} opacity=".45"/><circle cx="50" cy="64" r="3" fill=${d}/>`,
+  bucket:(c,d)=>html`<path d="M40 34 C40 18 60 18 60 34" fill="none" stroke=${d} stroke-width="3"/><path d="M26 36 H74 L68 84 Q50 90 32 84 Z" fill=${c}/><ellipse cx="50" cy="36" rx="24" ry="5" fill=${d} opacity=".5"/><path d="M30 46 Q50 52 70 46" fill="none" stroke=${d} stroke-width="2" stroke-dasharray="3 3"/>`,
+  clutch:(c,d)=>html`<rect x="12" y="38" width="76" height="38" rx="5" fill=${c}/><path d="M12 43 Q12 38 17 38 H83 Q88 38 88 43 L50 62 Z" fill=${d} opacity=".4"/>`,
+  trunk:(c,d)=>html`<path d="M38 30 Q38 22 46 22 H54 Q62 22 62 30" fill="none" stroke=${d} stroke-width="4"/><rect x="18" y="30" width="64" height="52" rx="4" fill=${c}/><path d="M18 46 H82 M18 66 H82" stroke=${d} stroke-width="2.5" opacity=".6"/><rect x="45" y="42" width="10" height="9" rx="1.5" fill=${d}/>`,
+  backpack:(c,d)=>html`<path d="M42 26 Q42 16 50 16 Q58 16 58 26" fill="none" stroke=${d} stroke-width="3"/><rect x="26" y="24" width="48" height="64" rx="12" fill=${c}/><rect x="34" y="56" width="32" height="24" rx="5" fill=${d} opacity=".35"/>`,
+  dress:(c,d)=>html`<path d="M40 12 H60 L62 26 L56 32 L74 88 H26 L44 32 L38 26 Z" fill=${c}/><path d="M44 32 Q50 36 56 32" fill="none" stroke=${d} stroke-width="2"/><path d="M47 40 Q42 64 36 88 M53 40 Q60 64 64 88" fill="none" stroke=${d} stroke-width="1.5" opacity=".5"/>`,
+  tee:(c,d)=>html`<path d="M36 18 L16 28 L22 42 L30 38 V86 H70 V38 L78 42 L84 28 L64 18 Q50 28 36 18 Z" fill=${c}/><path d="M36 18 Q50 28 64 18" fill="none" stroke=${d} stroke-width="2"/>`,
+  shirt:(c,d)=>html`<path d="M36 16 L18 26 L12 72 L22 74 L30 42 V88 H70 V42 L78 74 L88 72 L82 26 L64 16 L50 24 Z" fill=${c}/><path d="M36 16 L50 30 L64 16 M50 30 V88" fill="none" stroke=${d} stroke-width="2"/>`,
+  coat:(c,d)=>html`<path d="M36 12 L20 22 L14 84 L26 86 L30 46 V92 H70 V46 L74 86 L86 84 L80 22 L64 12 L50 30 Z" fill=${c}/><path d="M36 12 L44 44 L50 30 L56 44 L64 12" fill=${d} opacity=".35"/><path d="M30 60 H70" stroke=${d} stroke-width="3" opacity=".5"/>`,
+  trousers:(c,d)=>html`<path d="M30 12 H70 L76 90 H60 L50 34 L40 90 H24 Z" fill=${c}/><path d="M30 18 H70" stroke=${d} stroke-width="3" opacity=".5"/>`,
+  heel:(c,d)=>html`<path d="M14 66 Q20 56 34 62 L72 72 Q86 76 86 82 L84 84 H44 Q34 76 26 74 L25 86 H19 L19 72 Q13 70 14 66 Z" fill=${c}/><path d="M44 84 H84" stroke=${d} stroke-width="2"/>`,
+  sneaker:(c,d)=>html`<path d="M12 72 Q12 52 26 50 L44 48 Q56 60 72 62 Q88 64 88 74 V78 H12 Z" fill=${c}/><rect x="10" y="76" width="80" height="7" rx="3" fill=${d} opacity=".45"/><path d="M34 54 L46 64 M40 52 L52 62" stroke=${d} stroke-width="2"/>`,
+  loafer:(c,d)=>html`<path d="M12 74 Q14 58 32 56 L60 58 Q86 62 88 76 V80 H12 Z" fill=${c}/><path d="M40 60 Q52 66 64 60" fill="none" stroke=${d} stroke-width="3"/><rect x="10" y="78" width="80" height="5" rx="2" fill=${d} opacity=".5"/>`,
+  glasses:(c,d)=>html`<ellipse cx="32" cy="52" rx="16" ry="12" fill=${c} fill-opacity=".35" stroke=${c} stroke-width="5"/><ellipse cx="68" cy="52" rx="16" ry="12" fill=${c} fill-opacity=".35" stroke=${c} stroke-width="5"/><path d="M47 50 Q50 46 53 50" fill="none" stroke=${c} stroke-width="4"/>`,
+  wallet:(c,d)=>html`<rect x="20" y="32" width="60" height="40" rx="5" fill=${c}/><path d="M20 46 H80" stroke=${d} stroke-width="2" opacity=".6"/><rect x="66" y="50" width="10" height="8" rx="2" fill=${d}/>`,
+  scarf:(c,d)=>html`<rect x="25" y="25" width="50" height="50" transform="rotate(45 50 50)" fill=${c}/><rect x="32" y="32" width="36" height="36" transform="rotate(45 50 50)" fill="none" stroke=${d} stroke-width="2" opacity=".6"/>`,
+  belt:(c,d)=>html`<rect x="8" y="44" width="70" height="12" rx="3" fill=${c}/><rect x="76" y="40" width="16" height="20" rx="3" fill="none" stroke=${d} stroke-width="3"/>`,
+};
+function Art({pid, colour, style}) {
+  const p = P[pid], c = COL[colour][0], d = lum(c) < .3 ? shade(c, .35) : shade(c, -.42);
+  return html`<svg viewBox="0 0 100 100" style=${style} role="img" aria-label=${p.name + ', ' + colour}>
+    <ellipse cx="50" cy="91" rx="30" ry="3" fill="rgba(0,0,0,.14)"/>
+    <g stroke="rgba(0,0,0,.22)" stroke-width="0.8" transform=${p.small ? 'translate(14 22) scale(.72)' : 'translate(0 0)'}>${SHAPES[p.shape](c, d)}</g>
+  </svg>`;
+}
+const Thumb = ({pid, colour, cls=''}) => html`<div class=${'thumb ' + cls}><${Art} pid=${pid} colour=${colour}/></div>`;
+const Cluster = ({c}) => html`<span class="cl" style=${clusterVar(c)}><i></i>${c}</span>`;
+const Pill = ({s}) => html`<span class=${'pill s-' + s}>${STATUS[s]}</span>`;
+const By = ({by}) => by ? html`<span class=${'by ' + by}><${Icon} n="user" s=${13} w=${2}/>${by === 'client' ? 'Client' : 'Salesperson'}</span>` : null;
+const Seg = ({opts, val, on, full}) => html`<div class=${'seg' + (full ? ' full' : '')} role="tablist">${opts.map(([v, l]) => html`<button role="tab" aria-selected=${v === val} class=${v === val ? 'on' : ''} onClick=${() => on(v)}>${l}</button>`)}</div>`;
+
+function Sheet({title, sub, onClose, children, tall, foot}) {
+  return html`<div class="scrim" onClick=${onClose}></div>
+    <div class=${'sheet' + (tall ? ' tall' : '')} role="dialog" aria-label=${title}>
+      <div class="sheet-grab"></div>
+      <div class="sheet-head"><div style="min-width:0"><div class="sheet-title">${title}</div>${sub && html`<div class="sheet-sub">${sub}</div>`}</div>
+        <button class="icon-btn" onClick=${onClose} aria-label="Close"><${Icon} n="x"/></button></div>
+      <div class="sheet-body">${children}</div>
+      ${foot && html`<div class="sheet-foot">${foot}</div>`}
+    </div>`;
+}
+
+function copyText(text, act) {
+  const done = () => act.toast('Copied');
+  try { navigator.clipboard.writeText(text).then(done, () => act.toast('Select the text to copy it')); } catch (e) { act.toast('Select the text to copy it'); }
+}
+
+/* =====================================================================
+   KPI recap — live guideline check per division
+   ===================================================================== */
+function KpiPanel({order, div}) {
+  const b = BUYERS[order.buyerId], k = kpi(order, div);
+  const okCount = k.mix.filter(m => m.st === 'ok').length;
+  const scale = 80;
+  return html`<div class="kpi">
+    <div>
+      <div class="kpi-label">${DIV_LABEL[div]} budget</div>
+      <div class="kpi-big"><span class="num">${fmt(k.total)}</span><span class="muted"> of ${fmt(k.budget)}</span></div>
+      <div class="bar"><div class=${'bar-fill ' + k.bst} style=${{width: Math.min(k.used, 100) + '%'}}></div></div>
+      <div class="kpi-meta"><span class="num">${Math.round(k.used)}% used · ${k.units} units</span><span class="num">${k.total > k.budget ? fmt(k.total - k.budget) + ' over' : fmt(k.budget - k.total) + ' left'}</span></div>
+    </div>
+    <div class="kpi-mix">
+      <div class="kpi-label row2"><span>Guideline mix · ${b.cluster}</span>
+        <span class=${'chip ' + (k.total ? (okCount === 4 ? 'ok' : okCount >= 2 ? 'warn' : 'bad') : '')}>${k.total ? okCount + ' of 4 on target' : 'No lines yet'}</span></div>
+      ${k.mix.map(m => html`<div>
+        <div class="mix-top"><span>${CAT_LABEL[m.cat]}</span><span class="mix-val"><b>${Math.round(m.pct)}%</b> <span class="muted">/ ${m.target}%</span></span></div>
+        <div class="mix-track"><div class=${'mix-fill ' + m.st} style=${{width: Math.min(m.pct / scale * 100, 100) + '%'}}></div><div class="mix-target" style=${{left: (m.target / scale * 100) + '%'}}></div></div>
+        ${(m.st === 'warn' || m.st === 'bad') && html`<div class=${'mix-note ' + m.st}>${m.diff > 0 ? '+' : '−'}${Math.abs(Math.round(m.diff))} pts ${m.diff > 0 ? 'over' : 'under'} guideline</div>`}
+      </div>`)}
+    </div>
+    <div class="kpi-foot">Share of ${DIV_LABEL[div].toLowerCase()} order value. The tick marks the Maison target for ${b.cluster} clients; ±5 pts counts as on target. Updates as sizes go in.</div>
+  </div>`;
+}
+
+/* =====================================================================
+   Today (home): lookbooks first, then appointments, then the live event view
+   ===================================================================== */
+function LookTile({look, h=150}) {
+  const pos = [['4%','14%'],['40%','4%'],['22%','40%'],['56%','38%']];
+  const bg = shade(COL[look.items[0][1]][0], .55);
+  return html`<div class="look-tile" style=${{height: h + 'px', background: bg}}>
+    ${look.items.slice(0, 4).map(([pid, c], i) => html`<${Art} pid=${pid} colour=${c} style=${{left:pos[i][0], top:pos[i][1]}}/>`)}
+  </div>`;
+}
+
+function Today({S, act}) {
+  const own = Object.values(S.orders);
+  const rows = [...own.map(o => ({status:o.status, by:o.submittedBy, value:kpi(o, 'W').total + kpi(o, 'M').total})), ...OTHERS];
+  const total = rows.reduce((a, r) => a + r.value, 0);
+  return html`
+    <header class="top">
+      <div class="brandline"><span class="maison">Maison Aurore</span>
+        <button class="icon-btn" onClick=${() => act.sheet({type:'about'})} aria-label="About this prototype"><${Icon} n="info"/></button></div>
+      <div class="eyebrow">SS27 showroom · Paris · day 2 of 4</div>
+      <h1 class="h1">Today</h1>
+    </header>
+    <div class="today-grid">
+      <section class="sec looks">
+        <div class="sec-head"><h2>Lookbooks & VM intent</h2><span class="small muted">${LOOKS.length} looks</span></div>
+        <div class="hscroll">
+          ${LOOKS.map(l => html`<button class="look" onClick=${() => act.sheet({type:'look', id:l.id})}>
+            <${LookTile} look=${l}/>
+            <div><div class="look-n">${DIV_LABEL[l.div]} · Look ${String(l.n).padStart(2, '0')}</div><div class="look-t">${l.title}</div></div>
+            <div class="look-vm">${l.vm}</div>
+          </button>`)}
+        </div>
+      </section>
+      <section class="sec">
+        <div class="sec-head"><h2>Your appointments</h2><span class="small muted">${REP.name} · ${Object.keys(BUYERS).length} buyers</span></div>
+        ${Object.values(BUYERS).map(b => { const o = S.orders['o-' + b.id];
+          const v = o ? b.divs.reduce((a, d) => a + kpi(o, d).total, 0) : 0;
+          return html`<button class="appt" onClick=${() => act.openOrder(b.id)}>
+            <div class="appt-time">${b.time}</div>
+            <div class="appt-main">
+              <div class="appt-shop">${b.shop}</div>
+              <div class="small muted">${b.buyer} · ${b.city}</div>
+              <div class="appt-meta"><${Cluster} c=${b.cluster}/><span class="chip">${b.divs.map(d => DIV_LABEL[d]).join(' + ')}</span></div>
+            </div>
+            <div class="appt-side"><${Pill} s=${o ? o.status : 'none'}/>${o && html`<span class="row-val num">${fmt(v)}</span>`}</div>
+          </button>`; })}
+      </section>
+      <section class="sec">
+        <div class="sec-head"><h2>Live across the event</h2><span class="small muted">25 reps · sample</span></div>
+        <div class="live">
+          <div class="tile"><b>${rows.length}</b><span>orders</span></div>
+          <div class="tile"><b>${fmt(total / 1000)}k</b><span>captured</span></div>
+          <div class="tile"><b>${rows.filter(r => r.status === 'submitted' || r.status === 'confirmed').length}</b><span>submitted</span></div>
+        </div>
+        <button class="linkbtn" style="align-self:flex-start" onClick=${() => act.tab('orders')}>See every order →</button>
+      </section>
+    </div>
+    <div class="foot">Maison Aurore private showroom · powered by Vega</div>`;
+}
+
+function LookSheet({id, S, ui, act}) {
+  const l = LOOKS.find(x => x.id === id);
+  const o = ui.lastOrder && S.orders[ui.lastOrder];
+  const b = o && BUYERS[o.buyerId];
+  const canAdd = o && o.status !== 'confirmed' && b.divs.includes(l.div);
+  return html`<${Sheet} title=${l.title} sub=${`${DIV_LABEL[l.div]} lookbook · Look ${String(l.n).padStart(2, '0')}`} onClose=${act.close}>
+    <${LookTile} look=${l} h=${190}/>
+    <div class="callout info"><${Icon} n="spark" s=${18}/><div><b>VM intent.</b> ${l.vm}</div></div>
+    <div class="lbl">In this look</div>
+    <div class="list">${l.items.map(([pid, c]) => { const p = P[pid]; const locked = b && p.min > rank(b.cluster);
+      return html`<button class="row" disabled=${!canAdd || locked} onClick=${() => { act.openOrder(o.buyerId); act.sheet({type:'size', orderId:o.id, pid, colour:c, via:'look'}); }}>
+        <${Thumb} pid=${pid} colour=${c}/>
+        <div class="row-main"><div class="row-title">${p.name}</div><div class="row-sub"><span class="sw" style=${{background:COL[c][0]}}></span>${c} · <span class="code">${p.code}</span></div></div>
+        <div class="row-side"><span class="row-val">${fmt(p.price)}</span>${locked ? html`<span class="lock"><${Icon} n="lock" s=${12} w=${2.2}/>${CLUSTERS[p.min]}+</span>` : canAdd && html`<span class="small" style="color:var(--accent);font-weight:600">Add</span>`}</div>
+      </button>`; })}</div>
+    <div class="small muted">${canAdd ? `Tap a piece to add it to ${b.shop}'s order.` : 'Open a buyer session to add these pieces to an order.'}</div>
+  <//>`;
+}
+
+/* =====================================================================
+   Orders — one live view across reps, with submitter traceability
+   ===================================================================== */
+function OrdersTab({S, act}) {
+  const [f, setF] = useState('all');
+  const own = Object.values(S.orders).map(o => { const b = BUYERS[o.buyerId];
+    return {id:o.id, own:true, shop:b.shop, city:b.city, rep:REP.name, cluster:b.cluster, status:o.status, by:o.submittedBy,
+      value:b.divs.reduce((a, d) => a + kpi(o, d).total, 0), units:b.divs.reduce((a, d) => a + kpi(o, d).units, 0),
+      hoursLeft:o.status === 'shared' ? Math.max(0, 48 - Math.floor((Date.now() - o.sharedAt) / 36e5)) : null}; });
+  const all = [...own, ...OTHERS];
+  const rows = f === 'mine' ? own : all;
+  const byClient = all.filter(r => r.by === 'client').length, bySales = all.filter(r => r.by === 'salesperson').length;
+  return html`
+    <header class="top"><div class="eyebrow">SS27 showroom · Paris</div><h1 class="h1">Orders</h1></header>
+    <section class="sec">
+      <div class="live">
+        <div class="tile"><b>${fmt(all.reduce((a, r) => a + r.value, 0) / 1000)}k</b><span>${all.length} orders</span></div>
+        <div class="tile"><b>${byClient}</b><span>by client</span></div>
+        <div class="tile"><b>${bySales}</b><span>by salesperson</span></div>
+      </div>
+      <${Seg} full opts=${[['all', 'All reps'], ['mine', 'Mine']]} val=${f} on=${setF}/>
+      <div class="list">
+        ${rows.map(r => html`<button class="row" onClick=${() => r.own ? act.openOrder(r.id.slice(2)) : act.sheet({type:'other', id:r.id})}>
+          <div class="row-main">
+            <div class="row-title">${r.shop} <span class="muted" style="font-weight:400">· ${r.city}</span></div>
+            <div class="row-sub"><${Pill} s=${r.status}/><${By} by=${r.by}/>${r.hoursLeft != null && html`<span class="by"><${Icon} n="clock" s=${13} w=${2}/>${r.hoursLeft}h left</span>`}</div>
+            <div class="row-sub">${r.rep}${r.own ? ' (you)' : ''} · ${r.cluster}</div>
+          </div>
+          <div class="row-side"><span class="row-val">${fmt(r.value)}</span><span class="small muted num">${r.units} units</span></div>
+        </button>`)}
+      </div>
+      <p class="small muted" style="margin:0">Every order records who submitted it. When a salesperson submits, the Maison carries the cost of an error; when the client submits, the client does.</p>
+    </section>
+    <div class="foot">Shared event database · updates live across reps</div>`;
+}
+
+function OtherSheet({id, act}) {
+  const r = OTHERS.find(x => x.id === id);
+  const ev = [['09:12', 'salesperson', 'Session started in the showroom'], ['11:05', 'salesperson', 'Basket shared with the buyer']];
+  if (r.status === 'submitted' || r.status === 'confirmed') ev.push(['Yesterday', r.by, r.by === 'client' ? 'Order submitted by the buyer' : 'Order submitted by the salesperson']);
+  if (r.status === 'confirmed') ev.push(['Today', 'salesperson', 'Reviewed against guidelines and confirmed']);
+  return html`<${Sheet} title=${r.shop} sub=${`${r.city} · ${r.cluster} · ${r.rep}`} onClose=${act.close}>
+    <div class="row-sub" style="gap:8px"><${Pill} s=${r.status}/><${By} by=${r.by}/></div>
+    <div class="live"><div class="tile"><b>${fmt(r.value)}</b><span>value</span></div><div class="tile"><b>${r.units}</b><span>units</span></div><div class="tile"><b>${r.rep.split(' ')[0]}</b><span>owner</span></div></div>
+    <div class="lbl">Audit trail</div>
+    <div class="panel log">${ev.map(([t, by, text]) => html`<div class="log-row"><div class="log-t">${t}</div><div>${text}<div class="log-who"><${By} by=${by}/></div></div></div>`)}</div>
+    <div class="small muted">Read only. This order belongs to ${r.rep}.</div>
+  <//>`;
+}
+
+/* =====================================================================
+   Catalogue — browse with per-cluster availability
+   ===================================================================== */
+function ProductList({div, q, cluster, onPick, grid}) {
+  const ql = q.trim().toLowerCase();
+  const items = PRODUCTS.filter(p => (!div || p.div === div) && (!ql || (p.name + ' ' + p.code + ' ' + p.family + ' ' + CAT_LABEL[p.cat]).toLowerCase().includes(ql)));
+  if (!items.length) return html`<div class="empty">No styles match “${q}”. Try a style name or code.</div>`;
+  const lockOf = p => cluster && p.min > rank(cluster);
+  if (grid) return html`<div class="pgrid">${items.map(p => html`<button class=${'pcard' + (lockOf(p) ? ' locked' : '')} onClick=${() => onPick(p)}>
+    <${Thumb} pid=${p.id} colour=${p.colours[0]}/>
+    <div class="pname">${p.name}</div>
+    <div class="code">${p.code}</div>
+    <div class="row-sub" style="justify-content:space-between"><span class="dots">${p.colours.map(c => html`<span class="sw" style=${{background:COL[c][0]}}></span>`)}</span><span class="num" style="color:var(--ink);font-weight:600">${fmt(p.price)}</span></div>
+    ${lockOf(p) && html`<span class="lock"><${Icon} n="lock" s=${12} w=${2.2}/>${CLUSTERS[p.min]}+ only</span>`}
+  </button>`)}</div>`;
+  return html`<div class="list">${items.map(p => html`<button class="row" onClick=${() => onPick(p)}>
+    <${Thumb} pid=${p.id} colour=${p.colours[0]}/>
+    <div class="row-main"><div class="row-title">${p.name}</div><div class="row-sub"><span class="code">${p.code}</span> · ${CAT_LABEL[p.cat]}</div></div>
+    <div class="row-side"><span class="row-val">${fmt(p.price)}</span>${lockOf(p) && html`<span class="lock"><${Icon} n="lock" s=${12} w=${2.2}/>${CLUSTERS[p.min]}+</span>`}</div>
+  </button>`)}</div>`;
+}
+
+function CatalogueTab({act}) {
+  const [q, setQ] = useState(''), [div, setDiv] = useState('W'), [cl, setCl] = useState('Gold');
+  return html`
+    <header class="top"><div class="eyebrow">SS27 · ${PRODUCTS.length} styles</div><h1 class="h1">Collection</h1></header>
+    <section class="sec">
+      <label class="search"><${Icon} n="search" s=${18}/><input id="cat-q" placeholder="Search style, code or family" value=${q} onInput=${e => setQ(e.target.value)}/></label>
+      <div class="filters"><${Seg} opts=${[['W', "Women's"], ['M', "Men's"]]} val=${div} on=${setDiv}/></div>
+      <div class="filters"><span class="small muted">Show availability for</span>${CLUSTERS.map(c => html`<button class=${'cl'} style=${{...clusterVar(c), ...(c === cl ? {borderColor:'var(--ink)', boxShadow:'inset 0 0 0 1px var(--ink)'} : {})}} onClick=${() => setCl(c)}><i></i>${c}</button>`)}</div>
+      <${ProductList} grid div=${div} q=${q} cluster=${cl} onPick=${p => act.sheet({type:'product', pid:p.id})}/>
+    </section>`;
+}
+
+function ProductSheet({pid, S, ui, act}) {
+  const p = P[pid], [c, setC] = useState(p.colours[0]);
+  const o = ui.lastOrder && S.orders[ui.lastOrder], b = o && BUYERS[o.buyerId];
+  const canAdd = o && o.status !== 'confirmed' && b.divs.includes(p.div) && p.min <= rank(b.cluster);
+  const looks = LOOKS.filter(l => l.items.some(([x]) => x === pid));
+  return html`<${Sheet} title=${p.name} sub=${`${p.code} · ${fmt(p.price)} wholesale`} onClose=${act.close}
+    foot=${o && html`<button class="btn primary" disabled=${!canAdd} onClick=${() => { act.openOrder(o.buyerId); act.sheet({type:'size', orderId:o.id, pid, colour:c, via:'search'}); }}>${canAdd ? `Add to ${b.shop}` : `Not available for ${b.shop}`}</button>`}>
+    <div class="thumb" style="width:100%;height:220px;border-radius:18px"><${Art} pid=${pid} colour=${c} style=${{width:'60%', height:'90%'}}/></div>
+    <div class="colours">${p.colours.map(x => html`<button class=${'colour' + (x === c ? ' on' : '')} onClick=${() => setC(x)}><span class="sw" style=${{background:COL[x][0]}}></span>${x}<span class="code">${COL[x][1]}</span></button>`)}</div>
+    <div class="panel">
+      <div class="impact-row"><span class="muted">Category</span><span>${DIV_LABEL[p.div]} ${CAT_LABEL[p.cat].toLowerCase()} · ${p.family} family</span></div>
+      <div class="impact-row"><span class="muted">Sizes</span><span class="code" style="color:var(--ink)">${p.sizes.join(' · ')}</span></div>
+      <div class="impact-row"><span class="muted">Delivery</span><span>${DROPS[p.drop]}</span></div>
+    </div>
+    <div class="lbl">Available to</div>
+    <div class="filters">${CLUSTERS.map((x, i) => html`<span class="cl" style=${{...clusterVar(x), opacity: i >= p.min ? 1 : .45}}><i></i>${x}${i < p.min ? ' — no' : ''}</span>`)}</div>
+    ${looks.length > 0 && html`<div class="lbl">Appears in</div><div class="filters">${looks.map(l => html`<button class="chip ai" onClick=${() => act.sheet({type:'look', id:l.id})}>Look ${String(l.n).padStart(2, '0')} · ${l.title}</button>`)}</div>`}
+  <//>`;
+}
+
+/* =====================================================================
+   Size & quantity entry — the step a photo can't do
+   ===================================================================== */
+const CURVES = {5:[['Core 1·2·2·1', [0,1,2,2,1]], ['Full 1·2·3·2·1', [1,2,3,2,1]]], 6:[['Core 1·2·2·1', [0,1,2,2,1,0]], ['Full 1·2·3·3·2·1', [1,2,3,3,2,1]]]};
+
+function SizeSheet({sh, S, act}) {
+  const order = S.orders[sh.orderId], p = P[sh.pid], b = BUYERS[order.buyerId];
+  const actor = sh.actor || 'salesperson';
+  const init = useMemo(() => Object.fromEntries(p.colours.map(c => [c, {...((order.lines.find(l => l.pid === p.id && l.colour === c) || {}).qty || {})}])), []);
+  const [draft, setDraft] = useState(init);
+  const existing = order.lines.some(l => l.pid === p.id);
+  const [col, setCol] = useState(sh.colour || (order.lines.find(l => l.pid === p.id) || {}).colour || p.colours[0]);
+  const locked = p.min > rank(b.cluster);
+  const readOnly = order.status === 'confirmed' || (actor === 'client' && order.status === 'submitted');
+  const q = draft[col] || {};
+  const dirty = JSON.stringify(Object.fromEntries(Object.entries(draft).map(([c, x]) => [c, qkey(Object.fromEntries(Object.entries(x).filter(([, n]) => n > 0)))]))) !==
+                JSON.stringify(Object.fromEntries(Object.entries(init).map(([c, x]) => [c, qkey(x)])));
+  const setQty = (s, n) => setDraft(d => ({...d, [col]: {...d[col], [s]: Math.max(0, Math.min(99, n))}}));
+  const setAll = arr => setDraft(d => ({...d, [col]: Object.fromEntries(p.sizes.map((s, i) => [s, arr[i] || 0]))}));
+  const save = () => { if (dirty && !locked && !readOnly) { act.saveDraft(order.id, p.id, draft, sh.via || 'search', actor); return true; } return false; };
+  const close = () => { if (save()) act.toast('Saved to order'); act.close(); };
+  const done = () => { save(); act.close(); act.toast(existing ? 'Order updated' : `Added to ${b.shop}`); };
+  const go = (pid, colour) => { if (save()) act.toast('Saved · ' + p.name); act.sheet({type:'size', orderId:order.id, pid, colour, via:'suggestion', actor}); };
+
+  const projected = useMemo(() => { const o = JSON.parse(JSON.stringify(order)); applyDraft(o, p.id, draft, 'x', actor); return o; }, [draft, order]);
+  const k0 = kpi(order, p.div), k1 = kpi(projected, p.div);
+  const m0 = k0.mix.find(m => m.cat === p.cat), m1 = k1.mix.find(m => m.cat === p.cat);
+  const tUnits = Object.values(draft).reduce((a, x) => a + units(x), 0);
+  const family = PRODUCTS.filter(x => x.family === p.family && x.id !== p.id && x.div === p.div);
+  const styled = []; LOOKS.filter(l => l.items.some(([x]) => x === p.id)).forEach(l => l.items.forEach(([x, c]) => { if (x !== p.id && !styled.some(s => s.pid === x)) styled.push({pid:x, colour:c, look:l}); }));
+  const sug = (pid, colour, note) => { const xp = P[pid], lk = xp.min > rank(b.cluster), has = order.lines.some(l => l.pid === pid);
+    return html`<button class="sug" onClick=${() => go(pid, colour)}><${Thumb} pid=${pid} colour=${colour}/><div class="sug-n">${xp.name}</div>
+      <div class="small muted">${lk ? html`<span class="lock"><${Icon} n="lock" s=${11} w=${2.2}/>${CLUSTERS[xp.min]}+</span>` : has ? 'In order' : note || fmt(xp.price)}</div></button>`; };
+  const curves = CURVES[p.sizes.length] || [];
+
+  return html`<${Sheet} tall title=${p.name} sub=${`${p.code} · ${fmt(p.price)} wholesale`} onClose=${close}
+    foot=${readOnly ? html`<button class="btn secondary" onClick=${act.close}>Close</button>` : html`
+      ${existing && html`<button class="btn danger" style="flex:0 0 auto" onClick=${() => { act.saveDraft(order.id, p.id, {}, 'x', actor); act.close(); act.toast('Removed from order'); }}>Remove</button>`}
+      <button class="btn primary" disabled=${locked || (!existing && tUnits === 0)} onClick=${done}>${existing ? 'Save changes' : tUnits ? `Add ${tUnits} to order` : 'Enter quantities'}</button>`}>
+    <div class="ss-top">
+      <${Thumb} cls="lg" pid=${p.id} colour=${col}/>
+      <div class="ss-info">
+        ${sh.via === 'photo' && html`<span class="chip ai" style="align-self:flex-start"><${Icon} n="spark" s=${13}/>Matched from photo</span>`}
+        <div class="small muted">${DIV_LABEL[p.div]} · ${CAT_LABEL[p.cat]} · ${DROPS[p.drop]}</div>
+        <div class="ss-total"><b>${tUnits}</b> units · <span class="num">${fmt(tUnits * p.price)}</span></div>
+      </div>
+    </div>
+    ${locked && html`<div class="callout bad"><${Icon} n="lock" s=${18}/><div>${p.name} is for ${CLUSTERS[p.min]} clients and above. ${b.shop} is ${b.cluster}, so it can’t go on this order.</div></div>`}
+    ${readOnly && html`<div class="callout info"><${Icon} n="lock" s=${18}/><div>This order is ${STATUS[order.status].toLowerCase()} and can’t be edited here.</div></div>`}
+    <div class="lbl">Colour <span style="text-transform:none;letter-spacing:0;font-weight:500">· ${p.colours.length} options</span></div>
+    <div class="colours">${p.colours.map(c => html`<button class=${'colour' + (c === col ? ' on' : '')} onClick=${() => setCol(c)}><span class="sw" style=${{background:COL[c][0]}}></span>${c}${units(draft[c]) > 0 && html`<span class="cnt">${units(draft[c])}</span>`}</button>`)}</div>
+    ${!locked && !readOnly && html`
+      <div class="lbl">${p.sizes.length > 1 ? 'Sizes' : 'Quantity'} · ${col}</div>
+      ${p.sizes.length > 1 ? html`
+        <div class="sizes">${p.sizes.map(s => html`<div class=${'size-cell' + (q[s] ? ' has' : '')}>
+          <div class="sz">${s}</div>
+          <button class="step" aria-label=${'Add one size ' + s} onClick=${() => setQty(s, (q[s] || 0) + 1)}>+</button>
+          <div class="qty num">${q[s] || 0}</div>
+          <button class="step" aria-label=${'Remove one size ' + s} onClick=${() => setQty(s, (q[s] || 0) - 1)}>−</button>
+        </div>`)}</div>
+        <div class="quick">${curves.map(([l, arr]) => html`<button class="qbtn" onClick=${() => setAll(arr)}>${l}</button>`)}
+          <button class="qbtn" onClick=${() => setAll(p.sizes.map(s => (q[s] || 0) + 1))}>+1 each</button>
+          <button class="qbtn" onClick=${() => setAll([])}>Clear</button></div>` : html`
+        <div class="single">
+          <button class="step lg" aria-label="Remove one" onClick=${() => setQty('U', (q.U || 0) - 1)}>−</button>
+          <div class="qty xl num">${q.U || 0}</div>
+          <button class="step lg" aria-label="Add one" onClick=${() => setQty('U', (q.U || 0) + 1)}>+</button>
+        </div>
+        <div class="quick">${[1, 2, 3, 4, 6].map(n => html`<button class="qbtn" onClick=${() => setQty('U', n)}>${n}</button>`)}<button class="qbtn" onClick=${() => setQty('U', 0)}>Clear</button></div>`}
+      <div class="panel impact">
+        <div class="impact-row"><span class="muted">${CAT_LABEL[p.cat]} share</span>
+          <span class="num"><span class="muted">${Math.round(m0.pct)}% →</span> <b>${Math.round(m1.pct)}%</b> <span class=${'chip ' + m1.st}>target ${m1.target}%</span></span></div>
+        <div class="impact-row"><span class="muted">${DIV_LABEL[p.div]} budget</span>
+          <span class="num"><span class="muted">${Math.round(k0.used)}% →</span> <b>${Math.round(k1.used)}%</b> <span class="muted">of ${fmt(k1.budget)}</span></span></div>
+      </div>`}
+    ${family.length > 0 && html`<div class="lbl">Same family · ${p.family}</div><div class="sugs">${family.map(x => sug(x.id, x.colours.includes(col) ? col : x.colours[0]))}</div>`}
+    ${styled.length > 0 && html`<div class="lbl">Styled with it · Look ${String(styled[0].look.n).padStart(2, '0')}</div><div class="sugs">${styled.map(s => sug(s.pid, s.colour, 'Look ' + String(s.look.n).padStart(2, '0')))}</div>`}
+  <//>`;
+}
+
+/* =====================================================================
+   Capture — photograph a sample, AI matches it to the catalogue
+   ===================================================================== */
+function Capture({order, div, act}) {
+  const b = BUYERS[order.buyerId];
+  const samples = useMemo(() => PRODUCTS.filter(p => p.div === div).map(p => ({pid:p.id, colour:p.colours[hash(p.id) % p.colours.length]})), [div]);
+  const [idx, setIdx] = useState(() => hash(String(Date.now())) % samples.length);
+  const [stage, setStage] = useState('aim');
+  const t = useRef(0);
+  useEffect(() => () => clearTimeout(t.current), []);
+  const s = samples[idx], p = P[s.pid];
+  const shoot = () => { setStage('scan'); t.current = setTimeout(() => setStage('match'), 1250); };
+  const conf = confidence(p), sib = sibling(p), alts = alternatives(p);
+  const locked = p.min > rank(b.cluster);
+  const pick = (pid, colour) => act.sheet({type:'size', orderId:order.id, pid, colour, via:'photo'});
+  return html`<div class="capture">
+    <div class="vf-top">
+      <button class="vf-btn" onClick=${() => act.capture(false)} aria-label="Close camera"><${Icon} n="x"/></button>
+      <div class="vf-title">${b.shop} · ${DIV_LABEL[div]}</div>
+      <button class="vf-btn" onClick=${() => act.sheet({type:'picker', orderId:order.id, div})} aria-label="Search the catalogue instead"><${Icon} n="search"/></button>
+    </div>
+    <div class="vf-scene">
+      <div class="rail"></div>
+      <div class=${'vf-sample ' + stage}><${Art} pid=${s.pid} colour=${s.colour}/></div>
+      <div class="brackets"><i></i><i></i><i></i><i></i></div>
+      ${stage === 'scan' && html`<div class="scanline"></div><div class="vf-status"><span>Matching against ${PRODUCTS.length} SS27 styles…</span></div>`}
+      ${stage === 'aim' && html`<div class="vf-hint"><span>Frame the sample. No tag or barcode needed.</span></div>`}
+    </div>
+    <div class="vf-bottom">
+      <div class="rail-label">Demo: pick which showroom sample is in front of the camera</div>
+      <div class="sample-rail">${samples.map((x, i) => html`<button class=${'sample' + (i === idx ? ' on' : '')} onClick=${() => { setIdx(i); setStage('aim'); }} aria-label=${P[x.pid].name}><${Art} pid=${x.pid} colour=${x.colour}/></button>`)}</div>
+      <div class="shutter-row"><button class="shutter" onClick=${shoot} disabled=${stage !== 'aim'} aria-label="Take photo"><span></span></button></div>
+    </div>
+    ${stage === 'match' && html`<div class="match" role="dialog" aria-label="Confirm the match">
+      <div class="match-head"><span class="chip ai"><${Icon} n="spark" s=${13}/>Match found</span><span class=${'conf ' + (conf >= 90 ? 'hi' : 'mid')}>${conf}% confidence</span></div>
+      <div class="match-main"><${Thumb} cls="lg" pid=${p.id} colour=${s.colour}/>
+        <div style="min-width:0"><div class="m-name">${p.name}</div><div class="code" style="margin-top:4px">${p.code} · ${s.colour} ${COL[s.colour][1]}</div><div class="small muted" style="margin-top:2px">${CAT_LABEL[p.cat]} · ${fmt(p.price)} wholesale</div></div></div>
+      ${sib && html`<div class="callout warn"><${Icon} n="alert" s=${18}/><div>Close to <b>${sib.name}</b> (${sib.code}). Check the sample before you confirm.</div></div>`}
+      ${locked && html`<div class="callout bad"><${Icon} n="lock" s=${18}/><div>${CLUSTERS[p.min]}+ only. ${b.shop} is ${b.cluster}, so this style can’t be ordered.</div></div>`}
+      <button class="btn primary block" disabled=${locked} onClick=${() => pick(p.id, s.colour)}>Confirm match · enter sizes</button>
+      <div class="lbl" style="margin-top:2px">Not it? Next closest</div>
+      <div class="alts">${alts.map((a, i) => html`<button class="row" onClick=${() => pick(a.id, a.colours.includes(s.colour) ? s.colour : a.colours[0])}>
+        <${Thumb} cls="sm" pid=${a.id} colour=${a.colours.includes(s.colour) ? s.colour : a.colours[0]}/>
+        <div class="row-main"><div class="row-title">${a.name}</div><div class="code">${a.code}</div></div>
+        <span class="small muted num">${Math.max(8, (a === sib ? conf - 9 : 42 - i * 11))}%</span></button>`)}</div>
+      <button class="btn ghost block" onClick=${() => setStage('aim')}>Retake photo</button>
+    </div>`}
+  </div>`;
+}
+
+function PickerSheet({sh, act}) {
+  const [q, setQ] = useState('');
+  return html`<${Sheet} tall title="Find a style" sub=${DIV_LABEL[sh.div] + ' · SS27'} onClose=${act.close}>
+    <label class="search"><${Icon} n="search" s=${18}/><input id="pick-q" placeholder="Style name or code" value=${q} onInput=${e => setQ(e.target.value)}/></label>
+    <${ProductList} div=${sh.div} q=${q} onPick=${p => act.sheet({type:'size', orderId:sh.orderId, pid:p.id, via:'search', actor:sh.actor})}/>
+  <//>`;
+}
+
+/* =====================================================================
+   Order view — the salesperson's working screen
+   ===================================================================== */
+function LineRow({l, onClick}) {
+  const p = P[l.pid];
+  return html`<button class="row" onClick=${onClick}>
+    <${Thumb} pid=${l.pid} colour=${l.colour}/>
+    <div class="row-main">
+      <div class="row-title">${p.name}</div>
+      <div class="row-sub"><span class="sw" style=${{background:COL[l.colour][0]}}></span>${l.colour} <span class="code">${p.code}·${COL[l.colour][1]}</span></div>
+      ${p.sizes.length > 1 && html`<div class="szs">${p.sizes.filter(s => l.qty[s]).map(s => html`<span class="sz-chip">${s}·${l.qty[s]}</span>`)}</div>`}
+    </div>
+    <div class="row-side">
+      <span class="row-val">${fmt(lineValue(l))}</span>
+      <span class="small muted num">×${units(l.qty)}</span>
+      ${l.by === 'client' ? html`<${By} by="client"/>` : l.via === 'photo' && html`<span class="by" title="Captured from photo"><${Icon} n="cam" s=${13} w=${2}/>Photo</span>`}
+    </div>
+  </button>`;
+}
+
+function StatusTrack({o}) {
+  const steps = ['draft', 'shared', 'submitted', 'confirmed'], i = steps.indexOf(o.status), b = BUYERS[o.buyerId];
+  let note = 'Capturing with ' + b.buyer;
+  if (o.status === 'shared') note = `With ${b.buyer} · closes in ${Math.max(0, 48 - Math.floor((Date.now() - o.sharedAt) / 36e5))}h`;
+  if (o.status === 'submitted') note = `Submitted by ${whoName(o, o.submittedBy)} · your review due in 3 days`;
+  if (o.status === 'confirmed') note = `Confirmed ${hhmm(o.confirmedAt)} · ready for the factory export`;
+  return html`<div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+    <div class="track">${steps.map((s, j) => html`<div class=${j < i ? 'done' : j === i ? 'cur' : ''}>${STATUS[s]}</div>`)}</div>
+    <div class="track-note">${o.submittedBy && html`<${By} by=${o.submittedBy}/>`}<span>${note}</span></div>
+  </div>`;
+}
+
+function OrderView({S, ui, act, order}) {
+  const b = BUYERS[order.buyerId], div = b.divs.includes(ui.div) ? ui.div : b.divs[0];
+  const [group, setGroup] = useState('cat');
+  const lines = order.lines.filter(l => P[l.pid].div === div);
+  const groups = group === 'cat'
+    ? CATS.map(c => ({key:c, label:CAT_LABEL[c], lines:lines.filter(l => P[l.pid].cat === c)}))
+    : Object.keys(DROPS).map(d => ({key:d, label:DROPS[d], lines:lines.filter(l => P[l.pid].drop === d)}));
+  const locked = order.status === 'confirmed';
+  const edit = l => act.sheet({type:'size', orderId:order.id, pid:l.pid, colour:l.colour, via:l.via});
+  return html`<div class="ov">
+    <div class="ov-nav">
+      <button class="icon-btn" onClick=${act.back} aria-label="Back to today"><${Icon} n="back"/></button>
+      <div class="ov-nav-t"><div class="ov-shop">${b.shop}</div><div class="ov-id">${orderNo(order)}</div></div>
+      <button class="icon-btn" onClick=${() => act.sheet({type:'history', orderId:order.id})} aria-label="Order history"><${Icon} n="history"/></button>
+    </div>
+    <div class="ov-sub">
+      <div class="ov-buyer"><span>${b.buyer}</span><${Cluster} c=${b.cluster}/>
+        ${S.savedAt && html`<span class="saved" key=${S.savedAt}><${Icon} n="check" s=${13} w=${2.4}/>Saved ${hhmm(S.savedAt)}</span>`}</div>
+      <${StatusTrack} o=${order}/>
+    </div>
+    <div class="ov-body">
+      <div class="ov-kpi">
+        ${b.divs.length > 1 && html`<div style="margin-bottom:12px"><${Seg} full opts=${b.divs.map(d => [d, DIV_LABEL[d] + ' · ' + fmt(kpi(order, d).total)])} val=${div} on=${act.div}/></div>`}
+        <${KpiPanel} order=${order} div=${div}/>
+      </div>
+      <div class="ov-lines">
+        <div class="lines-head"><span class="lbl">${lines.length} lines · ${DIV_LABEL[div]}</span><${Seg} opts=${[['cat', 'Category'], ['drop', 'Delivery']]} val=${group} on=${setGroup}/></div>
+        ${lines.length === 0 && html`<div class="empty"><${Icon} n="cam" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} lines yet</b></div><div class="small">Photograph a sample to add the first style. Every line saves the moment it’s entered.</div></div>`}
+        ${groups.filter(g => g.lines.length).map(g => html`<div>
+          <div class="grp-head"><span>${g.label}</span><span class="num">${fmt(g.lines.reduce((a, l) => a + lineValue(l), 0))}</span></div>
+          <div class="list">${g.lines.map(l => html`<${LineRow} key=${l.id} l=${l} onClick=${() => edit(l)}/>`)}</div>
+        </div>`)}
+      </div>
+    </div>
+    <div class="ov-bar">
+      <button class="round" disabled=${locked} onClick=${() => act.sheet({type:'picker', orderId:order.id, div})} aria-label="Search the catalogue"><${Icon} n="search"/></button>
+      <button class="cap-btn" disabled=${locked} onClick=${() => act.capture(true)}><${Icon} n="cam"/>Photograph sample</button>
+      <button class="round" onClick=${() => act.sheet({type:'finish', orderId:order.id})} aria-label="Share, submit or export"><${Icon} n="share"/></button>
+    </div>
+  </div>`;
+}
+
+function issuesOf(o) {
+  const b = BUYERS[o.buyerId], out = [];
+  b.divs.forEach(d => { const k = kpi(o, d); if (!k.total) return;
+    k.mix.filter(m => m.st !== 'ok').forEach(m => out.push({d, label:`${DIV_LABEL[d]} ${CAT_LABEL[m.cat].toLowerCase()}`, text:`${Math.round(m.pct)}% vs ${m.target}%`, st:m.st}));
+    if (k.bst !== 'ok') out.push({d, label:`${DIV_LABEL[d]} budget`, text:`${Math.round(k.used)}% used`, st:k.bst}); });
+  return out;
+}
+
+function FinishSheet({sh, S, act}) {
+  const o = S.orders[sh.orderId], b = BUYERS[o.buyerId];
+  const [confirmSubmit, setConfirmSubmit] = useState(false);
+  const link = `aurore.vega.app/o/${b.code}-${o.id.length}K${String(o.lines.length).padStart(2, '0')}`;
+  const issues = issuesOf(o);
+  const empty = o.lines.length === 0;
+  return html`<${Sheet} title=${o.status === 'submitted' ? 'Review and confirm' : o.status === 'confirmed' ? 'Confirmed order' : 'Finish the session'} sub=${orderNo(o)} onClose=${act.close}>
+    ${(o.status === 'draft' || o.status === 'shared') && html`
+      <div class="panel">
+        <div style="font-weight:650">Share the basket with ${b.buyer}</div>
+        <div class="small muted">${b.buyer.split(' ')[0]} can review and complete it from the shop within 48 hours. No account needed.</div>
+        ${o.status === 'shared'
+          ? html`<div class="linkbox"><code>${link}</code><button class="btn secondary" onClick=${() => copyText('https://' + link, act)}><${Icon} n="copy" s=${16}/>Copy</button></div>
+                 <button class="btn primary block" onClick=${() => act.role('buyer', o.id)}>Open as ${b.buyer.split(' ')[0]} (demo)</button>`
+          : html`<button class="btn primary block" disabled=${empty} onClick=${() => { act.share(o.id); act.toast('Basket shared · closes in 48h'); }}><${Icon} n="share" s=${18}/>Share basket</button>`}
+      </div>
+      <div class="panel">
+        <div style="font-weight:650">Submit for the buyer</div>
+        ${!confirmSubmit ? html`<div class="small muted">Use this when ${b.buyer.split(' ')[0]} asks you to place the order now.</div>
+            <button class="btn secondary block" disabled=${empty} onClick=${() => setConfirmSubmit(true)}>Submit on ${b.buyer.split(' ')[0]}’s behalf</button>`
+          : html`<div class="callout warn"><${Icon} n="alert" s=${18}/><div>The order will be recorded as submitted by you, ${REP.name}. If it contains an error, the Maison carries the cost of the production run.</div></div>
+            <div style="display:flex;gap:10px"><button class="btn secondary" style="flex:1" onClick=${() => setConfirmSubmit(false)}>Cancel</button>
+            <button class="btn primary" style="flex:1" onClick=${() => { act.submit(o.id, 'salesperson'); act.close(); act.toast('Submitted by salesperson'); }}>Submit as ${REP.name}</button></div>`}
+      </div>`}
+    ${o.status === 'submitted' && html`
+      <div class="callout ${o.submittedBy === 'client' ? 'info' : 'warn'}"><${Icon} n="user" s=${18}/><div>Submitted by <b>${whoName(o, o.submittedBy)}</b> (${o.submittedBy === 'client' ? 'client' : 'salesperson'}) at ${hhmm(o.submittedAt)}. ${o.submittedBy === 'client' ? 'Errors in quantities are the client’s responsibility.' : 'The Maison carries the cost of any error.'}</div></div>
+      <div class="panel">
+        <div style="font-weight:650">Guideline check · ${b.cluster}</div>
+        ${issues.length === 0 ? html`<div class="callout good"><${Icon} n="check" s=${18}/><div>Every category and budget is within the Maison guidelines.</div></div>`
+          : html`<div>${issues.map(x => html`<div class="issue"><span>${x.label}</span><span class=${'chip ' + x.st}>${x.text}</span></div>`)}</div>
+                 <div class="small muted">${issues.length} item${issues.length > 1 ? 's' : ''} outside guidelines. Email ${b.buyer.split(' ')[0]} to adjust, or confirm as is.</div>`}
+        <button class="btn primary block" onClick=${() => { act.confirm(o.id); act.toast('Confirmed for production'); }}>Confirm for production</button>
+      </div>`}
+    ${o.status === 'confirmed' && html`<div class="callout good"><${Icon} n="check" s=${18}/><div>Confirmed at ${hhmm(o.confirmedAt)}. Submitted by ${whoName(o, o.submittedBy)} (${o.submittedBy}).</div></div>`}
+    <button class="btn secondary block" disabled=${empty} onClick=${() => act.sheet({type:'export', orderId:o.id})}><${Icon} n="export" s=${18}/>Export for the factory</button>
+  <//>`;
+}
+
+function ExportSheet({sh, S, act}) {
+  const o = S.orders[sh.orderId], [fmtX, setFmt] = useState('xls');
+  const text = fmtX === 'xls' ? toTSV(o) : toXML(o);
+  return html`<${Sheet} tall title="Factory export" sub=${orderNo(o) + ' · ' + exportRows(o).length + ' rows'} onClose=${act.close}
+    foot=${html`<button class="btn primary" onClick=${() => copyText(text, act)}><${Icon} n="copy" s=${18}/>Copy ${fmtX === 'xls' ? 'for Excel' : 'XML'}</button>`}>
+    <${Seg} full opts=${[['xls', 'Excel'], ['xml', 'XML']]} val=${fmtX} on=${setFmt}/>
+    <div class="small muted">${fmtX === 'xls' ? 'One row per style, colour and size. Paste into Excel and the columns line up.' : 'Structured order for systems that import XML.'} The export is a view of the shared database; it carries the submitter and how each line was captured.</div>
+    <pre class="pre">${text}</pre>
+  <//>`;
+}
+
+function HistorySheet({sh, S, act}) {
+  const o = S.orders[sh.orderId];
+  return html`<${Sheet} tall title="Order history" sub=${orderNo(o) + ' · ' + o.log.length + ' events'} onClose=${act.close}>
+    <div class="panel log">${[...o.log].reverse().map(e => html`<div class="log-row"><div class="log-t">${hhmm(e.at)}</div><div>${e.text}<div class="log-who"><span class=${'by ' + e.by}><${Icon} n="user" s=${13} w=${2}/>${whoName(o, e.by)} · ${e.by === 'client' ? 'client' : 'salesperson'}</span></div></div></div>`)}</div>
+  <//>`;
+}
+
+/* =====================================================================
+   Buyer view — what the client sees from the shared link
+   ===================================================================== */
+function BuyerView({S, ui, act}) {
+  const o = S.orders[ui.buyerOrder], b = BUYERS[o.buyerId];
+  const div = b.divs.includes(ui.div) ? ui.div : b.divs[0];
+  const [confirming, setConfirming] = useState(false);
+  const lines = o.lines.filter(l => P[l.pid].div === div);
+  const open = o.status === 'shared' || o.status === 'draft';
+  const hoursLeft = o.sharedAt ? Math.max(0, 48 - Math.floor((Date.now() - o.sharedAt) / 36e5)) : 48;
+  return html`<div class="ov">
+    <div class="demo-bar"><span>Demo: buyer view from the shared link</span><button onClick=${() => act.role('sales')}>Back to salesperson</button></div>
+    <div class="bv-head">
+      <span class="maison">Maison Aurore</span>
+      <div class="ov-shop" style="font-size:24px">Your SS27 order</div>
+      <div class="small muted">${b.shop} · prepared with ${REP.name}</div>
+      <div class="row-sub">${open ? html`<span class="pill s-shared"><${Icon} n="clock" s=${13} w=${2}/>Closes in ${hoursLeft}h</span>` : html`<${Pill} s=${o.status}/><${By} by=${o.submittedBy}/>`}</div>
+    </div>
+    <div class="ov-body">
+      <div class="ov-kpi">
+        ${b.divs.length > 1 && html`<div style="margin-bottom:12px"><${Seg} full opts=${b.divs.map(d => [d, DIV_LABEL[d]])} val=${div} on=${act.div}/></div>`}
+        <${KpiPanel} order=${o} div=${div}/>
+      </div>
+      <div class="ov-lines">
+        <div class="lines-head"><span class="lbl">${lines.length} styles</span>${open && html`<button class="linkbtn" onClick=${() => act.sheet({type:'picker', orderId:o.id, div, actor:'client'})}>Add from the collection</button>`}</div>
+        <div class="list">${lines.map(l => html`<${LineRow} key=${l.id} l=${l} onClick=${() => act.sheet({type:'size', orderId:o.id, pid:l.pid, colour:l.colour, via:l.via, actor:'client'})}/>`)}</div>
+        ${!open && html`<div class="callout good"><${Icon} n="check" s=${18}/><div>Thank you. ${REP.name} will review the order against the Maison guidelines within 3 days and confirm it for production.</div></div>`}
+      </div>
+    </div>
+    ${open && html`<div class="ov-bar" style="flex-direction:column;align-items:stretch">
+      ${confirming ? html`<div class="small muted" style="text-align:center">You’re submitting as ${b.buyer}. Quantities are produced exactly as ordered.</div>
+        <div style="display:flex;gap:10px"><button class="btn secondary" style="flex:1" onClick=${() => setConfirming(false)}>Keep editing</button>
+        <button class="btn primary" style="flex:1" onClick=${() => { act.submit(o.id, 'client'); setConfirming(false); act.toast('Order submitted'); }}>Submit order</button></div>`
+      : html`<button class="btn primary block" onClick=${() => setConfirming(true)}>Review and submit · ${fmt(b.divs.reduce((a, d) => a + kpi(o, d).total, 0))}</button>`}
+    </div>`}
+  </div>`;
+}
+
+/* =====================================================================
+   App shell
+   ===================================================================== */
+const GUIDE_STEPS = [
+  'Open Maison Dubois. The session is already under way.',
+  'Tap Photograph sample, pick a sample on the rail and press the shutter.',
+  'Confirm the match, set sizes with a size curve, and watch the guideline mix move.',
+  'Tap the share button, share the basket, then open it as the buyer and submit.',
+  'Back as the salesperson, review the guideline check, confirm, and open the factory export.',
+];
+
+function AboutSheet({act}) {
+  return html`<${Sheet} title="About this prototype" sub="Vega · POC v0.1" onClose=${act.close}>
+    <p style="margin:0;line-height:1.5">Vega captures wholesale showroom orders on a phone. The salesperson photographs a sample, confirms the match and enters sizes, while the order is checked live against the Maison’s guidelines for the client’s cluster.</p>
+    <div class="lbl">Try this</div>
+    <ol class="steps">${GUIDE_STEPS.map(s => html`<li>${s}</li>`)}</ol>
+    <div class="callout info"><${Icon} n="info" s=${18}/><div>Photo recognition is simulated against a fictional catalogue. Orders save in this browser only.</div></div>
+    <button class="btn secondary block" onClick=${act.reset}>Reset demo data</button>
+  <//>`;
+}
+
+function TabBar({tab, act}) {
+  const T = [['today', 'Today', 'today'], ['orders', 'Orders', 'orders'], ['catalogue', 'Collection', 'grid']];
+  return html`<nav class="tabbar">${T.map(([k, l, i]) => html`<button class=${'tab' + (tab === k ? ' on' : '')} onClick=${() => act.tab(k)} aria-current=${tab === k ? 'page' : null}><${Icon} n=${i}/>${l}</button>`)}</nav>`;
+}
+
+function makeActs(setS, setUi, onReset) {
+  let toastT = 0;
+  const a = {
+    toast: msg => { setUi(u => ({...u, toast:msg, toastId:Date.now()})); clearTimeout(toastT); toastT = setTimeout(() => setUi(u => ({...u, toast:null})), 2200); },
+    openOrder: bid => { const id = 'o-' + bid;
+      setS(s => s.orders[id] ? s : {...s, orders:{...s.orders, [id]:newOrder(bid)}, savedAt:Date.now()});
+      setUi(u => ({...u, view:id, lastOrder:id, div: u.view === id ? u.div : BUYERS[bid].divs[0], sheet:null, capture:false})); },
+    back: () => setUi(u => ({...u, view:null, capture:false, sheet:null})),
+    tab: t => setUi(u => ({...u, tab:t, view:null})),
+    sheet: sh => setUi(u => ({...u, sheet:sh, capture: sh && sh.type === 'picker' ? false : sh && sh.type === 'size' ? false : u.capture})),
+    close: () => setUi(u => ({...u, sheet:null})),
+    capture: on => setUi(u => ({...u, capture:on, sheet:null})),
+    div: d => setUi(u => ({...u, div:d})),
+    mut: (id, fn) => setS(s => { const o = JSON.parse(JSON.stringify(s.orders[id])); fn(o); return {...s, orders:{...s.orders, [id]:o}, savedAt:Date.now()}; }),
+    role: (r, id) => setUi(u => ({...u, role:r, buyerOrder:id || u.buyerOrder, sheet:null, capture:false})),
+    reset: onReset,
+  };
+  a.saveDraft = (id, pid, draft, via, by) => a.mut(id, o => applyDraft(o, pid, draft, via, by));
+  a.share = id => a.mut(id, o => { if (o.status === 'draft') { o.status = 'shared'; o.sharedAt = Date.now(); log(o, 'salesperson', `Basket shared with ${BUYERS[o.buyerId].buyer} · closes in 48h`); } });
+  a.submit = (id, by) => a.mut(id, o => { o.status = 'submitted'; o.submittedBy = by; o.submittedAt = Date.now(); log(o, by, by === 'client' ? 'Order submitted by the buyer' : 'Order submitted by the salesperson on the buyer’s behalf'); });
+  a.confirm = id => a.mut(id, o => { o.status = 'confirmed'; o.confirmedAt = Date.now(); log(o, 'salesperson', 'Reviewed against guidelines and confirmed for production'); });
+  return a;
+}
+
+function App({onReset}) {
+  const [S, setS] = useState(loadState);
+  const [ui, setUi] = useState({tab:'today', view:null, sheet:null, capture:false, div:'W', role:'sales', toast:null, lastOrder:null});
+  useEffect(() => { saveState(S); }, [S]);
+  const act = useMemo(() => makeActs(setS, setUi, onReset), []);
+  const order = ui.view && S.orders[ui.view];
+  const sh = ui.sheet;
+  const sheet = !sh ? null
+    : sh.type === 'size' ? html`<${SizeSheet} key=${sh.pid + (sh.actor || '')} sh=${sh} S=${S} act=${act}/>`
+    : sh.type === 'picker' ? html`<${PickerSheet} sh=${sh} act=${act}/>`
+    : sh.type === 'finish' ? html`<${FinishSheet} sh=${sh} S=${S} act=${act}/>`
+    : sh.type === 'export' ? html`<${ExportSheet} sh=${sh} S=${S} act=${act}/>`
+    : sh.type === 'history' ? html`<${HistorySheet} sh=${sh} S=${S} act=${act}/>`
+    : sh.type === 'look' ? html`<${LookSheet} id=${sh.id} S=${S} ui=${ui} act=${act}/>`
+    : sh.type === 'product' ? html`<${ProductSheet} key=${sh.pid} pid=${sh.pid} S=${S} ui=${ui} act=${act}/>`
+    : sh.type === 'other' ? html`<${OtherSheet} id=${sh.id} act=${act}/>`
+    : sh.type === 'about' ? html`<${AboutSheet} act=${act}/>` : null;
+  const toast = ui.toast && html`<div class="toast" key=${ui.toastId} role="status"><${Icon} n="check" s=${16} w=${2.4}/>${ui.toast}</div>`;
+
+  if (ui.role === 'buyer' && S.orders[ui.buyerOrder]) return html`<div class="app"><${BuyerView} S=${S} ui=${ui} act=${act}/>${sheet}${toast}</div>`;
+  return html`<div class="app">
+    ${order ? html`<${OrderView} S=${S} ui=${ui} act=${act} order=${order}/>` : html`
+      <div class="screen">
+        ${ui.tab === 'today' && html`<${Today} S=${S} act=${act}/>`}
+        ${ui.tab === 'orders' && html`<${OrdersTab} S=${S} act=${act}/>`}
+        ${ui.tab === 'catalogue' && html`<${CatalogueTab} act=${act}/>`}
+      </div>
+      <${TabBar} tab=${ui.tab} act=${act}/>`}
+    ${ui.capture && order && html`<${Capture} order=${order} div=${BUYERS[order.buyerId].divs.includes(ui.div) ? ui.div : BUYERS[order.buyerId].divs[0]} act=${act}/>`}
+    ${sheet}${toast}
+  </div>`;
+}
+
+function Shell() {
+  const [orient, setOrient] = useState('portrait');
+  const [k, setK] = useState(0);
+  const reset = () => { clearState(); setK(x => x + 1); };
+  return html`<div class="shell">
+    <aside class="side">
+      <div class="side-brand">Vega</div>
+      <p class="side-lede">Showroom order capture for wholesale. A first web mockup of the iOS app: photo match, fast size entry, live guideline checks per cluster, and a record of who submitted each order.</p>
+      <div class="lbl">Try this</div>
+      <ol class="steps">${GUIDE_STEPS.map(s => html`<li>${s}</li>`)}</ol>
+      <div class="side-ctrls"><${Seg} opts=${[['portrait', 'Portrait'], ['landscape', 'Landscape']]} val=${orient} on=${setOrient}/><button class="linkbtn" onClick=${reset}>Reset demo</button></div>
+      <p class="fine">Prototype. Photo recognition is simulated against a fictional catalogue (Maison Aurore). Orders save in this browser only.</p>
+    </aside>
+    <div class=${'device ' + orient}>
+      <div class="statusbar"><span>9:41</span><span class="sb-r"><i style="height:5px"></i><i style="height:7px"></i><i style="height:9px"></i><i style="height:11px"></i><span class="sb-batt"><span></span></span></span></div>
+      <${App} key=${k} onReset=${reset}/>
+    </div>
+  </div>`;
+}
+
+render(html`<${Shell}/>`, document.getElementById('root'));
+</script>
+</body>
+</html>

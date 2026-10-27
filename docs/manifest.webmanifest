@@ -1,0 +1,15 @@
+{
+  "name": "Vega Showroom",
+  "short_name": "Vega",
+  "description": "Showroom order capture for wholesale. Clickable prototype.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#EFF0EC",
+  "theme_color": "#EFF0EC",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}
