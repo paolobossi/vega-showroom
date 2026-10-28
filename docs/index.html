@@ -128,6 +128,15 @@ input{font:inherit;color:inherit}
 .top-bar.mid{align-items:center;padding-top:18px}
 .h1-btn{font:inherit;letter-spacing:inherit;color:inherit;text-align:left}
 .h1-btn:active{opacity:.5}
+.pin{display:flex;flex-direction:column;align-items:center;gap:14px;padding:4px 0 6px}
+.pin-t{font-size:16px;font-weight:600}
+.pin-dots{display:flex;gap:16px;margin:2px 0 6px}
+.pin-dots i{width:13px;height:13px;border-radius:50%;border:1.5px solid var(--ink);transition:background .12s}
+.pin-dots i.on{background:var(--ink)}
+.pin-pad{display:grid;grid-template-columns:repeat(3,72px);gap:14px 26px}
+.pin-k{width:72px;height:72px;border-radius:50%;background:var(--surface);border:1px solid var(--line);font-size:28px;font-weight:500;display:grid;place-items:center;font-variant-numeric:tabular-nums}
+.pin-k:active:not(:disabled){background:var(--surface-2)}
+.pin-k.txt{background:none;border:0;font-size:15px;font-weight:600;color:var(--accent)}
 .top-acts{display:flex;align-items:center;gap:10px}.top-acts .round-btn{margin-top:0}
 .field{display:flex;flex-direction:column;gap:6px}
 .inp.area{height:auto;min-height:104px;padding:12px 14px;line-height:1.45;resize:vertical}
@@ -931,7 +940,7 @@ function Guidelines() {
 function Today({S, act}) {
   const rep = REPS[S.rep];
   return html`
-    <header class="top top-bar"><div><div class="eyebrow">SS27 showroom · Paris · day 2 of 4</div><h1 class="h1">Home</h1></div>
+    <header class="top top-bar mid"><h1 class="h1">Home</h1>
       <button class="avatar" onClick=${() => act.sheet({type:'account'})} aria-label=${'Signed in as ' + rep.name + '. Switch account'}>${rep.ini}</button>
     </header>
     <div class="today-grid">
@@ -1038,7 +1047,7 @@ function OrdersTab({S, act}) {
       hoursLeft:o.status === 'shared' ? Math.max(0, 48 - Math.floor((Date.now() - o.sharedAt) / 36e5)) : null}; });
   const byClient = rows.filter(r => r.by === 'client').length, bySales = rows.filter(r => r.by === 'salesperson').length;
   return html`
-    <header class="top top-bar"><div><div class="eyebrow">SS27 showroom · Paris</div><h1 class="h1">Orders</h1></div>
+    <header class="top top-bar mid"><h1 class="h1">Orders</h1>
       <button class="round-btn" onClick=${() => act.sheet({type:'newbuyer'})} aria-label="New session with a buyer"><${Icon} n="plus" s=${20} w=${2.2}/></button></header>
     <section class="sec">
       <div class="live">
@@ -1154,9 +1163,30 @@ function CatalogueTab({S, ui, act}) {
     </section>`;
 }
 
+// Switching seller asks for that seller's 4-digit code (demo: any 4 digits are accepted)
+function PinPad({rep, onDone, onBack}) {
+  const [pin, setPin] = useState('');
+  const press = k => setPin(p => k === 'del' ? p.slice(0, -1) : p.length < 4 ? p + k : p);
+  useEffect(() => { if (pin.length === 4) { const t = setTimeout(onDone, 180); return () => clearTimeout(t); } }, [pin]);
+  useEffect(() => { const key = e => { if (/^[0-9]$/.test(e.key)) press(e.key); else if (e.key === 'Backspace') press('del'); };
+    window.addEventListener('keydown', key); return () => window.removeEventListener('keydown', key); }, []);
+  return html`<div class="pin">
+    <span class="avatar">${rep.ini}</span>
+    <div class="pin-t">Enter ${rep.name}’s code</div>
+    <div class="pin-dots" role="status" aria-label=${pin.length + ' of 4 digits entered'}>${[0, 1, 2, 3].map(i => html`<i class=${i < pin.length ? 'on' : ''}></i>`)}</div>
+    <div class="pin-pad">${['1', '2', '3', '4', '5', '6', '7', '8', '9', 'back', '0', 'del'].map(k => k === 'back'
+      ? html`<button class="pin-k txt" onClick=${onBack}>Cancel</button>`
+      : k === 'del' ? html`<button class="pin-k txt" onClick=${() => press('del')} aria-label="Delete" disabled=${!pin}><${Icon} n="back" s=${22}/></button>`
+      : html`<button class="pin-k" onClick=${() => press(k)}>${k}</button>`)}</div>
+    <div class="small muted">Demo: any 4 digits work.</div>
+  </div>`;
+}
+
 function AccountSheet({S, act}) {
+  const [to, setTo] = useState(null);
+  if (to) return html`<${Sheet} title="Switch account" onClose=${act.close}><${PinPad} rep=${REPS[to]} onDone=${() => act.switchRep(to)} onBack=${() => setTo(null)}/><//>`;
   return html`<${Sheet} title="Switch account" onClose=${act.close}>
-    <div class="list">${Object.values(REPS).map(r => html`<button class="row opt" onClick=${() => act.switchRep(r.id)} aria-pressed=${r.id === S.rep}>
+    <div class="list">${Object.values(REPS).map(r => html`<button class="row opt" onClick=${() => r.id === S.rep ? act.close() : setTo(r.id)} aria-pressed=${r.id === S.rep}>
         <span class="avatar sm">${r.ini}</span>
         <div class="row-main"><div class="row-title">${r.name}</div></div>
         <div class="row-side">${r.id === S.rep && html`<${Icon} n="check" s=${20} w=${2.4}/>`}</div>
@@ -1626,7 +1656,7 @@ function SessionBar({S, ui, act}) {
 }
 
 function TabBar({tab, act}) {
-  const T = [['calendar', 'Calendar', 'today'], ['today', 'Home', 'home'], ['catalogue', 'Collection', 'grid'], ['orders', 'Orders', 'orders']];
+  const T = [['today', 'Home', 'home'], ['calendar', 'Calendar', 'today'], ['catalogue', 'Collection', 'grid'], ['orders', 'Orders', 'orders']];
   return html`<nav class="tabbar">${T.map(([k, l, i]) => html`<button class=${'tab' + (tab === k ? ' on' : '')} onClick=${() => act.tab(k)} aria-current=${tab === k ? 'page' : null}><${Icon} n=${i}/>${l}</button>`)}</nav>`;
 }
 
