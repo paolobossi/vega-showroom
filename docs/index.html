@@ -54,6 +54,8 @@ body{background:var(--bg);color:var(--ink);font:15px/1.4 var(--f-ui);-webkit-fon
 @media (min-width:900px){html,body{background:var(--stage)}}
 [hidden]{display:none!important}
 #root{height:100%}
+/* no double-tap zoom anywhere; scrolling and pinch still work */
+*,*::before,*::after{touch-action:manipulation}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
 button:disabled{cursor:default;opacity:.45}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
@@ -98,14 +100,15 @@ input{font:inherit;color:inherit}
 .tab{display:flex;flex-direction:column;align-items:center;gap:1px;font-size:10.5px;font-weight:600;color:var(--muted);min-width:74px;padding:7px 10px 6px;border-radius:999px;transition:background .2s,color .2s}
 .tab.on{color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
 /* client in session: a bar at the top of every tab, part of the layout so it never covers products */
-.sbar{flex:none;display:flex;align-items:center;gap:6px;margin:8px 12px 0;padding:6px 6px 6px 14px;border-radius:18px;background:var(--ink);color:var(--bg);box-shadow:0 6px 18px rgba(0,0,0,.14);animation:fade .2s ease}
-.sbar-main{flex:1;min-width:0;display:flex;align-items:center;gap:12px;text-align:left;color:inherit;padding:4px 0}
-.sbar-dot{flex:none;width:9px;height:9px;border-radius:50%;background:#3CCB7F;box-shadow:0 0 0 4px rgba(60,203,127,.22)}
-.sbar-txt{flex:1;min-width:0}
-.sbar-k{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.6}
-.sbar-t{font:650 19px/1.2 var(--f-display);letter-spacing:-.015em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sbar-s{font-size:12.5px;opacity:.72;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sbar-x{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--bg) 16%,transparent);color:inherit}
+/* edge-to-edge band under the status bar, rounded only at the bottom: it pushes the page down rather than floating over it */
+.sbar{flex:none;display:flex;align-items:center;gap:4px;padding:4px 8px 6px 20px;border-radius:0 0 20px 20px;background:var(--ink);color:var(--bg);animation:drop .3s cubic-bezier(.2,.8,.2,1)}
+@keyframes drop{from{transform:translateY(-100%)}to{transform:none}}
+.sbar-main{flex:1;min-width:0;display:flex;align-items:center;gap:12px;text-align:left;color:inherit;min-height:40px}
+.sbar-dot{position:relative;flex:none;width:8px;height:8px;border-radius:50%;background:#3CCB7F}
+.sbar-dot::after{content:"";position:absolute;inset:0;border-radius:50%;background:#3CCB7F;animation:beat 1.8s ease-out infinite}
+@keyframes beat{from{transform:scale(1);opacity:.7}to{transform:scale(3.2);opacity:0}}
+.sbar-t{flex:1;min-width:0;font-size:15px;font-weight:600;letter-spacing:-.005em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sbar-x{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:inherit;opacity:.55}
 .top{padding:14px 18px 6px}
 .brandline{display:flex;justify-content:space-between;align-items:center;min-height:36px}
 .maison{font:600 11.5px var(--f-display);letter-spacing:.28em;text-transform:uppercase}
@@ -263,20 +266,22 @@ input{font:inherit;color:inherit}
 .opt .row-side{color:var(--accent)}
 .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 /* collection: category rail on the left, products grouped by category and family */
-.cat-layout{display:grid;grid-template-columns:84px minmax(0,1fr);gap:8px;align-items:start}
-.cat-side{position:sticky;top:8px;max-height:calc(100cqh - 120px);overflow-y:auto;scrollbar-width:none;display:flex;flex-direction:column;gap:12px;padding-bottom:20px}
-.cs-grp{display:flex;flex-direction:column;gap:1px}
-.cs-cat{display:flex;justify-content:space-between;align-items:baseline;gap:4px;text-align:left;font-size:13px;font-weight:700;line-height:1.2;padding:7px 8px;border-radius:10px;color:var(--ink)}
-.cs-cat span{font-size:11px;font-weight:600;color:var(--muted)}
-.cs-cat.on{background:var(--ink);color:var(--bg)}.cs-cat.on span{color:inherit;opacity:.7}
-.cs-fam{text-align:left;font-size:12.5px;line-height:1.2;color:var(--muted);padding:5px 8px 5px 12px;border-left:2px solid var(--line);margin-left:8px}
-.cs-fam.on{color:var(--accent);border-left-color:var(--accent);font-weight:650}
-.cat-main{display:flex;flex-direction:column;gap:22px;min-width:0}
+/* category tabs stick under the top while the grid scrolls; sub-categories of the current one sit beneath */
+.cat-nav{position:sticky;top:0;z-index:5;margin:0 -18px;padding:6px 0 8px;background:color-mix(in srgb,var(--bg) 88%,transparent);-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);border-bottom:1px solid var(--line)}
+.cn-row{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:0 18px;scroll-padding:0 18px}
+.cn-row::-webkit-scrollbar{display:none}
+.cn-cat{flex:none;position:relative;display:flex;align-items:baseline;gap:5px;font-size:15px;font-weight:650;color:var(--muted);padding:9px 6px 10px;margin-right:8px;white-space:nowrap}
+.cn-cat span{font-size:12px;font-weight:600;opacity:.75}
+.cn-cat::after{content:"";position:absolute;left:6px;right:6px;bottom:2px;height:2.5px;border-radius:2px;background:var(--ink);transform:scaleX(0);transition:transform .25s ease}
+.cn-cat.on{color:var(--ink)}.cn-cat.on::after{transform:scaleX(1)}
+.cn-fams{margin-top:4px}
+.cn-fam{flex:none;height:34px;padding:0 14px;border-radius:17px;border:1px solid var(--line);background:var(--surface);font-size:13.5px;font-weight:600;color:var(--ink);white-space:nowrap;transition:background .2s,color .2s}
+.cn-fam.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.cat-main{display:flex;flex-direction:column;gap:24px;min-width:0;padding-top:4px}
 .cat-sec{display:flex;flex-direction:column;gap:8px}
-.cat-h{margin:0;display:flex;align-items:baseline;gap:8px;font:650 20px/1.2 var(--f-display);letter-spacing:-.02em;padding-bottom:6px;border-bottom:2px solid var(--ink);scroll-margin-top:8px}
+.cat-h{margin:0;display:flex;align-items:baseline;gap:8px;font:650 20px/1.2 var(--f-display);letter-spacing:-.02em;padding-bottom:6px;border-bottom:2px solid var(--ink)}
 .cat-h span{font-size:13px;font-weight:600;color:var(--muted)}
 .pc-fam{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
-.pcard{scroll-margin-top:8px}
 .pgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .pcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:6px;display:flex;flex-direction:column;gap:6px;min-width:0}
 .pcard.has{border-color:var(--good);box-shadow:inset 0 0 0 1px var(--good)}
@@ -489,8 +494,8 @@ input{font:inherit;color:inherit}
   .tabbar{bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 8px));padding:4px}
   .tab{flex-direction:row;gap:6px;font-size:12.5px;padding:6px 16px}
   .screen.tabbed{padding-bottom:64px}
-  .sbar{margin-top:4px;padding:3px 4px 3px 14px}
-  .sbar-main{padding:1px 0}.sbar-t{font-size:16px}.sbar-k{display:none}
+  .sbar{padding:0 6px 2px 20px}
+  .sbar-main{min-height:34px}
   .ov-body{padding-bottom:116px}
   .ov-actions{bottom:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 8px)) + 54px)}
 }
@@ -500,7 +505,6 @@ input{font:inherit;color:inherit}
   .today-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start}
   .h1{font-size:28px}
   .pgrid{grid-template-columns:repeat(4,minmax(0,1fr))}
-  .cat-layout{grid-template-columns:150px minmax(0,1fr)}
   .vf-stage{transform:translate(-50%,-42%)}
   .sheet,.match{max-height:94%}
   .sheet.tall{height:94%}
@@ -508,7 +512,6 @@ input{font:inherit;color:inherit}
 }
 @container app (min-width: 700px) and (orientation: portrait){
   .pgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .cat-layout{grid-template-columns:150px minmax(0,1fr)}
 }
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
@@ -1101,13 +1104,24 @@ function CatalogueTab({S, ui, act}) {
   // category, then family as the sub-category
   const groups = CATS.map(c => { const ps = items.filter(p => p.cat === c);
     return {cat:c, n:ps.length, fams:[...new Set(ps.map(p => p.family))].map(f => ({f, id:c + '-' + slug(f), ps:ps.filter(p => p.family === f)}))}; }).filter(g => g.n);
-  const ref = useRef(null);
+  const ref = useRef(null), nav = useRef(null), hold = useRef(0);
+  const navBottom = () => nav.current ? nav.current.getBoundingClientRect().bottom : 0;
+  // scroll-spy: the last heading or family anchor that has passed under the sticky tabs is the current one
   useEffect(() => { const sc = ref.current && ref.current.closest('.screen'); if (!sc) return;
-    const spy = () => { const top = sc.getBoundingClientRect().top + 60; let id = null;
+    const spy = () => { if (Date.now() < hold.current) return; const top = navBottom() + 12; let id = null;
       ref.current.querySelectorAll('[data-spy]').forEach(el => { if (el.getBoundingClientRect().top <= top) id = el.dataset.spy; }); setCur(id); };
     spy(); sc.addEventListener('scroll', spy, {passive:true}); return () => sc.removeEventListener('scroll', spy); }, [div, ql, season.id]);
-  const go = id => { const el = document.getElementById('c-' + id); if (el) el.scrollIntoView({behavior:'smooth', block:'start'}); };
-  const curCat = cur ? cur.split('-')[0] : groups[0] && groups[0].cat;
+  // tap: glide to the target just below the tabs; the spy waits so the tabs don't flicker on the way
+  const go = id => { const el = document.getElementById('c-' + id), sc = ref.current && ref.current.closest('.screen'); if (!el || !sc) return;
+    hold.current = Date.now() + 700; setCur(id);
+    // aim for where the tabs end once they are stuck to the top, not where they sit before the page scrolls
+    const stuck = sc.getBoundingClientRect().top + nav.current.offsetHeight;
+    sc.scrollTo({top: sc.scrollTop + el.getBoundingClientRect().top - stuck - 10, behavior:'smooth'}); };
+  const curCat = cur ? cur.split('-')[0] : groups[0] && groups[0].cat, cg = groups.find(g => g.cat === curCat) || groups[0];
+  const curFam = cur && cur.includes('-') ? cur : cg && cg.fams[0].id;
+  // keep the active tab and chip in view inside their scrolling rows
+  useEffect(() => { if (!nav.current) return; nav.current.querySelectorAll('.cn-cat.on, .cn-fam.on').forEach(el => { const row = el.parentElement;
+    row.scrollLeft = el.offsetLeft - row.clientWidth / 2 + el.offsetWidth / 2; }); }, [curCat, curFam]); // instant: a second smooth scroll would cancel the vertical glide in Chrome
   return html`
     <header class="top">
       <button class="season-btn" onClick=${() => act.sheet({type:'season'})} aria-label=${'Collection: ' + season.name + '. Change'}>${season.name}<${Icon} n="down" s=${15} w=${2.2}/></button>
@@ -1121,11 +1135,11 @@ function CatalogueTab({S, ui, act}) {
       <${Seg} full opts=${[['W', DIV_TAB.W], ['M', DIV_TAB.M]]} val=${div} on=${setDiv}/>
       ${ui.catAvail && html`<button class="fchip" onClick=${() => act.set({catAvail:null})} aria-label="Clear availability filter">Available to ${ui.catAvail} clients<${Icon} n="x" s=${14} w=${2.2}/></button>`}
       ${!items.length ? html`<div class="empty">${ql ? `No styles match “${q}”. Try a style name or code.` : `No ${DIV_LABEL[div].toLowerCase()} styles in this collection.`}</div>`
-      : html`<div class="cat-layout" ref=${ref}>
-        <nav class="cat-side" aria-label="Categories">${groups.map(g => html`<div class="cs-grp">
-          <button class=${'cs-cat' + (curCat === g.cat ? ' on' : '')} onClick=${() => go(g.cat)}>${CAT_LABEL[g.cat]}<span class="num">${g.n}</span></button>
-          ${g.fams.map(f => html`<button class=${'cs-fam' + (cur === f.id ? ' on' : '')} onClick=${() => go(f.id)}>${f.f}</button>`)}
-        </div>`)}</nav>
+      : html`<div ref=${ref}>
+        <nav class="cat-nav" ref=${nav} aria-label="Categories">
+          <div class="cn-row" role="tablist">${groups.map(g => html`<button role="tab" aria-selected=${curCat === g.cat} class=${'cn-cat' + (curCat === g.cat ? ' on' : '')} onClick=${() => go(g.cat)}>${CAT_LABEL[g.cat]}<span class="num">${g.n}</span></button>`)}</div>
+          <div class="cn-row cn-fams">${cg.fams.map(f => html`<button class=${'cn-fam' + (curFam === f.id ? ' on' : '')} aria-pressed=${curFam === f.id} onClick=${() => go(f.id)}>${f.f}</button>`)}</div>
+        </nav>
         <div class="cat-main">${groups.map(g => html`<div class="cat-sec">
           <h2 class="cat-h" id=${'c-' + g.cat} data-spy=${g.cat}>${CAT_LABEL[g.cat]}<span class="num">${g.n}</span></h2>
           <div class="pgrid">${g.fams.map(f => f.ps.map((p, i) => html`<${PCard} key=${p.id} p=${p} o=${so} cl=${cl} act=${act} anchor=${i ? null : f.id}/>`))}</div>
@@ -1599,11 +1613,9 @@ function SessionBar({S, ui, act}) {
   const o = activeOrder(S, ui); if (!o) return null;
   const b = BUYERS[o.buyerId], v = b.divs.reduce((a, d) => a + kpi(o, d).total, 0), n = b.divs.reduce((a, d) => a + kpi(o, d).units, 0);
   return html`<div class="sbar" role="status">
-    <button class="sbar-main" onClick=${() => act.openOrder(b.id)} aria-label=${`Ordering for ${b.shop} with ${b.buyer}. Open order`}>
-      <span class="sbar-dot"></span>
-      <div class="sbar-txt"><div class="sbar-k">Ordering for</div><div class="sbar-t">${b.shop}</div><div class="sbar-s">${b.buyer} · ${o.lines.length} selected · ${n} units · ${fmt(v)}</div></div>
-      <${Icon} n="next" s=${18} w=${2.2}/></button>
-    <button class="sbar-x" onClick=${act.endSession} aria-label="End session"><${Icon} n="x" s=${16} w=${2.2}/></button>
+    <button class="sbar-main" onClick=${() => act.openOrder(b.id)} aria-label=${`Ordering for ${b.shop} with ${b.buyer}: ${o.lines.length} selected, ${n} units, ${fmt(v)}. Open order`}>
+      <span class="sbar-dot" aria-hidden="true"></span><span class="sbar-t">${b.shop}</span></button>
+    <button class="sbar-x" onClick=${act.endSession} aria-label="End session"><${Icon} n="x" s=${15} w=${2}/></button>
   </div>`;
 }
 
