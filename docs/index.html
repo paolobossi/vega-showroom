@@ -62,7 +62,7 @@ input{font:inherit;color:inherit}
 .num{font-variant-numeric:tabular-nums}
 .muted{color:var(--muted)}
 .small{font-size:13px}
-.code{font:12px/1.3 var(--f-mono);color:var(--muted);letter-spacing:.01em}
+.code{font-size:12.5px;line-height:1.3;color:var(--muted)}
 
 /* ---------- shell / device ---------- */
 .shell{height:100%;display:flex;align-items:center;justify-content:center;gap:48px}
@@ -154,7 +154,9 @@ input{font:inherit;color:inherit}
 .look-n{font:12px var(--f-mono);color:var(--muted)}
 .look-t{font:600 17px/1.2 var(--f-display);letter-spacing:-.01em}
 .look-vm{font-size:13px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.appt{display:flex;gap:14px;align-items:stretch;text-align:left;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px}
+.appts{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.appt{display:flex;gap:14px;align-items:stretch;text-align:left;width:100%;padding:14px;border-top:1px solid var(--line)}
+.appt:first-child{border-top:0}
 .appt-time{font:500 13px var(--f-mono);color:var(--muted);padding-top:3px;width:42px;flex:none}
 .appt-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
 .appt-shop{font:600 18px/1.2 var(--f-display);letter-spacing:-.015em}
@@ -254,7 +256,7 @@ input{font:inherit;color:inherit}
 .sheet-grab{width:38px;height:5px;border-radius:3px;background:var(--line);margin:8px auto 0;flex:none}
 .sheet-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:8px 10px 6px 18px;flex:none}
 .sheet-title{font:650 21px/1.2 var(--f-display);letter-spacing:-.02em;text-wrap:balance}
-.sheet-sub{font:12px var(--f-mono);color:var(--muted);margin-top:3px}
+.sheet-sub{font-size:13px;color:var(--muted);margin-top:3px}
 .sheet-body{flex:1;min-height:0;overflow-y:auto;padding:4px 18px 18px;display:flex;flex-direction:column;gap:14px}
 .sheet-body > *, .match > *, .ov-lines > *{flex-shrink:0}
 .sheet-foot{flex:none;display:flex;gap:10px;padding:10px 18px max(14px,env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--surface)}
@@ -509,16 +511,6 @@ const LOOKS = [
    vm:'Entry price point for Silver and Gold. Pogo in Brown Green is the bestseller target.'},
 ];
 
-// Other reps' orders at the same event (sample rows for the shared live view)
-const OTHERS = [
-  {id:'x1', shop:'Atelier Nove', city:'Rome', rep:'Sofia L.', cluster:'Gold', status:'submitted', by:'client', value:38450, units:96},
-  {id:'x2', shop:'Brun & Fils', city:'Lyon', rep:'Marc D.', cluster:'Silver', status:'shared', by:null, value:22100, units:58, hoursLeft:31},
-  {id:'x3', shop:'Sora Studio', city:'Seoul', rep:'Jin P.', cluster:'Diamond', status:'confirmed', by:'salesperson', value:74800, units:171},
-  {id:'x4', shop:'Nordlys', city:'Copenhagen', rep:'Ida H.', cluster:'Gold', status:'draft', by:null, value:12600, units:33},
-  {id:'x5', shop:'Casa Prisma', city:'Madrid', rep:'Sofia L.', cluster:'Platinum', status:'submitted', by:'salesperson', value:29900, units:77},
-  {id:'x6', shop:'Wren', city:'New York', rep:'Marc D.', cluster:'Platinum', status:'confirmed', by:'client', value:51300, units:120},
-];
-
 /* ---------- helpers ---------- */
 const fmt = n => '€' + Math.round(n).toLocaleString('en-GB');
 const units = q => Object.values(q || {}).reduce((a, b) => a + b, 0);
@@ -694,7 +686,7 @@ function KpiPanel({order, div}) {
 }
 
 /* =====================================================================
-   Today (home): lookbooks first, then appointments, then the live event view
+   Home: lookbooks first, then appointments
    ===================================================================== */
 function LookTile({look}) {
   const items = look.items.slice(0, 3);
@@ -704,15 +696,11 @@ function LookTile({look}) {
 }
 
 function Today({S, act}) {
-  const own = Object.values(S.orders);
-  const rows = [...own.map(o => ({status:o.status, by:o.submittedBy, value:kpi(o, 'W').total + kpi(o, 'M').total})), ...OTHERS];
-  const total = rows.reduce((a, r) => a + r.value, 0);
   return html`
     <header class="top">
-      <div class="brandline"><span class="maison">Loewe</span>
-        <button class="icon-btn" onClick=${() => act.sheet({type:'about'})} aria-label="About this prototype"><${Icon} n="info"/></button></div>
+      <div class="brandline"><span class="maison">Loewe</span></div>
       <div class="eyebrow">SS27 showroom · Paris · day 2 of 4</div>
-      <h1 class="h1">Today</h1>
+      <h1 class="h1">Home</h1>
     </header>
     <div class="today-grid">
       <section class="sec looks">
@@ -727,7 +715,7 @@ function Today({S, act}) {
       </section>
       <section class="sec">
         <div class="sec-head"><h2>Your appointments</h2><span class="small muted">${REP.name} · ${Object.keys(BUYERS).length} buyers</span></div>
-        ${Object.values(BUYERS).map(b => { const o = S.orders['o-' + b.id];
+        <div class="appts">${Object.values(BUYERS).map(b => { const o = S.orders['o-' + b.id];
           const v = o ? b.divs.reduce((a, d) => a + kpi(o, d).total, 0) : 0;
           return html`<button class="appt" onClick=${() => act.openOrder(b.id)}>
             <div class="appt-time">${b.time}</div>
@@ -737,16 +725,7 @@ function Today({S, act}) {
               <div class="appt-meta"><${Cluster} c=${b.cluster}/><span class="chip">${b.divs.map(d => DIV_LABEL[d]).join(' + ')}</span></div>
             </div>
             <div class="appt-side"><${Pill} s=${o ? o.status : 'none'}/>${o && html`<span class="row-val num">${fmt(v)}</span>`}</div>
-          </button>`; })}
-      </section>
-      <section class="sec">
-        <div class="sec-head"><h2>Live across the event</h2><span class="small muted">25 reps · sample</span></div>
-        <div class="live">
-          <div class="tile"><b>${rows.length}</b><span>orders</span></div>
-          <div class="tile"><b>${fmt(total / 1000)}k</b><span>captured</span></div>
-          <div class="tile"><b>${rows.filter(r => r.status === 'submitted' || r.status === 'confirmed').length}</b><span>submitted</span></div>
-        </div>
-        <button class="linkbtn" style="align-self:flex-start" onClick=${() => act.tab('orders')}>See every order →</button>
+          </button>`; })}</div>
       </section>
     </div>
     <div class="foot">Loewe showroom · powered by Vega</div>`;
@@ -775,50 +754,30 @@ function LookSheet({id, S, ui, act}) {
    Orders — one live view across reps, with submitter traceability
    ===================================================================== */
 function OrdersTab({S, act}) {
-  const [f, setF] = useState('all');
-  const own = Object.values(S.orders).map(o => { const b = BUYERS[o.buyerId];
-    return {id:o.id, own:true, shop:b.shop, city:b.city, rep:REP.name, cluster:b.cluster, status:o.status, by:o.submittedBy,
+  const rows = Object.values(S.orders).map(o => { const b = BUYERS[o.buyerId];
+    return {id:o.id, buyerId:o.buyerId, shop:b.shop, city:b.city, buyer:b.buyer, cluster:b.cluster, status:o.status, by:o.submittedBy,
       value:b.divs.reduce((a, d) => a + kpi(o, d).total, 0), units:b.divs.reduce((a, d) => a + kpi(o, d).units, 0),
       hoursLeft:o.status === 'shared' ? Math.max(0, 48 - Math.floor((Date.now() - o.sharedAt) / 36e5)) : null}; });
-  const all = [...own, ...OTHERS];
-  const rows = f === 'mine' ? own : all;
-  const byClient = all.filter(r => r.by === 'client').length, bySales = all.filter(r => r.by === 'salesperson').length;
+  const byClient = rows.filter(r => r.by === 'client').length, bySales = rows.filter(r => r.by === 'salesperson').length;
   return html`
     <header class="top"><div class="eyebrow">SS27 showroom · Paris</div><h1 class="h1">Orders</h1></header>
     <section class="sec">
       <div class="live">
-        <div class="tile"><b>${fmt(all.reduce((a, r) => a + r.value, 0) / 1000)}k</b><span>${all.length} orders</span></div>
+        <div class="tile"><b>${fmt(rows.reduce((a, r) => a + r.value, 0) / 1000)}k</b><span>${rows.length} ${rows.length === 1 ? 'order' : 'orders'}</span></div>
         <div class="tile"><b>${byClient}</b><span>by client</span></div>
         <div class="tile"><b>${bySales}</b><span>by salesperson</span></div>
       </div>
-      <${Seg} full opts=${[['all', 'All reps'], ['mine', 'Mine']]} val=${f} on=${setF}/>
       <div class="list">
-        ${rows.map(r => html`<button class="row" onClick=${() => r.own ? act.openOrder(r.id.slice(2)) : act.sheet({type:'other', id:r.id})}>
+        ${rows.map(r => html`<button class="row" onClick=${() => act.openOrder(r.buyerId)}>
           <div class="row-main">
             <div class="row-title">${r.shop} <span class="muted" style="font-weight:400">· ${r.city}</span></div>
             <div class="row-sub"><${Pill} s=${r.status}/><${By} by=${r.by}/>${r.hoursLeft != null && html`<span class="by"><${Icon} n="clock" s=${13} w=${2}/>${r.hoursLeft}h left</span>`}</div>
-            <div class="row-sub">${r.rep}${r.own ? ' (you)' : ''} · ${r.cluster}</div>
+            <div class="row-sub">${r.buyer} · ${r.cluster}</div>
           </div>
           <div class="row-side"><span class="row-val">${fmt(r.value)}</span><span class="small muted num">${r.units} units</span></div>
         </button>`)}
       </div>
-      <p class="small muted" style="margin:0">Every order records who submitted it. When a salesperson submits, the Maison carries the cost of an error; when the client submits, the client does.</p>
-    </section>
-    <div class="foot">Shared event database · updates live across reps</div>`;
-}
-
-function OtherSheet({id, act}) {
-  const r = OTHERS.find(x => x.id === id);
-  const ev = [['09:12', 'salesperson', 'Session started in the showroom'], ['11:05', 'salesperson', 'Basket shared with the buyer']];
-  if (r.status === 'submitted' || r.status === 'confirmed') ev.push(['Yesterday', r.by, r.by === 'client' ? 'Order submitted by the buyer' : 'Order submitted by the salesperson']);
-  if (r.status === 'confirmed') ev.push(['Today', 'salesperson', 'Reviewed against guidelines and confirmed']);
-  return html`<${Sheet} title=${r.shop} sub=${`${r.city} · ${r.cluster} · ${r.rep}`} onClose=${act.close}>
-    <div class="row-sub" style="gap:8px"><${Pill} s=${r.status}/><${By} by=${r.by}/></div>
-    <div class="live"><div class="tile"><b>${fmt(r.value)}</b><span>value</span></div><div class="tile"><b>${r.units}</b><span>units</span></div><div class="tile"><b>${r.rep.split(' ')[0]}</b><span>owner</span></div></div>
-    <div class="lbl">Audit trail</div>
-    <div class="panel log">${ev.map(([t, by, text]) => html`<div class="log-row"><div class="log-t">${t}</div><div>${text}<div class="log-who"><${By} by=${by}/></div></div></div>`)}</div>
-    <div class="small muted">Read only. This order belongs to ${r.rep}.</div>
-  <//>`;
+    </section>`;
 }
 
 /* =====================================================================
@@ -871,11 +830,11 @@ function SeasonSheet({ui, act}) {
 }
 
 function FilterSheet({ui, act}) {
-  const opts = [[null, 'All styles', 'No restrictions shown'], ...CLUSTERS.map(c => [c, c, `Dim styles ${c} clients can’t order`])];
+  const opts = [[null, 'All styles'], ...CLUSTERS.map(c => [c, c])];
   return html`<${Sheet} title="Filters" onClose=${act.close}>
     <div class="lbl">Show availability for</div>
-    <div class="list">${opts.map(([v, t, d]) => html`<button class="row opt" onClick=${() => { act.set({catAvail:v}); act.close(); }} aria-pressed=${v === ui.catAvail}>
-      <div class="row-main"><div class="row-title">${t}</div><div class="row-sub">${d}</div></div>
+    <div class="list">${opts.map(([v, t]) => html`<button class="row opt" onClick=${() => { act.set({catAvail:v}); act.close(); }} aria-pressed=${v === ui.catAvail}>
+      <div class="row-main"><div class="row-title">${t}</div></div>
       <div class="row-side">${v === ui.catAvail && html`<${Icon} n="check" s=${20} w=${2.4}/>`}</div>
     </button>`)}</div>
   <//>`;
@@ -1227,18 +1186,8 @@ const GUIDE_STEPS = [
   'Back as the salesperson, review the guideline check, confirm, and open the factory export.',
 ];
 
-function AboutSheet({act}) {
-  return html`<${Sheet} title="About this prototype" sub="Vega · POC v0.1" onClose=${act.close}>
-    <p style="margin:0;line-height:1.5">Vega captures wholesale showroom orders on a phone. The salesperson photographs a sample, confirms the match and enters sizes, while the order is checked live against the Maison’s guidelines for the client’s cluster.</p>
-    <div class="lbl">Try this</div>
-    <ol class="steps">${GUIDE_STEPS.map(s => html`<li>${s}</li>`)}</ol>
-    <div class="callout info"><${Icon} n="info" s=${18}/><div>Photo recognition is simulated against a catalogue built from loewe.com. Orders save in this browser only.</div></div>
-    <button class="btn secondary block" onClick=${act.reset}>Reset demo data</button>
-  <//>`;
-}
-
 function TabBar({tab, act}) {
-  const T = [['today', 'Today', 'today'], ['orders', 'Orders', 'orders'], ['catalogue', 'Collection', 'grid']];
+  const T = [['today', 'Home', 'today'], ['orders', 'Orders', 'orders'], ['catalogue', 'Collection', 'grid']];
   return html`<nav class="tabbar">${T.map(([k, l, i]) => html`<button class=${'tab' + (tab === k ? ' on' : '')} onClick=${() => act.tab(k)} aria-current=${tab === k ? 'page' : null}><${Icon} n=${i}/>${l}</button>`)}</nav>`;
 }
 
@@ -1282,10 +1231,8 @@ function App({onReset}) {
     : sh.type === 'history' ? html`<${HistorySheet} sh=${sh} S=${S} act=${act}/>`
     : sh.type === 'look' ? html`<${LookSheet} id=${sh.id} S=${S} ui=${ui} act=${act}/>`
     : sh.type === 'product' ? html`<${ProductSheet} key=${sh.pid} pid=${sh.pid} S=${S} ui=${ui} act=${act}/>`
-    : sh.type === 'other' ? html`<${OtherSheet} id=${sh.id} act=${act}/>`
     : sh.type === 'season' ? html`<${SeasonSheet} ui=${ui} act=${act}/>`
-    : sh.type === 'filter' ? html`<${FilterSheet} ui=${ui} act=${act}/>`
-    : sh.type === 'about' ? html`<${AboutSheet} act=${act}/>` : null;
+    : sh.type === 'filter' ? html`<${FilterSheet} ui=${ui} act=${act}/>` : null;
   const toast = ui.toast && html`<div class="toast" key=${ui.toastId} role="status"><${Icon} n="check" s=${16} w=${2.4}/>${ui.toast}</div>`;
 
   if (ui.role === 'buyer' && S.orders[ui.buyerOrder]) return html`<div class="app"><${BuyerView} S=${S} ui=${ui} act=${act}/>${sheet}${toast}</div>`;
