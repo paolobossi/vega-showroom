@@ -103,6 +103,8 @@ input{font:inherit;color:inherit}
 /* edge-to-edge band under the status bar; the page below rounds its top corners into it, like a bridge, so it pushes the page down rather than floating over it */
 .sbar{flex:none;display:flex;align-items:center;gap:4px;padding:4px 8px 4px 20px;background:var(--ink);color:var(--bg);animation:drop .3s cubic-bezier(.2,.8,.2,1)}
 .app.in-session{background:var(--ink)}
+/* on the phone the notch / status bar area above goes black too (desktop keeps the device frame) */
+@media (max-width:899px){html.in-session,html.in-session body{background:var(--ink)}}
 .app.in-session > .screen{border-radius:20px 20px 0 0;background:var(--bg)}
 @keyframes drop{from{transform:translateY(-100%)}to{transform:none}}
 .sbar-main{flex:1;min-width:0;display:flex;align-items:center;gap:12px;text-align:left;color:inherit;min-height:40px}
@@ -1713,10 +1715,15 @@ function App({onReset}) {
     : sh.type === 'bulk' ? html`<${BulkSheet} sh=${sh} S=${S} act=${act}/>` : null;
   const toast = ui.toast && html`<div class="toast" key=${ui.toastId} role="status"><${Icon} n="check" s=${16} w=${2.4}/>${ui.toast}</div>`;
 
-  if (ui.role === 'buyer' && S.orders[ui.buyerOrder]) return html`<div class="app"><${BuyerView} S=${S} ui=${ui} act=${act}/>${sheet}${toast}</div>`;
+  const buyerView = ui.role === 'buyer' && S.orders[ui.buyerOrder];
   // the client in session stays on top of every tab, in the layout so it never covers products; the tab bar is always there
-  const so = activeOrder(S, ui), capDiv = so && (BUYERS[so.buyerId].divs.includes(ui.capDiv) ? ui.capDiv : BUYERS[so.buyerId].divs[0]);
-  return html`<div class=${'app' + (so && !order ? ' in-session' : '')}>
+  const so = activeOrder(S, ui), banded = !!(so && !order && !buyerView), capDiv = so && (BUYERS[so.buyerId].divs.includes(ui.capDiv) ? ui.capDiv : BUYERS[so.buyerId].divs[0]);
+  // tint the browser chrome and safe area to match the client band while it shows
+  useEffect(() => { const root = document.documentElement; root.classList.toggle('in-session', banded);
+    const ink = getComputedStyle(root).getPropertyValue('--ink').trim();
+    document.querySelectorAll('meta[name="theme-color"]').forEach(m => { m.dataset.base = m.dataset.base || m.content; m.content = banded ? ink : m.dataset.base; }); }, [banded]);
+  if (buyerView) return html`<div class="app"><${BuyerView} S=${S} ui=${ui} act=${act}/>${sheet}${toast}</div>`;
+  return html`<div class=${'app' + (banded ? ' in-session' : '')}>
     ${order ? html`<${OrderView} S=${S} ui=${ui} act=${act} order=${order}/>` : html`
       <${SessionBar} S=${S} ui=${ui} act=${act}/>
       <div class="screen tabbed">
