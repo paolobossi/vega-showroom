@@ -101,17 +101,20 @@ input{font:inherit;color:inherit}
 .tab.on{color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
 /* client in session: a bar at the top of every tab, part of the layout so it never covers products */
 /* edge-to-edge band under the status bar; the page below rounds its top corners into it, like a bridge, so it pushes the page down rather than floating over it */
-.sbar{flex:none;display:flex;align-items:center;gap:4px;padding:4px 8px 4px 20px;background:var(--ink);color:var(--bg);animation:drop .3s cubic-bezier(.2,.8,.2,1)}
+.sbar{flex:none;display:flex;align-items:center;gap:4px;padding:4px 8px;background:var(--ink);color:var(--bg);animation:drop .3s cubic-bezier(.2,.8,.2,1)}
 .app.in-session{background:var(--ink)}
 /* on the phone the notch / status bar area above goes black too (desktop keeps the device frame) */
 @media (max-width:899px){html.in-session,html.in-session body{background:var(--ink)}}
 .app.in-session > .screen{border-radius:20px 20px 0 0;background:var(--bg)}
 @keyframes drop{from{transform:translateY(-100%)}to{transform:none}}
-.sbar-main{flex:1;min-width:0;display:flex;align-items:center;gap:12px;text-align:left;color:inherit;min-height:40px}
+.sbar-main{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:10px;padding-left:36px;color:inherit;min-height:40px}
 .sbar-dot{position:relative;flex:none;width:8px;height:8px;border-radius:50%;background:#3CCB7F}
 .sbar-dot::after{content:"";position:absolute;inset:0;border-radius:50%;background:#3CCB7F;animation:beat 1.8s ease-out infinite}
 @keyframes beat{from{transform:scale(1);opacity:.7}to{transform:scale(3.2);opacity:0}}
-.sbar-t{flex:1;min-width:0;font-size:15px;font-weight:600;letter-spacing:-.005em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sbar-t{flex:0 1 auto;min-width:0;display:flex;flex-direction:column;align-items:center;line-height:1.2}
+.sbar-t b,.sbar-t span{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sbar-t b{font-size:15px;font-weight:600;letter-spacing:-.005em}
+.sbar-t span{font-size:12.5px;font-weight:400;opacity:.7}
 .sbar-x{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:inherit;opacity:.55}
 .top{padding:14px 18px 6px}
 .maison{font:600 11.5px var(--f-display);letter-spacing:.28em;text-transform:uppercase}
@@ -276,8 +279,6 @@ input{font:inherit;color:inherit}
 .searchrow{display:flex;gap:8px}.searchrow .search{flex:1;min-width:0}
 .sq-btn{position:relative;flex:none;width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--line);background:var(--surface);border-radius:12px;color:var(--ink)}
 .sq-btn.on{background:var(--accent);color:var(--accent-ink);border-color:transparent}
-.season-btn{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);min-height:44px;padding:0 12px 0 0;margin:-2px 0 -10px}
-.season-btn svg{color:var(--muted)}
 .fchip{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:5px 8px 5px 12px;border-radius:99px;background:var(--surface-2);border:1px solid var(--line);color:var(--ink)}
 .fchip svg{color:var(--muted)}
 .opt .row-side{color:var(--accent)}
@@ -296,7 +297,7 @@ input{font:inherit;color:inherit}
 .cn-fam.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
 .cat-main{display:flex;flex-direction:column;gap:24px;min-width:0;padding-top:4px}
 .cat-sec{display:flex;flex-direction:column;gap:8px}
-.cat-h{margin:0;display:flex;align-items:baseline;gap:8px;font:650 20px/1.2 var(--f-display);letter-spacing:-.02em;padding-bottom:6px;border-bottom:2px solid var(--ink)}
+.cat-h{margin:0;display:flex;align-items:baseline;gap:8px;font:650 20px/1.2 var(--f-display);letter-spacing:-.02em}
 .cat-h span{font-size:13px;font-weight:600;color:var(--muted)}
 .pc-fam{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
 .pgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
@@ -511,7 +512,7 @@ input{font:inherit;color:inherit}
   .tabbar{bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 8px));padding:4px}
   .tab{flex-direction:row;gap:6px;font-size:12.5px;padding:6px 16px}
   .screen.tabbed{padding-bottom:64px}
-  .sbar{padding:0 6px 2px 20px}
+  .sbar{padding:0 6px 2px}
   .sbar-main{min-height:34px}
   .ov-body{padding-bottom:116px}
   .ov-actions{bottom:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 8px)) + 54px)}
@@ -1139,14 +1140,12 @@ function CatalogueTab({S, ui, act}) {
   useEffect(() => { if (!nav.current) return; nav.current.querySelectorAll('.cn-cat.on, .cn-fam.on').forEach(el => { const row = el.parentElement;
     row.scrollLeft = el.offsetLeft - row.clientWidth / 2 + el.offsetWidth / 2; }); }, [curCat, curFam]); // instant: a second smooth scroll would cancel the vertical glide in Chrome
   return html`
-    <header class="top">
-      <button class="season-btn" onClick=${() => act.sheet({type:'season'})} aria-label=${'Collection: ' + season.name + '. Change'}>${season.name}<${Icon} n="down" s=${15} w=${2.2}/></button>
-      <h1 class="h1">Collection</h1></header>
+    <header class="top top-bar mid"><h1 class="h1">Collection</h1></header>
     <section class="sec">
       <div class="searchrow">
         <label class="search"><${Icon} n="search" s=${18}/><input id="cat-q" placeholder="Search style, code or family" value=${q} onInput=${e => setQ(e.target.value)}/></label>
         ${so && html`<button class="sq-btn" onClick=${() => { act.set({capDiv:div}); act.capture(true); }} aria-label="Photograph a sample"><${Icon} n="cam" s=${20} w=${2}/></button>`}
-        <button class=${'sq-btn' + (ui.catAvail ? ' on' : '')} onClick=${() => act.sheet({type:'filter'})} aria-label=${ui.catAvail ? `Filters: ${ui.catAvail} availability` : 'Filters'}><${Icon} n="filter" s=${20} w=${2}/></button>
+        <button class=${'sq-btn' + (ui.catAvail || season.id !== SEASONS[0].id ? ' on' : '')} onClick=${() => act.sheet({type:'filter'})} aria-label=${`Filters: ${season.name}` + (ui.catAvail ? `, ${ui.catAvail} availability` : '')}><${Icon} n="filter" s=${20} w=${2}/></button>
       </div>
       <${Seg} full opts=${[['W', DIV_TAB.W], ['M', DIV_TAB.M]]} val=${div} on=${setDiv}/>
       ${ui.catAvail && html`<button class="fchip" onClick=${() => act.set({catAvail:null})} aria-label="Clear availability filter">Available to ${ui.catAvail} clients<${Icon} n="x" s=${14} w=${2.2}/></button>`}
@@ -1234,20 +1233,17 @@ function NewBuyerSheet({S, sh, act}) {
   <//>`;
 }
 
-function SeasonSheet({ui, act}) {
-  return html`<${Sheet} title="Collection" sub="Choose which collection to browse" onClose=${act.close}>
-    <div class="list">${SEASONS.map(x => html`<button class="row opt" onClick=${() => { act.set({catSeason:x.id}); act.close(); }} aria-pressed=${x.id === ui.catSeason}>
+function FilterSheet({ui, act}) {
+  const opts = [[null, 'All styles'], ...CLUSTERS.map(c => [c, c])];
+  // picking an option keeps the sheet open, so collection and availability can be set together
+  return html`<${Sheet} title="Filters" onClose=${act.close}>
+    <div class="lbl">Collection</div>
+    <div class="list">${SEASONS.map(x => html`<button class="row opt" onClick=${() => act.set({catSeason:x.id})} aria-pressed=${x.id === ui.catSeason}>
       <div class="row-main"><div class="row-title">${x.name}</div><div class="row-sub">${x.note}</div></div>
       <div class="row-side">${x.id === ui.catSeason && html`<${Icon} n="check" s=${20} w=${2.4}/>`}</div>
     </button>`)}</div>
-  <//>`;
-}
-
-function FilterSheet({ui, act}) {
-  const opts = [[null, 'All styles'], ...CLUSTERS.map(c => [c, c])];
-  return html`<${Sheet} title="Filters" onClose=${act.close}>
     <div class="lbl">Show availability for</div>
-    <div class="list">${opts.map(([v, t]) => html`<button class="row opt" onClick=${() => { act.set({catAvail:v}); act.close(); }} aria-pressed=${v === ui.catAvail}>
+    <div class="list">${opts.map(([v, t]) => html`<button class="row opt" onClick=${() => act.set({catAvail:v})} aria-pressed=${v === ui.catAvail}>
       <div class="row-main"><div class="row-title">${t}</div></div>
       <div class="row-side">${v === ui.catAvail && html`<${Icon} n="check" s=${20} w=${2.4}/>`}</div>
     </button>`)}</div>
@@ -1651,7 +1647,7 @@ function SessionBar({S, ui, act}) {
   const b = BUYERS[o.buyerId], v = b.divs.reduce((a, d) => a + kpi(o, d).total, 0), n = b.divs.reduce((a, d) => a + kpi(o, d).units, 0);
   return html`<div class="sbar" role="status">
     <button class="sbar-main" onClick=${() => act.openOrder(b.id)} aria-label=${`Ordering for ${b.shop} with ${b.buyer}: ${o.lines.length} selected, ${n} units, ${fmt(v)}. Open order`}>
-      <span class="sbar-dot" aria-hidden="true"></span><span class="sbar-t">${b.shop}</span></button>
+      <span class="sbar-dot" aria-hidden="true"></span><span class="sbar-t"><b>${b.shop}</b><span>${b.buyer}</span></span></button>
     <button class="sbar-x" onClick=${act.endSession} aria-label="End session"><${Icon} n="x" s=${15} w=${2}/></button>
   </div>`;
 }
@@ -1738,7 +1734,6 @@ function App({onReset}) {
     : sh.type === 'history' ? html`<${HistorySheet} sh=${sh} S=${S} act=${act}/>`
     : sh.type === 'look' ? html`<${LookSheet} id=${sh.id} S=${S} ui=${ui} act=${act}/>`
     : sh.type === 'product' ? html`<${ProductSheet} key=${sh.pid} pid=${sh.pid} S=${S} ui=${ui} act=${act}/>`
-    : sh.type === 'season' ? html`<${SeasonSheet} ui=${ui} act=${act}/>`
     : sh.type === 'filter' ? html`<${FilterSheet} ui=${ui} act=${act}/>`
     : sh.type === 'account' ? html`<${AccountSheet} S=${S} act=${act}/>`
     : sh.type === 'newbuyer' ? html`<${NewBuyerSheet} S=${S} sh=${sh} act=${act}/>`
