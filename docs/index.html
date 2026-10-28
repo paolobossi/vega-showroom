@@ -100,8 +100,10 @@ input{font:inherit;color:inherit}
 .tab{display:flex;flex-direction:column;align-items:center;gap:1px;font-size:10.5px;font-weight:600;color:var(--muted);min-width:74px;padding:7px 10px 6px;border-radius:999px;transition:background .2s,color .2s}
 .tab.on{color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
 /* client in session: a bar at the top of every tab, part of the layout so it never covers products */
-/* edge-to-edge band under the status bar, rounded only at the bottom: it pushes the page down rather than floating over it */
-.sbar{flex:none;display:flex;align-items:center;gap:4px;padding:4px 8px 6px 20px;border-radius:0 0 20px 20px;background:var(--ink);color:var(--bg);animation:drop .3s cubic-bezier(.2,.8,.2,1)}
+/* edge-to-edge band under the status bar; the page below rounds its top corners into it, like a bridge, so it pushes the page down rather than floating over it */
+.sbar{flex:none;display:flex;align-items:center;gap:4px;padding:4px 8px 4px 20px;background:var(--ink);color:var(--bg);animation:drop .3s cubic-bezier(.2,.8,.2,1)}
+.app.in-session{background:var(--ink)}
+.app.in-session > .screen{border-radius:20px 20px 0 0;background:var(--bg)}
 @keyframes drop{from{transform:translateY(-100%)}to{transform:none}}
 .sbar-main{flex:1;min-width:0;display:flex;align-items:center;gap:12px;text-align:left;color:inherit;min-height:40px}
 .sbar-dot{position:relative;flex:none;width:8px;height:8px;border-radius:50%;background:#3CCB7F}
@@ -1714,7 +1716,7 @@ function App({onReset}) {
   if (ui.role === 'buyer' && S.orders[ui.buyerOrder]) return html`<div class="app"><${BuyerView} S=${S} ui=${ui} act=${act}/>${sheet}${toast}</div>`;
   // the client in session stays on top of every tab, in the layout so it never covers products; the tab bar is always there
   const so = activeOrder(S, ui), capDiv = so && (BUYERS[so.buyerId].divs.includes(ui.capDiv) ? ui.capDiv : BUYERS[so.buyerId].divs[0]);
-  return html`<div class="app">
+  return html`<div class=${'app' + (so && !order ? ' in-session' : '')}>
     ${order ? html`<${OrderView} S=${S} ui=${ui} act=${act} order=${order}/>` : html`
       <${SessionBar} S=${S} ui=${ui} act=${act}/>
       <div class="screen tabbed">
