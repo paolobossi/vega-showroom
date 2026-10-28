@@ -16,7 +16,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&display=swap">
 <style>
 /* Layout: one phone-first app (portrait or landscape). On desktop it sits in a device frame beside a short demo guide. */
 :root{
@@ -30,7 +30,6 @@
   --vf-bg:#0C0D0F; --vf-ink:#F2F2EF; --vf-dim:rgba(242,242,239,.62);
   --f-display:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   --f-ui:"Inter",-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-  --f-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --stage:#050607; --frame:#2A2C30;
@@ -83,7 +82,7 @@ input{font:inherit;color:inherit}
 .side-brand{font:650 44px/1 var(--f-display);letter-spacing:-.035em}
 .side-lede{margin:0;color:var(--muted);line-height:1.5;text-wrap:pretty}
 .steps{margin:0;padding:0 0 0 20px;display:flex;flex-direction:column;gap:8px;line-height:1.45}
-.steps li::marker{font:12px var(--f-mono);color:var(--muted)}
+.steps li::marker{font:600 12px var(--f-ui);color:var(--muted)}
 .side-ctrls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .fine{margin:0;font-size:12.5px;color:var(--muted);line-height:1.5}
 .linkbtn{color:var(--accent);font-weight:600;font-size:14px;padding:6px 2px}
@@ -145,19 +144,19 @@ input{font:inherit;color:inherit}
 .ph{background:#EDEDED}
 
 /* ---------- today ---------- */
-.look{scroll-snap-align:start;flex:none;width:236px;text-align:left;display:flex;flex-direction:column;gap:8px}
-.look-tile{position:relative;border-radius:16px;overflow:hidden;background:var(--studio)}
+.look{scroll-snap-align:start;flex:none;width:236px;text-align:left;display:flex;flex-direction:column;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:8px 8px 12px}
+.look-tile{position:relative;border-radius:12px;overflow:hidden;background:var(--studio)}
 /* one large square plus two small squares: 3:2 overall, so no photo is cropped */
 .look-tile{display:grid;aspect-ratio:3/2;height:auto;grid-template-columns:2fr 1fr;grid-template-rows:repeat(2,minmax(0,1fr));gap:2px}
 .look-tile img{min-width:0;min-height:0}
 .look-tile img:first-child{grid-row:1 / span 2}
-.look-n{font:12px var(--f-mono);color:var(--muted)}
+.look-n{font-size:12.5px;color:var(--muted)}
 .look-t{font:600 17px/1.2 var(--f-display);letter-spacing:-.01em}
 .look-vm{font-size:13px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .appts{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
 .appt{display:flex;gap:14px;align-items:stretch;text-align:left;width:100%;padding:14px;border-top:1px solid var(--line)}
 .appt:first-child{border-top:0}
-.appt-time{font:500 13px var(--f-mono);color:var(--muted);padding-top:3px;width:42px;flex:none}
+.appt-time{font:600 13px var(--f-ui);font-variant-numeric:tabular-nums;color:var(--muted);padding-top:3px;width:42px;flex:none}
 .appt-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
 .appt-shop{font:600 18px/1.2 var(--f-display);letter-spacing:-.015em}
 .appt-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
@@ -180,7 +179,7 @@ input{font:inherit;color:inherit}
 .row-val{font-weight:650;font-variant-numeric:tabular-nums}
 .sw{display:inline-block;width:11px;height:11px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.2);flex:none}
 .szs{display:flex;gap:4px;flex-wrap:wrap}
-.sz-chip{font:11.5px var(--f-mono);padding:1px 5px;border-radius:5px;background:var(--surface-2);color:var(--muted)}
+.sz-chip{font:500 11.5px var(--f-ui);font-variant-numeric:tabular-nums;padding:1px 5px;border-radius:5px;background:var(--surface-2);color:var(--muted)}
 .lock{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:650;color:var(--warn)}
 .search{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:0 12px;height:44px;color:var(--muted)}
 .search input{border:0;outline:0;background:none;flex:1;min-width:0;height:100%;color:var(--ink)}
@@ -206,7 +205,7 @@ input{font:inherit;color:inherit}
 .ov-nav{flex:none;display:flex;align-items:center;gap:4px;padding:4px 8px 0;min-height:48px}
 .ov-nav-t{flex:1;min-width:0;text-align:center}
 .ov-shop{font:600 17px/1.2 var(--f-display);letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ov-id{font:11.5px var(--f-mono);color:var(--muted)}
+.ov-id{font-size:12px;color:var(--muted)}
 .saved{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;color:var(--good);font-weight:600;animation:pulse .6s ease}
 @keyframes pulse{from{opacity:.2}to{opacity:1}}
 .ov-sub{flex:none;display:flex;flex-direction:column;gap:10px;padding:6px 16px 10px;border-bottom:1px solid var(--line)}
@@ -285,7 +284,7 @@ input{font:inherit;color:inherit}
 .sizes{display:flex;gap:6px;overflow-x:auto;margin:0 -18px;padding:0 18px 2px;scrollbar-width:none}
 .size-cell{flex:1 0 54px;display:flex;flex-direction:column;align-items:stretch;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
 .size-cell.has{border-color:var(--accent)}
-.sz{font:500 13px var(--f-mono);text-align:center;padding:7px 0 3px;color:var(--muted)}
+.sz{font:600 13px var(--f-ui);font-variant-numeric:tabular-nums;text-align:center;padding:7px 0 3px;color:var(--muted)}
 .size-cell.has .sz{color:var(--accent)}
 .step{height:42px;font-size:22px;font-weight:500;display:grid;place-items:center;color:var(--ink)}
 .step:active{background:var(--surface-2)}
@@ -304,14 +303,14 @@ input{font:inherit;color:inherit}
 .sug{flex:none;width:118px;text-align:left;display:flex;flex-direction:column;gap:5px}
 .sug .thumb{width:118px;height:118px}
 .sug-n{font-size:13px;font-weight:600;line-height:1.25}
-.pre{font:11.5px/1.5 var(--f-mono);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;overflow:auto;white-space:pre;max-height:340px;color:var(--ink);margin:0}
+.pre{font:12px/1.5 var(--f-ui);font-variant-numeric:tabular-nums;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;overflow:auto;white-space:pre;max-height:340px;color:var(--ink);margin:0}
 .log{display:flex;flex-direction:column}
 .log-row{display:grid;grid-template-columns:44px minmax(0,1fr);gap:10px;padding:10px 0;border-top:1px solid var(--line);font-size:13.5px}
 .log-row:first-child{border-top:0}
-.log-t{font:12px var(--f-mono);color:var(--muted);padding-top:2px}
+.log-t{font-size:12px;font-variant-numeric:tabular-nums;color:var(--muted);padding-top:2px}
 .log-who{margin-top:3px}
 .linkbox{display:flex;gap:8px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:6px 6px 6px 12px}
-.linkbox code{flex:1;min-width:0;font:13px var(--f-mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;user-select:all}
+.linkbox code{flex:1;min-width:0;font:13px var(--f-ui);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;user-select:all}
 .linkbox .btn{min-height:38px;padding:0 14px;font-size:14px}
 .issue{display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:6px 0;border-top:1px solid var(--line)}
 .issue:first-of-type{border-top:0}
@@ -407,7 +406,7 @@ const {html, render, useState, useEffect, useMemo, useRef} = window.htmPreact;
    Data — catalogue built from loewe.com (styles, colour codes, photos; wholesale prices indicative). Mirrors the shape of the
    shared database the iOS app will write to (orders, lines, audit log).
    ===================================================================== */
-const REP = {name:'Alex R.', full:'Alex Rinaldi'};
+const REP = {name:'Roberto D.', full:'Roberto D.'};
 const COL = {
   'Carmine Red':['#9E1B24','0241'], 'Mineral Mist':['#B9BCB8','0371'], Black:['#1E1E1F','1100'], White:['#F4F4F2','2100'],
   Mocha:['#6A4B3A','9579'], 'Sunrise Orange':['#E0662A','5557'], Sand:['#CDB892','2150'], Squirrel:['#8A6E55','4927'],
@@ -704,7 +703,7 @@ function Today({S, act}) {
     </header>
     <div class="today-grid">
       <section class="sec looks">
-        <div class="sec-head"><h2>Lookbooks & VM intent</h2><span class="small muted">${LOOKS.length} looks</span></div>
+        <div class="sec-head"><h2>Lookbooks & VM intent</h2></div>
         <div class="hscroll">
           ${LOOKS.map(l => html`<button class="look" onClick=${() => act.sheet({type:'look', id:l.id})}>
             <${LookTile} look=${l}/>
