@@ -97,17 +97,15 @@ input{font:inherit;color:inherit}
   border:1px solid color-mix(in srgb,var(--line) 70%,transparent);box-shadow:0 10px 30px rgba(0,0,0,.14),0 1px 3px rgba(0,0,0,.08)}
 .tab{display:flex;flex-direction:column;align-items:center;gap:1px;font-size:10.5px;font-weight:600;color:var(--muted);min-width:74px;padding:7px 10px 6px;border-radius:999px;transition:background .2s,color .2s}
 .tab.on{color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
-/* live session bar, sits just above the tab pill */
-.screen.tabbed.has-session{padding-bottom:calc(166px + env(safe-area-inset-bottom,0px))}
-.sbar{position:absolute;z-index:19;left:50%;transform:translateX(-50%);bottom:calc(max(14px,calc(env(safe-area-inset-bottom,0px) - 6px)) + 72px);width:min(calc(100% - 28px),420px);
-  display:flex;align-items:center;gap:6px;padding:6px 6px 6px 14px;border-radius:18px;background:var(--ink);color:var(--bg);box-shadow:0 10px 30px rgba(0,0,0,.22);animation:up .22s ease}
-.sbar-main{flex:1;min-width:0;display:flex;align-items:center;gap:10px;text-align:left;color:inherit;padding:4px 0}
-.sbar-dot{flex:none;width:8px;height:8px;border-radius:50%;background:#3CCB7F;box-shadow:0 0 0 4px rgba(60,203,127,.22)}
+/* client in session: a bar at the top of every tab, part of the layout so it never covers products */
+.sbar{flex:none;display:flex;align-items:center;gap:6px;margin:8px 12px 0;padding:6px 6px 6px 14px;border-radius:18px;background:var(--ink);color:var(--bg);box-shadow:0 6px 18px rgba(0,0,0,.14);animation:fade .2s ease}
+.sbar-main{flex:1;min-width:0;display:flex;align-items:center;gap:12px;text-align:left;color:inherit;padding:4px 0}
+.sbar-dot{flex:none;width:9px;height:9px;border-radius:50%;background:#3CCB7F;box-shadow:0 0 0 4px rgba(60,203,127,.22)}
 .sbar-txt{flex:1;min-width:0}
-.sbar-t{font-weight:650;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sbar-k{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.6}
+.sbar-t{font:650 19px/1.2 var(--f-display);letter-spacing:-.015em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sbar-s{font-size:12.5px;opacity:.72;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sbar-x{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--bg) 16%,transparent);color:inherit}
-.app.has-session .toast{bottom:calc(150px + env(safe-area-inset-bottom,0px))}
+.sbar-x{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--bg) 16%,transparent);color:inherit}
 .top{padding:14px 18px 6px}
 .brandline{display:flex;justify-content:space-between;align-items:center;min-height:36px}
 .maison{font:600 11.5px var(--f-display);letter-spacing:.28em;text-transform:uppercase}
@@ -172,6 +170,38 @@ input{font:inherit;color:inherit}
 .thumb.lg{width:96px;height:96px;border-radius:16px}
 .thumb img,.ph{width:100%;height:100%;object-fit:cover;display:block}
 .ph{background:#EDEDED}
+.cc{display:inline-flex;align-items:center;gap:5px;min-width:0}
+.cc .code{font-weight:600;color:var(--ink);opacity:.7}
+.pc-code{font-size:12.5px;font-weight:650;letter-spacing:.02em;color:var(--ink)}
+.prices{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.prices span{display:flex;flex-direction:column;min-width:0}
+.prices small{font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.prices b{font-size:14px;font-weight:650;color:var(--ink)}
+.prices.lg{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 14px}
+.prices.lg b{font-size:19px}
+.stp{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden}
+.stp button{width:38px;height:36px;display:grid;place-items:center;color:var(--ink)}
+.stp button:active{background:var(--surface-2)}
+.stp span{min-width:30px;text-align:center;font-weight:650;font-size:15px}
+.st-ok{color:var(--good)}.st-warn{color:var(--warn)}.st-bad{color:var(--bad)}.st-none{color:var(--muted)}
+.flag-txt{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:700;color:var(--good)}
+.flag-dot{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--good);color:#fff}
+/* carousel: portrait shots, swipe or tap to enlarge */
+.car{display:flex;flex-direction:column;gap:8px}
+.car-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;border-radius:18px;background:#F0F0F0}
+.car-track::-webkit-scrollbar{display:none}
+.car-slide{position:relative;flex:0 0 100%;scroll-snap-align:center;aspect-ratio:4/5;max-height:52cqh;background:#F0F0F0}
+.car-slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block}
+.car-dots{display:flex;justify-content:center;gap:6px}
+.car-dots i{width:6px;height:6px;border-radius:50%;background:var(--line);transition:background .2s,width .2s}
+.car-dots i.on{background:var(--ink);width:16px;border-radius:3px}
+.zoom{position:absolute;inset:0;z-index:50;background:var(--bg);display:flex;flex-direction:column;animation:fade .2s ease}
+.zoom-top{flex:none;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 8px 8px 18px}
+.zoom-t{font:650 18px/1.2 var(--f-display);letter-spacing:-.015em}
+.zoom .car{flex:1;min-height:0;padding-bottom:6px}
+.zoom .car-track{flex:1;min-height:0;border-radius:0}
+.zoom .car-slide{aspect-ratio:auto;max-height:none;height:100%}
+.zoom-foot{flex:none;display:flex;flex-direction:column;gap:8px;padding:10px 18px max(14px,env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--surface)}
 
 /* ---------- today ---------- */
 .look{scroll-snap-align:start;flex:none;width:236px;text-align:left;display:flex;flex-direction:column;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:8px 8px 12px}
@@ -192,6 +222,14 @@ input{font:inherit;color:inherit}
 .appt-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
 .appt-shop{font:600 18px/1.2 var(--f-display);letter-spacing:-.015em}
 .appt-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.appt-buyer{font-size:14px;color:var(--ink);margin-top:-3px}
+.appt-cats{font-size:13px;color:var(--muted)}
+.appt-cats b{color:var(--ink);font-weight:600;margin-right:4px}
+.kv{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted)}
+.gtab{width:100%;border-collapse:collapse;font-size:13.5px}
+.gtab th{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-align:right;padding:4px 0 8px}
+.gtab th:first-child,.gtab td:first-child{text-align:left}
+.gtab td{text-align:right;padding:7px 0;border-top:1px solid var(--line)}
 .appt-side{display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;gap:6px;flex:none}
 .live{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .tile{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px;min-width:0}
@@ -224,11 +262,39 @@ input{font:inherit;color:inherit}
 .fchip svg{color:var(--muted)}
 .opt .row-side{color:var(--accent)}
 .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.pgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.pcard{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:8px 8px 12px;display:flex;flex-direction:column;gap:6px;min-width:0}
-.pcard .thumb{width:100%;height:auto;aspect-ratio:1;max-width:100%}
-.pcard.locked .thumb{opacity:.5}
-.pname{font-weight:620;font-size:14px;line-height:1.25}
+/* collection: category rail on the left, products grouped by category and family */
+.cat-layout{display:grid;grid-template-columns:84px minmax(0,1fr);gap:8px;align-items:start}
+.cat-side{position:sticky;top:8px;max-height:calc(100cqh - 120px);overflow-y:auto;scrollbar-width:none;display:flex;flex-direction:column;gap:12px;padding-bottom:20px}
+.cs-grp{display:flex;flex-direction:column;gap:1px}
+.cs-cat{display:flex;justify-content:space-between;align-items:baseline;gap:4px;text-align:left;font-size:13px;font-weight:700;line-height:1.2;padding:7px 8px;border-radius:10px;color:var(--ink)}
+.cs-cat span{font-size:11px;font-weight:600;color:var(--muted)}
+.cs-cat.on{background:var(--ink);color:var(--bg)}.cs-cat.on span{color:inherit;opacity:.7}
+.cs-fam{text-align:left;font-size:12.5px;line-height:1.2;color:var(--muted);padding:5px 8px 5px 12px;border-left:2px solid var(--line);margin-left:8px}
+.cs-fam.on{color:var(--accent);border-left-color:var(--accent);font-weight:650}
+.cat-main{display:flex;flex-direction:column;gap:22px;min-width:0}
+.cat-sec{display:flex;flex-direction:column;gap:8px}
+.cat-h{margin:0;display:flex;align-items:baseline;gap:8px;font:650 20px/1.2 var(--f-display);letter-spacing:-.02em;padding-bottom:6px;border-bottom:2px solid var(--ink);scroll-margin-top:8px}
+.cat-h span{font-size:13px;font-weight:600;color:var(--muted)}
+.pc-fam{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.pcard{scroll-margin-top:8px}
+.pgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.pcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:6px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.pcard.has{border-color:var(--good);box-shadow:inset 0 0 0 1px var(--good)}
+.pc-photo{position:relative}
+.pc-img{display:block;width:100%}
+.pc-photo .thumb{width:100%;height:auto;aspect-ratio:1;border-radius:10px}
+.pcard.locked .pc-img{opacity:.5}
+.pc-btn{position:absolute;right:5px;bottom:5px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--accent-ink);box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.pc-btn.x{top:5px;bottom:auto;width:30px;height:30px;background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+.pc-flag,.pc-lock{position:absolute;left:5px;top:5px;display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;padding:3px 7px 3px 5px;border-radius:99px;max-width:calc(100% - 44px);white-space:nowrap;overflow:hidden}
+.pc-flag{background:var(--good);color:#fff}
+.pc-lock{background:var(--surface);color:var(--warn);border:1px solid var(--line)}
+.pc-info{display:flex;flex-direction:column;gap:4px;text-align:left;padding:0 1px 4px;min-width:0}
+.pname{font-weight:620;font-size:13.5px;line-height:1.25}
+.pcard .prices{grid-template-columns:1fr;gap:1px}
+.pcard .prices span{flex-direction:row;justify-content:space-between;align-items:baseline;gap:4px}
+.pcard .prices small{text-transform:none;letter-spacing:0;font-size:10.5px}
+.pcard .prices b{font-size:13px}
 .dots{display:flex;gap:4px}
 .dots .sw{width:10px;height:10px}
 
@@ -248,7 +314,24 @@ input{font:inherit;color:inherit}
 .track div.done{color:var(--muted)}.track div.done::before{background:var(--good)}
 .track div.cur{color:var(--ink)}.track div.cur::before{background:var(--accent)}
 .track-note{font-size:12.5px;color:var(--muted);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-.ov-body{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column}
+.ov-body{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
+.ov-actions{position:absolute;z-index:19;left:50%;transform:translateX(-50%);bottom:calc(max(14px,calc(env(safe-area-inset-bottom,0px) - 6px)) + 70px);width:min(calc(100% - 28px),420px);display:flex;gap:10px}
+.ov-actions .cap-btn{box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.ov-actions .round{background:var(--surface);box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.sel{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 4px;padding:12px 8px 12px 14px;border-top:1px solid var(--line)}
+.sel:first-child{border-top:0}
+.sel-info{display:flex;gap:12px;align-items:center;text-align:left;min-width:0}
+.sel-x{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--muted);align-self:start}
+.sel-ctl{grid-column:1 / -1;display:flex;align-items:center;gap:10px;padding-left:68px;padding-right:6px;flex-wrap:wrap}
+.sel-sz{font-size:13px;font-weight:650;color:var(--accent);padding:6px 2px}
+.sel-val{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;line-height:1.2}
+.sel-val small{font-size:11.5px;color:var(--muted)}
+.sel-meta{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.sel-meta small{font-size:10px;font-weight:700}
+.sel.open .sel-val small{color:var(--warn);font-weight:650}
+.bulk-cta{display:flex;justify-content:space-between;align-items:center;gap:10px;text-align:left;padding:12px 14px;border-radius:14px;background:var(--warn-bg);color:var(--ink)}
+.bulk-cta > span:first-child{display:flex;flex-direction:column;gap:2px}
+.bulk-cta .linkbtn{flex:none}
 .ov-kpi{padding:14px 16px 4px}
 .ov-lines{padding:6px 16px 20px;display:flex;flex-direction:column;gap:14px}
 .lines-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:8px}
@@ -269,15 +352,20 @@ input{font:inherit;color:inherit}
 .bar-fill{height:100%;border-radius:4px;background:var(--accent);transition:width .35s ease}
 .bar-fill.warn{background:var(--warn)}.bar-fill.bad{background:var(--bad)}
 .kpi-meta{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;color:var(--muted);margin-top:6px}
-.kpi-mix{display:flex;flex-direction:column;gap:12px}
-.mix-top{display:flex;justify-content:space-between;font-size:14px;gap:8px}
-.mix-val{font-variant-numeric:tabular-nums}
-.mix-track{position:relative;height:6px;border-radius:3px;background:var(--surface-2);margin-top:6px}
+.bud-div{display:flex;flex-direction:column;gap:2px;padding-top:12px;border-top:1px solid var(--line)}
+.bud-head{display:flex;justify-content:space-between;align-items:center;gap:8px;font-weight:650;font-size:15px;padding-bottom:4px}
+.bud-head .num{font-weight:500;font-size:14px}.bud-head .num b{font-weight:700}
+.bud-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:2px 10px;align-items:baseline;font-size:14px;padding:6px 0}
+.bud-row b{min-width:42px;text-align:right}
+.bud-row .mix-track{grid-column:1 / -1;margin-top:4px}
+.bud-row.off{color:var(--faint);grid-template-columns:1fr auto;font-size:13.5px}
+.bud-in{display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:10px;align-items:center;padding:4px 0}
+.bud-in > span:first-child{display:flex;flex-direction:column;font-weight:600}
+.inp-eur{position:relative}.inp-eur span{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.inp-eur .inp{padding-left:28px;text-align:right;font-variant-numeric:tabular-nums}
+.mix-track{position:relative;height:6px;border-radius:3px;background:var(--surface-2);margin-top:6px;overflow:hidden}
 .mix-fill{height:100%;border-radius:3px;background:var(--faint);transition:width .35s ease}
 .mix-fill.ok{background:var(--good)}.mix-fill.warn{background:var(--warn)}.mix-fill.bad{background:var(--bad)}
-.mix-target{position:absolute;top:-4px;bottom:-4px;width:2px;margin-left:-1px;background:var(--ink);border-radius:1px}
-.mix-note{font-size:12px;font-weight:600;margin-top:4px}
-.mix-note.warn{color:var(--warn)}.mix-note.bad{color:var(--bad)}
 .kpi-foot{font-size:12px;color:var(--faint);line-height:1.45}
 
 /* ---------- sheets ---------- */
@@ -401,20 +489,18 @@ input{font:inherit;color:inherit}
   .tabbar{bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 8px));padding:4px}
   .tab{flex-direction:row;gap:6px;font-size:12.5px;padding:6px 16px}
   .screen.tabbed{padding-bottom:64px}
-  .screen.tabbed.has-session{padding-bottom:128px}
-  .sbar{bottom:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 8px)) + 56px);padding:4px 4px 4px 14px}
-  .sbar-main{padding:2px 0}
-  .app.has-session .toast{bottom:124px}
+  .sbar{margin-top:4px;padding:3px 4px 3px 14px}
+  .sbar-main{padding:1px 0}.sbar-t{font-size:16px}.sbar-k{display:none}
+  .ov-body{padding-bottom:116px}
+  .ov-actions{bottom:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 8px)) + 54px)}
 }
 @container app (orientation: landscape) and (min-width: 600px){
-  .ov-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,38%);overflow:hidden}
-  .ov-lines{overflow-y:auto;order:1;min-height:0}
-  .ov-kpi{overflow-y:auto;order:2;min-height:0;border-left:1px solid var(--line);padding:12px 14px}
   .ov-sub{flex-direction:row;align-items:center;justify-content:space-between;padding:4px 16px 8px}
   .ov-sub .track{flex:1;max-width:420px}
   .today-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start}
   .h1{font-size:28px}
   .pgrid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .cat-layout{grid-template-columns:150px minmax(0,1fr)}
   .vf-stage{transform:translate(-50%,-42%)}
   .sheet,.match{max-height:94%}
   .sheet.tall{height:94%}
@@ -422,6 +508,7 @@ input{font:inherit;color:inherit}
 }
 @container app (min-width: 700px) and (orientation: portrait){
   .pgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .cat-layout{grid-template-columns:150px minmax(0,1fr)}
 }
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
@@ -464,6 +551,7 @@ const COL = {
 const SZ = {wr:['34','36','38','40','42'], mr:['46','48','50','52','54'], ws:['36','37','38','39','40','41'], ms:['40','41','42','43','44','45'], u:['U']};
 const CATS = ['bags','rtw','shoes','acc'];
 const CAT_LABEL = {bags:'Bags', rtw:'Ready-to-wear', shoes:'Shoes', acc:'Accessories'};
+const CAT_SHORT = {bags:'Bags', rtw:'RTW', shoes:'Shoes', acc:'Acc.'};
 const DIV_LABEL = {W:"Women's", M:"Men's"};
 const DIV_TAB = {W:'Women', M:'Men'};
 const CLUSTERS = ['Silver','Gold','Platinum','Diamond'];
@@ -521,6 +609,8 @@ PRODUCTS.forEach(p => { p.season = Object.keys(SEASON_OF).find(k => SEASON_OF[k]
 const P = Object.fromEntries(PRODUCTS.map(p => [p.id, p]));
 // Simulated camera feed: a real shelf shot of one sample, and the style it should match
 const CAMERA_SCENE = {src:'img/scene-amazona-mini.jpg', pid:'w-amazona-mini', colour:'Sunrise Orange'};
+// Extra loewe.com shots per colourway (front first), shown in the product carousel: docs/img/v/<style>-<colour>_<view>.jpg
+const VIEWS = {'A039AS0X01-0241':'1F 1Q 1S 1O 1W', 'A039AS0X01-0371':'1F 1Q 1S 1O 1W', 'A039AS0X01-1100':'1F 1Q 1S 1O 1W', 'A039AS0X01-2100':'1F 1Q 1S 1O 1W', 'A039AS0X01-9579':'1F 1Q 1S 1W 1R', 'A039AS4X12-1100':'1F 1Q 1S 1W 1R', 'A039AS4X12-5557':'1F 1Q 1S 1W 1R', 'A039AS4X12-9579':'1F 1Q 1S 1O 1W', 'A411FC2XA6-1100':'1F 1Q 1O 1W 1R', 'A411FC2XA6-2150':'1F 1Q 1S 1O 1W', 'A411FC2XA6-3606':'1F 1Q 1O 1W 1R', 'A411FC2XA6-4927':'1F 1Q 1O 1W 1R', 'A411FC2XA6-5557':'1F 1Q 1O 1W 1R', 'A510P60X41-1100':'1F 1Q 1S 1O 1W', 'A510P60XAC-2530':'1F 1Q 1S 1O 1W', 'A510PLIX04-1100':'1F 1Q 1S 1O 1W', 'A510PLIX04-3565':'1F 1Q 1S 1O 1W', 'A510PLIX18-0018':'1F 1Q 1S 1W 1R', 'A510PLIX18-4974':'1F 1Q 1S 1O 1W', 'A657G50X01-1100':'1F 1Q 1S 1O 1W', 'A657G50X01-2150':'1F 1Q 1S 1O 1W', 'A657G50X01-4927':'1F 1Q 1S 1W 1U', 'A657G50X01-7240':'1F 1Q 1S 1O 1W', 'ATBBTBBX01-0241':'1F 1Q 1S 1O 1W', 'ATBBTBBX01-1100':'1F 1Q 1S 1O 1W', 'ATBBTBBX01-3200':'1F 1Q 1S 1O 1W', 'ATBBTBBX01-8000':'1F 1Q 1S 1O 1W', 'AWRAWRPX01-1100':'1F 1Q 1S 1O 1W', 'AWRAWRPX01-5987':'1F 1Q 1S 1O 1W', 'AWRAWRPX01-9579':'1F 1Q 1S 1O 1W', 'B510PCSX02-0018':'1F 1Q 1S 1O 1W', 'B510PCSX02-1100':'1F 1Q 1S 1O 1W', 'B510PNLX02-0018':'1F 1Q 1S 1O 1W', 'B510PZZX01-1100':'1F 1Q 1S 1O 1W', 'B510PZZX01-8853':'1F 1Q 1S 1O 1W', 'BANBBBHX06-1100':'1F 1S 1O 1W 1R', 'BANBBBHX06-3468':'1F 1S 1O 1W 1R', 'BSHOSTMX01-1100':'1F 1Q 1S 1O 1W', 'BSHOSTMX01-8304':'1F 1Q 1S 1W 1U', 'C510302X23-0362':'1F 1Q 1S 1W 1P', 'C510302X23-3606':'1F 1Q 1S 1W 1P', 'C510Q77X12-1100':'1F 1S 1W 1U', 'C510Q77X14-0362':'1F 1Q 1S 1W', 'C510Q77X14-3606':'1F 1Q 1S 1W', 'CWS1ST0X07-3102':'1F 1W 1P 1X', 'CWS1ST0X07-5109':'1F 1W 1P 1X', 'EBUB237X02-1839':'1F 1O 1W', 'EBUB237X02-8779':'1F 1O 1W', 'F810487X17-1102':'1F 1W 1P 1U', 'F810487X17-2112':'1F 1O 1W 1P', 'F810487X17-5100':'1F 1W 1P', 'F810487X17-5102':'1F 1O 1W 1P 1U', 'G314MSKX01-1100':'1F 1Q 1O 1W 1R', 'G314MSKX01-1742':'1F 1Q 1O 1W 1R', 'H526Y02WF1-4933':'1F 1S 1A 1C 1D', 'H526Y04WKV-3100':'1F 1A 1C 1D 1B', 'H526Y04WKV-9100':'1F 1A 1C 1D 1B', 'H526Y05WIN-5110':'1F 1A 1C 1D 1B', 'H526Y14KH1-4160':'1F 1A 1C 1D 1B', 'H526Y14KH1-5100':'1F 1A 1C 1D 1B', 'H526Y14KQU-1584':'1F 1A 1C 1D 1B', 'H526Y22JAJ-5110':'1F 1A 1C 1D 1B', 'H526Y22JAK-2370':'1F 1A 1C 1D 1B', 'K820358X88-1100':'1F 1Q 1W 1R', 'K820358X89-6579':'1F 1Q 1O 1W 1R', 'KSA9OT1X01-1100':'1F 1Q 1O 1W 1R', 'KSA9OT1X01-2140':'1F 1Q 1W 1R', 'L814379X83-1100':'1F 1Q 1O 1W 1U', 'L814379X83-4974':'1F 1Q 1O 1W 1U', 'L815284X18-1100':'1F 1Q 1O 1W 1U', 'L815284X18-2100':'1F 1Q 1O 1W 1U', 'L815284X18-7240':'1F 1Q 1O 1W 1U', 'LLST465X04-3110':'1F 1Q 1O 1W 1U', 'LLST465X04-4140':'1F 1Q 1O 1W 1U', 'LOVLS07X03-1100':'1F 1Q 1W 1U', 'LOVLS07X03-4700':'1F 1Q 1W 1U', 'M816282XCC-0130':'1F 1Q 1O 1W 1U', 'M816282XCC-0132':'1F 1Q 1W 1U', 'M816282XCC-0202':'1F 1Q 1W 1U', 'M816282XCC-2432':'1F 1Q 1O 1W 1U', 'M816282XCE-1265':'1F 1Q 1O 1W 1U', 'M816282XCE-2105':'1F 1Q 1O 1W 1U', 'M816282XCE-4157':'1F 1Q 1O 1W 1U', 'MBR2282X09-1102':'1F 1Q 1O 1W 1U', 'MBR2282X09-2101':'1F 1Q 1O 1W 1U', 'S359Y02XHK-0264':'1F 1A 1C 1D 1B', 'S359Y02XHK-1100':'1F 1A 1C 1D 1B', 'S359Y02XHK-2110':'1F 1A 1D 1B', 'S359Y08XBU-2110':'1F 1A 1C 1D 1B', 'S359Y08XBU-7100':'1F 1A 1C 1D 1B', 'S359Y09XKZ-4100':'1F 1A 1C 1D', 'S359Y09XKZ-5110':'1F 1A 1C 1D', 'S359Y09XKZ-7100':'1F 1A 1C 1D', 'S359Y09XMK-9990':'1F 1A 1C 1D', 'S540Y01XCL-1100':'1F 1A 1C 1D 1B', 'S540Y01XCL-3878':'1F 1A 1C 1D 1B', 'S540Y04XOJ-3100':'1F 1A 1C 1D 1B', 'S540Y04XOJ-6100':'1F 1A 1C 1D 1B', 'S540Y04XOJ-9100':'1F 1A 1C 1D 1B', 'S540Y09XWV-3110':'1F 1A 1C 1D', 'S540Y09XWW-1100':'1F 1A 1C 1D', 'S540Y09XXN-1100':'1F 1A 1C 1B', 'S540Y09XXN-5100':'1F 1A 1C 1D'};
 
 // Maison guidelines: target share of the order value per category, per cluster and division (±5 pts tolerance)
 const GUIDE = {
@@ -532,14 +622,21 @@ const GUIDE = {
 
 const BUYERS = {
   dubois: {id:'dubois', rep:'roberto', shop:'Maison Dubois', city:'Paris', buyer:'Claire Dubois', cluster:'Platinum', divs:['W','M'], budget:{W:60000, M:30000}, time:'10:00', code:'DUB01'},
-  linea:  {id:'linea', rep:'roberto', shop:'Linea Concept', city:'Milan', buyer:'Giulia Ferri', cluster:'Gold', divs:['W'], budget:{W:40000}, time:'12:30', code:'LIN04'},
-  harbour:{id:'harbour', rep:'roberto', shop:'Harbour & Co.', city:'London', buyer:'Tom Whitlock', cluster:'Silver', divs:['M'], budget:{M:20000}, time:'15:00', code:'HAR02'},
+  linea:  {id:'linea', rep:'roberto', shop:'Linea Concept', city:'Milan', buyer:'Giulia Ferri', cluster:'Gold', divs:['W'], budget:{W:40000}, time:'12:30', code:'LIN04',
+           cat:{W:{bags:20000, rtw:0, shoes:10000, acc:10000}}},
+  harbour:{id:'harbour', rep:'roberto', shop:'Harbour & Co.', city:'London', buyer:'Tom Whitlock', cluster:'Silver', divs:['M'], budget:{M:20000}, time:'15:00', code:'HAR02',
+           cat:{M:{bags:0, rtw:12000, shoes:6000, acc:2000}}},
   kanda:  {id:'kanda', rep:'roberto', shop:'Kanda Select', city:'Tokyo', buyer:'Aiko Mori', cluster:'Diamond', divs:['W','M'], budget:{W:120000, M:65000}, time:'17:00', code:'KAN07'},
   nove:   {id:'nove', rep:'sofia', shop:'Atelier Nove', city:'Rome', buyer:'Luca Bianchi', cluster:'Gold', divs:['W','M'], budget:{W:45000, M:20000}, time:'11:00', code:'NOV03'},
   prisma: {id:'prisma', rep:'sofia', shop:'Casa Prisma', city:'Madrid', buyer:'Elena Ruiz', cluster:'Platinum', divs:['W'], budget:{W:55000}, time:'14:30', code:'PRI05'},
   brun:   {id:'brun', rep:'marc', shop:'Brun & Fils', city:'Lyon', buyer:'Paul Brun', cluster:'Silver', divs:['W','M'], budget:{W:25000, M:15000}, time:'09:30', code:'BRU02'},
   wren:   {id:'wren', rep:'marc', shop:'Wren', city:'New York', buyer:'Maya Chen', cluster:'Platinum', divs:['W','M'], budget:{W:70000, M:35000}, time:'16:00', code:'WRE01'},
 };
+const BUYER_CAT0 = Object.fromEntries(Object.entries(BUYERS).map(([k, b]) => [k, b.cat]));
+// Budget per category: set by the seller; until then the division budget split by the Maison guideline for the client's cluster
+const catBudget = (b, d, c) => b.cat && b.cat[d] && b.cat[d][c] != null ? b.cat[d][c] : Math.round((b.budget[d] || 0) * GUIDE[b.cluster][d][c] / 100);
+const divBudget = (b, d) => CATS.reduce((a, c) => a + catBudget(b, d, c), 0);
+const buyingCats = (b, d) => CATS.filter(c => catBudget(b, d, c) > 0);
 const repOf = o => REPS[BUYERS[o.buyerId].rep];
 // The buyer session the seller is in right now (opened from Home, Orders or a picker), if any
 const activeOrder = (S, ui) => { const o = ui.session && S.orders[ui.session]; return o && BUYERS[o.buyerId].rep === S.rep ? o : null; };
@@ -562,7 +659,12 @@ const LOOKS = [
 /* ---------- helpers ---------- */
 const fmt = n => '€' + Math.round(n).toLocaleString('en-GB');
 const prices = p => `${fmt(p.price)} wholesale · ${fmt(p.rrp)} retail`;
+const cname = c => `${c} ${COL[c][1]}`;
 const units = q => Object.values(q || {}).reduce((a, b) => a + b, 0);
+// A line can be just selected (no quantity), a bulk total not yet split by size (key ALL; U for one-size styles), or split by size
+const bulkKey = p => p.sizes.length > 1 ? 'ALL' : 'U';
+const isSplit = l => P[l.pid].sizes.length > 1 && Object.keys(l.qty).some(k => k !== 'ALL');
+const usedSt = (v, bud) => !v ? 'none' : !bud ? 'bad' : v / bud > 1.1 ? 'bad' : v / bud > 1 ? 'warn' : 'ok';
 const lineValue = l => units(l.qty) * P[l.pid].price;
 const qkey = q => Object.keys(q).sort().map(k => k + ':' + q[k]).join(',');
 const uid = () => Math.random().toString(36).slice(2, 9);
@@ -576,19 +678,17 @@ const clusterVar = c => ({'--c': `var(--${c.toLowerCase()})`});
 
 function log(o, by, text) { o.log.push({at: Date.now(), by, text}); }
 
+// Spend against budget per division and per category; percentages are on each category's own budget
 function kpi(order, div) {
-  const b = BUYERS[order.buyerId], g = GUIDE[b.cluster][div];
+  const b = BUYERS[order.buyerId];
   const byCat = {bags:0, rtw:0, shoes:0, acc:0};
-  let total = 0, u = 0;
-  order.lines.forEach(l => { const p = P[l.pid]; if (p.div !== div) return; const v = lineValue(l); byCat[p.cat] += v; total += v; u += units(l.qty); });
-  const budget = b.budget[div] || 0;
-  const mix = CATS.map(c => {
-    const pct = total ? byCat[c] / total * 100 : 0, target = g[c], diff = pct - target;
-    const st = !total ? 'none' : Math.abs(diff) <= 5 ? 'ok' : Math.abs(diff) <= 10 ? 'warn' : 'bad';
-    return {cat:c, value:byCat[c], pct, target, diff, st};
-  });
+  let total = 0, u = 0, open = 0;
+  order.lines.forEach(l => { const p = P[l.pid]; if (p.div !== div) return; const v = lineValue(l); byCat[p.cat] += v; total += v; u += units(l.qty); if (!units(l.qty)) open++; });
+  const budget = divBudget(b, div);
+  const mix = CATS.map(c => { const bud = catBudget(b, div, c), v = byCat[c];
+    return {cat:c, value:v, budget:bud, used: bud ? v / bud * 100 : 0, st: usedSt(v, bud)}; });
   const used = budget ? total / budget * 100 : 0;
-  return {total, units:u, budget, used, bst: used > 115 ? 'bad' : used > 105 ? 'warn' : 'ok', mix};
+  return {total, units:u, open, budget, used, bst: usedSt(total, budget) === 'none' ? 'ok' : usedSt(total, budget), mix};
 }
 
 function applyDraft(o, pid, draft, via, by) {
@@ -600,11 +700,12 @@ function applyDraft(o, pid, draft, via, by) {
   for (const c of p.colours) {
     const q = {}; Object.entries(draft[c] || {}).forEach(([s, n]) => { if (n > 0) q[s] = n; });
     const prev = old.find(l => l.colour === c), u = units(q), pu = prev ? units(prev.qty) : 0;
+    if (!prev && !u) continue;
+    // a colour already in the order stays selected at zero; only Remove takes it out
     const same = prev && qkey(prev.qty) === qkey(q);
-    if (u > 0) fresh.push(same ? prev : {id: prev ? prev.id : uid(), pid, colour:c, qty:q, via: prev ? prev.via : via, by, at: now});
-    if (!prev && u > 0) msgs.push(`Added ${p.name} · ${c} ×${u}${via === 'photo' ? ' (photo match)' : via === 'suggestion' ? ' (suggestion)' : ''}`);
-    else if (prev && u === 0) msgs.push(`Removed ${p.name} · ${c}`);
-    else if (prev && !same) msgs.push(`Changed ${p.name} · ${c} ×${pu} → ×${u}`);
+    fresh.push(same ? prev : prev ? {...prev, qty:q, at:now} : {id:uid(), pid, colour:c, qty:q, via, by, at:now});
+    if (!prev) msgs.push(`Added ${p.name} · ${cname(c)} ×${u}${via === 'photo' ? ' (photo match)' : via === 'suggestion' ? ' (suggestion)' : ''}`);
+    else if (!same) msgs.push(u ? `Changed ${p.name} · ${cname(c)} ×${pu} → ×${u}` : `Cleared quantities for ${p.name} · ${cname(c)}`);
   }
   const at = idx < 0 ? rest.length : o.lines.slice(0, idx).filter(l => l.pid !== pid).length;
   rest.splice(at, 0, ...fresh);
@@ -624,24 +725,26 @@ function seedState() {
     L('w-puzzle-fold','Sand',{U:2},10,11),
     L('w-shirt-dress','Navy Blue',{'34':1,'36':2,'38':2,'40':1},10,21), L('w-short-coat','Taupe Grey',{'36':1,'38':1,'40':1},10,26),
     L('w-pebble-lace','Black',{'37':1,'38':2,'39':2,'40':1},10,33), L('w-scarf','White Beige',{U:6},10,36,'suggestion'),
+    L('w-cord','Brown',{ALL:4},10,38,'search'), L('w-flamenco','Sunrise Orange',{},10,40,'search'), L('w-toy','Emerald Green',{},10,41,'search'),
     L('m-tee','Ecru',{'46':1,'48':2,'50':2,'52':1},10,44), L('m-pogo','Brown Green',{'41':1,'42':2,'43':2,'44':1},10,48),
   ];
   const o = {id:'o-dubois', buyerId:'dubois', status:'draft', submittedBy:null, lines,
     log:[{at:todayAt(10,2), by:'salesperson', text:'Session started in the showroom'},
-      ...lines.map(l => ({at:l.at, by:'salesperson', text:`Added ${P[l.pid].name} · ${l.colour} ×${units(l.qty)}${l.via === 'photo' ? ' (photo match)' : ' (suggestion)'}`}))]};
-  return {orders:{'o-dubois':o}, rep:'roberto', buyers:{}, appts:{dubois:{in:todayAt(10, 2)}}, savedAt:null};
+      ...lines.map(l => ({at:l.at, by:'salesperson', text: units(l.qty) ? `Added ${P[l.pid].name} · ${cname(l.colour)} ×${units(l.qty)}${l.via === 'photo' ? ' (photo match)' : l.via === 'suggestion' ? ' (suggestion)' : ''}` : `Selected ${P[l.pid].name} · ${cname(l.colour)}`}))]};
+  return {orders:{'o-dubois':o}, rep:'roberto', buyers:{}, budgets:{}, appts:{dubois:{in:todayAt(10, 2)}}, savedAt:null};
 }
 const KEY = 'vega-poc-v2';
 function loadState() {
   try { const s = JSON.parse(localStorage.getItem(KEY));
-    if (s && s.orders) { s.rep = REPS[s.rep] ? s.rep : 'roberto'; s.buyers = s.buyers || {}; s.appts = s.appts || {}; Object.assign(BUYERS, s.buyers); return s; } } catch (e) {}
+    if (s && s.orders) { s.rep = REPS[s.rep] ? s.rep : 'roberto'; s.buyers = s.buyers || {}; s.appts = s.appts || {}; s.budgets = s.budgets || {};
+      Object.assign(BUYERS, s.buyers); Object.entries(s.budgets).forEach(([k, c]) => { if (BUYERS[k]) BUYERS[k].cat = c; }); return s; } } catch (e) {}
   return seedState();
 }
 function saveState(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
 const SKEY = 'vega-session';
 const loadSession = () => { try { return localStorage.getItem(SKEY) || null; } catch (e) { return null; } };
 const saveSession = id => { try { id ? localStorage.setItem(SKEY, id) : localStorage.removeItem(SKEY); } catch (e) {} };
-function clearState() { saveSession(null); Object.keys(BUYERS).forEach(k => { if (BUYERS[k].added) delete BUYERS[k]; }); try { localStorage.removeItem(KEY); } catch (e) {} }
+function clearState() { saveSession(null); Object.keys(BUYERS).forEach(k => { if (BUYERS[k].added) delete BUYERS[k]; else BUYERS[k].cat = BUYER_CAT0[k]; }); try { localStorage.removeItem(KEY); } catch (e) {} }
 
 /* ---------- recognition (simulated for the POC) ---------- */
 const sibling = p => PRODUCTS.find(x => x.id !== p.id && x.div === p.div && x.shape === p.shape);
@@ -655,18 +758,18 @@ function alternatives(p) {
 /* ---------- export ---------- */
 function exportRows(o) {
   const b = BUYERS[o.buyerId], rows = [];
-  o.lines.forEach(l => { const p = P[l.pid]; p.sizes.forEach(s => { const n = l.qty[s]; if (!n) return;
+  o.lines.forEach(l => { const p = P[l.pid]; [...p.sizes, 'ALL'].forEach(s => { const n = l.qty[s]; if (!n) return;
     rows.push({order:orderNo(o), buyer_shop:b.shop, buyer:b.buyer, cluster:b.cluster, salesperson:repOf(o).name, submitted_by:o.submittedBy || 'not submitted', status:o.status,
-      division:DIV_LABEL[p.div], category:CAT_LABEL[p.cat], style_code:p.code, style:p.name, colour_code:COL[l.colour][1], colour:l.colour, size:s, qty:n,
+      division:DIV_LABEL[p.div], category:CAT_LABEL[p.cat], style_code:p.code, style:p.name, colour_code:COL[l.colour][1], colour:l.colour, size:s === 'ALL' ? 'not split' : s, qty:n,
       unit_wholesale_eur:p.price, line_value_eur:n * p.price, delivery:p.drop, captured_via:l.via, captured_by:l.by, captured_at:new Date(l.at).toISOString()}); }); });
   return rows;
 }
 function toTSV(o) { const r = exportRows(o); if (!r.length) return 'No lines yet.'; const h = Object.keys(r[0]); return [h.join('\t'), ...r.map(x => h.map(k => x[k]).join('\t'))].join('\n'); }
 function toXML(o) {
   const b = BUYERS[o.buyerId], esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
-  const lines = o.lines.map(l => { const p = P[l.pid];
+  const lines = o.lines.filter(l => units(l.qty)).map(l => { const p = P[l.pid];
     return `    <line style="${p.code}" colour="${COL[l.colour][1]}" delivery="${p.drop}" capturedVia="${l.via}" capturedBy="${l.by}">\n      <name>${esc(p.name)} · ${l.colour}</name>\n` +
-      p.sizes.filter(s => l.qty[s]).map(s => `      <size code="${s}" qty="${l.qty[s]}" unitEur="${p.price}"/>`).join('\n') + `\n    </line>`; }).join('\n');
+      [...p.sizes, 'ALL'].filter(s => l.qty[s]).map(s => `      <size code="${s === 'ALL' ? 'unsplit' : s}" qty="${l.qty[s]}" unitEur="${p.price}"/>`).join('\n') + `\n    </line>`; }).join('\n');
   return `<?xml version="1.0" encoding="UTF-8"?>\n<order id="${orderNo(o)}" season="SS27" status="${o.status}" submittedBy="${o.submittedBy || ''}">\n  <buyer shop="${esc(b.shop)}" name="${esc(b.buyer)}" cluster="${b.cluster}"/>\n  <salesperson>${repOf(o).full}</salesperson>\n  <lines>\n${lines}\n  </lines>\n</order>`;
 }
 
@@ -682,7 +785,7 @@ const IC = {
   user:'M12 12a4 4 0 100-8 4 4 0 000 8z M4 21c1-4 4-6 8-6s7 2 8 6', spark:'M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z',
   info:'M12 21a9 9 0 100-18 9 9 0 000 18z M12 11v6 M12 7.5v.01', history:'M4 12a8 8 0 108-8 8 8 0 00-6.5 3.3 M4 4v4h4 M12 8v4l3 2',
   copy:'M8 8h11v12H8z M5 16V4h11', alert:'M12 4l9 16H3z M12 10v4 M12 17v.01',
-  filter:'M4 7h16 M7 12h10 M10 17h4', down:'M6 9l6 6 6-6', plus:'M12 5v14 M5 12h14', next:'M9 6l6 6-6 6', home:'M4 11l8-7 8 7 M6 9.5V20h12V9.5 M10 20v-5h4v5', note:'M5 4h14v16H5z M8 9h8 M8 13h8 M8 17h5',
+  filter:'M4 7h16 M7 12h10 M10 17h4', down:'M6 9l6 6 6-6', plus:'M12 5v14 M5 12h14', minus:'M5 12h14', flag:'M5 21V3.5 M5 4h14l-3.5 4.5L19 13H5', next:'M9 6l6 6-6 6', home:'M4 11l8-7 8 7 M6 9.5V20h12V9.5 M10 20v-5h4v5', note:'M5 4h14v16H5z M8 9h8 M8 13h8 M8 17h5',
 };
 const Icon = ({n, s=22, w=1.8}) => html`<svg width=${s} height=${s} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width=${w} stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d=${IC[n]}/></svg>`;
 
@@ -693,6 +796,37 @@ function Art({pid, colour, style}) {
   return html`<img class="ph" src=${imgSrc(p, colour)} alt=${p.name + ', ' + colour} loading="lazy" decoding="async" draggable="false" style=${style}/>`;
 }
 const Thumb = ({pid, colour, cls=''}) => html`<div class=${'thumb ' + cls}><${Art} pid=${pid} colour=${colour}/></div>`;
+const viewsOf = (p, colour) => { const id = p.img[colour] || p.img[p.colours[0]]; return (VIEWS[id] || '1F').split(' ').map(v => `img/v/${id}_${v}.jpg`); };
+// Colour name always travels with its Loewe colour code
+const Colour = ({c}) => html`<span class="cc"><span class="sw" style=${{background:COL[c][0]}}></span>${c}<span class="code">${COL[c][1]}</span></span>`;
+const Prices = ({p, cls=''}) => html`<div class=${'prices ' + cls}><span><small>Wholesale</small><b class="num">${fmt(p.price)}</b></span><span><small>Retail</small><b class="num">${fmt(p.rrp)}</b></span></div>`;
+const Stepper = ({n, on, label}) => html`<div class="stp">
+  <button aria-label=${'One less, ' + label} disabled=${n <= 0} onClick=${() => on(n - 1)}><${Icon} n="minus" s=${16} w=${2.4}/></button>
+  <span class="num">${n}</span>
+  <button aria-label=${'One more, ' + label} onClick=${() => on(n + 1)}><${Icon} n="plus" s=${16} w=${2.4}/></button></div>`;
+
+// Swipeable product shots; tap opens them full screen
+function Carousel({p, colour, onOpen, start=0, full}) {
+  const src = viewsOf(p, colour), [i, setI] = useState(start), ref = useRef(null);
+  useEffect(() => { const el = ref.current; if (el && start) el.scrollLeft = start * el.clientWidth; }, []);
+  useEffect(() => { setI(0); if (ref.current && !full) ref.current.scrollLeft = 0; }, [colour]);
+  const onScroll = e => { const el = e.currentTarget; setI(Math.round(el.scrollLeft / Math.max(1, el.clientWidth))); };
+  return html`<div class=${'car' + (full ? ' full' : '')}>
+    <div class="car-track" ref=${ref} onScroll=${onScroll}>${src.map((s, k) => html`<button class="car-slide" onClick=${() => onOpen && onOpen(k)} aria-label=${onOpen ? `Enlarge photo ${k + 1} of ${src.length}` : `Photo ${k + 1} of ${src.length}`}>
+      <img src=${s} alt=${`${p.name}, ${colour}, view ${k + 1}`} loading=${k ? 'lazy' : 'eager'} decoding="async" draggable="false"/></button>`)}</div>
+    <div class="car-dots" aria-hidden="true">${src.map((s, k) => html`<i class=${k === i ? 'on' : ''}></i>`)}</div>
+  </div>`;
+}
+
+function Zoom({z, act}) {
+  const p = P[z.pid];
+  return html`<div class="zoom" role="dialog" aria-label=${p.name + ' photos'}>
+    <div class="zoom-top"><div style="min-width:0"><div class="zoom-t">${p.name}</div><div class="small muted"><${Colour} c=${z.colour}/></div></div>
+      <button class="icon-btn" onClick=${() => act.set({zoom:null})} aria-label="Close photos"><${Icon} n="x"/></button></div>
+    <${Carousel} full p=${p} colour=${z.colour} start=${z.i || 0}/>
+    <div class="zoom-foot"><span class="pc-code">${p.code}</span><${Prices} p=${p}/></div>
+  </div>`;
+}
 const Cluster = ({c}) => html`<span class="cl" style=${clusterVar(c)}><i></i>${c}</span>`;
 const Pill = ({s}) => html`<span class=${'pill s-' + s}>${STATUS[s]}</span>`;
 const By = ({by}) => by ? html`<span class=${'by ' + by}><${Icon} n="user" s=${13} w=${2}/>${by === 'client' ? 'Client' : 'Salesperson'}</span>` : null;
@@ -717,28 +851,44 @@ function copyText(text, act) {
 /* =====================================================================
    KPI recap — live guideline check per division
    ===================================================================== */
-function KpiPanel({order, div}) {
-  const b = BUYERS[order.buyerId], k = kpi(order, div);
-  const okCount = k.mix.filter(m => m.st === 'ok').length;
-  const scale = 80;
+// Total budget, then each division and category against its own budget. Without an order it shows the assigned split only.
+function Budgets({b, order, divs, onEdit}) {
+  const ds = divs || b.divs, ks = order && Object.fromEntries(ds.map(d => [d, kpi(order, d)]));
+  const total = ds.reduce((a, d) => a + divBudget(b, d), 0), spent = ks ? ds.reduce((a, d) => a + ks[d].total, 0) : 0;
+  const pctOf = (v, of) => of ? Math.round(v / of * 100) : 0;
   return html`<div class="kpi">
-    <div>
-      <div class="kpi-label">${DIV_LABEL[div]} budget</div>
-      <div class="kpi-big"><span class="num">${fmt(k.total)}</span><span class="muted"> of ${fmt(k.budget)}</span></div>
-      <div class="bar"><div class=${'bar-fill ' + k.bst} style=${{width: Math.min(k.used, 100) + '%'}}></div></div>
-      <div class="kpi-meta"><span class="num">${Math.round(k.used)}% used · ${k.units} units</span><span class="num">${k.total > k.budget ? fmt(k.total - k.budget) + ' over' : fmt(k.budget - k.total) + ' left'}</span></div>
-    </div>
-    <div class="kpi-mix">
-      <div class="kpi-label row2"><span>Guideline mix · ${b.cluster}</span>
-        <span class=${'chip ' + (k.total ? (okCount === 4 ? 'ok' : okCount >= 2 ? 'warn' : 'bad') : '')}>${k.total ? okCount + ' of 4 on target' : 'No lines yet'}</span></div>
-      ${k.mix.map(m => html`<div>
-        <div class="mix-top"><span>${CAT_LABEL[m.cat]}</span><span class="mix-val"><b>${Math.round(m.pct)}%</b> <span class="muted">/ ${m.target}%</span></span></div>
-        <div class="mix-track"><div class=${'mix-fill ' + m.st} style=${{width: Math.min(m.pct / scale * 100, 100) + '%'}}></div><div class="mix-target" style=${{left: (m.target / scale * 100) + '%'}}></div></div>
-        ${(m.st === 'warn' || m.st === 'bad') && html`<div class=${'mix-note ' + m.st}>${m.diff > 0 ? '+' : '−'}${Math.abs(Math.round(m.diff))} pts ${m.diff > 0 ? 'over' : 'under'} guideline</div>`}
-      </div>`)}
-    </div>
-    <div class="kpi-foot">Share of ${DIV_LABEL[div].toLowerCase()} order value. The tick marks the Maison target for ${b.cluster} clients; ±5 pts counts as on target. Updates as sizes go in.</div>
+    ${!divs && html`<div>
+      <div class="kpi-label row2"><span>Total budget</span>${onEdit && html`<button class="linkbtn" onClick=${onEdit}>Edit budgets</button>`}</div>
+      <div class="kpi-big"><span class="num">${fmt(ks ? spent : total)}</span>${ks && html`<span class="muted"> of ${fmt(total)}</span>`}</div>
+      ${ks && html`<div class="bar"><div class=${'bar-fill ' + (usedSt(spent, total) === 'none' ? 'ok' : usedSt(spent, total))} style=${{width: Math.min(pctOf(spent, total), 100) + '%'}}></div></div>
+        <div class="kpi-meta"><span class="num">${pctOf(spent, total)}% used</span><span class="num">${spent > total ? fmt(spent - total) + ' over' : fmt(total - spent) + ' left'}</span></div>`}
+    </div>`}
+    ${ds.map(d => { const db = divBudget(b, d), k = ks && ks[d];
+      return html`<div class="bud-div">
+        <div class="bud-head"><span>${DIV_LABEL[d]}</span><span class="num">${k ? html`${fmt(k.total)} <span class="muted">of ${fmt(db)} · </span><b>${pctOf(k.total, db)}%</b>` : fmt(db)}</span></div>
+        ${CATS.map(c => { const cb = catBudget(b, d, c), m = k && k.mix.find(x => x.cat === c);
+          if (!cb && !(m && m.value)) return html`<div class="bud-row off"><span>${CAT_LABEL[c]}</span><span>Not buying</span></div>`;
+          return html`<div class="bud-row">
+            <span>${CAT_LABEL[c]}</span>
+            <span class="num">${m ? html`${fmt(m.value)} <span class="muted">of ${fmt(cb)}</span>` : html`${fmt(cb)} <span class="muted">· ${pctOf(cb, db)}%</span>`}</span>
+            ${m && html`<b class=${'num st-' + m.st}>${cb ? Math.round(m.used) + '%' : 'No budget'}</b>`}
+            ${m && html`<div class="mix-track"><div class=${'mix-fill ' + m.st} style=${{width: Math.min(m.used, 100) + '%'}}></div></div>`}
+          </div>`; })}
+      </div>`; })}
+    ${ks && html`<div class="kpi-foot">Each percentage is spend against that category’s own budget. Styles without a quantity don’t count yet.</div>`}
   </div>`;
+}
+
+function BudgetSheet({sh, S, act}) {
+  const b = BUYERS[sh.bid], total = b.divs.reduce((a, d) => a + divBudget(b, d), 0);
+  return html`<${Sheet} tall title="Budgets" sub=${`${b.shop} · ${b.cluster} · total ${fmt(total)}`} onClose=${() => sh.back ? act.sheet(sh.back) : act.close()}>
+    ${b.divs.map(d => html`<div class="panel">
+      <div class="bud-head"><span>${DIV_LABEL[d]}</span><span class="num">${fmt(divBudget(b, d))}</span></div>
+      ${CATS.map(c => html`<label class="bud-in"><span>${CAT_LABEL[c]}<span class="small muted">Guideline ${GUIDE[b.cluster][d][c]}%</span></span>
+        <span class="inp-eur"><span>€</span><input class="inp" inputmode="numeric" value=${catBudget(b, d, c)} onInput=${e => act.setBudget(b.id, d, c, Math.max(0, Number(e.target.value.replace(/\D/g, '')) || 0))}/></span></label>`)}
+    </div>`)}
+    <div class="small muted">Set 0 for a category the client isn’t buying. Totals add up from the categories. Saved automatically.</div>
+  <//>`;
 }
 
 /* =====================================================================
@@ -749,6 +899,23 @@ function LookTile({look}) {
   return html`<div class="look-tile">
     ${items.map(([pid, c]) => html`<${Art} pid=${pid} colour=${c}/>`)}
   </div>`;
+}
+
+function Guidelines() {
+  const [d, setD] = useState('W');
+  return html`<section class="sec">
+    <div class="sec-head"><h2>Buying guidelines</h2></div>
+    <div class="panel">
+      <${Seg} full opts=${[['W', DIV_TAB.W], ['M', DIV_TAB.M]]} val=${d} on=${setD}/>
+      <table class="gtab"><thead><tr><th>Cluster</th>${CATS.map(c => html`<th>${CAT_SHORT[c]}</th>`)}</tr></thead>
+        <tbody>${CLUSTERS.map(cl => html`<tr><td><${Cluster} c=${cl}/></td>${CATS.map(c => html`<td class="num">${GUIDE[cl][d][c]}%</td>`)}</tr>`)}</tbody></table>
+      <div class="small muted">Default split of a client’s ${DIV_TAB[d].toLowerCase()} budget by category. Set a different budget per category in the client profile.</div>
+    </div>
+    <div class="list">
+      ${Object.entries(DROPS).map(([k, v]) => html`<div class="row"><div class="row-main"><div class="row-title">${v.split(' · ')[0]}</div><div class="row-sub">${v.split(' · ')[1]}</div></div><span class="chip">${PRODUCTS.filter(p => p.drop === k).length} styles</span></div>`)}
+      <div class="row"><div class="row-main"><div class="row-title">Reserved styles</div><div class="row-sub">Some styles are for Gold, Platinum or Diamond clients only. They show a lock in the Collection.</div></div></div>
+    </div>
+  </section>`;
 }
 
 function Today({S, act}) {
@@ -771,6 +938,7 @@ function Today({S, act}) {
           </button>`)}
         </div>
       </section>`)}
+      <${Guidelines}/>
     </div>
     <div class="foot">Loewe showroom · powered by Vega</div>`;
 }
@@ -797,37 +965,35 @@ function CalendarTab({S, act}) {
       <div class="days" role="tablist">${SHOW_DAYS.map((d, i) => html`<button role="tab" aria-selected=${i === day} class=${'day' + (i === day ? ' on' : '')} onClick=${() => setDay(i)}>
         <span>${d.toLocaleDateString('en-GB', {weekday:'short'})}</span><b>${d.getDate()}</b><span>Day ${i + 1}</span></button>`)}</div>
       ${!list.length && html`<div class="empty">No appointments on this day.</div>`}
-      ${list.length > 0 && html`<div class="appts">${list.map(b => { const o = S.orders['o-' + b.id], a = S.appts[b.id];
-        const v = o ? b.divs.reduce((x, d) => x + kpi(o, d).total, 0) : 0;
-        return html`<button class="appt" onClick=${() => act.sheet({type:'appt', bid:b.id})}>
+      ${list.length > 0 && html`<div class="appts">${list.map(b => html`<button class="appt" onClick=${() => act.sheet({type:'appt', bid:b.id})}>
           <div class="appt-time">${b.time}</div>
           <div class="appt-main">
             <div class="appt-shop">${b.shop}</div>
-            <div class="small muted">${b.buyer} · ${b.city}</div>
-            <div class="appt-meta"><${Cluster} c=${b.cluster}/><span class="chip">${b.divs.map(d => DIV_LABEL[d]).join(' + ')}</span></div>
+            <div class="appt-buyer">${b.buyer}</div>
+            ${b.divs.map(d => html`<div class="appt-cats"><b>${DIV_TAB[d]}</b> ${buyingCats(b, d).map(c => CAT_SHORT[c]).join(' · ') || 'No budget yet'}</div>`)}
           </div>
-          <div class="appt-side"><${CheckPill} a=${a}/>${o && html`<span class="row-val num">${fmt(v)}</span>`}</div>
-        </button>`; })}</div>`}
+          <div class="appt-side"><${CheckPill} a=${S.appts[b.id]}/></div>
+        </button>`)}</div>`}
     </section>`;
 }
 
 function ApptSheet({sh, S, act}) {
   const b = BUYERS[sh.bid], o = S.orders['o-' + b.id], a = S.appts[b.id] || {};
-  const [div, setDiv] = useState(b.divs[0]);
   const isIn = a.in && !a.out;
   return html`<${Sheet} tall title=${b.shop} sub=${`${b.time} · ${b.buyer} · ${b.city}`} onClose=${act.close}
     foot=${html`${o && html`<button class="btn secondary" style="flex:0 0 auto" onClick=${() => act.openOrder(b.id)}>View order</button>`}
       <button class="btn primary" onClick=${() => act.createOrder(b.id)}>${o ? 'Add products' : 'Create order'}</button>`}>
-    <div class="appt-meta"><${Cluster} c=${b.cluster}/><span class="chip">${b.divs.map(d => DIV_LABEL[d]).join(' + ')}</span>${o && html`<${Pill} s=${o.status}/>`}</div>
+    <div class="kv"><span>Cluster</span><${Cluster} c=${b.cluster}/>${o && html`<span style="margin-left:auto"><${Pill} s=${o.status}/></span>`}</div>
     <div class="checks">
-      <button class=${'btn ' + (a.in ? 'secondary' : 'primary')} disabled=${!!a.in} onClick=${() => act.checkIn(b.id)}>
-        <${Icon} n="check" s=${18} w=${2.2}/>${a.in ? `In ${hhmm(a.in)}` : 'Check in'}</button>
+      ${!a.in ? html`<button class="btn primary" onClick=${() => act.checkIn(b.id, a)}><${Icon} n="check" s=${18} w=${2.2}/>Check in</button>`
+        : isIn ? html`<button class="btn secondary" disabled><${Icon} n="check" s=${18} w=${2.2}/>In ${hhmm(a.in)}</button>`
+        : html`<button class="btn secondary" onClick=${() => act.checkIn(b.id, a)}><${Icon} n="check" s=${18} w=${2.2}/>Check in again</button>`}
       <button class=${'btn ' + (isIn ? 'primary' : 'secondary')} disabled=${!isIn} onClick=${() => act.checkOut(b.id)}>
         <${Icon} n="back" s=${18} w=${2.2}/>${a.out ? `Out ${hhmm(a.out)}` : 'Check out'}</button>
     </div>
-    <div class="lbl">Budgets & targets</div>
-    ${b.divs.length > 1 && html`<${Seg} full opts=${b.divs.map(d => [d, DIV_TAB[d]])} val=${div} on=${setDiv}/>`}
-    <${KpiPanel} order=${o || {buyerId:b.id, lines:[]}} div=${div}/>
+    ${a.in && a.out && html`<div class="small muted" style="margin-top:-6px">Started ${hhmm(a.in)}. Checking in again keeps this start time.</div>`}
+    <div class="lbl">Budgets</div>
+    <${Budgets} b=${b} onEdit=${() => act.sheet({type:'budget', bid:b.id, back:sh})}/>
     <label class="field"><span class="lbl">Notes</span>
       <textarea class="inp area" placeholder="Preferences, follow-ups, what the buyer liked…" value=${a.notes || ''} onInput=${e => act.note(b.id, e.target.value)}></textarea>
       <span class="small muted">Saved automatically</span></label>
@@ -842,12 +1008,14 @@ function LookSheet({id, S, ui, act}) {
     <div class="callout info"><${Icon} n="spark" s=${18}/><div><b>VM intent.</b> ${l.vm}</div></div>
     <div class="lbl">In this look</div>
     <div class="list">${l.items.map(([pid, c]) => { const p = P[pid], why = o && canTake(o, p), item = {pid, colour:c, via:'look'};
-      return html`<button class="row" disabled=${!!why} onClick=${() => o ? act.sheet({type:'size', orderId:o.id, ...item}) : act.sheet({type:'pick', item})}>
+      const has = o && o.lines.some(x => x.pid === pid && x.colour === c);
+      return html`<button class="row" disabled=${!!why || has} onClick=${() => o ? act.select(o.id, pid, c, 'look') : act.sheet({type:'pick', item})}>
         <${Thumb} pid=${pid} colour=${c}/>
-        <div class="row-main"><div class="row-title">${p.name}</div><div class="row-sub"><span class="sw" style=${{background:COL[c][0]}}></span>${c} · <span class="code">${p.code}</span></div></div>
-        <div class="row-side"><span class="row-val">${fmt(p.price)}</span>${why ? html`<span class="lock">${why}</span>` : html`<span class="small" style="color:var(--accent);font-weight:600">Add</span>`}</div>
+        <div class="row-main"><div class="row-title">${p.name}</div><div class="row-sub"><${Colour} c=${c}/></div><div class="row-sub"><span class="pc-code">${p.code}</span></div></div>
+        <div class="row-side"><span class="row-val">${fmt(p.price)}</span><span class="small muted num">${fmt(p.rrp)} retail</span>
+          ${why ? html`<span class="lock">${why}</span>` : has ? html`<span class="flag-txt"><${Icon} n="flag" s=${13} w=${2.2}/>In order</span>` : html`<span class="small" style="color:var(--accent);font-weight:600">Add</span>`}</div>
       </button>`; })}</div>
-    <div class="small muted">${o ? `Tap a piece to add it to ${b.shop}’s order.` : 'Tap a piece, then choose which buyer it’s for.'}</div>
+    <div class="small muted">${o ? `Tap a piece to add it to ${b.shop}’s selection.` : 'Tap a piece, then choose which buyer it’s for.'}</div>
   <//>`;
 }
 
@@ -886,18 +1054,14 @@ function OrdersTab({S, act}) {
 /* =====================================================================
    Catalogue — browse with per-cluster availability
    ===================================================================== */
-function ProductList({div, q, cluster, season, onPick, grid}) {
+const matches = (p, ql) => !ql || (p.name + ' ' + p.code + ' ' + p.family + ' ' + CAT_LABEL[p.cat]).toLowerCase().includes(ql);
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+function ProductList({div, q, cluster, season, onPick}) {
   const ql = q.trim().toLowerCase();
-  const items = PRODUCTS.filter(p => (!div || p.div === div) && (!season || p.season === season) && (!ql || (p.name + ' ' + p.code + ' ' + p.family + ' ' + CAT_LABEL[p.cat]).toLowerCase().includes(ql)));
+  const items = PRODUCTS.filter(p => (!div || p.div === div) && (!season || p.season === season) && matches(p, ql));
   if (!items.length) return html`<div class="empty">${ql ? `No styles match “${q}”. Try a style name or code.` : `No ${DIV_LABEL[div].toLowerCase()} styles in this collection.`}</div>`;
   const lockOf = p => cluster && p.min > rank(cluster);
-  if (grid) return html`<div class="pgrid">${items.map(p => html`<button class=${'pcard' + (lockOf(p) ? ' locked' : '')} onClick=${() => onPick(p)}>
-    <${Thumb} pid=${p.id} colour=${p.colours[0]}/>
-    <div class="pname">${p.name}</div>
-    <div class="code">${p.code}</div>
-    <div class="row-sub" style="justify-content:space-between"><span class="dots">${p.colours.map(c => html`<span class="sw" style=${{background:COL[c][0]}}></span>`)}</span><span class="num" style="color:var(--ink);font-weight:600">${fmt(p.price)}</span></div>
-    ${lockOf(p) && html`<span class="lock"><${Icon} n="lock" s=${12} w=${2.2}/>${CLUSTERS[p.min]}+ only</span>`}
-  </button>`)}</div>`;
   return html`<div class="list">${items.map(p => html`<button class="row" onClick=${() => onPick(p)}>
     <${Thumb} pid=${p.id} colour=${p.colours[0]}/>
     <div class="row-main"><div class="row-title">${p.name}</div><div class="row-sub"><span class="code">${p.code}</span> · ${CAT_LABEL[p.cat]}</div></div>
@@ -905,10 +1069,45 @@ function ProductList({div, q, cluster, season, onPick, grid}) {
   </button>`)}</div>`;
 }
 
+// Collection card: photo opens the shots full screen; + selects the style for the client, the flag marks it as in the order, × takes it out
+function PCard({p, o, cl, act, anchor}) {
+  const mine = o && o.lines.find(l => l.pid === p.id), has = !!mine, c = mine ? mine.colour : p.colours[0], why = o && canTake(o, p);
+  const lock = o ? why : cl && p.min > rank(cl) ? `${CLUSTERS[p.min]}+ only` : null;
+  const add = () => o ? act.select(o.id, p.id, c, 'search') : act.sheet({type:'pick', item:{pid:p.id, colour:c, via:'search'}});
+  return html`<div class=${'pcard' + (lock && !has ? ' locked' : '') + (has ? ' has' : '')} id=${anchor ? 'c-' + anchor : null} data-spy=${anchor || null}>
+    <div class="pc-photo">
+      <button class="pc-img" onClick=${() => act.set({zoom:{pid:p.id, colour:c}})} aria-label=${'Enlarge photos of ' + p.name}><${Thumb} pid=${p.id} colour=${c}/></button>
+      ${has ? html`<span class="pc-flag"><${Icon} n="flag" s=${14} w=${2.4}/>In order</span>`
+        : lock && html`<span class="pc-lock"><${Icon} n="lock" s=${11} w=${2.4}/>${lock}</span>`}
+      ${has ? html`<button class="pc-btn x" onClick=${() => act.unselect(o.id, p.id)} aria-label=${'Remove ' + p.name + ' from the order'}><${Icon} n="x" s=${16} w=${2.6}/></button>`
+        : !(o && why) && html`<button class="pc-btn" onClick=${add} aria-label=${'Add ' + p.name + (o ? ' to ' + BUYERS[o.buyerId].shop : ' to an order')}><${Icon} n="plus" s=${18} w=${2.6}/></button>`}
+    </div>
+    <button class="pc-info" onClick=${() => act.sheet({type:'product', pid:p.id})}>
+      <span class="pc-fam">${p.family}</span>
+      <span class="pname">${p.name}</span>
+      <span class="pc-code">${p.code}</span>
+      <${Prices} p=${p}/>
+      <span class="dots">${p.colours.map(x => html`<span class="sw" style=${{background:COL[x][0]}}></span>`)}</span>
+    </button>
+  </div>`;
+}
+
 function CatalogueTab({S, ui, act}) {
   const so = activeOrder(S, ui), sb = so && BUYERS[so.buyerId];
-  const [q, setQ] = useState(''), [div, setDiv] = useState(sb ? sb.divs[0] : 'W');
+  const [q, setQ] = useState(''), [div, setDiv] = useState(sb ? sb.divs[0] : 'W'), [cur, setCur] = useState(null);
   const season = SEASONS.find(x => x.id === ui.catSeason), cl = ui.catAvail || (sb && sb.cluster);
+  const ql = q.trim().toLowerCase();
+  const items = PRODUCTS.filter(p => p.div === div && p.season === season.id && matches(p, ql));
+  // category, then family as the sub-category
+  const groups = CATS.map(c => { const ps = items.filter(p => p.cat === c);
+    return {cat:c, n:ps.length, fams:[...new Set(ps.map(p => p.family))].map(f => ({f, id:c + '-' + slug(f), ps:ps.filter(p => p.family === f)}))}; }).filter(g => g.n);
+  const ref = useRef(null);
+  useEffect(() => { const sc = ref.current && ref.current.closest('.screen'); if (!sc) return;
+    const spy = () => { const top = sc.getBoundingClientRect().top + 60; let id = null;
+      ref.current.querySelectorAll('[data-spy]').forEach(el => { if (el.getBoundingClientRect().top <= top) id = el.dataset.spy; }); setCur(id); };
+    spy(); sc.addEventListener('scroll', spy, {passive:true}); return () => sc.removeEventListener('scroll', spy); }, [div, ql, season.id]);
+  const go = id => { const el = document.getElementById('c-' + id); if (el) el.scrollIntoView({behavior:'smooth', block:'start'}); };
+  const curCat = cur ? cur.split('-')[0] : groups[0] && groups[0].cat;
   return html`
     <header class="top">
       <button class="season-btn" onClick=${() => act.sheet({type:'season'})} aria-label=${'Collection: ' + season.name + '. Change'}>${season.name}<${Icon} n="down" s=${15} w=${2.2}/></button>
@@ -916,12 +1115,22 @@ function CatalogueTab({S, ui, act}) {
     <section class="sec">
       <div class="searchrow">
         <label class="search"><${Icon} n="search" s=${18}/><input id="cat-q" placeholder="Search style, code or family" value=${q} onInput=${e => setQ(e.target.value)}/></label>
+        ${so && html`<button class="sq-btn" onClick=${() => { act.set({capDiv:div}); act.capture(true); }} aria-label="Photograph a sample"><${Icon} n="cam" s=${20} w=${2}/></button>`}
         <button class=${'sq-btn' + (ui.catAvail ? ' on' : '')} onClick=${() => act.sheet({type:'filter'})} aria-label=${ui.catAvail ? `Filters: ${ui.catAvail} availability` : 'Filters'}><${Icon} n="filter" s=${20} w=${2}/></button>
       </div>
       <${Seg} full opts=${[['W', DIV_TAB.W], ['M', DIV_TAB.M]]} val=${div} on=${setDiv}/>
-      ${ui.catAvail ? html`<button class="fchip" onClick=${() => act.set({catAvail:null})} aria-label="Clear availability filter">Available to ${ui.catAvail} clients<${Icon} n="x" s=${14} w=${2.2}/></button>`
-        : sb && html`<span class="fchip">Ordering for ${sb.shop} · ${sb.cluster}</span>`}
-      <${ProductList} grid div=${div} q=${q} season=${season.id} cluster=${cl} onPick=${p => act.sheet({type:'product', pid:p.id})}/>
+      ${ui.catAvail && html`<button class="fchip" onClick=${() => act.set({catAvail:null})} aria-label="Clear availability filter">Available to ${ui.catAvail} clients<${Icon} n="x" s=${14} w=${2.2}/></button>`}
+      ${!items.length ? html`<div class="empty">${ql ? `No styles match “${q}”. Try a style name or code.` : `No ${DIV_LABEL[div].toLowerCase()} styles in this collection.`}</div>`
+      : html`<div class="cat-layout" ref=${ref}>
+        <nav class="cat-side" aria-label="Categories">${groups.map(g => html`<div class="cs-grp">
+          <button class=${'cs-cat' + (curCat === g.cat ? ' on' : '')} onClick=${() => go(g.cat)}>${CAT_LABEL[g.cat]}<span class="num">${g.n}</span></button>
+          ${g.fams.map(f => html`<button class=${'cs-fam' + (cur === f.id ? ' on' : '')} onClick=${() => go(f.id)}>${f.f}</button>`)}
+        </div>`)}</nav>
+        <div class="cat-main">${groups.map(g => html`<div class="cat-sec">
+          <h2 class="cat-h" id=${'c-' + g.cat} data-spy=${g.cat}>${CAT_LABEL[g.cat]}<span class="num">${g.n}</span></h2>
+          <div class="pgrid">${g.fams.map(f => f.ps.map((p, i) => html`<${PCard} key=${p.id} p=${p} o=${so} cl=${cl} act=${act} anchor=${i ? null : f.id}/>`))}</div>
+        </div>`)}</div>
+      </div>`}
     </section>`;
 }
 
@@ -938,7 +1147,7 @@ function AccountSheet({S, act}) {
 function PickBuyerSheet({S, sh, act}) {
   const p = P[sh.item.pid];
   const mine = Object.values(BUYERS).filter(b => b.rep === S.rep).sort((x, y) => x.time.localeCompare(y.time));
-  return html`<${Sheet} title="Add to an order" sub=${`${p.name} · ${sh.item.colour}`} onClose=${act.close}>
+  return html`<${Sheet} title="Add to an order" sub=${`${p.name} · ${cname(sh.item.colour)}`} onClose=${act.close}>
     <div class="lbl">Your appointments</div>
     <div class="list">${mine.map(b => { const o = S.orders['o-' + b.id], why = canTake(o || {buyerId:b.id, status:'draft'}, p);
       return html`<button class="row" disabled=${!!why} onClick=${() => act.addFor(b.id, sh.item)}>
@@ -995,16 +1204,21 @@ function FilterSheet({ui, act}) {
 }
 
 function ProductSheet({pid, S, ui, act}) {
-  const p = P[pid], [c, setC] = useState(p.colours[0]);
-  const o = activeOrder(S, ui), b = o && BUYERS[o.buyerId], why = o && canTake(o, p);
+  const p = P[pid], o = activeOrder(S, ui), b = o && BUYERS[o.buyerId], why = o && canTake(o, p);
+  const [c, setC] = useState(() => { const l = o && o.lines.find(x => x.pid === pid); return l ? l.colour : p.colours[0]; });
   const looks = LOOKS.filter(l => l.items.some(([x]) => x === pid));
   const item = {pid, colour:c, via:'search'}, pick = () => act.sheet({type:'pick', item});
-  return html`<${Sheet} title=${p.name} sub=${`${p.code} · ${prices(p)}`} onClose=${act.close}
+  const inOrder = x => o && o.lines.some(l => l.pid === pid && l.colour === x), has = inOrder(c);
+  const sizes = () => act.sheet({type:'size', orderId:o.id, ...item});
+  return html`<${Sheet} title=${p.name} sub=${`${p.code} · ${DIV_LABEL[p.div]} ${CAT_LABEL[p.cat].toLowerCase()}`} onClose=${act.close}
     foot=${!o ? html`<button class="btn primary" onClick=${pick}>Add to an order…</button>`
       : why ? html`<button class="btn secondary" style="flex:0 0 auto" onClick=${pick}>Other buyer</button><button class="btn primary" disabled>${b.shop} · ${why}</button>`
-      : html`<button class="btn primary" onClick=${() => act.sheet({type:'size', orderId:o.id, ...item})}>Add to ${b.shop}</button>`}>
-    <div class="thumb" style="width:100%;max-width:360px;height:auto;aspect-ratio:1;margin:0 auto;border-radius:18px"><${Art} pid=${pid} colour=${c}/></div>
-    <div class="colours">${p.colours.map(x => html`<button class=${'colour' + (x === c ? ' on' : '')} onClick=${() => setC(x)}><span class="sw" style=${{background:COL[x][0]}}></span>${x}<span class="code">${COL[x][1]}</span></button>`)}</div>
+      : has ? html`<button class="btn danger" style="flex:0 0 auto" onClick=${() => act.unselect(o.id, pid, c)}>Remove</button><button class="btn primary" onClick=${sizes}>Quantities</button>`
+      : html`<button class="btn secondary" style="flex:0 0 auto" onClick=${sizes}>Quantities</button><button class="btn primary" onClick=${() => act.select(o.id, pid, c, 'search')}><${Icon} n="plus" s=${18} w=${2.4}/>Add to order</button>`}>
+    <${Carousel} p=${p} colour=${c} onOpen=${i => act.set({zoom:{pid, colour:c, i}})}/>
+    <${Prices} cls="lg" p=${p}/>
+    <div class="colours">${p.colours.map(x => html`<button class=${'colour' + (x === c ? ' on' : '')} onClick=${() => setC(x)}><span class="sw" style=${{background:COL[x][0]}}></span>${x}<span class="code">${COL[x][1]}</span>${inOrder(x) && html`<span class="flag-dot" title="In order"><${Icon} n="flag" s=${12} w=${2.4}/></span>`}</button>`)}</div>
+    ${has && html`<div class="callout good"><${Icon} n="flag" s=${18}/><div>${cname(c)} is in ${b.shop}’s selection. Set quantities here or later in the order.</div></div>`}
     <div class="panel">
       <div class="impact-row"><span class="muted">Category</span><span>${DIV_LABEL[p.div]} ${CAT_LABEL[p.cat].toLowerCase()} · ${p.family} family</span></div>
       <div class="impact-row"><span class="muted">Sizes</span><span class="code" style="color:var(--ink)">${p.sizes.join(' · ')}</span></div>
@@ -1033,7 +1247,8 @@ function SizeSheet({sh, S, act}) {
   const q = draft[col] || {};
   const dirty = JSON.stringify(Object.fromEntries(Object.entries(draft).map(([c, x]) => [c, qkey(Object.fromEntries(Object.entries(x).filter(([, n]) => n > 0)))]))) !==
                 JSON.stringify(Object.fromEntries(Object.entries(init).map(([c, x]) => [c, qkey(x)])));
-  const setQty = (s, n) => setDraft(d => ({...d, [col]: {...d[col], [s]: Math.max(0, Math.min(99, n))}}));
+  // entering sizes replaces a bulk total that wasn't split yet
+  const setQty = (s, n) => setDraft(d => { const x = {...d[col], [s]: Math.max(0, Math.min(99, n))}; if (s !== 'ALL') delete x.ALL; return {...d, [col]: x}; });
   const setAll = arr => setDraft(d => ({...d, [col]: Object.fromEntries(p.sizes.map((s, i) => [s, arr[i] || 0]))}));
   const save = () => { if (dirty && !locked && !readOnly) { act.saveDraft(order.id, p.id, draft, sh.via || 'search', actor); return true; } return false; };
   const close = () => { if (save()) act.toast('Saved to order'); act.close(); };
@@ -1053,7 +1268,7 @@ function SizeSheet({sh, S, act}) {
 
   return html`<${Sheet} tall title=${p.name} sub=${`${p.code} · ${prices(p)}`} onClose=${close}
     foot=${readOnly ? html`<button class="btn secondary" onClick=${act.close}>Close</button>` : html`
-      ${existing && html`<button class="btn danger" style="flex:0 0 auto" onClick=${() => { act.saveDraft(order.id, p.id, {}, 'x', actor); act.close(); act.toast('Removed from order'); }}>Remove</button>`}
+      ${existing && html`<button class="btn danger" style="flex:0 0 auto" onClick=${() => act.unselect(order.id, p.id, null, actor)}>Remove</button>`}
       <button class="btn primary" disabled=${locked || (!existing && tUnits === 0)} onClick=${done}>${existing ? 'Save changes' : tUnits ? `Add ${tUnits} to order` : 'Enter quantities'}</button>`}>
     <div class="ss-top">
       <${Thumb} cls="lg" pid=${p.id} colour=${col}/>
@@ -1066,7 +1281,8 @@ function SizeSheet({sh, S, act}) {
     ${locked && html`<div class="callout bad"><${Icon} n="lock" s=${18}/><div>${p.name} is for ${CLUSTERS[p.min]} clients and above. ${b.shop} is ${b.cluster}, so it can’t go on this order.</div></div>`}
     ${readOnly && html`<div class="callout info"><${Icon} n="lock" s=${18}/><div>This order is ${STATUS[order.status].toLowerCase()} and can’t be edited here.</div></div>`}
     <div class="lbl">Colour <span style="text-transform:none;letter-spacing:0;font-weight:500">· ${p.colours.length} options</span></div>
-    <div class="colours">${p.colours.map(c => html`<button class=${'colour' + (c === col ? ' on' : '')} onClick=${() => setCol(c)}><span class="sw" style=${{background:COL[c][0]}}></span>${c}${units(draft[c]) > 0 && html`<span class="cnt">${units(draft[c])}</span>`}</button>`)}</div>
+    <div class="colours">${p.colours.map(c => html`<button class=${'colour' + (c === col ? ' on' : '')} onClick=${() => setCol(c)}><span class="sw" style=${{background:COL[c][0]}}></span>${c}<span class="code">${COL[c][1]}</span>${units(draft[c]) > 0 && html`<span class="cnt">${units(draft[c])}</span>`}</button>`)}</div>
+    ${!locked && !readOnly && q.ALL > 0 && html`<div class="callout info"><${Icon} n="info" s=${18}/><div>${q.ALL} units entered in bulk, not split by size yet. Entering sizes replaces the bulk quantity.</div></div>`}
     ${!locked && !readOnly && html`
       <div class="lbl">${p.sizes.length > 1 ? 'Sizes' : 'Quantity'} · ${col}</div>
       ${p.sizes.length > 1 ? html`
@@ -1086,8 +1302,8 @@ function SizeSheet({sh, S, act}) {
         </div>
         <div class="quick">${[1, 2, 3, 4, 6].map(n => html`<button class="qbtn" onClick=${() => setQty('U', n)}>${n}</button>`)}<button class="qbtn" onClick=${() => setQty('U', 0)}>Clear</button></div>`}
       <div class="panel impact">
-        <div class="impact-row"><span class="muted">${CAT_LABEL[p.cat]} share</span>
-          <span class="num"><span class="muted">${Math.round(m0.pct)}% →</span> <b>${Math.round(m1.pct)}%</b> <span class=${'chip ' + m1.st}>target ${m1.target}%</span></span></div>
+        <div class="impact-row"><span class="muted">${CAT_LABEL[p.cat]} budget</span>
+          <span class="num"><span class="muted">${Math.round(m0.used)}% →</span> <b class=${'st-' + m1.st}>${Math.round(m1.used)}%</b> <span class="muted">of ${fmt(m1.budget)}</span></span></div>
         <div class="impact-row"><span class="muted">${DIV_LABEL[p.div]} budget</span>
           <span class="num"><span class="muted">${Math.round(k0.used)}% →</span> <b>${Math.round(k1.used)}%</b> <span class="muted">of ${fmt(k1.budget)}</span></span></div>
       </div>`}
@@ -1108,7 +1324,7 @@ function Capture({order, div, act}) {
   const shoot = () => { setStage('scan'); t.current = setTimeout(() => setStage('match'), 1250); };
   const conf = confidence(p), sib = sibling(p), alts = alternatives(p);
   const why = canTake(order, p);
-  const pick = (pid, colour) => act.sheet({type:'size', orderId:order.id, pid, colour, via:'photo'});
+  const pick = (pid, colour) => { act.select(order.id, pid, colour, 'photo'); act.capture(false); };
   return html`<div class="capture">
     <div class="vf-top">
       <button class="vf-btn" onClick=${() => act.capture(false)} aria-label="Close camera"><${Icon} n="x"/></button>
@@ -1127,10 +1343,10 @@ function Capture({order, div, act}) {
     ${stage === 'match' && html`<div class="match" role="dialog" aria-label="Confirm the match">
       <div class="match-head"><span class="chip ai"><${Icon} n="spark" s=${13}/>Match found</span><span class=${'conf ' + (conf >= 90 ? 'hi' : 'mid')}>${conf}% confidence</span></div>
       <div class="match-main"><${Thumb} cls="lg" pid=${p.id} colour=${s.colour}/>
-        <div style="min-width:0"><div class="m-name">${p.name}</div><div class="code" style="margin-top:4px">${p.code} · ${s.colour} ${COL[s.colour][1]}</div><div class="small muted" style="margin-top:2px">${CAT_LABEL[p.cat]} · ${prices(p)}</div></div></div>
+        <div style="min-width:0;display:flex;flex-direction:column;gap:4px"><div class="m-name">${p.name}</div><span class="pc-code">${p.code}</span><span class="small muted"><${Colour} c=${s.colour}/></span><${Prices} p=${p}/></div></div>
       ${sib && html`<div class="callout warn"><${Icon} n="alert" s=${18}/><div>Close to <b>${sib.name}</b> (${sib.code}). Check the sample before you confirm.</div></div>`}
       ${why && html`<div class="callout bad"><${Icon} n="lock" s=${18}/><div>${b.shop} · ${why}, so this style can’t go on the order.</div></div>`}
-      <button class="btn primary block" disabled=${!!why} onClick=${() => pick(p.id, s.colour)}>Confirm match · enter sizes</button>
+      <button class="btn primary block" disabled=${!!why} onClick=${() => pick(p.id, s.colour)}>Confirm match · add to ${b.shop}</button>
       <div class="lbl" style="margin-top:2px">Not it? Next closest</div>
       <div class="alts">${alts.map((a, i) => html`<button class="row" onClick=${() => pick(a.id, a.colours.includes(s.colour) ? s.colour : a.colours[0])}>
         <${Thumb} cls="sm" pid=${a.id} colour=${a.colours.includes(s.colour) ? s.colour : a.colours[0]}/>
@@ -1158,15 +1374,60 @@ function LineRow({l, onClick}) {
     <${Thumb} pid=${l.pid} colour=${l.colour}/>
     <div class="row-main">
       <div class="row-title">${p.name}</div>
-      <div class="row-sub"><span class="sw" style=${{background:COL[l.colour][0]}}></span>${l.colour} <span class="code">${p.code}·${COL[l.colour][1]}</span></div>
+      <div class="row-sub"><${Colour} c=${l.colour}/></div>
+      <div class="row-sub"><span class="pc-code">${p.code}</span></div>
       ${p.sizes.length > 1 && html`<div class="szs">${p.sizes.filter(s => l.qty[s]).map(s => html`<span class="sz-chip">${s}·${l.qty[s]}</span>`)}</div>`}
     </div>
     <div class="row-side">
-      <span class="row-val">${fmt(lineValue(l))}</span>
+      <span class="row-val">${units(l.qty) ? fmt(lineValue(l)) : '—'}</span>
       <span class="small muted num">×${units(l.qty)}</span>
       ${l.by === 'client' ? html`<${By} by="client"/>` : l.via === 'photo' && html`<span class="by" title="Captured from photo"><${Icon} n="cam" s=${13} w=${2}/>Photo</span>`}
     </div>
   </button>`;
+}
+
+// One style-colour in the client's selection: quantity can wait, go in as a bulk total, or be split by size
+function SelLine({l, o, act, locked}) {
+  const p = P[l.pid], u = units(l.qty), split = isSplit(l);
+  const edit = () => act.sheet({type:'size', orderId:o.id, pid:l.pid, colour:l.colour, via:l.via});
+  return html`<div class=${'sel' + (u ? '' : ' open')}>
+    <button class="sel-info" onClick=${edit}>
+      <${Thumb} pid=${l.pid} colour=${l.colour}/>
+      <span class="row-main">
+        <span class="row-title">${p.name}</span>
+        <span class="row-sub"><${Colour} c=${l.colour}/></span>
+        <span class="sel-meta"><span class="pc-code">${p.code}</span><span class="num">${fmt(p.price)} <small>W</small> · ${fmt(p.rrp)} <small>R</small></span></span>
+      </span>
+    </button>
+    ${!locked && html`<button class="sel-x" onClick=${() => act.unselect(o.id, l.pid, l.colour)} aria-label=${'Remove ' + p.name + ' ' + l.colour}><${Icon} n="x" s=${16} w=${2.2}/></button>`}
+    <div class="sel-ctl">
+      ${split ? html`<span class="szs">${p.sizes.filter(s => l.qty[s]).map(s => html`<span class="sz-chip">${s}·${l.qty[s]}</span>`)}</span>`
+        : locked ? html`<span class="small muted num">×${u}</span>`
+        : html`<${Stepper} n=${u} label=${p.name} on=${n => act.setUnits(o.id, l.id, n)}/>`}
+      ${!locked && p.sizes.length > 1 && html`<button class="sel-sz" onClick=${edit}>${split ? 'Edit sizes' : 'Sizes'}</button>`}
+      <span class="sel-val num">${u ? html`<b>${fmt(lineValue(l))}</b><small>×${u}${l.qty.ALL ? ' · sizes to split' : ''}</small>` : html`<small>No quantity yet</small>`}</span>
+    </div>
+  </div>`;
+}
+
+function BulkSheet({sh, S, act}) {
+  const o = S.orders[sh.orderId], b = BUYERS[o.buyerId];
+  const open = o.lines.filter(l => !units(l.qty)), [n, setN] = useState(2);
+  const after = useMemo(() => { const x = JSON.parse(JSON.stringify(o)); x.lines.forEach(l => { if (!units(l.qty)) l.qty = {[bulkKey(P[l.pid])]: n}; }); return x; }, [o, n]);
+  const add = open.reduce((a, l) => a + n * P[l.pid].price, 0);
+  return html`<${Sheet} tall title="Quantities in bulk" sub=${`${open.length} styles without a quantity · ${b.shop}`} onClose=${act.close}
+    foot=${html`<button class="btn primary" disabled=${!open.length || !n} onClick=${() => { act.bulk(o.id, n); act.close(); act.toast(`${n} each on ${open.length} styles`); }}>Set ${n} each · ${fmt(add)}</button>`}>
+    <div class="panel">
+      <div class="bud-head"><span>Units per style</span><${Stepper} n=${n} label="units per style" on=${x => setN(Math.max(0, Math.min(99, x)))}/></div>
+      <div class="small muted">Sizes aren’t split yet. Split them later from each line.</div>
+    </div>
+    <div class="panel impact">${b.divs.map(d => { const k0 = kpi(o, d), k1 = kpi(after, d); return k1.total !== k0.total && html`
+      <div class="impact-row"><span class="muted">${DIV_LABEL[d]} budget</span><span class="num"><span class="muted">${Math.round(k0.used)}% →</span> <b class=${'st-' + k1.bst}>${Math.round(k1.used)}%</b> <span class="muted">of ${fmt(k1.budget)}</span></span></div>
+      ${k1.mix.filter((m, i) => m.value !== k0.mix[i].value).map(m => html`<div class="impact-row"><span class="muted">· ${CAT_LABEL[m.cat]}</span><span class="num"><b class=${'st-' + m.st}>${m.budget ? Math.round(m.used) + '%' : 'No budget'}</b> <span class="muted">of ${fmt(m.budget)}</span></span></div>`)}`; })}</div>
+    <div class="list">${open.map(l => { const p = P[l.pid]; return html`<div class="row"><${Thumb} cls="sm" pid=${l.pid} colour=${l.colour}/>
+      <div class="row-main"><div class="row-title">${p.name}</div><div class="row-sub"><${Colour} c=${l.colour}/></div></div>
+      <div class="row-side"><span class="row-val">${fmt(n * p.price)}</span><span class="small muted num">×${n}</span></div></div>`; })}</div>
+  <//>`;
 }
 
 function StatusTrack({o}) {
@@ -1183,13 +1444,11 @@ function StatusTrack({o}) {
 
 function OrderView({S, ui, act, order}) {
   const b = BUYERS[order.buyerId], div = b.divs.includes(ui.div) ? ui.div : b.divs[0];
-  const [group, setGroup] = useState('cat');
+  const [pane, setPane] = useState('sel');
   const lines = order.lines.filter(l => P[l.pid].div === div);
-  const groups = group === 'cat'
-    ? CATS.map(c => ({key:c, label:CAT_LABEL[c], lines:lines.filter(l => P[l.pid].cat === c)}))
-    : Object.keys(DROPS).map(d => ({key:d, label:DROPS[d], lines:lines.filter(l => P[l.pid].drop === d)}));
+  const groups = CATS.map(c => ({key:c, label:CAT_LABEL[c], lines:lines.filter(l => P[l.pid].cat === c)}));
   const locked = order.status === 'confirmed';
-  const edit = l => act.sheet({type:'size', orderId:order.id, pid:l.pid, colour:l.colour, via:l.via});
+  const open = order.lines.filter(l => !units(l.qty)).length;
   return html`<div class="ov">
     <div class="ov-nav">
       <button class="icon-btn" onClick=${act.back} aria-label="Back"><${Icon} n="back"/></button>
@@ -1200,25 +1459,24 @@ function OrderView({S, ui, act, order}) {
       <div class="ov-buyer"><span>${b.buyer}</span><${Cluster} c=${b.cluster}/>
         ${S.savedAt && html`<span class="saved" key=${S.savedAt}><${Icon} n="check" s=${13} w=${2.4}/>Saved ${hhmm(S.savedAt)}</span>`}</div>
       <${StatusTrack} o=${order}/>
+      <${Seg} full opts=${[['sel', `Selection · ${order.lines.length}`], ['kpi', 'Budgets & KPIs']]} val=${pane} on=${setPane}/>
     </div>
     <div class="ov-body">
-      <div class="ov-kpi">
-        ${b.divs.length > 1 && html`<div style="margin-bottom:12px"><${Seg} full opts=${b.divs.map(d => [d, DIV_TAB[d] + ' · ' + fmt(kpi(order, d).total)])} val=${div} on=${act.div}/></div>`}
-        <${KpiPanel} order=${order} div=${div}/>
-      </div>
+      ${pane === 'kpi' ? html`<div class="ov-kpi"><${Budgets} b=${b} order=${order} onEdit=${() => act.sheet({type:'budget', bid:b.id})}/></div>` : html`
       <div class="ov-lines">
-        <div class="lines-head"><span class="lbl">${lines.length} lines · ${DIV_LABEL[div]}</span><${Seg} opts=${[['cat', 'Category'], ['drop', 'Delivery']]} val=${group} on=${setGroup}/></div>
-        ${lines.length === 0 && html`<div class="empty"><${Icon} n="cam" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} lines yet</b></div><div class="small">Photograph a sample to add the first style. Every line saves the moment it’s entered.</div></div>`}
+        ${b.divs.length > 1 && html`<${Seg} full opts=${b.divs.map(d => [d, `${DIV_TAB[d]} · ${order.lines.filter(l => P[l.pid].div === d).length}`])} val=${div} on=${act.div}/>`}
+        ${open > 0 && !locked && html`<button class="bulk-cta" onClick=${() => act.sheet({type:'bulk', orderId:order.id})}>
+          <span><b>${open} ${open === 1 ? 'style' : 'styles'} without a quantity</b><span class="small muted">Set them in bulk and see the budget</span></span><span class="linkbtn">Set quantities</span></button>`}
+        ${lines.length === 0 && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div><div class="small">Tap Add products, then + on any style in the Collection. Quantities can come later.</div></div>`}
         ${groups.filter(g => g.lines.length).map(g => html`<div>
-          <div class="grp-head"><span>${g.label}</span><span class="num">${fmt(g.lines.reduce((a, l) => a + lineValue(l), 0))}</span></div>
-          <div class="list">${g.lines.map(l => html`<${LineRow} key=${l.id} l=${l} onClick=${() => edit(l)}/>`)}</div>
+          <div class="grp-head"><span>${g.label} · ${g.lines.length}</span><span class="num">${fmt(g.lines.reduce((a, l) => a + lineValue(l), 0))}</span></div>
+          <div class="list">${g.lines.map(l => html`<${SelLine} key=${l.id} l=${l} o=${order} act=${act} locked=${locked}/>`)}</div>
         </div>`)}
-      </div>
+      </div>`}
     </div>
-    <div class="ov-bar">
-      <button class="round" disabled=${locked} onClick=${() => act.sheet({type:'picker', orderId:order.id, div})} aria-label="Search the catalogue"><${Icon} n="search"/></button>
-      <button class="cap-btn" disabled=${locked} onClick=${() => act.capture(true)}><${Icon} n="cam"/>Photograph sample</button>
+    <div class="ov-actions">
       <button class="round" onClick=${() => act.sheet({type:'finish', orderId:order.id})} aria-label="Share, submit or export"><${Icon} n="share"/></button>
+      <button class="cap-btn" disabled=${locked} onClick=${() => act.createOrder(b.id)}><${Icon} n="plus" w=${2.4}/>Add products</button>
     </div>
   </div>`;
 }
@@ -1226,7 +1484,7 @@ function OrderView({S, ui, act, order}) {
 function issuesOf(o) {
   const b = BUYERS[o.buyerId], out = [];
   b.divs.forEach(d => { const k = kpi(o, d); if (!k.total) return;
-    k.mix.filter(m => m.st !== 'ok').forEach(m => out.push({d, label:`${DIV_LABEL[d]} ${CAT_LABEL[m.cat].toLowerCase()}`, text:`${Math.round(m.pct)}% vs ${m.target}%`, st:m.st}));
+    k.mix.filter(m => m.st === 'warn' || m.st === 'bad').forEach(m => out.push({d, label:`${DIV_LABEL[d]} ${CAT_LABEL[m.cat].toLowerCase()}`, text: m.budget ? `${Math.round(m.used)}% of ${fmt(m.budget)}` : 'No budget', st:m.st}));
     if (k.bst !== 'ok') out.push({d, label:`${DIV_LABEL[d]} budget`, text:`${Math.round(k.used)}% used`, st:k.bst}); });
   return out;
 }
@@ -1236,8 +1494,9 @@ function FinishSheet({sh, S, act}) {
   const [confirmSubmit, setConfirmSubmit] = useState(false);
   const link = `aurore.vega.app/o/${b.code}-${o.id.length}K${String(o.lines.length).padStart(2, '0')}`;
   const issues = issuesOf(o);
-  const empty = o.lines.length === 0;
+  const empty = !o.lines.some(l => units(l.qty)), open = o.lines.filter(l => !units(l.qty)).length;
   return html`<${Sheet} title=${o.status === 'submitted' ? 'Review and confirm' : o.status === 'confirmed' ? 'Confirmed order' : 'Finish the session'} sub=${orderNo(o)} onClose=${act.close}>
+    ${open > 0 && o.status !== 'confirmed' && html`<div class="callout warn"><${Icon} n="alert" s=${18}/><div>${open} selected ${open === 1 ? 'style has' : 'styles have'} no quantity and won’t be produced. <button class="linkbtn" style="padding:0" onClick=${() => act.sheet({type:'bulk', orderId:o.id})}>Set quantities</button></div></div>`}
     ${(o.status === 'draft' || o.status === 'shared') && html`
       <div class="panel">
         <div style="font-weight:650">Share the basket with ${b.buyer}</div>
@@ -1308,7 +1567,7 @@ function BuyerView({S, ui, act}) {
     <div class="ov-body">
       <div class="ov-kpi">
         ${b.divs.length > 1 && html`<div style="margin-bottom:12px"><${Seg} full opts=${b.divs.map(d => [d, DIV_TAB[d]])} val=${div} on=${act.div}/></div>`}
-        <${KpiPanel} order=${o} div=${div}/>
+        <${Budgets} b=${b} order=${o} divs=${[div]}/>
       </div>
       <div class="ov-lines">
         <div class="lines-head"><span class="lbl">${lines.length} styles</span>${open && html`<button class="linkbtn" onClick=${() => act.sheet({type:'picker', orderId:o.id, div, actor:'client'})}>Add from the collection</button>`}</div>
@@ -1329,9 +1588,9 @@ function BuyerView({S, ui, act}) {
    App shell
    ===================================================================== */
 const GUIDE_STEPS = [
-  'In Calendar, open Maison Dubois (already checked in) and tap Add products, or View order.',
-  'Tap Photograph sample and press the shutter to match the bag on the shelf.',
-  'Confirm the match, set sizes with a size curve, and watch the guideline mix move.',
+  'In Calendar, open Maison Dubois (already checked in): cluster and budgets per category. Tap Add products.',
+  'In the Collection, tap + on a photo to select a style; the flag shows it is in the order, × takes it out. Tap a photo to see every shot.',
+  'Tap the client bar at the top to open the order: set quantities line by line or in bulk, then check Budgets & KPIs.',
   'Tap the share button, share the basket, then open it as the buyer and submit.',
   'Back as the salesperson, review the guideline check, confirm, and open the factory export.',
 ];
@@ -1340,9 +1599,9 @@ function SessionBar({S, ui, act}) {
   const o = activeOrder(S, ui); if (!o) return null;
   const b = BUYERS[o.buyerId], v = b.divs.reduce((a, d) => a + kpi(o, d).total, 0), n = b.divs.reduce((a, d) => a + kpi(o, d).units, 0);
   return html`<div class="sbar" role="status">
-    <button class="sbar-main" onClick=${() => act.openOrder(b.id)} aria-label=${`In session with ${b.buyer}, ${b.shop}. Open order`}>
+    <button class="sbar-main" onClick=${() => act.openOrder(b.id)} aria-label=${`Ordering for ${b.shop} with ${b.buyer}. Open order`}>
       <span class="sbar-dot"></span>
-      <div class="sbar-txt"><div class="sbar-t">With ${b.buyer}</div><div class="sbar-s">${b.shop} · ${n} units · ${fmt(v)}</div></div>
+      <div class="sbar-txt"><div class="sbar-k">Ordering for</div><div class="sbar-t">${b.shop}</div><div class="sbar-s">${b.buyer} · ${o.lines.length} selected · ${n} units · ${fmt(v)}</div></div>
       <${Icon} n="next" s=${18} w=${2.2}/></button>
     <button class="sbar-x" onClick=${act.endSession} aria-label="End session"><${Icon} n="x" s=${16} w=${2.2}/></button>
   </div>`;
@@ -1374,13 +1633,15 @@ function makeActs(setS, setUi, onReset) {
     endSession: () => { setUi(u => ({...u, session:null})); a.toast('Session ended'); },
     // appointment record: every change is stored straight away (state persists on each update)
     appt: (bid, patch) => setS(s => ({...s, appts:{...s.appts, [bid]:{...(s.appts[bid] || {}), ...patch}}, savedAt:Date.now()})),
-    checkIn: bid => { a.appt(bid, {in:Date.now(), out:null}); a.toast(`Checked in · ${BUYERS[bid].shop}`); },
+    // checking in again after a check-out keeps the original start time
+    checkIn: (bid, x={}) => { a.appt(bid, x.in ? {out:null, back:Date.now()} : {in:Date.now(), out:null});
+      a.toast(x.in ? `Checked in again · since ${hhmm(x.in)}` : `Checked in · ${BUYERS[bid].shop}`); },
     checkOut: bid => { a.appt(bid, {out:Date.now()}); setUi(u => u.session === 'o-' + bid ? {...u, session:null} : u); a.toast(`Checked out · ${BUYERS[bid].shop}`); },
     note: (bid, text) => a.appt(bid, {notes:text}),
     // Create order: start that client's session and land in the Collection to add products
     createOrder: bid => { a.startSession(bid); setUi(u => ({...u, tab:'catalogue', view:null, sheet:null, catAvail:null})); a.toast(`Ordering for ${BUYERS[bid].shop}`); },
     // add flow from Collection or a lookbook: start (or switch to) that buyer's session, then enter sizes in place
-    addFor: (bid, item) => { a.startSession(bid); a.sheet({type:'size', orderId:'o-' + bid, ...item}); },
+    addFor: (bid, item) => { a.startSession(bid); a.close(); a.select('o-' + bid, item.pid, item.colour, item.via); },
     newBuyer: (b, item, appt) => { BUYERS[b.id] = b; setS(s => ({...s, buyers:{...s.buyers, [b.id]:b}}));
       if (item) a.addFor(b.id, item); else if (appt) a.sheet({type:'appt', bid:b.id}); else a.openOrder(b.id);
       a.toast(`Session started with ${b.shop}`); },
@@ -1389,6 +1650,23 @@ function makeActs(setS, setUi, onReset) {
     reset: onReset,
   };
   a.saveDraft = (id, pid, draft, via, by) => a.mut(id, o => applyDraft(o, pid, draft, via, by));
+  // selection without quantity: the style-colour joins the order at zero units
+  a.select = (id, pid, colour, via) => { const p = P[pid];
+    a.mut(id, o => { if (o.lines.some(l => l.pid === pid && l.colour === colour)) return;
+      o.lines.push({id:uid(), pid, colour, qty:{}, via, by:'salesperson', at:Date.now()}); log(o, 'salesperson', `Selected ${p.name} · ${cname(colour)}${via === 'photo' ? ' (photo match)' : ''}`); });
+    a.toast(`Added ${p.name} · ${BUYERS[id.slice(2)].shop}`); };
+  a.unselect = (id, pid, colour, by='salesperson') => { const p = P[pid];
+    a.mut(id, o => { o.lines = o.lines.filter(l => !(l.pid === pid && (!colour || l.colour === colour))); log(o, by, `Removed ${p.name}${colour ? ' · ' + cname(colour) : ''}`); });
+    setUi(u => u.sheet && (u.sheet.type === 'size' || u.sheet.type === 'product') ? {...u, sheet:null} : u); a.toast(`Removed ${p.name}`); };
+  // stepper: a bulk total with no size split; repeated taps update one log entry
+  a.setUnits = (id, lineId, n) => a.mut(id, o => { const l = o.lines.find(x => x.id === lineId); if (!l) return; const p = P[l.pid];
+    n = Math.max(0, Math.min(999, n)); l.qty = n ? {[bulkKey(p)]: n} : {}; l.at = Date.now();
+    const key = 'u:' + lineId, last = o.log[o.log.length - 1], text = `Set ${p.name} · ${cname(l.colour)} to ×${n}`;
+    if (last && last.key === key) { last.text = text; last.at = Date.now(); } else o.log.push({at:Date.now(), by:'salesperson', text, key}); });
+  a.bulk = (id, n) => a.mut(id, o => { let k = 0; o.lines.forEach(l => { if (!units(l.qty)) { l.qty = {[bulkKey(P[l.pid])]: n}; k++; } }); log(o, 'salesperson', `Set ${n} units each on ${k} styles (sizes to split)`); });
+  a.setBudget = (bid, d, c, v) => { const b = BUYERS[bid], cat = JSON.parse(JSON.stringify(b.cat || {}));
+    b.divs.forEach(x => { cat[x] = Object.fromEntries(CATS.map(k => [k, cat[x] && cat[x][k] != null ? cat[x][k] : catBudget(b, x, k)])); });
+    cat[d][c] = v; b.cat = cat; setS(s => ({...s, budgets:{...s.budgets, [bid]:cat}, savedAt:Date.now()})); };
   a.share = id => a.mut(id, o => { if (o.status === 'draft') { o.status = 'shared'; o.sharedAt = Date.now(); log(o, 'salesperson', `Basket shared with ${BUYERS[o.buyerId].buyer} · closes in 48h`); } });
   a.submit = (id, by) => a.mut(id, o => { o.status = 'submitted'; o.submittedBy = by; o.submittedAt = Date.now(); log(o, by, by === 'client' ? 'Order submitted by the buyer' : 'Order submitted by the salesperson on the buyer’s behalf'); });
   a.confirm = id => a.mut(id, o => { o.status = 'confirmed'; o.confirmedAt = Date.now(); log(o, 'salesperson', 'Reviewed against guidelines and confirmed for production'); });
@@ -1416,22 +1694,26 @@ function App({onReset}) {
     : sh.type === 'account' ? html`<${AccountSheet} S=${S} act=${act}/>`
     : sh.type === 'newbuyer' ? html`<${NewBuyerSheet} S=${S} sh=${sh} act=${act}/>`
     : sh.type === 'pick' ? html`<${PickBuyerSheet} S=${S} sh=${sh} act=${act}/>`
-    : sh.type === 'appt' ? html`<${ApptSheet} key=${sh.bid} sh=${sh} S=${S} act=${act}/>` : null;
+    : sh.type === 'appt' ? html`<${ApptSheet} key=${sh.bid} sh=${sh} S=${S} act=${act}/>`
+    : sh.type === 'budget' ? html`<${BudgetSheet} sh=${sh} S=${S} act=${act}/>`
+    : sh.type === 'bulk' ? html`<${BulkSheet} sh=${sh} S=${S} act=${act}/>` : null;
   const toast = ui.toast && html`<div class="toast" key=${ui.toastId} role="status"><${Icon} n="check" s=${16} w=${2.4}/>${ui.toast}</div>`;
 
   if (ui.role === 'buyer' && S.orders[ui.buyerOrder]) return html`<div class="app"><${BuyerView} S=${S} ui=${ui} act=${act}/>${sheet}${toast}</div>`;
-  const inSession = !order && !!activeOrder(S, ui);
-  return html`<div class=${'app' + (inSession ? ' has-session' : '')}>
+  // the client in session stays on top of every tab, in the layout so it never covers products; the tab bar is always there
+  const so = activeOrder(S, ui), capDiv = so && (BUYERS[so.buyerId].divs.includes(ui.capDiv) ? ui.capDiv : BUYERS[so.buyerId].divs[0]);
+  return html`<div class="app">
     ${order ? html`<${OrderView} S=${S} ui=${ui} act=${act} order=${order}/>` : html`
-      <div class=${'screen tabbed' + (inSession ? ' has-session' : '')}>
+      <${SessionBar} S=${S} ui=${ui} act=${act}/>
+      <div class="screen tabbed">
         ${ui.tab === 'calendar' && html`<${CalendarTab} S=${S} act=${act}/>`}
         ${ui.tab === 'today' && html`<${Today} S=${S} act=${act}/>`}
         ${ui.tab === 'orders' && html`<${OrdersTab} S=${S} act=${act}/>`}
-        ${ui.tab === 'catalogue' && html`<${CatalogueTab} S=${S} ui=${ui} act=${act}/>`}
-      </div>
-      <${SessionBar} S=${S} ui=${ui} act=${act}/>
-      <${TabBar} tab=${ui.tab} act=${act}/>`}
-    ${ui.capture && order && html`<${Capture} order=${order} div=${BUYERS[order.buyerId].divs.includes(ui.div) ? ui.div : BUYERS[order.buyerId].divs[0]} act=${act}/>`}
+        ${ui.tab === 'catalogue' && html`<${CatalogueTab} key=${so ? so.id : 'none'} S=${S} ui=${ui} act=${act}/>`}
+      </div>`}
+    <${TabBar} tab=${ui.tab} act=${act}/>
+    ${ui.capture && so && html`<${Capture} order=${so} div=${capDiv} act=${act}/>`}
+    ${ui.zoom && html`<${Zoom} z=${ui.zoom} act=${act}/>`}
     ${sheet}${toast}
   </div>`;
 }
