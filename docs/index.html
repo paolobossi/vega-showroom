@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0F1113" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Vega">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-192.png">
@@ -23,6 +23,7 @@
   --stage:#E1E2DE; --frame:#17181A;
   --bg:#EFF0EC; --surface:#FFFFFF; --surface-2:#F5F6F2; --studio:#E3E4DF;
   --ink:#141619; --muted:#62666B; --faint:#999DA1; --line:#DCDED8;
+  --band:#000000; --band-ink:#FFFFFF; /* client band: black in light and dark mode */
   --accent:#2238A6; --accent-ink:#FFFFFF; --accent-soft:#E3E7F8;
   --good:#1D7448; --good-bg:#E0EFE6; --warn:#946000; --warn-bg:#F7EAD2; --bad:#AE281C; --bad-bg:#F7E1DE;
   --silver:#9AA1A8; --gold:#B8903A; --platinum:#7C97AB; --diamond:#4C7BD9;
@@ -51,6 +52,8 @@
 html,body{height:100%;margin:0}
 html{padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) 0 env(safe-area-inset-left,0px);background:var(--bg)}
 body{background:var(--bg);color:var(--ink);font:15px/1.4 var(--f-ui);-webkit-font-smoothing:antialiased;overscroll-behavior:none}
+/* home-screen app: the status bar is see-through with white icons (fixed by iOS at launch), so the strip behind it is always black like the client band */
+html::before{content:"";position:fixed;z-index:100;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:var(--band);pointer-events:none}
 @media (min-width:900px){html,body{background:var(--stage)}}
 [hidden]{display:none!important}
 #root{height:100%}
@@ -101,10 +104,10 @@ input{font:inherit;color:inherit}
 .tab.on{color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
 /* client in session: a bar at the top of every tab, part of the layout so it never covers products */
 /* edge-to-edge band under the status bar; the page below rounds its top corners into it, like a bridge, so it pushes the page down rather than floating over it */
-.sbar{flex:none;display:flex;align-items:center;gap:4px;padding:4px 8px;background:var(--ink);color:var(--bg);animation:drop .3s cubic-bezier(.2,.8,.2,1)}
-.app.in-session{background:var(--ink)}
+.sbar{flex:none;display:flex;align-items:center;gap:4px;padding:4px 8px;background:var(--band);color:var(--band-ink);animation:drop .3s cubic-bezier(.2,.8,.2,1)}
+.app.in-session{background:var(--band)}
 /* on the phone the notch / status bar area above goes black too (desktop keeps the device frame) */
-@media (max-width:899px){html.in-session,html.in-session body{background:var(--ink)}}
+@media (max-width:899px){html.in-session,html.in-session body{background:var(--band)}}
 .app.in-session > .screen{border-radius:20px 20px 0 0;background:var(--bg)}
 @keyframes drop{from{transform:translateY(-100%)}to{transform:none}}
 .sbar-main{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:10px;padding-left:36px;color:inherit;min-height:40px}
@@ -131,11 +134,11 @@ input{font:inherit;color:inherit}
 .top-bar.mid{align-items:center;padding-top:18px}
 .h1-btn{font:inherit;letter-spacing:inherit;color:inherit;text-align:left}
 .h1-btn:active{opacity:.5}
-.full{position:absolute;inset:0;z-index:45;background:var(--bg);display:flex;flex-direction:column;animation:fade .2s ease}
-.full-head{flex:none;display:flex;justify-content:space-between;align-items:center;padding:8px 8px 0}
-.full-body{flex:1;min-height:0;overflow-y:auto;width:100%;max-width:640px;margin:0 auto;padding:4px 20px max(24px,env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:18px}
-.full-body > *{flex-shrink:0}
-.full-body > .pin{margin:auto 0}
+.fpage{position:absolute;inset:0;z-index:45;background:var(--bg);display:flex;flex-direction:column;animation:fade .2s ease}
+.fpage-head{flex:none;display:flex;justify-content:space-between;align-items:center;padding:8px 8px 0}
+.fpage-body{flex:1;min-height:0;overflow-y:auto;width:100%;max-width:640px;margin:0 auto;padding:4px 20px max(24px,env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:18px}
+.fpage-body > *{flex-shrink:0}
+.fpage-body > .pin{margin:auto 0}
 .pin{display:flex;flex-direction:column;align-items:center;gap:14px;padding:4px 0 6px}
 .pin-t{font-size:16px;font-weight:600}
 .pin-dots{display:flex;gap:16px;margin:2px 0 6px}
@@ -170,6 +173,8 @@ input{font:inherit;color:inherit}
 .s-confirmed{background:var(--good);color:var(--surface)}
 .s-in{background:var(--good-bg);color:var(--good)}
 .s-out{background:var(--surface-2);color:var(--muted)}
+.live-dot{position:relative;width:7px;height:7px;border-radius:50%;background:currentColor}
+.live-dot::after{content:"";position:absolute;inset:0;border-radius:50%;background:currentColor;animation:beat 1.8s ease-out infinite}
 .by{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:600;color:var(--muted);white-space:nowrap}
 .by.client{color:var(--accent)}
 .chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:99px;background:var(--surface-2);color:var(--muted);white-space:nowrap}
@@ -246,6 +251,7 @@ input{font:inherit;color:inherit}
 .appts{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
 .appt{display:flex;gap:14px;align-items:stretch;text-align:left;width:100%;padding:14px;border-top:1px solid var(--line)}
 .appt:first-child{border-top:0}
+.appts.now{border:1.5px solid var(--good)}
 .appt-time{font:600 13px var(--f-ui);font-variant-numeric:tabular-nums;color:var(--muted);padding-top:3px;width:42px;flex:none}
 .appt-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
 .appt-shop{font:600 18px/1.2 var(--f-display);letter-spacing:-.015em}
@@ -975,11 +981,24 @@ const reloadApp = () => location.replace(location.pathname + '?r=' + Date.now() 
 const SHOW_DAYS = [-1, 0, 1, 2].map(off => { const d = new Date(); d.setDate(d.getDate() + off); return d; });
 const TODAY_IDX = 1;
 const myBuyers = S => Object.values(BUYERS).filter(b => b.rep === S.rep).sort((x, y) => x.time.localeCompare(y.time));
-const CheckPill = ({a}) => !a || !a.in ? null : a.out ? html`<span class="pill s-out" title="Checked out">Out ${hhmm(a.out)}</span>` : html`<span class="pill s-in" title="Checked in">In ${hhmm(a.in)}</span>`;
+const isOngoing = a => !!(a && a.in && !a.out);
+// the client the seller is with right now (checked in, not yet out)
+const ongoingBuyer = S => myBuyers(S).find(b => isOngoing(S.appts[b.id]));
+const CheckPill = ({a}) => !a || !a.in ? null : a.out ? html`<span class="pill s-out" title="Checked out">Out ${hhmm(a.out)}</span>`
+  : html`<span class="pill s-in" title=${'Checked in at ' + hhmm(a.in)}><i class="live-dot" aria-hidden="true"></i>Ongoing</span>`;
 
 function CalendarTab({S, act}) {
   const rep = REPS[S.rep], [day, setDay] = useState(TODAY_IDX);
-  const list = day === TODAY_IDX ? myBuyers(S) : [];
+  const all = day === TODAY_IDX ? myBuyers(S) : [], now = all.filter(b => isOngoing(S.appts[b.id])), list = all.filter(b => !now.includes(b));
+  const row = b => html`<button class="appt" onClick=${() => act.sheet({type:'appt', bid:b.id})}>
+          <div class="appt-time">${b.time}</div>
+          <div class="appt-main">
+            <div class="appt-shop">${b.shop}</div>
+            <div class="appt-buyer">${b.buyer}</div>
+            ${b.divs.map(d => html`<div class="appt-cats"><b>${DIV_TAB[d]}</b> ${buyingCats(b, d).map(c => CAT_SHORT[c]).join(' · ') || 'No budget yet'}</div>`)}
+          </div>
+          <div class="appt-side"><${CheckPill} a=${S.appts[b.id]}/></div>
+        </button>`;
   return html`
     <header class="top top-bar mid"><h1 class="h1"><button class="h1-btn" onClick=${reloadApp} aria-label="Calendar. Tap to reload the app">Calendar</button></h1>
       <div class="top-acts">
@@ -989,30 +1008,25 @@ function CalendarTab({S, act}) {
     <section class="sec">
       <div class="days" role="tablist">${SHOW_DAYS.map((d, i) => html`<button role="tab" aria-selected=${i === day} class=${'day' + (i === day ? ' on' : '')} onClick=${() => setDay(i)}>
         <span>${d.toLocaleDateString('en-GB', {weekday:'short'})}</span><b>${d.getDate()}</b><span>Day ${i + 1}</span></button>`)}</div>
-      ${!list.length && html`<div class="empty">No appointments on this day.</div>`}
-      ${list.length > 0 && html`<div class="appts">${list.map(b => html`<button class="appt" onClick=${() => act.sheet({type:'appt', bid:b.id})}>
-          <div class="appt-time">${b.time}</div>
-          <div class="appt-main">
-            <div class="appt-shop">${b.shop}</div>
-            <div class="appt-buyer">${b.buyer}</div>
-            ${b.divs.map(d => html`<div class="appt-cats"><b>${DIV_TAB[d]}</b> ${buyingCats(b, d).map(c => CAT_SHORT[c]).join(' · ') || 'No budget yet'}</div>`)}
-          </div>
-          <div class="appt-side"><${CheckPill} a=${S.appts[b.id]}/></div>
-        </button>`)}</div>`}
+      ${!all.length && html`<div class="empty">No appointments on this day.</div>`}
+      ${now.length > 0 && html`<div class="lbl">Now</div><div class="appts now">${now.map(row)}</div>`}
+      ${list.length > 0 && html`${now.length > 0 && html`<div class="lbl">Today</div>`}<div class="appts">${list.map(row)}</div>`}
     </section>`;
 }
 
 function ApptSheet({sh, S, act}) {
   const b = BUYERS[sh.bid], o = S.orders['o-' + b.id], a = S.appts[b.id] || {};
-  const isIn = a.in && !a.out;
+  const isIn = a.in && !a.out, other = ongoingBuyer(S);
+  // one client at a time: checking in here checks out whoever is ongoing
+  const checkIn = () => { if (other && other.id !== b.id) act.checkOut(other.id); act.checkIn(b.id, a); };
   return html`<${Sheet} tall title=${b.shop} sub=${`${b.time} · ${b.buyer} · ${b.city}`} onClose=${act.close}
     foot=${html`${o && html`<button class="btn secondary" style="flex:0 0 auto" onClick=${() => act.openOrder(b.id)}>View order</button>`}
       <button class="btn primary" onClick=${() => act.createOrder(b.id)}>${o ? 'Add products' : 'Create order'}</button>`}>
     <div class="kv"><span>Cluster</span><${Cluster} c=${b.cluster}/>${o && html`<span style="margin-left:auto"><${Pill} s=${o.status}/></span>`}</div>
     <div class="checks">
-      ${!a.in ? html`<button class="btn go" onClick=${() => act.checkIn(b.id, a)}><${Icon} n="check" s=${18} w=${2.2}/>Check in</button>`
+      ${!a.in ? html`<button class="btn go" onClick=${checkIn}><${Icon} n="check" s=${18} w=${2.2}/>Check in</button>`
         : isIn ? html`<button class="btn secondary" disabled><${Icon} n="check" s=${18} w=${2.2}/>In ${hhmm(a.in)}</button>`
-        : html`<button class="btn go" onClick=${() => act.checkIn(b.id, a)}><${Icon} n="check" s=${18} w=${2.2}/>Check in again</button>`}
+        : html`<button class="btn go" onClick=${checkIn}><${Icon} n="check" s=${18} w=${2.2}/>Check in again</button>`}
       <button class=${'btn ' + (isIn ? 'primary' : 'secondary')} disabled=${!isIn} onClick=${() => act.checkOut(b.id)}>
         <${Icon} n="back" s=${18} w=${2.2}/>${a.out ? `Out ${hhmm(a.out)}` : 'Check out'}</button>
     </div>
@@ -1183,16 +1197,15 @@ function PinPad({rep, onDone, onBack}) {
       ? html`<button class="pin-k txt" onClick=${onBack}>Cancel</button>`
       : k === 'del' ? html`<button class="pin-k txt" onClick=${() => press('del')} aria-label="Delete" disabled=${!pin}><${Icon} n="back" s=${22}/></button>`
       : html`<button class="pin-k" onClick=${() => press(k)}>${k}</button>`)}</div>
-    <div class="small muted">Demo: any 4 digits work.</div>
   </div>`;
 }
 
 // full-screen page instead of a bottom sheet: close on the right, back on the left when there is a step to return to
 function FullPage({title, onClose, onBack, children}) {
-  return html`<div class="full" role="dialog" aria-modal="true" aria-label=${title}>
-    <div class="full-head">${onBack ? html`<button class="icon-btn" onClick=${onBack} aria-label="Back"><${Icon} n="back"/></button>` : html`<span></span>`}
+  return html`<div class="fpage" role="dialog" aria-modal="true" aria-label=${title}>
+    <div class="fpage-head">${onBack ? html`<button class="icon-btn" onClick=${onBack} aria-label="Back"><${Icon} n="back"/></button>` : html`<span></span>`}
       <button class="icon-btn" onClick=${onClose} aria-label="Close"><${Icon} n="x"/></button></div>
-    <div class="full-body">${children}</div>
+    <div class="fpage-body">${children}</div>
   </div>`;
 }
 
@@ -1663,7 +1676,7 @@ function SessionBar({S, ui, act}) {
   return html`<div class="sbar" role="status">
     <button class="sbar-main" onClick=${() => act.openOrder(b.id)} aria-label=${`Ordering for ${b.shop} with ${b.buyer}: ${o.lines.length} selected, ${n} units, ${fmt(v)}. Open order`}>
       <span class="sbar-dot" aria-hidden="true"></span><span class="sbar-t"><b>${b.shop}</b><span>${b.buyer}</span></span></button>
-    <button class="sbar-x" onClick=${act.endSession} aria-label="End session"><${Icon} n="x" s=${15} w=${2}/></button>
+    <button class="sbar-x" onClick=${() => isOngoing(S.appts[b.id]) ? act.checkOut(b.id) : act.endSession()} aria-label=${isOngoing(S.appts[b.id]) ? 'Check out and end session' : 'End session'}><${Icon} n="x" s=${15} w=${2}/></button>
   </div>`;
 }
 
@@ -1759,11 +1772,14 @@ function App({onReset}) {
   const toast = ui.toast && html`<div class="toast" key=${ui.toastId} role="status"><${Icon} n="check" s=${16} w=${2.4}/>${ui.toast}</div>`;
 
   const buyerView = ui.role === 'buyer' && S.orders[ui.buyerOrder];
+  // a checked-in client is always the client in session (after a reload or an account switch too)
+  const ongoing = ongoingBuyer(S), sessionOk = !!activeOrder(S, ui);
+  useEffect(() => { if (ongoing && !sessionOk && !buyerView) act.startSession(ongoing.id); }, [ongoing && ongoing.id, sessionOk, !!buyerView]);
   // the client in session stays on top of every tab, in the layout so it never covers products; the tab bar is always there
   const so = activeOrder(S, ui), banded = !!(so && !order && !buyerView && !(ui.sheet && ui.sheet.type === 'account')), capDiv = so && (BUYERS[so.buyerId].divs.includes(ui.capDiv) ? ui.capDiv : BUYERS[so.buyerId].divs[0]);
   // tint the browser chrome and safe area to match the client band while it shows
   useEffect(() => { const root = document.documentElement; root.classList.toggle('in-session', banded);
-    const ink = getComputedStyle(root).getPropertyValue('--ink').trim();
+    const ink = getComputedStyle(root).getPropertyValue('--band').trim();
     document.querySelectorAll('meta[name="theme-color"]').forEach(m => { m.dataset.base = m.dataset.base || m.content; m.content = banded ? ink : m.dataset.base; }); }, [banded]);
   if (buyerView) return html`<div class="app"><${BuyerView} S=${S} ui=${ui} act=${act}/>${sheet}${toast}</div>`;
   return html`<div class=${'app' + (banded ? ' in-session' : '')}>
