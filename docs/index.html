@@ -104,21 +104,20 @@ input{font:inherit;color:inherit}
 .tab.on{color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
 /* client in session: a bar at the top of every tab, part of the layout so it never covers products */
 /* edge-to-edge band under the status bar; the page below rounds its top corners into it, like a bridge, so it pushes the page down rather than floating over it */
-.sbar{flex:none;display:flex;align-items:center;gap:4px;padding:4px 8px;background:var(--band);color:var(--band-ink);animation:drop .3s cubic-bezier(.2,.8,.2,1)}
+.sbar{flex:none;display:flex;align-items:center;gap:4px;padding:2px 8px;background:var(--band);color:var(--band-ink);animation:drop .3s cubic-bezier(.2,.8,.2,1)}
 .app.in-session{background:var(--band)}
 /* on the phone the notch / status bar area above goes black too (desktop keeps the device frame) */
 @media (max-width:899px){html.in-session,html.in-session body{background:var(--band)}}
 .app.in-session > .screen{border-radius:20px 20px 0 0;background:var(--bg)}
 @keyframes drop{from{transform:translateY(-100%)}to{transform:none}}
-.sbar-main{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:10px;padding-left:36px;color:inherit;min-height:40px}
-.sbar-dot{position:relative;flex:none;width:8px;height:8px;border-radius:50%;background:#3CCB7F}
+.sbar-main{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:8px;color:inherit;min-height:28px}
+.sbar-dot{position:relative;flex:none;width:6px;height:6px;border-radius:50%;background:#3CCB7F}
 .sbar-dot::after{content:"";position:absolute;inset:0;border-radius:50%;background:#3CCB7F;animation:beat 1.8s ease-out infinite}
 @keyframes beat{from{transform:scale(1);opacity:.7}to{transform:scale(3.2);opacity:0}}
-.sbar-t{flex:0 1 auto;min-width:0;display:flex;flex-direction:column;align-items:center;line-height:1.2}
+.sbar-t{flex:0 1 auto;min-width:0;display:flex;align-items:baseline;gap:6px;line-height:1.2}
 .sbar-t b,.sbar-t span{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sbar-t b{font-size:15px;font-weight:600;letter-spacing:-.005em}
-.sbar-t span{font-size:12.5px;font-weight:400;opacity:.7}
-.sbar-x{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:inherit;opacity:.55}
+.sbar-t b{font-size:13px;font-weight:600}
+.sbar-t span{font-size:12.5px;font-weight:400;opacity:.65}
 .top{padding:14px 18px 6px}
 .maison{font:600 11.5px var(--f-display);letter-spacing:.28em;text-transform:uppercase}
 .eyebrow{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:10px}
@@ -530,8 +529,8 @@ input{font:inherit;color:inherit}
   .tabbar{bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 8px));padding:4px}
   .tab{flex-direction:row;gap:6px;font-size:12.5px;padding:6px 16px}
   .screen.tabbed{padding-bottom:64px}
-  .sbar{padding:0 6px 2px}
-  .sbar-main{min-height:34px}
+  .sbar{padding:0 6px 1px}
+  .sbar-main{min-height:26px}
   .ov-body{padding-bottom:116px}
   .ov-actions{bottom:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 8px)) + 54px)}
 }
@@ -1688,7 +1687,6 @@ function SessionBar({S, ui, act}) {
   return html`<div class="sbar" role="status">
     <button class="sbar-main" onClick=${() => act.openOrder(b.id)} aria-label=${`Ordering for ${b.shop} with ${b.buyer}: ${o.lines.length} selected, ${n} units, ${fmt(v)}. Open order`}>
       <span class="sbar-dot" aria-hidden="true"></span><span class="sbar-t"><b>${b.shop}</b><span>${b.buyer}</span></span></button>
-    <button class="sbar-x" onClick=${() => isOngoing(S.appts[b.id]) ? act.checkOut(b.id) : act.endSession()} aria-label=${isOngoing(S.appts[b.id]) ? 'Check out and end session' : 'End session'}><${Icon} n="x" s=${15} w=${2}/></button>
   </div>`;
 }
 
