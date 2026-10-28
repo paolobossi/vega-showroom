@@ -114,7 +114,6 @@ input{font:inherit;color:inherit}
 .sbar-t{flex:1;min-width:0;font-size:15px;font-weight:600;letter-spacing:-.005em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sbar-x{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:inherit;opacity:.55}
 .top{padding:14px 18px 6px}
-.brandline{display:flex;justify-content:space-between;align-items:center;min-height:36px}
 .maison{font:600 11.5px var(--f-display);letter-spacing:.28em;text-transform:uppercase}
 .eyebrow{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:10px}
 .h1{font:650 32px/1.1 var(--f-display);margin:4px 0 0;letter-spacing:-.03em}
@@ -126,6 +125,10 @@ input{font:inherit;color:inherit}
 .avatar.sm{width:34px;height:34px;font-size:12px}
 .round-btn{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--surface);border:1px solid var(--line);color:var(--ink);margin-top:6px}
 .top-bar{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.top-bar.mid{align-items:center;padding-top:18px}
+.h1-btn{font:inherit;letter-spacing:inherit;color:inherit;text-align:left}
+.h1-btn:active{opacity:.5}
+.top-acts{display:flex;align-items:center;gap:10px}.top-acts .round-btn{margin-top:0}
 .field{display:flex;flex-direction:column;gap:6px}
 .inp.area{height:auto;min-height:104px;padding:12px 14px;line-height:1.45;resize:vertical}
 .days{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
@@ -928,11 +931,8 @@ function Guidelines() {
 function Today({S, act}) {
   const rep = REPS[S.rep];
   return html`
-    <header class="top">
-      <div class="brandline"><span class="maison">Loewe</span>
-        <button class="avatar" onClick=${() => act.sheet({type:'account'})} aria-label=${'Signed in as ' + rep.name + '. Switch account'}>${rep.ini}</button></div>
-      <div class="eyebrow">SS27 showroom · Paris · day 2 of 4</div>
-      <h1 class="h1">Home</h1>
+    <header class="top top-bar"><div><div class="eyebrow">SS27 showroom · Paris · day 2 of 4</div><h1 class="h1">Home</h1></div>
+      <button class="avatar" onClick=${() => act.sheet({type:'account'})} aria-label=${'Signed in as ' + rep.name + '. Switch account'}>${rep.ini}</button>
     </header>
     <div class="today-grid">
       ${['W', 'M'].map(d => html`<section class="sec">
@@ -953,6 +953,9 @@ function Today({S, act}) {
 /* =====================================================================
    Calendar: the seller's showroom days and appointments
    ===================================================================== */
+// Tapping the Calendar title reloads the app, so the home-screen version (no browser bar) can pick up a new release.
+// A fresh query string skips the cached page; orders and the session are kept in local storage.
+const reloadApp = () => location.replace(location.pathname + '?r=' + Date.now() + location.hash);
 const SHOW_DAYS = [-1, 0, 1, 2].map(off => { const d = new Date(); d.setDate(d.getDate() + off); return d; });
 const TODAY_IDX = 1;
 const myBuyers = S => Object.values(BUYERS).filter(b => b.rep === S.rep).sort((x, y) => x.time.localeCompare(y.time));
@@ -962,11 +965,10 @@ function CalendarTab({S, act}) {
   const rep = REPS[S.rep], [day, setDay] = useState(TODAY_IDX);
   const list = day === TODAY_IDX ? myBuyers(S) : [];
   return html`
-    <header class="top">
-      <div class="brandline"><span class="maison">Loewe</span>
+    <header class="top top-bar mid"><h1 class="h1"><button class="h1-btn" onClick=${reloadApp} aria-label="Calendar. Tap to reload the app">Calendar</button></h1>
+      <div class="top-acts">
+        <button class="round-btn" onClick=${() => act.sheet({type:'newbuyer', appt:true})} aria-label="New appointment"><${Icon} n="plus" s=${20} w=${2.2}/></button>
         <button class="avatar" onClick=${() => act.sheet({type:'account'})} aria-label=${'Signed in as ' + rep.name + '. Switch account'}>${rep.ini}</button></div>
-      <div class="top-bar"><div><div class="eyebrow">SS27 showroom · Paris</div><h1 class="h1">Calendar</h1></div>
-        <button class="round-btn" onClick=${() => act.sheet({type:'newbuyer', appt:true})} aria-label="New appointment"><${Icon} n="plus" s=${20} w=${2.2}/></button></div>
     </header>
     <section class="sec">
       <div class="days" role="tablist">${SHOW_DAYS.map((d, i) => html`<button role="tab" aria-selected=${i === day} class=${'day' + (i === day ? ' on' : '')} onClick=${() => setDay(i)}>
