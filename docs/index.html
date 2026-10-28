@@ -95,7 +95,7 @@ input{font:inherit;color:inherit}
 .tabbar{position:absolute;z-index:20;left:50%;transform:translateX(-50%);bottom:max(14px,calc(env(safe-area-inset-bottom,0px) - 6px));display:flex;gap:2px;padding:5px;border-radius:999px;
   background:color-mix(in srgb,var(--surface) 78%,transparent);-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);
   border:1px solid color-mix(in srgb,var(--line) 70%,transparent);box-shadow:0 10px 30px rgba(0,0,0,.14),0 1px 3px rgba(0,0,0,.08)}
-.tab{display:flex;flex-direction:column;align-items:center;gap:1px;font-size:10.5px;font-weight:600;color:var(--muted);min-width:86px;padding:7px 14px 6px;border-radius:999px;transition:background .2s,color .2s}
+.tab{display:flex;flex-direction:column;align-items:center;gap:1px;font-size:10.5px;font-weight:600;color:var(--muted);min-width:74px;padding:7px 10px 6px;border-radius:999px;transition:background .2s,color .2s}
 .tab.on{color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
 /* live session bar, sits just above the tab pill */
 .screen.tabbed.has-session{padding-bottom:calc(166px + env(safe-area-inset-bottom,0px))}
@@ -116,14 +116,20 @@ input{font:inherit;color:inherit}
 .sec{padding:16px 18px 6px;display:flex;flex-direction:column;gap:10px;min-width:0}
 .sec-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
 .sec-head h2{margin:0;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.hscroll{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:18px;margin:0 -18px;padding:2px 18px 8px;scrollbar-width:none}
-.hscroll::-webkit-scrollbar{display:none}
 .icon-btn{display:grid;place-items:center;width:40px;height:40px;border-radius:20px;color:var(--ink)}
 .avatar{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font:650 13px var(--f-ui);letter-spacing:.02em}
 .avatar.sm{width:34px;height:34px;font-size:12px}
 .round-btn{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--surface);border:1px solid var(--line);color:var(--ink);margin-top:6px}
 .top-bar{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
 .field{display:flex;flex-direction:column;gap:6px}
+.inp.area{height:auto;min-height:104px;padding:12px 14px;line-height:1.45;resize:vertical}
+.days{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.day{display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 0;border-radius:14px;background:var(--surface);border:1px solid var(--line);color:var(--ink)}
+.day b{font-size:19px;font-weight:650;line-height:1.15}
+.day span{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.day.on{background:var(--accent);border-color:transparent;color:var(--accent-ink)}
+.day.on span{color:inherit;opacity:.8}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .inp{height:46px;border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:0 14px;font:16px var(--f-ui);color:var(--ink);outline:0;width:100%}
 .inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}
 .icon-btn:active{background:var(--surface-2)}
@@ -137,6 +143,8 @@ input{font:inherit;color:inherit}
 .s-shared{background:var(--warn-bg);color:var(--warn)}
 .s-submitted{background:var(--good-bg);color:var(--good)}
 .s-confirmed{background:var(--good);color:var(--surface)}
+.s-in{background:var(--good-bg);color:var(--good)}
+.s-out{background:var(--surface-2);color:var(--muted)}
 .by{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:600;color:var(--muted);white-space:nowrap}
 .by.client{color:var(--accent)}
 .chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:99px;background:var(--surface-2);color:var(--muted);white-space:nowrap}
@@ -175,6 +183,8 @@ input{font:inherit;color:inherit}
 .look-n{font-size:12.5px;color:var(--muted)}
 .look-t{font:600 17px/1.2 var(--f-display);letter-spacing:-.01em}
 .look-vm{font-size:13px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.look-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.look-list .look{width:auto}
 .appts{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
 .appt{display:flex;gap:14px;align-items:stretch;text-align:left;width:100%;padding:14px;border-top:1px solid var(--line)}
 .appt:first-child{border-top:0}
@@ -403,7 +413,6 @@ input{font:inherit;color:inherit}
   .ov-sub{flex-direction:row;align-items:center;justify-content:space-between;padding:4px 16px 8px}
   .ov-sub .track{flex:1;max-width:420px}
   .today-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start}
-  .today-grid .looks{grid-column:1 / -1}
   .h1{font-size:28px}
   .pgrid{grid-template-columns:repeat(4,minmax(0,1fr))}
   .vf-stage{transform:translate(-50%,-42%)}
@@ -552,6 +561,7 @@ const LOOKS = [
 
 /* ---------- helpers ---------- */
 const fmt = n => '€' + Math.round(n).toLocaleString('en-GB');
+const prices = p => `${fmt(p.price)} wholesale · ${fmt(p.rrp)} retail`;
 const units = q => Object.values(q || {}).reduce((a, b) => a + b, 0);
 const lineValue = l => units(l.qty) * P[l.pid].price;
 const qkey = q => Object.keys(q).sort().map(k => k + ':' + q[k]).join(',');
@@ -619,12 +629,12 @@ function seedState() {
   const o = {id:'o-dubois', buyerId:'dubois', status:'draft', submittedBy:null, lines,
     log:[{at:todayAt(10,2), by:'salesperson', text:'Session started in the showroom'},
       ...lines.map(l => ({at:l.at, by:'salesperson', text:`Added ${P[l.pid].name} · ${l.colour} ×${units(l.qty)}${l.via === 'photo' ? ' (photo match)' : ' (suggestion)'}`}))]};
-  return {orders:{'o-dubois':o}, rep:'roberto', buyers:{}, savedAt:null};
+  return {orders:{'o-dubois':o}, rep:'roberto', buyers:{}, appts:{dubois:{in:todayAt(10, 2)}}, savedAt:null};
 }
 const KEY = 'vega-poc-v2';
 function loadState() {
   try { const s = JSON.parse(localStorage.getItem(KEY));
-    if (s && s.orders) { s.rep = REPS[s.rep] ? s.rep : 'roberto'; s.buyers = s.buyers || {}; Object.assign(BUYERS, s.buyers); return s; } } catch (e) {}
+    if (s && s.orders) { s.rep = REPS[s.rep] ? s.rep : 'roberto'; s.buyers = s.buyers || {}; s.appts = s.appts || {}; Object.assign(BUYERS, s.buyers); return s; } } catch (e) {}
   return seedState();
 }
 function saveState(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
@@ -672,7 +682,7 @@ const IC = {
   user:'M12 12a4 4 0 100-8 4 4 0 000 8z M4 21c1-4 4-6 8-6s7 2 8 6', spark:'M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z',
   info:'M12 21a9 9 0 100-18 9 9 0 000 18z M12 11v6 M12 7.5v.01', history:'M4 12a8 8 0 108-8 8 8 0 00-6.5 3.3 M4 4v4h4 M12 8v4l3 2',
   copy:'M8 8h11v12H8z M5 16V4h11', alert:'M12 4l9 16H3z M12 10v4 M12 17v.01',
-  filter:'M4 7h16 M7 12h10 M10 17h4', down:'M6 9l6 6 6-6', plus:'M12 5v14 M5 12h14', next:'M9 6l6 6-6 6',
+  filter:'M4 7h16 M7 12h10 M10 17h4', down:'M6 9l6 6 6-6', plus:'M12 5v14 M5 12h14', next:'M9 6l6 6-6 6', home:'M4 11l8-7 8 7 M6 9.5V20h12V9.5 M10 20v-5h4v5', note:'M5 4h14v16H5z M8 9h8 M8 13h8 M8 17h5',
 };
 const Icon = ({n, s=22, w=1.8}) => html`<svg width=${s} height=${s} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width=${w} stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d=${IC[n]}/></svg>`;
 
@@ -732,7 +742,7 @@ function KpiPanel({order, div}) {
 }
 
 /* =====================================================================
-   Home: lookbooks first, then appointments
+   Home: lookbooks and VM intent
    ===================================================================== */
 function LookTile({look}) {
   const items = look.items.slice(0, 3);
@@ -742,7 +752,7 @@ function LookTile({look}) {
 }
 
 function Today({S, act}) {
-  const rep = REPS[S.rep], mine = Object.values(BUYERS).filter(b => b.rep === S.rep).sort((x, y) => x.time.localeCompare(y.time));
+  const rep = REPS[S.rep];
   return html`
     <header class="top">
       <div class="brandline"><span class="maison">Loewe</span>
@@ -751,33 +761,77 @@ function Today({S, act}) {
       <h1 class="h1">Home</h1>
     </header>
     <div class="today-grid">
-      <section class="sec looks">
-        <div class="sec-head"><h2>Lookbooks & VM intent</h2></div>
-        <div class="hscroll">
-          ${LOOKS.map(l => html`<button class="look" onClick=${() => act.sheet({type:'look', id:l.id})}>
+      ${['W', 'M'].map(d => html`<section class="sec">
+        <div class="sec-head"><h2>${DIV_LABEL[d]} lookbook & VM intent</h2></div>
+        <div class="look-list">
+          ${LOOKS.filter(l => l.div === d).map(l => html`<button class="look" onClick=${() => act.sheet({type:'look', id:l.id})}>
             <${LookTile} look=${l}/>
-            <div><div class="look-n">${DIV_LABEL[l.div]} · Look ${String(l.n).padStart(2, '0')}</div><div class="look-t">${l.title}</div></div>
+            <div><div class="look-n">Look ${String(l.n).padStart(2, '0')}</div><div class="look-t">${l.title}</div></div>
             <div class="look-vm">${l.vm}</div>
           </button>`)}
         </div>
-      </section>
-      <section class="sec">
-        <div class="sec-head"><h2>Your appointments</h2><span class="small muted">${rep.name} · ${mine.length} buyers</span></div>
-        ${!mine.length && html`<div class="empty">No appointments yet.</div>`}
-        ${mine.length > 0 && html`<div class="appts">${mine.map(b => { const o = S.orders['o-' + b.id];
-          const v = o ? b.divs.reduce((a, d) => a + kpi(o, d).total, 0) : 0;
-          return html`<button class="appt" onClick=${() => act.openOrder(b.id)}>
-            <div class="appt-time">${b.time}</div>
-            <div class="appt-main">
-              <div class="appt-shop">${b.shop}</div>
-              <div class="small muted">${b.buyer} · ${b.city}</div>
-              <div class="appt-meta"><${Cluster} c=${b.cluster}/><span class="chip">${b.divs.map(d => DIV_LABEL[d]).join(' + ')}</span></div>
-            </div>
-            <div class="appt-side"><${Pill} s=${o ? o.status : 'none'}/>${o && html`<span class="row-val num">${fmt(v)}</span>`}</div>
-          </button>`; })}</div>`}
-      </section>
+      </section>`)}
     </div>
     <div class="foot">Loewe showroom · powered by Vega</div>`;
+}
+
+/* =====================================================================
+   Calendar: the seller's showroom days and appointments
+   ===================================================================== */
+const SHOW_DAYS = [-1, 0, 1, 2].map(off => { const d = new Date(); d.setDate(d.getDate() + off); return d; });
+const TODAY_IDX = 1;
+const myBuyers = S => Object.values(BUYERS).filter(b => b.rep === S.rep).sort((x, y) => x.time.localeCompare(y.time));
+const CheckPill = ({a}) => !a || !a.in ? null : a.out ? html`<span class="pill s-out" title="Checked out">Out ${hhmm(a.out)}</span>` : html`<span class="pill s-in" title="Checked in">In ${hhmm(a.in)}</span>`;
+
+function CalendarTab({S, act}) {
+  const rep = REPS[S.rep], [day, setDay] = useState(TODAY_IDX);
+  const list = day === TODAY_IDX ? myBuyers(S) : [];
+  return html`
+    <header class="top">
+      <div class="brandline"><span class="maison">Loewe</span>
+        <button class="avatar" onClick=${() => act.sheet({type:'account'})} aria-label=${'Signed in as ' + rep.name + '. Switch account'}>${rep.ini}</button></div>
+      <div class="top-bar"><div><div class="eyebrow">SS27 showroom · Paris</div><h1 class="h1">Calendar</h1></div>
+        <button class="round-btn" onClick=${() => act.sheet({type:'newbuyer', appt:true})} aria-label="New appointment"><${Icon} n="plus" s=${20} w=${2.2}/></button></div>
+    </header>
+    <section class="sec">
+      <div class="days" role="tablist">${SHOW_DAYS.map((d, i) => html`<button role="tab" aria-selected=${i === day} class=${'day' + (i === day ? ' on' : '')} onClick=${() => setDay(i)}>
+        <span>${d.toLocaleDateString('en-GB', {weekday:'short'})}</span><b>${d.getDate()}</b><span>Day ${i + 1}</span></button>`)}</div>
+      ${!list.length && html`<div class="empty">No appointments on this day.</div>`}
+      ${list.length > 0 && html`<div class="appts">${list.map(b => { const o = S.orders['o-' + b.id], a = S.appts[b.id];
+        const v = o ? b.divs.reduce((x, d) => x + kpi(o, d).total, 0) : 0;
+        return html`<button class="appt" onClick=${() => act.sheet({type:'appt', bid:b.id})}>
+          <div class="appt-time">${b.time}</div>
+          <div class="appt-main">
+            <div class="appt-shop">${b.shop}</div>
+            <div class="small muted">${b.buyer} · ${b.city}</div>
+            <div class="appt-meta"><${Cluster} c=${b.cluster}/><span class="chip">${b.divs.map(d => DIV_LABEL[d]).join(' + ')}</span></div>
+          </div>
+          <div class="appt-side"><${CheckPill} a=${a}/>${o && html`<span class="row-val num">${fmt(v)}</span>`}</div>
+        </button>`; })}</div>`}
+    </section>`;
+}
+
+function ApptSheet({sh, S, act}) {
+  const b = BUYERS[sh.bid], o = S.orders['o-' + b.id], a = S.appts[b.id] || {};
+  const [div, setDiv] = useState(b.divs[0]);
+  const isIn = a.in && !a.out;
+  return html`<${Sheet} tall title=${b.shop} sub=${`${b.time} · ${b.buyer} · ${b.city}`} onClose=${act.close}
+    foot=${html`${o && html`<button class="btn secondary" style="flex:0 0 auto" onClick=${() => act.openOrder(b.id)}>View order</button>`}
+      <button class="btn primary" onClick=${() => act.createOrder(b.id)}>${o ? 'Add products' : 'Create order'}</button>`}>
+    <div class="appt-meta"><${Cluster} c=${b.cluster}/><span class="chip">${b.divs.map(d => DIV_LABEL[d]).join(' + ')}</span>${o && html`<${Pill} s=${o.status}/>`}</div>
+    <div class="checks">
+      <button class=${'btn ' + (a.in ? 'secondary' : 'primary')} disabled=${!!a.in} onClick=${() => act.checkIn(b.id)}>
+        <${Icon} n="check" s=${18} w=${2.2}/>${a.in ? `In ${hhmm(a.in)}` : 'Check in'}</button>
+      <button class=${'btn ' + (isIn ? 'primary' : 'secondary')} disabled=${!isIn} onClick=${() => act.checkOut(b.id)}>
+        <${Icon} n="back" s=${18} w=${2.2}/>${a.out ? `Out ${hhmm(a.out)}` : 'Check out'}</button>
+    </div>
+    <div class="lbl">Budgets & targets</div>
+    ${b.divs.length > 1 && html`<${Seg} full opts=${b.divs.map(d => [d, DIV_TAB[d]])} val=${div} on=${setDiv}/>`}
+    <${KpiPanel} order=${o || {buyerId:b.id, lines:[]}} div=${div}/>
+    <label class="field"><span class="lbl">Notes</span>
+      <textarea class="inp area" placeholder="Preferences, follow-ups, what the buyer liked…" value=${a.notes || ''} onInput=${e => act.note(b.id, e.target.value)}></textarea>
+      <span class="small muted">Saved automatically</span></label>
+  <//>`;
 }
 
 function LookSheet({id, S, ui, act}) {
@@ -851,9 +905,10 @@ function ProductList({div, q, cluster, season, onPick, grid}) {
   </button>`)}</div>`;
 }
 
-function CatalogueTab({ui, act}) {
-  const [q, setQ] = useState(''), [div, setDiv] = useState('W');
-  const season = SEASONS.find(x => x.id === ui.catSeason), cl = ui.catAvail;
+function CatalogueTab({S, ui, act}) {
+  const so = activeOrder(S, ui), sb = so && BUYERS[so.buyerId];
+  const [q, setQ] = useState(''), [div, setDiv] = useState(sb ? sb.divs[0] : 'W');
+  const season = SEASONS.find(x => x.id === ui.catSeason), cl = ui.catAvail || (sb && sb.cluster);
   return html`
     <header class="top">
       <button class="season-btn" onClick=${() => act.sheet({type:'season'})} aria-label=${'Collection: ' + season.name + '. Change'}>${season.name}<${Icon} n="down" s=${15} w=${2.2}/></button>
@@ -861,10 +916,11 @@ function CatalogueTab({ui, act}) {
     <section class="sec">
       <div class="searchrow">
         <label class="search"><${Icon} n="search" s=${18}/><input id="cat-q" placeholder="Search style, code or family" value=${q} onInput=${e => setQ(e.target.value)}/></label>
-        <button class=${'sq-btn' + (cl ? ' on' : '')} onClick=${() => act.sheet({type:'filter'})} aria-label=${cl ? `Filters: ${cl} availability` : 'Filters'}><${Icon} n="filter" s=${20} w=${2}/></button>
+        <button class=${'sq-btn' + (ui.catAvail ? ' on' : '')} onClick=${() => act.sheet({type:'filter'})} aria-label=${ui.catAvail ? `Filters: ${ui.catAvail} availability` : 'Filters'}><${Icon} n="filter" s=${20} w=${2}/></button>
       </div>
       <${Seg} full opts=${[['W', DIV_TAB.W], ['M', DIV_TAB.M]]} val=${div} on=${setDiv}/>
-      ${cl && html`<button class="fchip" onClick=${() => act.set({catAvail:null})} aria-label="Clear availability filter">Available to ${cl} clients<${Icon} n="x" s=${14} w=${2.2}/></button>`}
+      ${ui.catAvail ? html`<button class="fchip" onClick=${() => act.set({catAvail:null})} aria-label="Clear availability filter">Available to ${ui.catAvail} clients<${Icon} n="x" s=${14} w=${2.2}/></button>`
+        : sb && html`<span class="fchip">Ordering for ${sb.shop} · ${sb.cluster}</span>`}
       <${ProductList} grid div=${div} q=${q} season=${season.id} cluster=${cl} onPick=${p => act.sheet({type:'product', pid:p.id})}/>
     </section>`;
 }
@@ -905,7 +961,7 @@ function NewBuyerSheet({S, sh, act}) {
     const shop = f.shop.trim(), id = 'n' + uid();
     const code = (shop.replace(/[^A-Za-z]/g, '').slice(0, 3).toUpperCase() || 'NEW') + String(10 + hash(id) % 90);
     act.newBuyer({id, rep:S.rep, added:true, shop, city:f.city.trim() || 'Paris', buyer:f.buyer.trim(), cluster:f.cluster, divs,
-      budget:Object.fromEntries(divs.map(d => [d, Math.max(0, Number(f[d]) || 0)])), time:hhmm(Date.now()), code}, sh.item);
+      budget:Object.fromEntries(divs.map(d => [d, Math.max(0, Number(f[d]) || 0)])), time:hhmm(Date.now()), code}, sh.item, sh.appt);
   };
   return html`<${Sheet} tall title="New session" sub="Start an order with a buyer" onClose=${act.close}
     foot=${html`<button class="btn primary" disabled=${!ok} onClick=${start}>Start session</button>`}>
@@ -943,14 +999,13 @@ function ProductSheet({pid, S, ui, act}) {
   const o = activeOrder(S, ui), b = o && BUYERS[o.buyerId], why = o && canTake(o, p);
   const looks = LOOKS.filter(l => l.items.some(([x]) => x === pid));
   const item = {pid, colour:c, via:'search'}, pick = () => act.sheet({type:'pick', item});
-  return html`<${Sheet} title=${p.name} sub=${`${p.code} · ${fmt(p.price)} wholesale`} onClose=${act.close}
+  return html`<${Sheet} title=${p.name} sub=${`${p.code} · ${prices(p)}`} onClose=${act.close}
     foot=${!o ? html`<button class="btn primary" onClick=${pick}>Add to an order…</button>`
       : why ? html`<button class="btn secondary" style="flex:0 0 auto" onClick=${pick}>Other buyer</button><button class="btn primary" disabled>${b.shop} · ${why}</button>`
       : html`<button class="btn primary" onClick=${() => act.sheet({type:'size', orderId:o.id, ...item})}>Add to ${b.shop}</button>`}>
     <div class="thumb" style="width:100%;max-width:360px;height:auto;aspect-ratio:1;margin:0 auto;border-radius:18px"><${Art} pid=${pid} colour=${c}/></div>
     <div class="colours">${p.colours.map(x => html`<button class=${'colour' + (x === c ? ' on' : '')} onClick=${() => setC(x)}><span class="sw" style=${{background:COL[x][0]}}></span>${x}<span class="code">${COL[x][1]}</span></button>`)}</div>
     <div class="panel">
-      <div class="impact-row"><span class="muted">Retail</span><span>${fmt(p.rrp)} RRP</span></div>
       <div class="impact-row"><span class="muted">Category</span><span>${DIV_LABEL[p.div]} ${CAT_LABEL[p.cat].toLowerCase()} · ${p.family} family</span></div>
       <div class="impact-row"><span class="muted">Sizes</span><span class="code" style="color:var(--ink)">${p.sizes.join(' · ')}</span></div>
       <div class="impact-row"><span class="muted">Delivery</span><span>${DROPS[p.drop]}</span></div>
@@ -996,7 +1051,7 @@ function SizeSheet({sh, S, act}) {
       <div class="small muted">${lk ? html`<span class="lock"><${Icon} n="lock" s=${11} w=${2.2}/>${CLUSTERS[xp.min]}+</span>` : has ? 'In order' : note || fmt(xp.price)}</div></button>`; };
   const curves = CURVES[p.sizes.length] || [];
 
-  return html`<${Sheet} tall title=${p.name} sub=${`${p.code} · ${fmt(p.price)} wholesale`} onClose=${close}
+  return html`<${Sheet} tall title=${p.name} sub=${`${p.code} · ${prices(p)}`} onClose=${close}
     foot=${readOnly ? html`<button class="btn secondary" onClick=${act.close}>Close</button>` : html`
       ${existing && html`<button class="btn danger" style="flex:0 0 auto" onClick=${() => { act.saveDraft(order.id, p.id, {}, 'x', actor); act.close(); act.toast('Removed from order'); }}>Remove</button>`}
       <button class="btn primary" disabled=${locked || (!existing && tUnits === 0)} onClick=${done}>${existing ? 'Save changes' : tUnits ? `Add ${tUnits} to order` : 'Enter quantities'}</button>`}>
@@ -1072,7 +1127,7 @@ function Capture({order, div, act}) {
     ${stage === 'match' && html`<div class="match" role="dialog" aria-label="Confirm the match">
       <div class="match-head"><span class="chip ai"><${Icon} n="spark" s=${13}/>Match found</span><span class=${'conf ' + (conf >= 90 ? 'hi' : 'mid')}>${conf}% confidence</span></div>
       <div class="match-main"><${Thumb} cls="lg" pid=${p.id} colour=${s.colour}/>
-        <div style="min-width:0"><div class="m-name">${p.name}</div><div class="code" style="margin-top:4px">${p.code} · ${s.colour} ${COL[s.colour][1]}</div><div class="small muted" style="margin-top:2px">${CAT_LABEL[p.cat]} · ${fmt(p.price)} wholesale</div></div></div>
+        <div style="min-width:0"><div class="m-name">${p.name}</div><div class="code" style="margin-top:4px">${p.code} · ${s.colour} ${COL[s.colour][1]}</div><div class="small muted" style="margin-top:2px">${CAT_LABEL[p.cat]} · ${prices(p)}</div></div></div>
       ${sib && html`<div class="callout warn"><${Icon} n="alert" s=${18}/><div>Close to <b>${sib.name}</b> (${sib.code}). Check the sample before you confirm.</div></div>`}
       ${why && html`<div class="callout bad"><${Icon} n="lock" s=${18}/><div>${b.shop} · ${why}, so this style can’t go on the order.</div></div>`}
       <button class="btn primary block" disabled=${!!why} onClick=${() => pick(p.id, s.colour)}>Confirm match · enter sizes</button>
@@ -1274,7 +1329,7 @@ function BuyerView({S, ui, act}) {
    App shell
    ===================================================================== */
 const GUIDE_STEPS = [
-  'Open Maison Dubois. The session is already under way.',
+  'In Calendar, open Maison Dubois (already checked in) and tap Add products, or View order.',
   'Tap Photograph sample and press the shutter to match the bag on the shelf.',
   'Confirm the match, set sizes with a size curve, and watch the guideline mix move.',
   'Tap the share button, share the basket, then open it as the buyer and submit.',
@@ -1294,7 +1349,7 @@ function SessionBar({S, ui, act}) {
 }
 
 function TabBar({tab, act}) {
-  const T = [['today', 'Home', 'today'], ['orders', 'Orders', 'orders'], ['catalogue', 'Collection', 'grid']];
+  const T = [['calendar', 'Calendar', 'today'], ['today', 'Home', 'home'], ['catalogue', 'Collection', 'grid'], ['orders', 'Orders', 'orders']];
   return html`<nav class="tabbar">${T.map(([k, l, i]) => html`<button class=${'tab' + (tab === k ? ' on' : '')} onClick=${() => act.tab(k)} aria-current=${tab === k ? 'page' : null}><${Icon} n=${i}/>${l}</button>`)}</nav>`;
 }
 
@@ -1317,10 +1372,17 @@ function makeActs(setS, setUi, onReset) {
       setS(s => s.orders[id] ? s : {...s, orders:{...s.orders, [id]:newOrder(bid)}, savedAt:Date.now()});
       setUi(u => ({...u, session:id, div: BUYERS[bid].divs[0]})); },
     endSession: () => { setUi(u => ({...u, session:null})); a.toast('Session ended'); },
+    // appointment record: every change is stored straight away (state persists on each update)
+    appt: (bid, patch) => setS(s => ({...s, appts:{...s.appts, [bid]:{...(s.appts[bid] || {}), ...patch}}, savedAt:Date.now()})),
+    checkIn: bid => { a.appt(bid, {in:Date.now(), out:null}); a.toast(`Checked in · ${BUYERS[bid].shop}`); },
+    checkOut: bid => { a.appt(bid, {out:Date.now()}); setUi(u => u.session === 'o-' + bid ? {...u, session:null} : u); a.toast(`Checked out · ${BUYERS[bid].shop}`); },
+    note: (bid, text) => a.appt(bid, {notes:text}),
+    // Create order: start that client's session and land in the Collection to add products
+    createOrder: bid => { a.startSession(bid); setUi(u => ({...u, tab:'catalogue', view:null, sheet:null, catAvail:null})); a.toast(`Ordering for ${BUYERS[bid].shop}`); },
     // add flow from Collection or a lookbook: start (or switch to) that buyer's session, then enter sizes in place
     addFor: (bid, item) => { a.startSession(bid); a.sheet({type:'size', orderId:'o-' + bid, ...item}); },
-    newBuyer: (b, item) => { BUYERS[b.id] = b; setS(s => ({...s, buyers:{...s.buyers, [b.id]:b}}));
-      if (item) a.addFor(b.id, item); else a.openOrder(b.id);
+    newBuyer: (b, item, appt) => { BUYERS[b.id] = b; setS(s => ({...s, buyers:{...s.buyers, [b.id]:b}}));
+      if (item) a.addFor(b.id, item); else if (appt) a.sheet({type:'appt', bid:b.id}); else a.openOrder(b.id);
       a.toast(`Session started with ${b.shop}`); },
     mut: (id, fn) => setS(s => { const o = JSON.parse(JSON.stringify(s.orders[id])); fn(o); return {...s, orders:{...s.orders, [id]:o}, savedAt:Date.now()}; }),
     role: (r, id) => setUi(u => ({...u, role:r, buyerOrder:id || u.buyerOrder, sheet:null, capture:false})),
@@ -1335,7 +1397,7 @@ function makeActs(setS, setUi, onReset) {
 
 function App({onReset}) {
   const [S, setS] = useState(loadState);
-  const [ui, setUi] = useState({tab:'today', view:null, sheet:null, capture:false, div:'W', role:'sales', toast:null, session:loadSession(), catSeason:'SS27', catAvail:null});
+  const [ui, setUi] = useState({tab:'calendar', view:null, sheet:null, capture:false, div:'W', role:'sales', toast:null, session:loadSession(), catSeason:'SS27', catAvail:null});
   useEffect(() => { saveState(S); }, [S]);
   useEffect(() => { saveSession(ui.session); }, [ui.session]);
   const act = useMemo(() => makeActs(setS, setUi, onReset), []);
@@ -1353,7 +1415,8 @@ function App({onReset}) {
     : sh.type === 'filter' ? html`<${FilterSheet} ui=${ui} act=${act}/>`
     : sh.type === 'account' ? html`<${AccountSheet} S=${S} act=${act}/>`
     : sh.type === 'newbuyer' ? html`<${NewBuyerSheet} S=${S} sh=${sh} act=${act}/>`
-    : sh.type === 'pick' ? html`<${PickBuyerSheet} S=${S} sh=${sh} act=${act}/>` : null;
+    : sh.type === 'pick' ? html`<${PickBuyerSheet} S=${S} sh=${sh} act=${act}/>`
+    : sh.type === 'appt' ? html`<${ApptSheet} key=${sh.bid} sh=${sh} S=${S} act=${act}/>` : null;
   const toast = ui.toast && html`<div class="toast" key=${ui.toastId} role="status"><${Icon} n="check" s=${16} w=${2.4}/>${ui.toast}</div>`;
 
   if (ui.role === 'buyer' && S.orders[ui.buyerOrder]) return html`<div class="app"><${BuyerView} S=${S} ui=${ui} act=${act}/>${sheet}${toast}</div>`;
@@ -1361,9 +1424,10 @@ function App({onReset}) {
   return html`<div class=${'app' + (inSession ? ' has-session' : '')}>
     ${order ? html`<${OrderView} S=${S} ui=${ui} act=${act} order=${order}/>` : html`
       <div class=${'screen tabbed' + (inSession ? ' has-session' : '')}>
+        ${ui.tab === 'calendar' && html`<${CalendarTab} S=${S} act=${act}/>`}
         ${ui.tab === 'today' && html`<${Today} S=${S} act=${act}/>`}
         ${ui.tab === 'orders' && html`<${OrdersTab} S=${S} act=${act}/>`}
-        ${ui.tab === 'catalogue' && html`<${CatalogueTab} ui=${ui} act=${act}/>`}
+        ${ui.tab === 'catalogue' && html`<${CatalogueTab} S=${S} ui=${ui} act=${act}/>`}
       </div>
       <${SessionBar} S=${S} ui=${ui} act=${act}/>
       <${TabBar} tab=${ui.tab} act=${act}/>`}
