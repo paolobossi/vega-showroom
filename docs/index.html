@@ -178,6 +178,7 @@ input{font:inherit;color:inherit}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 18px;border-radius:14px;font-weight:650;font-size:15.5px}
 .btn.primary{background:var(--accent);color:var(--accent-ink)}
 .btn.secondary{background:var(--surface-2);border:1px solid var(--line)}
+.btn.go{background:var(--good);color:var(--surface)}
 .btn.ghost{color:var(--accent)}
 .btn.danger{color:var(--bad)}
 .btn.block{width:100%}
@@ -1003,9 +1004,9 @@ function ApptSheet({sh, S, act}) {
       <button class="btn primary" onClick=${() => act.createOrder(b.id)}>${o ? 'Add products' : 'Create order'}</button>`}>
     <div class="kv"><span>Cluster</span><${Cluster} c=${b.cluster}/>${o && html`<span style="margin-left:auto"><${Pill} s=${o.status}/></span>`}</div>
     <div class="checks">
-      ${!a.in ? html`<button class="btn primary" onClick=${() => act.checkIn(b.id, a)}><${Icon} n="check" s=${18} w=${2.2}/>Check in</button>`
+      ${!a.in ? html`<button class="btn go" onClick=${() => act.checkIn(b.id, a)}><${Icon} n="check" s=${18} w=${2.2}/>Check in</button>`
         : isIn ? html`<button class="btn secondary" disabled><${Icon} n="check" s=${18} w=${2.2}/>In ${hhmm(a.in)}</button>`
-        : html`<button class="btn secondary" onClick=${() => act.checkIn(b.id, a)}><${Icon} n="check" s=${18} w=${2.2}/>Check in again</button>`}
+        : html`<button class="btn go" onClick=${() => act.checkIn(b.id, a)}><${Icon} n="check" s=${18} w=${2.2}/>Check in again</button>`}
       <button class=${'btn ' + (isIn ? 'primary' : 'secondary')} disabled=${!isIn} onClick=${() => act.checkOut(b.id)}>
         <${Icon} n="back" s=${18} w=${2.2}/>${a.out ? `Out ${hhmm(a.out)}` : 'Check out'}</button>
     </div>
@@ -1681,8 +1682,8 @@ function makeActs(setS, setUi, onReset) {
     endSession: () => { setUi(u => ({...u, session:null})); a.toast('Session ended'); },
     // appointment record: every change is stored straight away (state persists on each update)
     appt: (bid, patch) => setS(s => ({...s, appts:{...s.appts, [bid]:{...(s.appts[bid] || {}), ...patch}}, savedAt:Date.now()})),
-    // checking in again after a check-out keeps the original start time
-    checkIn: (bid, x={}) => { a.appt(bid, x.in ? {out:null, back:Date.now()} : {in:Date.now(), out:null});
+    // checking in starts the client session (black band on top); checking in again after a check-out keeps the original start time
+    checkIn: (bid, x={}) => { a.appt(bid, x.in ? {out:null, back:Date.now()} : {in:Date.now(), out:null}); a.startSession(bid);
       a.toast(x.in ? `Checked in again · since ${hhmm(x.in)}` : `Checked in · ${BUYERS[bid].shop}`); },
     checkOut: bid => { a.appt(bid, {out:Date.now()}); setUi(u => u.session === 'o-' + bid ? {...u, session:null} : u); a.toast(`Checked out · ${BUYERS[bid].shop}`); },
     note: (bid, text) => a.appt(bid, {notes:text}),
