@@ -131,6 +131,11 @@ input{font:inherit;color:inherit}
 .top-bar.mid{align-items:center;padding-top:18px}
 .h1-btn{font:inherit;letter-spacing:inherit;color:inherit;text-align:left}
 .h1-btn:active{opacity:.5}
+.full{position:absolute;inset:0;z-index:45;background:var(--bg);display:flex;flex-direction:column;animation:fade .2s ease}
+.full-head{flex:none;display:flex;justify-content:space-between;align-items:center;padding:8px 8px 0}
+.full-body{flex:1;min-height:0;overflow-y:auto;width:100%;max-width:640px;margin:0 auto;padding:4px 20px max(24px,env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:18px}
+.full-body > *{flex-shrink:0}
+.full-body > .pin{margin:auto 0}
 .pin{display:flex;flex-direction:column;align-items:center;gap:14px;padding:4px 0 6px}
 .pin-t{font-size:16px;font-weight:600}
 .pin-dots{display:flex;gap:16px;margin:2px 0 6px}
@@ -1182,10 +1187,20 @@ function PinPad({rep, onDone, onBack}) {
   </div>`;
 }
 
+// full-screen page instead of a bottom sheet: close on the right, back on the left when there is a step to return to
+function FullPage({title, onClose, onBack, children}) {
+  return html`<div class="full" role="dialog" aria-modal="true" aria-label=${title}>
+    <div class="full-head">${onBack ? html`<button class="icon-btn" onClick=${onBack} aria-label="Back"><${Icon} n="back"/></button>` : html`<span></span>`}
+      <button class="icon-btn" onClick=${onClose} aria-label="Close"><${Icon} n="x"/></button></div>
+    <div class="full-body">${children}</div>
+  </div>`;
+}
+
 function AccountSheet({S, act}) {
   const [to, setTo] = useState(null);
-  if (to) return html`<${Sheet} title="Switch account" onClose=${act.close}><${PinPad} rep=${REPS[to]} onDone=${() => act.switchRep(to)} onBack=${() => setTo(null)}/><//>`;
-  return html`<${Sheet} title="Switch account" onClose=${act.close}>
+  if (to) return html`<${FullPage} title="Enter code" onClose=${act.close} onBack=${() => setTo(null)}><${PinPad} rep=${REPS[to]} onDone=${() => act.switchRep(to)} onBack=${() => setTo(null)}/><//>`;
+  return html`<${FullPage} title="Switch account" onClose=${act.close}>
+    <h1 class="h1">Switch account</h1>
     <div class="list">${Object.values(REPS).map(r => html`<button class="row opt" onClick=${() => r.id === S.rep ? act.close() : setTo(r.id)} aria-pressed=${r.id === S.rep}>
         <span class="avatar sm">${r.ini}</span>
         <div class="row-main"><div class="row-title">${r.name}</div></div>
@@ -1745,7 +1760,7 @@ function App({onReset}) {
 
   const buyerView = ui.role === 'buyer' && S.orders[ui.buyerOrder];
   // the client in session stays on top of every tab, in the layout so it never covers products; the tab bar is always there
-  const so = activeOrder(S, ui), banded = !!(so && !order && !buyerView), capDiv = so && (BUYERS[so.buyerId].divs.includes(ui.capDiv) ? ui.capDiv : BUYERS[so.buyerId].divs[0]);
+  const so = activeOrder(S, ui), banded = !!(so && !order && !buyerView && !(ui.sheet && ui.sheet.type === 'account')), capDiv = so && (BUYERS[so.buyerId].divs.includes(ui.capDiv) ? ui.capDiv : BUYERS[so.buyerId].divs[0]);
   // tint the browser chrome and safe area to match the client band while it shows
   useEffect(() => { const root = document.documentElement; root.classList.toggle('in-session', banded);
     const ink = getComputedStyle(root).getPropertyValue('--ink').trim();
