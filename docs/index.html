@@ -139,6 +139,12 @@ input{font:inherit;color:inherit}
 .fpage-body{flex:1;min-height:0;overflow-y:auto;width:100%;max-width:640px;margin:0 auto;padding:4px 20px max(24px,env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:18px}
 .fpage-body > *{flex-shrink:0}
 .fpage-body > .pin{margin:auto 0}
+.fpage-body:has(+ .fpage-foot){padding-bottom:18px}
+.fpage-foot{width:100%}
+.pd-head{display:flex;flex-direction:column;gap:4px;margin-top:-4px}
+.pd-name{margin:0;font:650 26px/1.15 var(--f-display);letter-spacing:-.02em;text-wrap:balance}
+.pd-sub{font-size:14px;color:var(--muted)}
+.pd-sub .code{color:var(--ink);font-weight:600}
 .pin{display:flex;flex-direction:column;align-items:center;gap:14px;padding:4px 0 6px}
 .pin-t{font-size:16px;font-weight:600}
 .pin-dots{display:flex;gap:16px;margin:2px 0 6px}
@@ -220,7 +226,8 @@ input{font:inherit;color:inherit}
 .flag-txt{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:700;color:var(--good)}
 .flag-dot{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--good);color:#fff}
 /* carousel: portrait shots, swipe or tap to enlarge */
-.car{display:flex;flex-direction:column;gap:8px}
+.car{position:relative;display:flex;flex-direction:column;gap:8px}
+.car-exp{position:absolute;z-index:2;top:10px;right:10px;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.88);color:#141619;box-shadow:0 1px 4px rgba(0,0,0,.12);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 .car-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;border-radius:18px;background:#F0F0F0}
 .car-track::-webkit-scrollbar{display:none}
 .car-slide{position:relative;flex:0 0 100%;scroll-snap-align:center;aspect-ratio:4/5;max-height:52cqh;background:#F0F0F0}
@@ -809,6 +816,7 @@ function toXML(o) {
    Visual primitives
    ===================================================================== */
 const IC = {
+  expand:'M14 4h6v6M10 20H4v-6M20 4l-6.5 6.5M4 20l6.5-6.5',
   back:'M15 5l-7 7 7 7', cam:'M4 8h3l2-3h6l2 3h3v11H4z M12 17a4 4 0 100-8 4 4 0 000 8z',
   today:'M4 6h16v14H4z M4 10h16 M8 3v4 M16 3v4', orders:'M6 4h12v16H6z M9 9h6 M9 13h6 M9 17h3',
   grid:'M4 4h7v7H4z M13 4h7v7h-7z M4 13h7v7H4z M13 13h7v7h-7z', search:'M11 18a7 7 0 100-14 7 7 0 000 14z M16 16l5 5',
@@ -844,6 +852,7 @@ function Carousel({p, colour, onOpen, start=0, full}) {
   useEffect(() => { setI(0); if (ref.current && !full) ref.current.scrollLeft = 0; }, [colour]);
   const onScroll = e => { const el = e.currentTarget; setI(Math.round(el.scrollLeft / Math.max(1, el.clientWidth))); };
   return html`<div class=${'car' + (full ? ' full' : '')}>
+    ${onOpen && !full && html`<button class="car-exp" onClick=${() => onOpen(i)} aria-label="Open photos full screen"><${Icon} n="expand" s=${18} w=${2}/></button>`}
     <div class="car-track" ref=${ref} onScroll=${onScroll}>${src.map((s, k) => html`<button class="car-slide" onClick=${() => onOpen && onOpen(k)} aria-label=${onOpen ? `Enlarge photo ${k + 1} of ${src.length}` : `Photo ${k + 1} of ${src.length}`}>
       <img src=${s} alt=${`${p.name}, ${colour}, view ${k + 1}`} loading=${k ? 'lazy' : 'eager'} decoding="async" draggable="false"/></button>`)}</div>
     <div class="car-dots" aria-hidden="true">${src.map((s, k) => html`<i class=${k === i ? 'on' : ''}></i>`)}</div>
@@ -1115,7 +1124,7 @@ function PCard({p, o, cl, act, anchor}) {
   const add = () => o ? act.select(o.id, p.id, c, 'search') : act.sheet({type:'pick', item:{pid:p.id, colour:c, via:'search'}});
   return html`<div class=${'pcard' + (lock && !has ? ' locked' : '') + (has ? ' has' : '')} id=${anchor ? 'c-' + anchor : null} data-spy=${anchor || null}>
     <div class="pc-photo">
-      <button class="pc-img" onClick=${() => act.set({zoom:{pid:p.id, colour:c}})} aria-label=${'Enlarge photos of ' + p.name}><${Thumb} pid=${p.id} colour=${c}/></button>
+      <button class="pc-img" onClick=${() => act.sheet({type:'product', pid:p.id})} aria-label=${'Open ' + p.name}><${Thumb} pid=${p.id} colour=${c}/></button>
       ${has ? html`<span class="pc-flag"><${Icon} n="flag" s=${14} w=${2.4}/>In order</span>`
         : lock && html`<span class="pc-lock"><${Icon} n="lock" s=${11} w=${2.4}/>${lock}</span>`}
       ${has ? html`<button class="pc-btn x" onClick=${() => act.unselect(o.id, p.id)} aria-label=${'Remove ' + p.name + ' from the order'}><${Icon} n="x" s=${16} w=${2.6}/></button>`
@@ -1201,11 +1210,12 @@ function PinPad({rep, onDone, onBack}) {
 }
 
 // full-screen page instead of a bottom sheet: close on the right, back on the left when there is a step to return to
-function FullPage({title, onClose, onBack, children}) {
+function FullPage({title, onClose, onBack, children, foot}) {
   return html`<div class="fpage" role="dialog" aria-modal="true" aria-label=${title}>
     <div class="fpage-head">${onBack ? html`<button class="icon-btn" onClick=${onBack} aria-label="Back"><${Icon} n="back"/></button>` : html`<span></span>`}
       <button class="icon-btn" onClick=${onClose} aria-label="Close"><${Icon} n="x"/></button></div>
     <div class="fpage-body">${children}</div>
+    ${foot && html`<div class="sheet-foot fpage-foot">${foot}</div>`}
   </div>`;
 }
 
@@ -1285,12 +1295,14 @@ function ProductSheet({pid, S, ui, act}) {
   const item = {pid, colour:c, via:'search'}, pick = () => act.sheet({type:'pick', item});
   const inOrder = x => o && o.lines.some(l => l.pid === pid && l.colour === x), has = inOrder(c);
   const sizes = () => act.sheet({type:'size', orderId:o.id, ...item});
-  return html`<${Sheet} title=${p.name} sub=${`${p.code} · ${DIV_LABEL[p.div]} ${CAT_LABEL[p.cat].toLowerCase()}`} onClose=${act.close}
+  return html`<${FullPage} title=${p.name} onClose=${act.close}
     foot=${!o ? html`<button class="btn primary" onClick=${pick}>Add to an order…</button>`
       : why ? html`<button class="btn secondary" style="flex:0 0 auto" onClick=${pick}>Other buyer</button><button class="btn primary" disabled>${b.shop} · ${why}</button>`
       : has ? html`<button class="btn danger" style="flex:0 0 auto" onClick=${() => act.unselect(o.id, pid, c)}>Remove</button><button class="btn primary" onClick=${sizes}>Quantities</button>`
       : html`<button class="btn secondary" style="flex:0 0 auto" onClick=${sizes}>Quantities</button><button class="btn primary" onClick=${() => act.select(o.id, pid, c, 'search')}><${Icon} n="plus" s=${18} w=${2.4}/>Add to order</button>`}>
     <${Carousel} p=${p} colour=${c} onOpen=${i => act.set({zoom:{pid, colour:c, i}})}/>
+    <div class="pd-head"><span class="pc-fam">${p.family}</span><h1 class="pd-name">${p.name}</h1>
+      <div class="pd-sub"><span class="code">${p.code}</span> · ${DIV_LABEL[p.div]} ${CAT_LABEL[p.cat].toLowerCase()}</div></div>
     <${Prices} cls="lg" p=${p}/>
     <div class="colours">${p.colours.map(x => html`<button class=${'colour' + (x === c ? ' on' : '')} onClick=${() => setC(x)}><span class="sw" style=${{background:COL[x][0]}}></span>${x}<span class="code">${COL[x][1]}</span>${inOrder(x) && html`<span class="flag-dot" title="In order"><${Icon} n="flag" s=${12} w=${2.4}/></span>`}</button>`)}</div>
     ${has && html`<div class="callout good"><${Icon} n="flag" s=${18}/><div>${cname(c)} is in ${b.shop}’s selection. Set quantities here or later in the order.</div></div>`}
@@ -1776,7 +1788,7 @@ function App({onReset}) {
   const ongoing = ongoingBuyer(S), sessionOk = !!activeOrder(S, ui);
   useEffect(() => { if (ongoing && !sessionOk && !buyerView) act.startSession(ongoing.id); }, [ongoing && ongoing.id, sessionOk, !!buyerView]);
   // the client in session stays on top of every tab, in the layout so it never covers products; the tab bar is always there
-  const so = activeOrder(S, ui), banded = !!(so && !order && !buyerView && !(ui.sheet && ui.sheet.type === 'account')), capDiv = so && (BUYERS[so.buyerId].divs.includes(ui.capDiv) ? ui.capDiv : BUYERS[so.buyerId].divs[0]);
+  const so = activeOrder(S, ui), banded = !!(so && !order && !buyerView && !(ui.sheet && ['account', 'product'].includes(ui.sheet.type))), capDiv = so && (BUYERS[so.buyerId].divs.includes(ui.capDiv) ? ui.capDiv : BUYERS[so.buyerId].divs[0]);
   // tint the browser chrome and safe area to match the client band while it shows
   useEffect(() => { const root = document.documentElement; root.classList.toggle('in-session', banded);
     const ink = getComputedStyle(root).getPropertyValue('--band').trim();
