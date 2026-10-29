@@ -580,7 +580,7 @@ const COL = {
   'Dark Cigar':['#5A3A28','8779'], 'Shell Grey':['#BDB8AE','6579'],
 };
 const SZ = {wr:['34','36','38','40','42'], mr:['46','48','50','52','54'], ws:['36','37','38','39','40','41'], ms:['40','41','42','43','44','45'], u:['U']};
-const CATS = ['bags','rtw','shoes','acc'];
+const CATS = ['rtw','bags','shoes','acc'];
 const CAT_LABEL = {bags:'Bags', rtw:'Ready-to-wear', shoes:'Shoes', acc:'Accessories'};
 const CAT_SHORT = {bags:'Bags', rtw:'RTW', shoes:'Shoes', acc:'Acc.'};
 const DIV_LABEL = {W:"Women's", M:"Men's"};
@@ -934,7 +934,7 @@ function MixChecks({o, d}) {
 }
 
 /* =====================================================================
-   Home: lookbooks and VM intent
+   Looks: lookbooks and VM intent
    ===================================================================== */
 function LookTile({look}) {
   const items = look.items.slice(0, 3);
@@ -960,7 +960,7 @@ function Guidelines({b, o}) {
 function Today({S, ui, act}) {
   const rep = REPS[S.rep], so = activeOrder(S, ui), sb = so && BUYERS[so.buyerId];
   return html`
-    <header class="top top-bar mid"><h1 class="h1">Home</h1>
+    <header class="top top-bar mid"><h1 class="h1">Looks</h1>
       <button class="avatar" onClick=${() => act.sheet({type:'account'})} aria-label=${'Signed in as ' + rep.name + '. Switch account'}>${rep.ini}</button>
     </header>
     <div class="today-grid">
@@ -980,9 +980,9 @@ function Today({S, ui, act}) {
 }
 
 /* =====================================================================
-   Calendar: the seller's showroom days and appointments
+   Home: the seller's showroom days and appointments
    ===================================================================== */
-// Tapping the Calendar title reloads the app, so the home-screen version (no browser bar) can pick up a new release.
+// Tapping the Home title reloads the app, so the home-screen version (no browser bar) can pick up a new release.
 // A fresh query string skips the cached page; orders and the session are kept in local storage.
 const reloadApp = () => location.replace(location.pathname + '?r=' + Date.now() + location.hash);
 const SHOW_DAYS = [-1, 0, 1, 2].map(off => { const d = new Date(); d.setDate(d.getDate() + off); return d; });
@@ -1007,7 +1007,7 @@ function CalendarTab({S, act}) {
           <div class="appt-side"><${CheckPill} a=${S.appts[b.id]}/></div>
         </button>`;
   return html`
-    <header class="top top-bar mid"><h1 class="h1"><button class="h1-btn" onClick=${reloadApp} aria-label="Calendar. Tap to reload the app">Calendar</button></h1>
+    <header class="top top-bar mid"><h1 class="h1"><button class="h1-btn" onClick=${reloadApp} aria-label="Home. Tap to reload the app">Home</button></h1>
       <div class="top-acts">
         <button class="round-btn" onClick=${() => act.sheet({type:'newbuyer', appt:true})} aria-label="New appointment"><${Icon} n="plus" s=${20} w=${2.2}/></button>
         <button class="avatar" onClick=${() => act.sheet({type:'account'})} aria-label=${'Signed in as ' + rep.name + '. Switch account'}>${rep.ini}</button></div>
@@ -1084,7 +1084,7 @@ function OrdersTab({S, ui, act}) {
         <div class="tile"><b>${sent}</b><span>sent</span></div>
         <div class="tile"><b>${rows.length - sent}</b><span>in draft</span></div>
       </div>`}
-      ${!rows.length && html`<div class="empty">No orders yet. Check in a client from the Calendar to start one.</div>`}
+      ${!rows.length && html`<div class="empty">No orders yet. Check in a client from Home to start one.</div>`}
       ${rows.length > 0 && html`<div class="list">
         ${rows.map(r => html`<button class="row" onClick=${() => act.openOrder(r.buyerId)}>
           <div class="row-main">
@@ -1526,7 +1526,7 @@ function OrderView({S, ui, act, order}) {
       <div class="ov-lines">
         ${b.divs.length > 1 && html`<${Seg} full opts=${b.divs.map(d => [d, `${DIV_TAB[d]} · ${order.lines.filter(l => P[l.pid].div === d).length}`])} val=${div} on=${act.div}/>`}
         ${locked && html`<div class="callout info"><${Icon} n="lock" s=${18}/><div>The ${DIV_LABEL[div].toLowerCase()} order has been sent. You can see it here but no longer change it.</div></div>`}
-        ${lines.length === 0 && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div><div class="small">Tap Add products, then + on any style in the Collection. Quantities can come later.</div></div>`}
+        ${lines.length === 0 && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div><div class="small">Tap + on any style in the Collection. Quantities can come later.</div></div>`}
         ${groups.filter(g => g.lines.length).map(g => html`<div>
           <div class="grp-head"><span>${g.label} · ${g.lines.length}</span><span class="num">${fmt(g.lines.reduce((a, l) => a + lineValue(l), 0))}</span></div>
           <div class="list">${g.lines.map(l => html`<${SelLine} key=${l.id} l=${l} o=${order} act=${act} locked=${locked}/>`)}</div>
@@ -1534,9 +1534,9 @@ function OrderView({S, ui, act, order}) {
       </div>`}
     </div>
     <div class="ov-actions">
-      <button class="round" onClick=${() => act.sheet({type:'finish', orderId:order.id})} aria-label="Send the order"><${Icon} n="share"/></button>
-      ${inVisit ? html`<button class="cap-btn" disabled=${allSent} onClick=${() => act.addProducts(b.id)}><${Icon} n="plus" w=${2.4}/>Add products</button>`
-        : html`<button class="cap-btn" disabled=${allSent} onClick=${() => act.checkIn(b.id)}><${Icon} n="check" w=${2.4}/>Check in to add products</button>`}
+      ${inVisit ? html`<button class="cap-btn" onClick=${() => act.sheet({type:'finish', orderId:order.id})}><${Icon} n="share" w=${2.4}/>Send the order</button>`
+        : html`<button class="round" onClick=${() => act.sheet({type:'finish', orderId:order.id})} aria-label="Send the order"><${Icon} n="share"/></button>
+        <button class="cap-btn" disabled=${allSent} onClick=${() => act.checkIn(b.id)}><${Icon} n="check" w=${2.4}/>Check in to add products</button>`}
     </div>
   </div>`;
 }
@@ -1669,7 +1669,7 @@ function BuyerView({S, ui, act}) {
    App shell
    ===================================================================== */
 const GUIDE_STEPS = [
-  'In Calendar, Maison Dubois is ongoing. Open another client and tap Check in at the bottom: the visit switches and the Collection opens.',
+  'In Home, Maison Dubois is ongoing. Open another client and tap Check in at the bottom: the visit switches and the Collection opens.',
   'In the Collection, tap + on a photo to select a style. Only styles the client can buy show; Filters choose the collection and the drop.',
   'Tap the client bar at the top to open the order: enter sizes line by line, then see Budgets & KPIs for mix rules, required looks and drops.',
   'Tap the send button: the client signs on the phone, or gets a link to review within 48 hours. Women’s and men’s can be sent separately.',
@@ -1686,7 +1686,7 @@ function SessionBar({S, ui, act}) {
 }
 
 function TabBar({tab, act}) {
-  const T = [['today', 'Home', 'home'], ['calendar', 'Calendar', 'today'], ['catalogue', 'Collection', 'grid'], ['orders', 'Orders', 'orders']];
+  const T = [['calendar', 'Home', 'home'], ['today', 'Looks', 'spark'], ['catalogue', 'Collection', 'grid'], ['orders', 'Orders', 'orders']];
   return html`<nav class="tabbar">${T.map(([k, l, i]) => html`<button class=${'tab' + (tab === k ? ' on' : '')} onClick=${() => act.tab(k)} aria-current=${tab === k ? 'page' : null}><${Icon} n=${i}/>${l}</button>`)}</nav>`;
 }
 
