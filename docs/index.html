@@ -96,26 +96,24 @@ input{font:inherit;color:inherit}
 .screen{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
 /* floating pill tab bar; content scrolls underneath */
 .screen.tabbed{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
-.tabbar{position:absolute;z-index:20;left:50%;transform:translateX(-50%);bottom:max(14px,calc(env(safe-area-inset-bottom,0px) - 6px));display:flex;gap:2px;padding:5px;border-radius:999px;
+.screen.tabbed.with-pill{padding-bottom:calc(134px + env(safe-area-inset-bottom,0px))}
+/* the client pill and the tab bar float together at the bottom; the pill takes the tab bar's width */
+.dock{position:absolute;z-index:20;left:50%;transform:translateX(-50%);bottom:max(14px,calc(env(safe-area-inset-bottom,0px) - 6px));display:flex;flex-direction:column;gap:8px}
+.tabbar{display:flex;gap:2px;padding:5px;border-radius:999px;
   background:color-mix(in srgb,var(--surface) 78%,transparent);-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);
   border:1px solid color-mix(in srgb,var(--line) 70%,transparent);box-shadow:0 10px 30px rgba(0,0,0,.14),0 1px 3px rgba(0,0,0,.08)}
 .tab{display:flex;flex-direction:column;align-items:center;gap:1px;font-size:10.5px;font-weight:600;color:var(--muted);min-width:74px;padding:7px 10px 6px;border-radius:999px;transition:background .2s,color .2s}
 .tab.on{color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
-/* client in session: a bar at the top of every tab, part of the layout so it never covers products */
-/* edge-to-edge band under the status bar; the page below rounds its top corners into it, like a bridge, so it pushes the page down rather than floating over it */
-.sbar{flex:none;display:flex;align-items:center;gap:4px;padding:2px 8px;background:var(--band);color:var(--band-ink);animation:drop .3s cubic-bezier(.2,.8,.2,1)}
-.app.in-session{background:var(--band)}
-/* on the phone the notch / status bar area above goes black too (desktop keeps the device frame) */
-@media (max-width:899px){html.in-session,html.in-session body{background:var(--band)}}
-.app.in-session > .screen{border-radius:20px 20px 0 0;background:var(--bg)}
-@keyframes drop{from{transform:translateY(-100%)}to{transform:none}}
-.sbar-main{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:8px;color:inherit;min-height:28px}
+/* client in session: a thin black pill 8px above the tab bar, on every tab; tapping it opens the order */
+.sbar{display:flex;border-radius:999px;background:var(--band);color:var(--band-ink);border:1px solid rgba(255,255,255,.1);box-shadow:0 6px 18px rgba(0,0,0,.16);animation:rise .3s cubic-bezier(.2,.8,.2,1)}
+@keyframes rise{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
+.sbar-main{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:8px;color:inherit;min-height:28px;padding:0 14px}
 .sbar-dot{position:relative;flex:none;width:6px;height:6px;border-radius:50%;background:#3CCB7F}
 .sbar-dot::after{content:"";position:absolute;inset:0;border-radius:50%;background:#3CCB7F;animation:beat 1.8s ease-out infinite}
 @keyframes beat{from{transform:scale(1);opacity:.7}to{transform:scale(3.2);opacity:0}}
 .sbar-t{flex:0 1 auto;min-width:0;display:flex;align-items:baseline;gap:6px;line-height:1.2}
 .sbar-t b,.sbar-t span{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sbar-t b{font-size:13px;font-weight:600}
+.sbar-t b{font-size:12.5px;font-weight:600}
 .sbar-t span{font-size:12.5px;font-weight:400;opacity:.65}
 .top{padding:14px 18px 6px}
 .maison{font:600 11.5px var(--f-display);letter-spacing:.28em;text-transform:uppercase}
@@ -510,6 +508,7 @@ input{font:inherit;color:inherit}
 .demo-bar{flex:none;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 12px 6px 16px;background:var(--ink);color:var(--bg);font-size:12.5px;font-weight:600}
 .demo-bar button{color:var(--bg);text-decoration:underline;font-weight:700;padding:6px 4px}
 .toast{position:absolute;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:99px;font-size:14px;font-weight:600;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis;animation:up .2s ease;display:flex;gap:6px;align-items:center}
+.app.with-pill .toast{bottom:calc(130px + env(safe-area-inset-bottom,0px))}
 
 /* ---------- landscape: horizontal working layout ---------- */
 @container app (orientation: landscape){
@@ -519,11 +518,12 @@ input{font:inherit;color:inherit}
   .ov-bar{padding:6px 14px max(6px,env(safe-area-inset-bottom,0px))}
   .cap-btn,.round{height:42px}
   .round{width:42px}
-  .tabbar{bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 8px));padding:4px}
+  .dock{bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 8px))}
+  .tabbar{padding:4px}
   .tab{flex-direction:row;gap:6px;font-size:12.5px;padding:6px 16px}
   .screen.tabbed{padding-bottom:64px}
-  .sbar{padding:0 6px 1px}
-  .sbar-main{min-height:26px}
+  .screen.tabbed.with-pill{padding-bottom:96px}
+  .sbar-main{min-height:24px}
   .ov-body{padding-bottom:116px}
   .ov-actions{bottom:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 8px)) + 54px)}
 }
@@ -1788,23 +1788,18 @@ function App({onReset}) {
   // a checked-in client is always the client in session (after a reload or an account switch too)
   const ongoing = ongoingBuyer(S), sessionOk = !!activeOrder(S, ui);
   useEffect(() => { if (ongoing && !sessionOk && !buyerView) act.startSession(ongoing.id); }, [ongoing && ongoing.id, sessionOk, !!buyerView]);
-  // the client in session stays on top of every tab, in the layout so it never covers products; the tab bar is always there
-  const so = activeOrder(S, ui), banded = !!(so && !order && !buyerView && !(ui.sheet && ['account', 'product', 'sign'].includes(ui.sheet.type))), capDiv = so && (BUYERS[so.buyerId].divs.includes(ui.capDiv) ? ui.capDiv : BUYERS[so.buyerId].divs[0]);
-  // tint the browser chrome and safe area to match the client band while it shows
-  useEffect(() => { const root = document.documentElement; root.classList.toggle('in-session', banded);
-    const ink = getComputedStyle(root).getPropertyValue('--band').trim();
-    document.querySelectorAll('meta[name="theme-color"]').forEach(m => { m.dataset.base = m.dataset.base || m.content; m.content = banded ? ink : m.dataset.base; }); }, [banded]);
+  // the client in session rides as a pill above the tab bar on every tab; the tab bar is always there
+  const so = activeOrder(S, ui), pill = !!(so && !order), capDiv = so && (BUYERS[so.buyerId].divs.includes(ui.capDiv) ? ui.capDiv : BUYERS[so.buyerId].divs[0]);
   if (buyerView) return html`<div class="app"><${BuyerView} S=${S} ui=${ui} act=${act}/>${sheet}${toast}</div>`;
-  return html`<div class=${'app' + (banded ? ' in-session' : '')}>
+  return html`<div class=${'app' + (pill ? ' with-pill' : '')}>
     ${order ? html`<${OrderView} S=${S} ui=${ui} act=${act} order=${order}/>` : html`
-      <${SessionBar} S=${S} ui=${ui} act=${act}/>
-      <div class="screen tabbed">
+      <div class=${'screen tabbed' + (pill ? ' with-pill' : '')}>
         ${ui.tab === 'calendar' && html`<${CalendarTab} S=${S} act=${act}/>`}
         ${ui.tab === 'today' && html`<${Today} S=${S} ui=${ui} act=${act}/>`}
         ${ui.tab === 'orders' && html`<${OrdersTab} S=${S} ui=${ui} act=${act}/>`}
         ${ui.tab === 'catalogue' && html`<${CatalogueTab} key=${so ? so.id : 'none'} S=${S} ui=${ui} act=${act}/>`}
       </div>`}
-    <${TabBar} tab=${ui.tab} act=${act}/>
+    <div class="dock">${pill && html`<${SessionBar} S=${S} ui=${ui} act=${act}/>`}<${TabBar} tab=${ui.tab} act=${act}/></div>
     ${ui.capture && so && html`<${Capture} order=${so} div=${capDiv} act=${act}/>`}
     ${ui.zoom && html`<${Zoom} z=${ui.zoom} act=${act}/>`}
     ${sheet}${toast}
