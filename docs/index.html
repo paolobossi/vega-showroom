@@ -315,7 +315,7 @@ input{font:inherit;color:inherit}
 .ftab{flex:none;display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:17px;border:1px solid var(--line);background:var(--surface);font-size:13.5px;font-weight:600;color:var(--ink);white-space:nowrap;transition:background .2s,color .2s}
 .ftab span{font-weight:500;opacity:.6}
 .ftab.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
-.ftab .live-dot{color:#3CCB7F}
+
 .cat-main{display:flex;flex-direction:column;gap:24px;min-width:0;padding-top:4px}
 .cat-sec{display:flex;flex-direction:column;gap:8px}
 .cat-h{margin:0;display:flex;align-items:baseline;gap:8px;font:650 20px/1.2 var(--f-display);letter-spacing:-.02em}
@@ -367,7 +367,15 @@ input{font:inherit;color:inherit}
 .sel-meta{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
 .sel-meta small{font-size:10px;font-weight:700}
 .sel.open .sel-val small{color:var(--warn);font-weight:650}
-.ov-kpi{padding:14px 16px 4px}
+/* Women / Men on the order: underlined tabs; the budget summary below opens Budgets & KPIs */
+.ov-divs{display:flex;gap:6px;margin:0 -6px -10px}
+.ov-sum{display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px 12px}
+.ov-sum .bar{margin-top:8px}
+.ov-sum-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:14px}
+.ov-sum-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;font-size:13px;font-weight:600;white-space:nowrap}
+.ov-sum-foot > span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.ov-sum-go{flex:none;display:inline-flex;align-items:center;gap:2px;color:var(--accent)}
+.ov-sum-go svg{transform:rotate(-90deg)}
 .ov-lines{padding:6px 16px 20px;display:flex;flex-direction:column;gap:14px}
 .lines-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:8px}
 .grp-head{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:0 2px 6px}
@@ -1139,28 +1147,27 @@ function LookSheet({id, S, ui, act}) {
 /* =====================================================================
    Orders — the signed-in seller's orders, with submitter traceability
    ===================================================================== */
-// Filter chips, never hidden orders: during a visit the Ongoing chip is picked, so only that client's order shows until the seller picks another
+// During a visit only the ongoing client's order shows; with no one ongoing, every order with filter chips
 const SENT = ['submitted', 'partial', 'confirmed'];
 function OrdersTab({S, ui, act}) {
-  const so = activeOrder(S, ui), [f, setF] = useState(so ? 'now' : 'all');
+  const so = activeOrder(S, ui), [f, setF] = useState('all');
   const all = Object.values(S.orders).filter(o => BUYERS[o.buyerId].rep === S.rep || (so && o.id === so.id)).map(o => { const b = BUYERS[o.buyerId];
     return {id:o.id, buyerId:o.buyerId, shop:b.shop, city:b.city, status:o.status,
       value:b.divs.reduce((a, d) => a + kpi(o, d).total, 0), units:b.divs.reduce((a, d) => a + kpi(o, d).units, 0),
       hoursLeft:o.status === 'shared' ? Math.max(0, 48 - Math.floor((Date.now() - o.sharedAt) / 36e5)) : null}; });
   const sent = all.filter(r => SENT.includes(r.status)).length;
-  const F = [...(so ? [['now', 'Ongoing', r => r.id === so.id]] : []), ['all', 'All', () => true], ['draft', 'Draft', r => !SENT.includes(r.status)], ['sent', 'Sent', r => SENT.includes(r.status)]];
-  const cur = F.find(x => x[0] === f) || F[0], rows = all.filter(cur[2]);
+  const F = [['all', 'All', () => true], ['draft', 'Draft', r => !SENT.includes(r.status)], ['sent', 'Sent', r => SENT.includes(r.status)]];
+  const cur = F.find(x => x[0] === f) || F[0], rows = so ? all.filter(r => r.id === so.id) : all.filter(cur[2]);
   return html`
     <header class="top top-bar mid"><h1 class="h1">Orders</h1>
       ${!so && html`<button class="round-btn" onClick=${() => act.sheet({type:'newbuyer'})} aria-label="New session with a client"><${Icon} n="plus" s=${20} w=${2.2}/></button>`}</header>
     <section class="sec">
-      <div class="live">
+      ${so ? html`<div class="lbl">Ongoing</div>` : html`<div class="live">
         <div class="tile"><b>${fmt(all.reduce((a, r) => a + r.value, 0) / 1000)}k</b><span>${all.length} ${all.length === 1 ? 'order' : 'orders'}</span></div>
         <div class="tile"><b>${sent}</b><span>sent</span></div>
         <div class="tile"><b>${all.length - sent}</b><span>in draft</span></div>
       </div>
-      <div class="ftabs" role="tablist" aria-label="Show orders">${F.map(([k, l, test]) => html`<button role="tab" aria-selected=${cur[0] === k} class=${'ftab' + (cur[0] === k ? ' on' : '')} onClick=${() => setF(k)}>
-        ${k === 'now' && html`<i class="live-dot" aria-hidden="true"></i>`}${l}<span class="num">${all.filter(test).length}</span></button>`)}</div>
+      <div class="ftabs" role="tablist" aria-label="Show orders">${F.map(([k, l, test]) => html`<button role="tab" aria-selected=${cur[0] === k} class=${'ftab' + (cur[0] === k ? ' on' : '')} onClick=${() => setF(k)}>${l}<span class="num">${all.filter(test).length}</span></button>`)}</div>`}
       ${!all.length ? html`<div class="empty">No orders yet. Check in a client from Home to start one.</div>`
         : !rows.length && html`<div class="empty">No ${cur[1].toLowerCase()} orders.</div>`}
       ${rows.length > 0 && html`<div class="list">
@@ -1562,9 +1569,10 @@ function SelLine({l, o, act, locked}) {
   </div>`;
 }
 
+// One switch only (Women / Men); budgets and guideline checks open from the summary card at the top of the selection
 function OrderView({S, ui, act, order}) {
   const b = BUYERS[order.buyerId], div = b.divs.includes(ui.div) ? ui.div : b.divs[0];
-  const [pane, setPane] = useState('sel');
+  const k = kpi(order, div), db = divBudget(b, div), open = issuesOf(order, [div]).length;
   const lines = order.lines.filter(l => P[l.pid].div === div);
   const groups = CATS.map(c => ({key:c, label:CAT_LABEL[c], lines:lines.filter(l => P[l.pid].cat === c)}));
   const locked = partLocked(order, div), allSent = b.divs.every(d => partLocked(order, d));
@@ -1579,20 +1587,22 @@ function OrderView({S, ui, act, order}) {
     <div class="ov-sub">
       <div class="ov-buyer"><span>${b.city}</span><${Pill} s=${order.status}/>
         ${S.savedAt && html`<span class="saved" key=${S.savedAt}><${Icon} n="check" s=${13} w=${2.4}/>Saved ${hhmm(S.savedAt)}</span>`}</div>
-      <${Seg} full opts=${[['sel', `Selection · ${order.lines.length}`], ['kpi', 'Budgets & KPIs']]} val=${pane} on=${setPane}/>
+      ${b.divs.length > 1 && html`<div class="ov-divs" role="tablist">${b.divs.map(d => html`<button role="tab" aria-selected=${d === div} class=${'cn-cat' + (d === div ? ' on' : '')} onClick=${() => act.div(d)}>${DIV_TAB[d]}</button>`)}</div>`}
     </div>
     <div class="ov-body">
-      ${pane === 'kpi' ? html`<div class="ov-kpi"><${Budgets} b=${b} order=${order}/>
-        <div class="kpi" style="margin-top:16px">${b.divs.map(d => html`<${MixChecks} o=${order} d=${d}/>`)}</div></div>` : html`
       <div class="ov-lines">
-        ${b.divs.length > 1 && html`<${Seg} full opts=${b.divs.map(d => [d, `${DIV_TAB[d]} · ${order.lines.filter(l => P[l.pid].div === d).length}`])} val=${div} on=${act.div}/>`}
+        <button class="ov-sum" onClick=${() => act.sheet({type:'kpis', orderId:order.id})} aria-label=${`Budgets and KPIs. ${DIV_LABEL[div]}: ${fmt(k.total)} of ${fmt(db)}`}>
+          <div class="ov-sum-top"><span class="kpi-label">${DIV_LABEL[div]} budget</span><span class="num"><b>${fmt(k.total)}</b> <span class="muted">of ${fmt(db)}</span></span></div>
+          <div class="bar"><div class=${'bar-fill ' + k.bst} style=${{width: Math.min(db ? k.total / db * 100 : 0, 100) + '%'}}></div></div>
+          <div class="ov-sum-foot"><span class=${open ? 'st-warn' : 'st-ok'}>${open ? `${open} outside the guidelines` : 'Within the guidelines'}</span><span class="ov-sum-go">Budgets & KPIs<${Icon} n="down" s=${15} w=${2.2}/></span></div>
+        </button>
         ${locked && html`<div class="callout info"><${Icon} n="lock" s=${18}/><div>The ${DIV_LABEL[div].toLowerCase()} order has been sent. You can see it here but no longer change it.</div></div>`}
         ${lines.length === 0 && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div><div class="small">Tap + on any style in the Collection. Quantities can come later.</div></div>`}
         ${groups.filter(g => g.lines.length).map(g => html`<div>
-          <div class="grp-head"><span>${g.label} · ${g.lines.length}</span><span class="num">${fmt(g.lines.reduce((a, l) => a + lineValue(l), 0))}</span></div>
+          <div class="grp-head"><span>${g.label}</span><span class="num">${fmt(g.lines.reduce((a, l) => a + lineValue(l), 0))}</span></div>
           <div class="list">${g.lines.map(l => html`<${SelLine} key=${l.id} l=${l} o=${order} act=${act} locked=${locked}/>`)}</div>
         </div>`)}
-      </div>`}
+      </div>
     </div>
     <div class="ov-actions">
       ${inVisit ? html`<button class="cap-btn" onClick=${() => act.sheet({type:'finish', orderId:order.id})}><${Icon} n="sign" w=${2.2}/>Review and sign</button>`
@@ -1603,6 +1613,14 @@ function OrderView({S, ui, act, order}) {
 }
 
 // What the seller sees before sending: budgets, mix rules and required looks that are off. Sending is still allowed.
+function KpiSheet({sh, S, act}) {
+  const o = S.orders[sh.orderId], b = BUYERS[o.buyerId];
+  return html`<${Sheet} tall title="Budgets & KPIs" sub=${b.shop} onClose=${act.close}>
+    <${Budgets} b=${b} order=${o}/>
+    <div class="kpi">${b.divs.map(d => html`<${MixChecks} o=${o} d=${d}/>`)}</div>
+  <//>`;
+}
+
 function issuesOf(o, divs) {
   const out = [];
   divs.forEach(d => { const k = kpi(o, d); if (!k.total) return;
@@ -1834,6 +1852,7 @@ function App({onReset}) {
     : sh.type === 'size' ? html`<${SizeSheet} key=${sh.pid + (sh.actor || '')} sh=${sh} S=${S} act=${act}/>`
     : sh.type === 'picker' ? html`<${PickerSheet} sh=${sh} act=${act}/>`
     : sh.type === 'finish' ? html`<${FinishSheet} sh=${sh} S=${S} act=${act}/>`
+    : sh.type === 'kpis' ? html`<${KpiSheet} sh=${sh} S=${S} act=${act}/>`
     : sh.type === 'sign' ? html`<${SignSheet} sh=${sh} S=${S} act=${act}/>`
     : sh.type === 'look' ? html`<${LookSheet} id=${sh.id} S=${S} ui=${ui} act=${act}/>`
     : sh.type === 'product' ? html`<${ProductSheet} key=${sh.pid} pid=${sh.pid} S=${S} ui=${ui} act=${act}/>`
