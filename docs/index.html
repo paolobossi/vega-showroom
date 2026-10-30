@@ -153,8 +153,9 @@ input{font:inherit;color:inherit}
 .top-acts{display:flex;align-items:center;gap:10px}.top-acts .round-btn{margin-top:0}
 .field{display:flex;flex-direction:column;gap:6px}
 .inp.area{height:auto;min-height:104px;padding:12px 14px;line-height:1.45;resize:vertical}
-.days{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-.day{display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 0;border-radius:14px;background:var(--surface);border:1px solid var(--line);color:var(--ink)}
+.days{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;margin:0 -18px;padding:0 18px;scroll-padding:0 18px}
+.days::-webkit-scrollbar{display:none}
+.day{flex:0 0 66px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 0;border-radius:14px;background:var(--surface);border:1px solid var(--line);color:var(--ink)}
 .day b{font-size:19px;font-weight:650;line-height:1.15}
 .day span{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
 .day.on{background:var(--accent);border-color:transparent;color:var(--accent-ink)}
@@ -651,6 +652,7 @@ const GUIDE = {
   Diamond: {W:{bags:35,rtw:35,shoes:15,acc:15}, M:{bags:30,rtw:40,shoes:20,acc:10}},
 };
 
+const hash = s => [...s].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
 const BUYERS = {
   dubois: {id:'dubois', rep:'roberto', shop:'Maison Dubois', city:'Paris', cluster:'Platinum', divs:['W','M'], budget:{W:60000, M:30000}, time:'10:00', code:'DUB01'},
   linea:  {id:'linea', rep:'roberto', shop:'Linea Concept', city:'Milan', cluster:'Gold', divs:['W'], budget:{W:40000}, time:'12:30', code:'LIN04',
@@ -663,6 +665,31 @@ const BUYERS = {
   brun:   {id:'brun', rep:'marc', shop:'Brun & Fils', city:'Lyon', cluster:'Silver', divs:['W','M'], budget:{W:25000, M:15000}, time:'09:30', code:'BRU02'},
   wren:   {id:'wren', rep:'marc', shop:'Wren', city:'New York', cluster:'Platinum', divs:['W','M'], budget:{W:70000, M:35000}, time:'16:00', code:'WRE01'},
 };
+// The rest of the showroom campaign: one appointment per client, `day` counted from today (past days are done)
+[
+  ['roberto', 'Studio Aalto', 'Helsinki', 'Silver', 'W', 22000, 0, '10:00', -3], ['roberto', 'Maison Vert', 'Brussels', 'Gold', 'WM', 38000, 18000, '12:00', -3],
+  ['roberto', 'Odeon Store', 'Athens', 'Gold', 'WM', 35000, 15000, '15:30', -3],
+  ['roberto', 'Kiko Room', 'Osaka', 'Platinum', 'WM', 65000, 30000, '09:30', -2], ['roberto', 'Northline', 'Copenhagen', 'Silver', 'M', 0, 18000, '11:30', -2],
+  ['roberto', 'Atelier Rue', 'Geneva', 'Diamond', 'W', 90000, 0, '14:00', -2], ['roberto', 'Sable', 'Dubai', 'Platinum', 'WM', 80000, 40000, '16:30', -2],
+  ['roberto', 'Casa Lume', 'Lisbon', 'Gold', 'W', 30000, 0, '10:30', -1], ['roberto', 'Bloom & Field', 'Sydney', 'Gold', 'WM', 40000, 20000, '13:00', -1],
+  ['roberto', 'Arkade', 'Seoul', 'Diamond', 'WM', 110000, 60000, '16:00', -1],
+  ['roberto', 'Verso', 'Florence', 'Silver', 'W', 20000, 0, '09:30', 1], ['roberto', 'The Edit Room', 'Los Angeles', 'Platinum', 'WM', 75000, 35000, '11:00', 1],
+  ['roberto', 'Marchetti', 'Turin', 'Gold', 'M', 0, 22000, '14:30', 1], ['roberto', 'Lune', 'Shanghai', 'Diamond', 'WM', 120000, 55000, '16:30', 1],
+  ['roberto', 'Kavala', 'Istanbul', 'Gold', 'W', 36000, 0, '10:00', 2], ['roberto', 'Høst', 'Oslo', 'Silver', 'WM', 18000, 9000, '12:30', 2],
+  ['roberto', 'Perla Negra', 'Mexico City', 'Platinum', 'W', 52000, 0, '15:00', 2],
+  ['roberto', 'Galerie Sud', 'Marseille', 'Silver', 'W', 21000, 0, '09:30', 3], ['roberto', 'Mode Amsterdam', 'Amsterdam', 'Gold', 'WM', 34000, 16000, '11:30', 3],
+  ['roberto', 'Ivy House', 'Hong Kong', 'Diamond', 'WM', 100000, 50000, '14:00', 3], ['roberto', 'Fenwick Row', 'Manchester', 'Silver', 'M', 0, 15000, '16:30', 3],
+  ['roberto', 'Altamira', 'Bogotá', 'Gold', 'W', 28000, 0, '10:00', 4], ['roberto', 'Kumo', 'Kyoto', 'Platinum', 'WM', 60000, 28000, '13:30', 4],
+  ['roberto', 'Rive', 'Bordeaux', 'Silver', 'W', 19000, 0, '11:00', 5], ['roberto', 'Halden & Co.', 'Stockholm', 'Gold', 'WM', 32000, 14000, '14:30', 5],
+  ['roberto', 'Saffron Lane', 'Mumbai', 'Platinum', 'W', 48000, 0, '10:30', 6], ['roberto', 'Corso 9', 'Bologna', 'Gold', 'WM', 30000, 15000, '15:00', 6],
+  ['sofia', 'Lirio', 'Seville', 'Gold', 'W', 32000, 0, '10:00', -1], ['sofia', 'Moderna', 'Naples', 'Silver', 'WM', 20000, 10000, '12:00', 1],
+  ['sofia', 'Il Chiostro', 'Venice', 'Platinum', 'W', 50000, 0, '15:00', 2], ['marc', 'Orée', 'Nantes', 'Silver', 'W', 18000, 0, '11:00', 1],
+  ['marc', 'Bastide', 'Toulouse', 'Gold', 'WM', 30000, 14000, '14:00', 3],
+].forEach(([rep, shop, city, cluster, dv, W, M, time, day]) => {
+  const id = 'c' + hash(shop).toString(36), divs = dv === 'WM' ? ['W', 'M'] : [dv];
+  BUYERS[id] = {id, rep, shop, city, cluster, divs, budget:Object.fromEntries(divs.map(d => [d, d === 'W' ? W : M])), time, day,
+    code:(shop.replace(/[^A-Za-z]/g, '').slice(0, 3).toUpperCase()) + String(10 + hash(id) % 90)};
+});
 const BUYER_CAT0 = Object.fromEntries(Object.entries(BUYERS).map(([k, b]) => [k, b.cat]));
 // Budget per category: set in the back office with the client, read-only here; until set, the division budget split by the Maison guideline for the client's cluster.
 // The cluster itself is back-office logic only and never appears on screen.
@@ -719,7 +746,10 @@ const qkey = q => Object.keys(q).sort().map(k => k + ':' + q[k]).join(',');
 const uid = () => Math.random().toString(36).slice(2, 9);
 const hhmm = t => new Date(t).toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
 const todayAt = (h, m) => { const d = new Date(); d.setHours(h, m, 0, 0); return d.getTime(); };
-const hash = s => [...s].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
+const dayAt = (off, h, m) => todayAt(h, m) + off * 864e5;
+// visits on past show days were checked in and out at their slot
+const pastAppts = () => Object.fromEntries(Object.values(BUYERS).filter(b => b.day < 0).map(b => { const [h, m] = b.time.split(':').map(Number);
+  return [b.id, {in:dayAt(b.day, h, m + 4), out:dayAt(b.day, h + 1, m + 20)}]; }));
 const rank = c => CLUSTERS.indexOf(c);
 const orderNo = o => 'LOE-SS27-' + BUYERS[o.buyerId].code;
 
@@ -788,13 +818,13 @@ function seedState() {
   const o = {id:'o-dubois', buyerId:'dubois', status:'draft', submittedBy:null, lines,
     log:[{at:todayAt(10,2), by:'salesperson', text:'Session started in the showroom'},
       ...lines.map(l => ({at:l.at, by:'salesperson', text: units(l.qty) ? `Added ${P[l.pid].name} · ${cname(l.colour)} ×${units(l.qty)}${l.via === 'photo' ? ' (photo match)' : l.via === 'suggestion' ? ' (suggestion)' : ''}` : `Selected ${P[l.pid].name} · ${cname(l.colour)}`}))]};
-  return {orders:{'o-dubois':o}, rep:'roberto', buyers:{}, appts:{dubois:{in:todayAt(10, 2)}}, savedAt:null};
+  return {orders:{'o-dubois':o}, rep:'roberto', buyers:{}, appts:{...pastAppts(), dubois:{in:todayAt(10, 2)}}, savedAt:null};
 }
 const KEY = 'vega-poc-v2';
 function loadState() {
   try { const s = JSON.parse(localStorage.getItem(KEY));
     if (s && s.orders) { s.rep = REPS[s.rep] ? s.rep : 'roberto'; s.buyers = s.buyers || {}; s.appts = s.appts || {}; delete s.budgets;
-      Object.assign(BUYERS, s.buyers); oneOngoing(s.appts);
+      Object.assign(BUYERS, s.buyers); s.appts = {...pastAppts(), ...s.appts}; oneOngoing(s.appts);
       // older saves: bulk totals not split by size go back to "no quantity yet"
       Object.values(s.orders).forEach(o => o.lines.forEach(l => { if (l.qty && l.qty.ALL) delete l.qty.ALL; }));
       return s; } } catch (e) {}
@@ -996,9 +1026,13 @@ function Today({S, ui, act}) {
 // Tapping the Home title reloads the app, so the home-screen version (no browser bar) can pick up a new release.
 // A fresh query string skips the cached page; orders and the session are kept in local storage.
 const reloadApp = () => location.replace(location.pathname + '?r=' + Date.now() + location.hash);
-const SHOW_DAYS = [-1, 0, 1, 2].map(off => { const d = new Date(); d.setDate(d.getDate() + off); return d; });
-const TODAY_IDX = 1;
-const myBuyers = S => Object.values(BUYERS).filter(b => b.rep === S.rep).sort((x, y) => x.time.localeCompare(y.time));
+// a ten-day showroom campaign: three days done, today, six to come
+const DAY_OFFS = [-3, -2, -1, 0, 1, 2, 3, 4, 5, 6];
+const SHOW_DAYS = DAY_OFFS.map(off => { const d = new Date(); d.setDate(d.getDate() + off); return d; });
+const TODAY_IDX = DAY_OFFS.indexOf(0);
+const dayOf = b => b.day || 0;
+const dayLabel = b => !dayOf(b) ? 'Today' : SHOW_DAYS[DAY_OFFS.indexOf(dayOf(b))].toLocaleDateString('en-GB', {weekday:'short', day:'numeric'});
+const myBuyers = S => Object.values(BUYERS).filter(b => b.rep === S.rep).sort((x, y) => dayOf(x) - dayOf(y) || x.time.localeCompare(y.time));
 const isOngoing = a => !!(a && a.in && !a.out);
 // the client the seller is with right now (checked in, not yet out)
 const ongoingBuyer = S => myBuyers(S).find(b => isOngoing(S.appts[b.id]));
@@ -1006,8 +1040,10 @@ const CheckPill = ({a}) => !a || !a.in ? null : a.out ? html`<span class="pill s
   : html`<span class="pill s-in" title=${'Checked in at ' + hhmm(a.in)}><i class="live-dot" aria-hidden="true"></i>Ongoing</span>`;
 
 function CalendarTab({S, act}) {
-  const rep = REPS[S.rep], [day, setDay] = useState(TODAY_IDX);
-  const all = day === TODAY_IDX ? myBuyers(S) : [], now = all.filter(b => isOngoing(S.appts[b.id])), list = all.filter(b => !now.includes(b));
+  const rep = REPS[S.rep], [day, setDay] = useState(TODAY_IDX), strip = useRef(null);
+  // open with today in view, one past day showing to its left
+  useEffect(() => { const el = strip.current, t = el && el.children[TODAY_IDX]; if (t) el.scrollLeft = t.offsetLeft - el.offsetLeft - t.offsetWidth - 8; }, []);
+  const all = myBuyers(S).filter(b => dayOf(b) === DAY_OFFS[day]), now = all.filter(b => isOngoing(S.appts[b.id])), list = all.filter(b => !now.includes(b));
   const row = b => html`<button class="appt" onClick=${() => act.sheet({type:'appt', bid:b.id})}>
           <div class="appt-time">${b.time}</div>
           <div class="appt-main">
@@ -1024,7 +1060,7 @@ function CalendarTab({S, act}) {
         <button class="avatar" onClick=${() => act.sheet({type:'account'})} aria-label=${'Signed in as ' + rep.name + '. Switch account'}>${rep.ini}</button></div>
     </header>
     <section class="sec">
-      <div class="days" role="tablist">${SHOW_DAYS.map((d, i) => html`<button role="tab" aria-selected=${i === day} class=${'day' + (i === day ? ' on' : '')} onClick=${() => setDay(i)}>
+      <div class="days" role="tablist" ref=${strip}>${SHOW_DAYS.map((d, i) => html`<button role="tab" aria-selected=${i === day} class=${'day' + (i === day ? ' on' : '')} onClick=${() => setDay(i)}>
         <span>${d.toLocaleDateString('en-GB', {weekday:'short'})}</span><b>${d.getDate()}</b><span>Day ${i + 1}</span></button>`)}</div>
       ${!all.length && html`<div class="empty">No appointments on this day.</div>`}
       ${now.length > 0 && html`<div class="lbl">Now</div><div class="appts now">${now.map(row)}</div>`}
@@ -1040,7 +1076,7 @@ function ApptSheet({sh, S, act}) {
         <button class="btn primary" onClick=${() => act.addProducts(b.id)}>Add products</button>`
     : html`${o && html`<button class="btn secondary" style="flex:0 0 auto" onClick=${() => act.openOrder(b.id)}>View order</button>`}
         <button class="btn go" onClick=${() => act.checkIn(b.id)}><${Icon} n="check" s=${18} w=${2.2}/>Check in again</button>`;
-  return html`<${Sheet} tall title=${b.shop} sub=${`${b.time} · ${b.city}`} onClose=${act.close} foot=${foot}>
+  return html`<${Sheet} tall title=${b.shop} sub=${`${dayLabel(b)} · ${b.time} · ${b.city}`} onClose=${act.close} foot=${foot}>
     ${a.in && html`<div class="kv">${isIn ? html`<span class="pill s-in"><i class="live-dot" aria-hidden="true"></i>Ongoing since ${hhmm(a.in)}</span>`
       : html`<span class="pill s-out">Checked out ${hhmm(a.out)}</span>`}${o && html`<span style="margin-left:auto"><${Pill} s=${o.status}/></span>`}</div>`}
     ${a.in && a.out && html`<div class="small muted" style="margin-top:-6px">Started ${hhmm(a.in)}. Checking in again keeps this start time.</div>`}
@@ -1243,12 +1279,12 @@ function AccountSheet({S, act}) {
 
 function PickBuyerSheet({S, sh, act}) {
   const p = P[sh.item.pid];
-  const mine = Object.values(BUYERS).filter(b => b.rep === S.rep).sort((x, y) => x.time.localeCompare(y.time));
-  return html`<${Sheet} title="Add to an order" sub=${`${p.name} · ${cname(sh.item.colour)}`} onClose=${act.close}>
+  const all = myBuyers(S), mine = [...all.filter(b => !dayOf(b)), ...all.filter(b => dayOf(b) > 0), ...all.filter(b => dayOf(b) < 0)];
+  return html`<${Sheet} tall title="Add to an order" sub=${`${p.name} · ${cname(sh.item.colour)}`} onClose=${act.close}>
     <div class="lbl">Your appointments</div>
     <div class="list">${mine.map(b => { const o = S.orders['o-' + b.id], why = canTake(o || {buyerId:b.id, status:'draft'}, p);
       return html`<button class="row" disabled=${!!why} onClick=${() => act.addFor(b.id, sh.item)}>
-        <div class="row-main"><div class="row-title">${b.shop}</div><div class="row-sub">${b.time} · ${b.city}</div></div>
+        <div class="row-main"><div class="row-title">${b.shop}</div><div class="row-sub">${dayLabel(b)} · ${b.time} · ${b.city}</div></div>
         <div class="row-side">${why ? html`<span class="small muted">${why}</span>` : html`<${Pill} s=${o ? o.status : 'none'}/>`}</div>
       </button>`; })}
       <button class="row" onClick=${() => act.sheet({type:'newbuyer', item:sh.item})}>
