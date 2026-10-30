@@ -830,7 +830,7 @@ const IC = {
   back:'M15 5l-7 7 7 7', cam:'M4 8h3l2-3h6l2 3h3v11H4z M12 17a4 4 0 100-8 4 4 0 000 8z',
   today:'M4 6h16v14H4z M4 10h16 M8 3v4 M16 3v4', orders:'M6 4h12v16H6z M9 9h6 M9 13h6 M9 17h3',
   grid:'M4 4h7v7H4z M13 4h7v7h-7z M4 13h7v7H4z M13 13h7v7h-7z', search:'M11 18a7 7 0 100-14 7 7 0 000 14z M16 16l5 5',
-  lock:'M6 11h12v9H6z M9 11V8a3 3 0 016 0v3', x:'M6 6l12 12 M18 6L6 18', share:'M12 15V4 M8 8l4-4 4 4 M5 13v7h14v-7',
+  lock:'M6 11h12v9H6z M9 11V8a3 3 0 016 0v3', x:'M6 6l12 12 M18 6L6 18', share:'M12 15V4 M8 8l4-4 4 4 M5 13v7h14v-7', sign:'M16.5 3.5l4 4L9 19l-5 1 1-5z M14 6l4 4 M13 21h8',
   check:'M5 12l5 5 9-10', export:'M12 4v11 M8 11l4 4 4-4 M5 20h14', clock:'M12 21a9 9 0 100-18 9 9 0 000 18z M12 7v5l3 2',
   user:'M12 12a4 4 0 100-8 4 4 0 000 8z M4 21c1-4 4-6 8-6s7 2 8 6', spark:'M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z',
   info:'M12 21a9 9 0 100-18 9 9 0 000 18z M12 11v6 M12 7.5v.01', history:'M4 12a8 8 0 108-8 8 8 0 00-6.5 3.3 M4 4v4h4 M12 8v4l3 2',
@@ -1533,8 +1533,8 @@ function OrderView({S, ui, act, order}) {
       </div>`}
     </div>
     <div class="ov-actions">
-      ${inVisit ? html`<button class="cap-btn" onClick=${() => act.sheet({type:'finish', orderId:order.id})}><${Icon} n="share" w=${2.4}/>Send the order</button>`
-        : html`<button class="round" onClick=${() => act.sheet({type:'finish', orderId:order.id})} aria-label="Send the order"><${Icon} n="share"/></button>
+      ${inVisit ? html`<button class="cap-btn" onClick=${() => act.sheet({type:'finish', orderId:order.id})}><${Icon} n="sign" w=${2.2}/>Review and sign</button>`
+        : html`<button class="round" onClick=${() => act.sheet({type:'finish', orderId:order.id})} aria-label="Review and sign"><${Icon} n="sign"/></button>
         <button class="cap-btn" disabled=${allSent} onClick=${() => act.checkIn(b.id)}><${Icon} n="check" w=${2.4}/>Check in to add products</button>`}
     </div>
   </div>`;
@@ -1563,7 +1563,7 @@ function FinishSheet({sh, S, act}) {
   const value = sel.reduce((a, d) => a + kpi(o, d).total, 0);
   const shared = sel.length > 0 && sel.every(d => partOf(o, d).status === 'shared');
   const link = `loewe.vega.app/o/${b.code}-${sel.join('')}${String(o.lines.length).padStart(2, '0')}`;
-  return html`<${Sheet} title="Send the order" sub=${orderNo(o)} onClose=${act.close}>
+  return html`<${Sheet} title="Review and sign" sub=${orderNo(o)} onClose=${act.close}>
     ${!open.length ? html`<div class="callout good"><${Icon} n="check" s=${18}/><div>Everything is sent. The commercial team reviews the order and confirms it for production.</div></div>` : html`
       <div class="lbl">What to send</div>
       <div class="list">${b.divs.map(d => { const k = kpi(o, d), st = partOf(o, d).status, can = open.includes(d) && filled(d);
