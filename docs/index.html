@@ -140,7 +140,7 @@ input{font:inherit;color:inherit}
 .pd-head{display:flex;flex-direction:column;gap:4px;margin-top:-4px}
 .pd-name{margin:0;font:650 26px/1.15 var(--f-display);letter-spacing:-.02em;text-wrap:balance}
 .pd-sub{font-size:14px;color:var(--muted)}
-.pd-sub .code{color:var(--ink);font-weight:600}
+.pd-sub .code{color:var(--ink);font-weight:400}
 .pin{display:flex;flex-direction:column;align-items:center;gap:14px;padding:4px 0 6px}
 .pin-t{font-size:16px;font-weight:600}
 .pin-dots{display:flex;gap:16px;margin:2px 0 6px}
@@ -247,7 +247,6 @@ input{font:inherit;color:inherit}
 .look-tile img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 30%}
 .look-h{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .look-t{font:600 17px/1.2 var(--f-display);letter-spacing:-.01em}
-.look-vm{font-size:13px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .look-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
 .look-list .look{width:auto}
 .appts{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
@@ -286,10 +285,10 @@ input{font:inherit;color:inherit}
 .szs{display:flex;gap:4px;flex-wrap:wrap}
 .sz-chip{font:500 11.5px var(--f-ui);font-variant-numeric:tabular-nums;padding:1px 5px;border-radius:5px;background:var(--surface-2);color:var(--muted)}
 .lock{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:650;color:var(--warn)}
-.search{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:0 12px;height:44px;color:var(--muted)}
+.search{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:0 16px;height:44px;color:var(--muted)}
 .search input{border:0;outline:0;background:none;flex:1;min-width:0;height:100%;color:var(--ink)}
 .searchrow{display:flex;gap:8px}.searchrow .search{flex:1;min-width:0}
-.sq-btn{position:relative;flex:none;width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--line);background:var(--surface);border-radius:12px;color:var(--ink)}
+.sq-btn{position:relative;flex:none;width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--line);background:var(--surface);border-radius:50%;color:var(--ink)}
 .sq-btn.on{background:var(--accent);color:var(--accent-ink);border-color:transparent}
 .fchip{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:5px 8px 5px 12px;border-radius:99px;background:var(--surface-2);border:1px solid var(--line);color:var(--ink)}
 .fchip svg{color:var(--muted)}
@@ -297,7 +296,7 @@ input{font:inherit;color:inherit}
 .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 /* collection: category rail on the left, products grouped by category and family */
 /* category tabs stick under the top while the grid scrolls; sub-categories of the current one sit beneath */
-.cat-nav{position:sticky;top:0;z-index:5;margin:0 -18px;padding:6px 0 8px;background:color-mix(in srgb,var(--bg) 88%,transparent);-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);border-bottom:1px solid var(--line)}
+.cat-nav{position:sticky;top:0;z-index:5;margin:0 -18px;padding:6px 0 8px;background:color-mix(in srgb,var(--bg) 88%,transparent);-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%)}
 .cn-row{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:0 18px;scroll-padding:0 18px}
 .cn-row::-webkit-scrollbar{display:none}
 .cn-cat{flex:none;position:relative;display:flex;align-items:baseline;gap:5px;font-size:15px;font-weight:650;color:var(--muted);padding:9px 6px 10px;margin-right:8px;white-space:nowrap}
@@ -323,7 +322,7 @@ input{font:inherit;color:inherit}
 .ftab span{font-weight:500;opacity:.6}
 .ftab.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
 
-.cat-main{display:flex;flex-direction:column;gap:24px;min-width:0;padding-top:4px}
+.cat-main{display:flex;flex-direction:column;gap:24px;min-width:0;padding-top:16px}
 .cat-sec{display:flex;flex-direction:column;gap:8px}
 .cat-h{margin:0;display:flex;align-items:baseline;gap:8px;font:650 20px/1.2 var(--f-display);letter-spacing:-.02em}
 .cat-h span{font-size:13px;font-weight:600;color:var(--muted)}
@@ -344,8 +343,8 @@ input{font:inherit;color:inherit}
 .pname{font-weight:620;font-size:13.5px;line-height:1.25}
 .pcard .prices{grid-template-columns:1fr;gap:4px}
 .pcard .prices span{flex-direction:row;justify-content:space-between;align-items:baseline;gap:4px}
-.pcard .prices small{text-transform:none;letter-spacing:0;font-size:13px;font-weight:400}
-.pcard .prices b{font-size:13px}
+.pcard .prices small{text-transform:none;letter-spacing:0;font-size:12px;font-weight:400}
+.pcard .prices b{font-size:12px}
 .dots{display:flex;gap:4px}
 .dots .sw{width:10px;height:10px}
 
@@ -466,6 +465,7 @@ input{font:inherit;color:inherit}
 .colours{display:flex;gap:8px;overflow-x:auto;margin:0 -18px;padding:0 18px 2px;scrollbar-width:none}
 .colour{display:flex;align-items:center;gap:7px;padding:0 12px;height:40px;border-radius:20px;border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:14px;white-space:nowrap;flex:none}
 .colour .sw{width:16px;height:16px}
+.colour .code{font-size:inherit;line-height:inherit;font-weight:inherit}
 .colour.on{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
 .cnt{font-size:11.5px;font-weight:700;background:var(--accent);color:var(--accent-ink);border-radius:99px;padding:1px 6px}
 .sizes{display:flex;gap:6px;overflow-x:auto;margin:0 -18px;padding:0 18px 2px;scrollbar-width:none}
@@ -1078,7 +1078,6 @@ function Today({S, ui, act}) {
           ${LOOKS.filter(l => l.div === d).map(l => html`<button class="look" onClick=${() => act.sheet({type:'look', id:l.id})}>
             <${LookTile} look=${l}/>
             <div class="look-h"><span class="look-t">${lookNo(l)}</span></div>
-            <div class="look-vm">${l.vm}</div>
           </button>`)}
         </div>
       </section>`)}
@@ -1171,7 +1170,7 @@ function LookSheet({id, S, ui, act}) {
         <${Thumb} pid=${pid} colour=${c}/>
         <div class="row-main"><div class="row-title">${p.name}</div><div class="row-sub"><${Colour} c=${c}/></div><div class="row-sub"><span class="pc-code">${p.code}</span></div></div>
         <div class="row-side"><span class="row-val">${fmt(p.price)}</span><span class="small muted num">${fmt(p.rrp)} retail</span>
-          ${why ? html`<span class="lock">${why}</span>` : has ? html`<span class="flag-txt"><${Icon} n="flag" s=${13} w=${2.2}/>In order</span>` : html`<span class="small" style="color:var(--accent);font-weight:600">Add</span>`}</div>
+          ${why ? html`<span class="lock">${why}</span>` : has ? html`<span class="flag-txt"><${Icon} n="flag" s=${13} w=${2.2}/>Added</span>` : html`<span class="small" style="color:var(--accent);font-weight:600">Add</span>`}</div>
       </button>`; })}</div>
     <div class="small muted">${o ? `Tap a piece to add it to ${b.shop}’s selection.` : 'Tap a piece, then choose which client it’s for.'}</div>
   <//>`;
@@ -1241,7 +1240,7 @@ function PCard({p, o, act}) {
   return html`<div class=${'pcard' + (lock && !has ? ' locked' : '') + (has ? ' has' : '')}>
     <div class="pc-photo">
       <button class="pc-img" onClick=${() => act.sheet({type:'product', pid:p.id})} aria-label=${'Open ' + p.name}><${Thumb} pid=${p.id} colour=${c}/></button>
-      ${has ? html`<span class="pc-flag"><${Icon} n="flag" s=${14} w=${2.4}/>In order</span>`
+      ${has ? html`<span class="pc-flag"><${Icon} n="flag" s=${14} w=${2.4}/>Added</span>`
         : lock && html`<span class="pc-lock"><${Icon} n="lock" s=${11} w=${2.4}/>${lock}</span>`}
       ${has ? html`<button class="pc-btn x" onClick=${() => act.unselect(o.id, p.id)} aria-label=${'Remove ' + p.name + ' from the order'}><${Icon} n="x" s=${16} w=${2.6}/></button>`
         : !(o && why) && html`<button class="pc-btn" onClick=${add} aria-label=${'Add ' + p.name + (o ? ' to ' + BUYERS[o.buyerId].shop : ' to an order')}><${Icon} n="plus" s=${18} w=${2.6}/></button>`}
@@ -1419,7 +1418,6 @@ function ProductSheet({pid, S, ui, act}) {
       <div class="pd-sub"><span class="code">${p.code}</span></div></div>
     <div class="colours">${p.colours.map(x => html`<button class=${'colour' + (x === c ? ' on' : '')} onClick=${() => setC(x)}><span class="sw" style=${{background:COL[x][0]}}></span>${x}<span class="code">${COL[x][1]}</span>${inOrder(x) && html`<span class="flag-dot" title="In order"><${Icon} n="flag" s=${12} w=${2.4}/></span>`}</button>`)}</div>
     <${Prices} cls="lg" p=${p}/>
-    ${has && html`<div class="callout good"><${Icon} n="flag" s=${18}/><div>${cname(c)} is in ${b.shop}’s selection. Set quantities here or later in the order.</div></div>`}
     <div class="panel facts">
       <div><span>Division</span><span>${p.div === 'W' ? 'Womenswear' : 'Menswear'}</span></div>
       <div><span>Category</span><span>${CAT_LABEL[p.cat]}</span></div>
@@ -1463,7 +1461,7 @@ function SizeSheet({sh, S, act}) {
   const family = PRODUCTS.filter(x => x.family === p.family && x.id !== p.id && x.div === p.div && available(b, x));
   const sug = (pid, colour) => { const xp = P[pid], has = order.lines.some(l => l.pid === pid);
     return html`<button class="sug" onClick=${() => go(pid, colour)}><${Thumb} pid=${pid} colour=${colour}/><div class="sug-n">${xp.name}</div>
-      <div class="small muted">${has ? 'In order' : fmt(xp.price)}</div></button>`; };
+      <div class="small muted">${has ? 'Added' : fmt(xp.price)}</div></button>`; };
   const curves = CURVES[p.sizes.length] || [];
 
   return html`<${Sheet} tall title=${p.name} sub=${`${p.code} · ${prices(p)}`} onClose=${close}
