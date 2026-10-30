@@ -309,7 +309,6 @@ input{font:inherit;color:inherit}
 /* family headings run across the grid */
 .fam-h{grid-column:1 / -1;display:flex;align-items:baseline;gap:6px;margin:10px 2px 0;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .fam-h:first-child{margin-top:0}
-.fam-h span{font-weight:600;letter-spacing:0;opacity:.75}
 /* filter chips (Orders) */
 .ftabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -18px;padding:0 18px}
 .ftabs::-webkit-scrollbar{display:none}
@@ -1260,11 +1259,11 @@ function CatalogueTab({S, ui, act}) {
       ${!items.length ? html`<div class="empty">${ql ? `No styles match “${q}”. Try a style name or code.` : `No ${DIV_LABEL[div].toLowerCase()} styles in this collection.`}</div>`
       : html`<div ref=${ref}>
         <nav class="cat-nav" ref=${nav} aria-label="Categories">
-          <div class="cn-row" role="tablist">${groups.map(g => html`<button role="tab" aria-selected=${curCat === g.cat} class=${'cn-cat' + (curCat === g.cat ? ' on' : '')} onClick=${() => go(g.cat)}>${CAT_LABEL[g.cat]}<span class="num">${g.n}</span></button>`)}</div>
+          <div class="cn-row" role="tablist">${groups.map(g => html`<button role="tab" aria-selected=${curCat === g.cat} class=${'cn-cat' + (curCat === g.cat ? ' on' : '')} onClick=${() => go(g.cat)}>${CAT_LABEL[g.cat]}</button>`)}</div>
         </nav>
         <div class="cat-main">${groups.map(g => html`<div class="cat-sec">
-          <h2 class="cat-h" id=${'c-' + g.cat} data-spy=${g.cat}>${CAT_LABEL[g.cat]}<span class="num">${g.n}</span></h2>
-          <div class="pgrid">${g.fams.map(f => html`<div class="fam-h" key=${f.id}>${f.f}<span class="num">${f.ps.length}</span></div>${f.ps.map(p => html`<${PCard} key=${p.id} p=${p} o=${so} act=${act}/>`)}`)}</div>
+          <h2 class="cat-h" id=${'c-' + g.cat} data-spy=${g.cat}>${CAT_LABEL[g.cat]}</h2>
+          <div class="pgrid">${g.fams.map(f => html`<div class="fam-h" key=${f.id}>${f.f}</div>${f.ps.map(p => html`<${PCard} key=${p.id} p=${p} o=${so} act=${act}/>`)}`)}</div>
         </div>`)}</div>
       </div>`}
     </section>`;
