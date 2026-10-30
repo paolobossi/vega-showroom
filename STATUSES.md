@@ -52,9 +52,9 @@ The whole order's status is worked out from its parts: all the same → that sta
 | Within budget (green) | Spend is at or under the budget set in the back office. |
 | Slightly over (amber) | Up to 10% over budget. |
 | Over (red) | More than 10% over, or spending where no budget is set. |
-| Mix rule OK (green) | A family's share is inside its limit (e.g. Puzzle ≤ 30%, accessories ≥ 5%). |
-| Mix rule over a max (red) | A family is above its maximum share. |
-| Mix rule under a min (amber) | A family is below its minimum share. |
+| Mix rule within (`Within`, green) | A family is inside its limit, shown in euros (e.g. Puzzle max €7,089, from the 30% rule set in the back office). |
+| Mix rule over a max (`Over`, red) | A family is above its maximum share. |
+| Mix rule under a min (`Under`, amber) | A family is below its minimum share. |
 | Required look done (`Done`) | Every piece of a required look is in the order with quantities. |
 | Required look open (`Open`) | Some pieces of a required look are still missing. |
 
