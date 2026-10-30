@@ -225,6 +225,7 @@ input{font:inherit;color:inherit}
 .car-track::-webkit-scrollbar{display:none}
 .car-slide{position:relative;flex:0 0 100%;scroll-snap-align:center;aspect-ratio:4/5;max-height:52cqh;background:#F0F0F0}
 .car-slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block}
+.car.cover .car-slide img{object-fit:cover;object-position:50% 30%}
 .car-dots{display:flex;justify-content:center;gap:6px}
 .car-dots i{width:6px;height:6px;border-radius:50%;background:var(--line);transition:background .2s,width .2s}
 .car-dots i.on{background:var(--ink);width:16px;border-radius:3px}
@@ -239,10 +240,9 @@ input{font:inherit;color:inherit}
 /* ---------- today ---------- */
 .look{scroll-snap-align:start;flex:none;width:236px;text-align:left;display:flex;flex-direction:column;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:8px 8px 12px}
 .look-tile{position:relative;border-radius:12px;overflow:hidden;background:var(--studio)}
-/* one large square plus two small squares: 3:2 overall, so no photo is cropped */
-.look-tile{display:grid;aspect-ratio:3/2;height:auto;grid-template-columns:2fr 1fr;grid-template-rows:repeat(2,minmax(0,1fr));gap:2px}
-.look-tile img{min-width:0;min-height:0}
-.look-tile img:first-child{grid-row:1 / span 2}
+/* the runway front shot, cropped to the model */
+.look-tile{aspect-ratio:4/5}
+.look-tile img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 30%}
 .look-h{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .look-t{font:600 17px/1.2 var(--f-display);letter-spacing:-.01em}
 .look-vm{font-size:13px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -691,17 +691,18 @@ function syncStatus(o) { const sts = [...new Set(BUYERS[o.buyerId].divs.map(d =>
 const canTake = (o, p) => { const b = BUYERS[o.buyerId];
   return !b.divs.includes(p.div) ? `No ${DIV_TAB[p.div].toLowerCase()}’s` : !available(b, p) ? 'Not available' : partLocked(o, p.div) ? `${DIV_TAB[p.div]} sent` : null; };
 
-// Runway looks, numbered in show order; required looks are part of the buying guidelines (the client buys every piece)
+// Runway looks, numbered in show order; required looks are part of the buying guidelines (the client buys every piece).
+// Photos are the real looks from the LOEWE Spring Summer 2027 show on loewe.com: docs/img/looks/<look>_<view>.jpg
 const LOOKS = [
-  {id:'L04', div:'W', n:4, req:true, items:[['w-amazona-s','Mocha'],['w-short-coat','Taupe Grey'],['w-balloon','Ivory'],['w-oval-loafer','Black']],
+  {id:'L04', div:'W', n:4, req:true, pics:'front back detail1 detail2', items:[['w-amazona-s','Mocha'],['w-short-coat','Taupe Grey'],['w-balloon','Ivory'],['w-oval-loafer','Black']],
    vm:'Window lead for the season. Mocha is the hero colour: aim for at least 30% of Amazona 180 units in Mocha, shown with the Taupe Grey coat.'},
-  {id:'L09', div:'W', n:9, req:true, items:[['w-shirt-dress','Red'],['w-flamenco','Sunrise Orange'],['w-toy','Emerald Green']],
+  {id:'L09', div:'W', n:9, req:true, pics:'front back detail1 detail2', items:[['w-shirt-dress','Red'],['w-flamenco','Sunrise Orange'],['w-toy','Emerald Green']],
    vm:'Evening capsule. Present as one full look on a mannequin, Flamenco carried by the knot rather than hung.'},
-  {id:'L15', div:'W', n:15, items:[['w-puffer','Light Sage'],['w-puzzle-fold','Sand'],['w-cord','Brown'],['w-pebble-lace','Black']],
+  {id:'L27', div:'W', n:27, pics:'front back detail1', items:[['w-puffer','Light Sage'],['w-puzzle-fold','Sand'],['w-cord','Brown'],['w-pebble-lace','Black']],
    vm:'Outerwear-led table. The puffer anchors the RTW wall; Puzzle Fold sits at the front.'},
-  {id:'M03', div:'M', n:3, req:true, items:[['m-puzzle-l','Dark Chestnut'],['m-shirt','Navy Blue'],['m-cord','Brown'],['m-ballet','Black White']],
+  {id:'M03', div:'M', n:3, req:true, pics:'front back detail1', items:[['m-puzzle-l','Dark Chestnut'],['m-shirt','Navy Blue'],['m-cord','Brown'],['m-ballet','Black White']],
    vm:'Lead men’s story. Sell the shirt and corduroy trouser as a pair, same size run. Puzzle in Dark Chestnut is the hero bag.'},
-  {id:'M06', div:'M', n:6, items:[['m-tee','Ecru'],['m-pogo','Brown Green'],['m-squad','Black']],
+  {id:'M06', div:'M', n:6, pics:'front back detail1 detail2', items:[['m-tee','Ecru'],['m-pogo','Brown Green'],['m-squad','Black']],
    vm:'Entry price point. Pogo in Brown Green is the bestseller target.'},
 ];
 
@@ -711,6 +712,8 @@ const RULES = {
   M:[{label:'Puzzle', max:30, has:p => p.family === 'Puzzle'}, {label:'Small leather goods', min:5, has:p => ['m-wallet', 'm-card'].includes(p.id)}],
 };
 const lookNo = l => 'Look ' + String(l.n).padStart(2, '0');
+const lookSrc = l => l.pics.split(' ').map(v => `img/looks/${String(l.n).padStart(2, '0')}_${v}.jpg`);
+const SHOW = 'Spring Summer 2027 show';
 
 /* ---------- helpers ---------- */
 const fmt = n => '€' + Math.round(n).toLocaleString('en-GB');
@@ -854,26 +857,28 @@ const Stepper = ({n, on, label}) => html`<div class="stp">
   <button aria-label=${'One more, ' + label} onClick=${() => on(n + 1)}><${Icon} n="plus" s=${16} w=${2.4}/></button></div>`;
 
 // Swipeable product shots; tap opens them full screen
-function Carousel({p, colour, onOpen, start=0, full}) {
-  const src = viewsOf(p, colour), [i, setI] = useState(start), ref = useRef(null);
+function Carousel({p, colour, src=viewsOf(p, colour), alt=`${p.name}, ${colour}`, onOpen, start=0, full, cover}) {
+  const [i, setI] = useState(start), ref = useRef(null);
   useEffect(() => { const el = ref.current; if (el && start) el.scrollLeft = start * el.clientWidth; }, []);
   useEffect(() => { setI(0); if (ref.current && !full) ref.current.scrollLeft = 0; }, [colour]);
   const onScroll = e => { const el = e.currentTarget; setI(Math.round(el.scrollLeft / Math.max(1, el.clientWidth))); };
-  return html`<div class=${'car' + (full ? ' full' : '')}>
+  return html`<div class=${'car' + (full ? ' full' : '') + (cover ? ' cover' : '')}>
     ${onOpen && !full && html`<button class="car-exp" onClick=${() => onOpen(i)} aria-label="Open photos full screen"><${Icon} n="expand" s=${18} w=${2}/></button>`}
     <div class="car-track" ref=${ref} onScroll=${onScroll}>${src.map((s, k) => html`<button class="car-slide" onClick=${() => onOpen && onOpen(k)} aria-label=${onOpen ? `Enlarge photo ${k + 1} of ${src.length}` : `Photo ${k + 1} of ${src.length}`}>
-      <img src=${s} alt=${`${p.name}, ${colour}, view ${k + 1}`} loading=${k ? 'lazy' : 'eager'} decoding="async" draggable="false"/></button>`)}</div>
+      <img src=${s} alt=${`${alt}, view ${k + 1}`} loading=${k ? 'lazy' : 'eager'} decoding="async" draggable="false"/></button>`)}</div>
     <div class="car-dots" aria-hidden="true">${src.map((s, k) => html`<i class=${k === i ? 'on' : ''}></i>`)}</div>
   </div>`;
 }
 
+// product photos, or a runway look's photos when z.look is set
 function Zoom({z, act}) {
-  const p = P[z.pid];
-  return html`<div class="zoom" role="dialog" aria-label=${p.name + ' photos'}>
-    <div class="zoom-top"><div style="min-width:0"><div class="zoom-t">${p.name}</div><div class="small muted"><${Colour} c=${z.colour}/></div></div>
+  const l = z.look && LOOKS.find(x => x.id === z.look), p = P[z.pid], t = l ? lookNo(l) : p.name;
+  return html`<div class="zoom" role="dialog" aria-label=${t + ' photos'}>
+    <div class="zoom-top"><div style="min-width:0"><div class="zoom-t">${t}</div><div class="small muted">${l ? SHOW : html`<${Colour} c=${z.colour}/>`}</div></div>
       <button class="icon-btn" onClick=${() => act.set({zoom:null})} aria-label="Close photos"><${Icon} n="x"/></button></div>
-    <${Carousel} full p=${p} colour=${z.colour} start=${z.i || 0}/>
-    <div class="zoom-foot"><span class="pc-code">${p.code}</span><${Prices} p=${p}/></div>
+    ${l ? html`<${Carousel} full src=${lookSrc(l)} alt=${t} start=${z.i || 0}/>`
+      : html`<${Carousel} full p=${p} colour=${z.colour} start=${z.i || 0}/>
+    <div class="zoom-foot"><span class="pc-code">${p.code}</span><${Prices} p=${p}/></div>`}
   </div>`;
 }
 const Pill = ({s}) => html`<span class=${'pill s-' + s}>${STATUS[s]}</span>`;
@@ -947,10 +952,7 @@ function MixChecks({o, d}) {
    Looks: lookbooks and VM intent
    ===================================================================== */
 function LookTile({look}) {
-  const items = look.items.slice(0, 3);
-  return html`<div class="look-tile">
-    ${items.map(([pid, c]) => html`<${Art} pid=${pid} colour=${c}/>`)}
-  </div>`;
+  return html`<div class="look-tile"><img src=${lookSrc(look)[0]} alt=${`${lookNo(look)}, ${SHOW}`} loading="lazy" decoding="async" draggable="false"/></div>`;
 }
 
 function Guidelines({b, o}) {
@@ -1056,9 +1058,10 @@ function LookSheet({id, S, ui, act}) {
   const o = activeOrder(S, ui), b = o && BUYERS[o.buyerId];
   const out = o ? l.items.filter(([pid, c]) => !o.lines.some(x => x.pid === pid && x.colour === c)) : [];
   const missing = out.filter(([pid]) => !canTake(o, P[pid])), why = o && out.length && !missing.length && canTake(o, P[out[0][0]]);
-  return html`<${Sheet} title=${lookNo(l)} sub=${`${DIV_LABEL[l.div]} lookbook${l.req ? ' · required look' : ''}`} onClose=${act.close}
+  return html`<${Sheet} tall title=${lookNo(l)} onClose=${act.close}
+    media=${html`<${Carousel} cover src=${lookSrc(l)} alt=${lookNo(l)} onOpen=${i => act.set({zoom:{look:l.id, i}})}/>`}
     foot=${o && html`<button class="btn primary" disabled=${!missing.length} onClick=${() => act.selectLook(o.id, l)}>${missing.length ? `Add the whole look · ${missing.length} ${missing.length === 1 ? 'piece' : 'pieces'}` : why || 'Whole look is in the order'}</button>`}>
-    <${LookTile} look=${l}/>
+    <div class="pd-head"><span class="pc-fam">${DIV_LABEL[l.div]} · ${SHOW}${l.req ? ' · required look' : ''}</span><h1 class="pd-name">${lookNo(l)}</h1></div>
     <div class="callout info"><${Icon} n="spark" s=${18}/><div><b>VM intent.</b> ${l.vm}</div></div>
     <div class="lbl">In this look</div>
     <div class="list">${l.items.map(([pid, c]) => { const p = P[pid], why = o && canTake(o, p), item = {pid, colour:c, via:'look'};

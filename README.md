@@ -17,8 +17,9 @@ On iPhone, open the link in Safari, tap Share, then **Add to Home Screen** to us
 ## Limits
 
 - Photo recognition is simulated. The catalogue is 38 Loewe styles taken from loewe.com (names, style and colour codes, product photos); wholesale prices are indicative, derived from retail.
+- Look photos are the real looks from the LOEWE Spring Summer 2027 show (loewe.com), but the pieces listed under each look are catalogue styles chosen for the demo, not the exact runway garments.
 - Orders are saved in each device's browser, not a shared database.
 
 ## Structure
 
-The whole app is `docs/index.html` (Preact + htm from a CDN, no build step), with product photos in `docs/img/`. GitHub Pages serves the `docs/` folder.
+The whole app is `docs/index.html` (Preact + htm from a CDN, no build step), with product photos in `docs/img/` and runway look photos in `docs/img/looks/`. GitHub Pages serves the `docs/` folder.
