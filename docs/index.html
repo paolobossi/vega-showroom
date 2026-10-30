@@ -434,6 +434,8 @@ input{font:inherit;color:inherit}
 .sheet-body:last-child{padding-bottom:max(18px,env(safe-area-inset-bottom,0px))}
 /* media sheet: photos run edge to edge under the rounded top, close floats on the top left */
 .sheet.media{overflow:hidden}
+/* the product page rises almost to the top, over the page title; a sliver stays visible so it still reads as a sheet */
+.sheet.media.tall{height:calc(100% - 12px);max-height:none}
 .sheet.media .sheet-grab{position:absolute;z-index:3;top:0;left:0;right:0;background:rgba(20,22,25,.22)}
 .sheet.media .sheet-body{padding-top:0}
 .sheet.media .car{margin:0 -18px}
