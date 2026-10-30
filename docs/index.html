@@ -512,11 +512,8 @@ input{font:inherit;color:inherit}
 .shutter span{width:56px;height:56px;border-radius:28px;background:var(--vf-ink);transition:transform .15s}
 .shutter:active span{transform:scale(.9)}
 .match{position:absolute;left:0;right:0;bottom:0;margin:0 auto;max-width:640px;max-height:86%;overflow-y:auto;z-index:5;background:var(--bg);color:var(--ink);border-radius:22px 22px 0 0;padding:16px 18px max(16px,env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px;animation:up .26s cubic-bezier(.2,.8,.2,1)}
-.match-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .match-main{display:flex;gap:14px;align-items:center}
 .m-name{font:650 21px/1.2 var(--f-display);letter-spacing:-.02em}
-.conf{font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums}
-.conf.hi{color:var(--good)}.conf.mid{color:var(--warn)}
 .alts{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
 
 /* ---------- buyer view ---------- */
@@ -874,8 +871,6 @@ const saveSession = id => { try { id ? localStorage.setItem(SKEY, id) : localSto
 function clearState() { saveSession(null); Object.keys(BUYERS).forEach(k => { if (BUYERS[k].added) delete BUYERS[k]; else BUYERS[k].cat = BUYER_CAT0[k]; }); try { localStorage.removeItem(KEY); } catch (e) {} }
 
 /* ---------- recognition (simulated for the POC) ---------- */
-const sibling = p => PRODUCTS.find(x => x.id !== p.id && x.div === p.div && x.shape === p.shape);
-const confidence = p => sibling(p) ? 78 + hash(p.id) % 7 : 91 + hash(p.id) % 7;
 function alternatives(p) {
   return PRODUCTS.filter(x => x.id !== p.id && x.div === p.div)
     .map(x => ({x, s:(x.shape === p.shape ? 3 : 0) + (x.family === p.family ? 2 : 0) + (x.cat === p.cat ? 1 : 0) + (hash(x.id) % 10) / 100}))
@@ -1185,6 +1180,7 @@ function OrdersTab({S, ui, act}) {
    ===================================================================== */
 const matches = (p, ql) => !ql || (p.name + ' ' + p.code + ' ' + p.family + ' ' + CAT_LABEL[p.cat]).toLowerCase().includes(ql);
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+const SUBTYPE = {rtw:p => p.family, acc:p => p.family === 'Puzzle' ? 'Small leather goods' : p.family};
 
 function ProductList({div, q, b, season, onPick}) {
   const ql = q.trim().toLowerCase();
@@ -1226,9 +1222,10 @@ function CatalogueTab({S, ui, act}) {
   const season = SEASONS.find(x => x.id === ui.catSeason);
   const ql = q.trim().toLowerCase();
   const items = PRODUCTS.filter(p => p.div === div && p.season === season.id && (!sb || available(sb, p)) && (!ui.catDrop || p.drop === ui.catDrop) && matches(p, ql));
-  // category, then family as the sub-category
-  const groups = CATS.map(c => { const ps = items.filter(p => p.cat === c);
-    return {cat:c, n:ps.length, fams:[...new Set(ps.map(p => p.family))].map(f => ({f, id:c + '-' + slug(f), ps:ps.filter(p => p.family === f)}))}; }).filter(g => g.n);
+  // category, then a sub-heading only where the family is a kind of product (Dresses, Hats); bags and shoes families are lines (Puzzle, Pebble), so they just sit together
+  const groups = CATS.map(c => { const ps = items.filter(p => p.cat === c), sub = SUBTYPE[c];
+    return {cat:c, n:ps.length, fams:sub ? [...new Set(ps.map(sub))].map(f => ({f, id:c + '-' + slug(f), ps:ps.filter(p => sub(p) === f)}))
+      : [...new Set(ps.map(p => p.family))].map(f => ({f:null, id:c + '-' + slug(f), ps:ps.filter(p => p.family === f)}))}; }).filter(g => g.n);
   const ref = useRef(null), nav = useRef(null), hold = useRef(0);
   const navBottom = () => nav.current ? nav.current.getBoundingClientRect().bottom : 0;
   // scroll-spy: the last category heading that has passed under the sticky tabs is the current one
@@ -1263,7 +1260,7 @@ function CatalogueTab({S, ui, act}) {
         </nav>
         <div class="cat-main">${groups.map(g => html`<div class="cat-sec">
           <h2 class="cat-h" id=${'c-' + g.cat} data-spy=${g.cat}>${CAT_LABEL[g.cat]}</h2>
-          <div class="pgrid">${g.fams.map(f => html`<div class="fam-h" key=${f.id}>${f.f}</div>${f.ps.map(p => html`<${PCard} key=${p.id} p=${p} o=${so} act=${act}/>`)}`)}</div>
+          <div class="pgrid">${g.fams.map(f => html`${f.f && html`<div class="fam-h" key=${f.id}>${f.f}</div>`}${f.ps.map(p => html`<${PCard} key=${p.id} p=${p} o=${so} act=${act}/>`)}`)}</div>
         </div>`)}</div>
       </div>`}
     </section>`;
@@ -1434,7 +1431,6 @@ function SizeSheet({sh, S, act}) {
     <div class="ss-top">
       <${Thumb} cls="lg" pid=${p.id} colour=${col}/>
       <div class="ss-info">
-        ${sh.via === 'photo' && html`<span class="chip ai" style="align-self:flex-start"><${Icon} n="spark" s=${13}/>Matched from photo</span>`}
         <div class="small muted">${DIV_LABEL[p.div]} · ${CAT_LABEL[p.cat]} · ${DROPS[p.drop]}</div>
         <div class="ss-total"><b>${tUnits}</b> units · <span class="num">${fmt(tUnits * p.price)}</span></div>
       </div>
@@ -1481,7 +1477,7 @@ function Capture({order, div, act}) {
   useEffect(() => () => clearTimeout(t.current), []);
   const s = CAMERA_SCENE, p = P[s.pid];
   const shoot = () => { setStage('scan'); t.current = setTimeout(() => setStage('match'), 1250); };
-  const conf = confidence(p), sib = sibling(p), alts = alternatives(p);
+  const alts = alternatives(p);
   const why = canTake(order, p);
   const pick = (pid, colour) => { act.select(order.id, pid, colour, 'photo'); act.capture(false); };
   return html`<div class="capture">
@@ -1493,24 +1489,21 @@ function Capture({order, div, act}) {
     <div class="vf-scene">
       <div class=${'vf-stage s-' + stage}><img src=${s.src} alt="Camera view of a showroom sample on a shelf" draggable="false"/>
         ${stage !== 'match' && html`<div class="brackets"><i></i><i></i><i></i><i></i>${stage === 'scan' && html`<div class="scanline"></div>`}</div>`}</div>
-      ${stage === 'scan' && html`<div class="flash"></div><div class="vf-status"><span>Matching against ${PRODUCTS.length} styles…</span></div>`}
+      ${stage === 'scan' && html`<div class="flash"></div><div class="vf-status"><span>Finding the style…</span></div>`}
       ${stage === 'aim' && html`<div class="vf-hint"><span>Frame the sample. No tag or barcode needed.</span></div>`}
     </div>
     ${stage !== 'match' && html`<div class="vf-bottom">
       <div class="shutter-row"><button class="shutter" onClick=${shoot} disabled=${stage !== 'aim'} aria-label="Take photo"><span></span></button></div>
     </div>`}
-    ${stage === 'match' && html`<div class="match" role="dialog" aria-label="Confirm the match">
-      <div class="match-head"><span class="chip ai"><${Icon} n="spark" s=${13}/>Match found</span><span class=${'conf ' + (conf >= 90 ? 'hi' : 'mid')}>${conf}% confidence</span></div>
+    ${stage === 'match' && html`<div class="match" role="dialog" aria-label=${p.name}>
       <div class="match-main"><${Thumb} cls="lg" pid=${p.id} colour=${s.colour}/>
         <div style="min-width:0;display:flex;flex-direction:column;gap:4px"><div class="m-name">${p.name}</div><span class="pc-code">${p.code}</span><span class="small muted"><${Colour} c=${s.colour}/></span><${Prices} p=${p}/></div></div>
-      ${sib && html`<div class="callout warn"><${Icon} n="alert" s=${18}/><div>Close to <b>${sib.name}</b> (${sib.code}). Check the sample before you confirm.</div></div>`}
       ${why && html`<div class="callout bad"><${Icon} n="lock" s=${18}/><div>${b.shop} · ${why}, so this style can’t go on the order.</div></div>`}
-      <button class="btn primary block" disabled=${!!why} onClick=${() => pick(p.id, s.colour)}>Confirm match · add to ${b.shop}</button>
-      <div class="lbl" style="margin-top:2px">Not it? Next closest</div>
+      <button class="btn primary block" disabled=${!!why} onClick=${() => pick(p.id, s.colour)}>Add to order</button>
+      <div class="lbl" style="margin-top:2px">Not this one?</div>
       <div class="alts">${alts.map((a, i) => html`<button class="row" onClick=${() => pick(a.id, a.colours.includes(s.colour) ? s.colour : a.colours[0])}>
         <${Thumb} cls="sm" pid=${a.id} colour=${a.colours.includes(s.colour) ? s.colour : a.colours[0]}/>
-        <div class="row-main"><div class="row-title">${a.name}</div><div class="code">${a.code}</div></div>
-        <span class="small muted num">${Math.max(8, (a === sib ? conf - 9 : 42 - i * 11))}%</span></button>`)}</div>
+        <div class="row-main"><div class="row-title">${a.name}</div><div class="code">${a.code}</div></div></button>`)}</div>
       <button class="btn ghost block" onClick=${() => setStage('aim')}>Retake photo</button>
     </div>`}
   </div>`;
