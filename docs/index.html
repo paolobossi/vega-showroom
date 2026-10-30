@@ -304,12 +304,17 @@ input{font:inherit;color:inherit}
 .cn-cat span{font-size:12px;font-weight:600;opacity:.75}
 .cn-cat::after{content:"";position:absolute;left:6px;right:6px;bottom:2px;height:2.5px;border-radius:2px;background:var(--ink);transform:scaleX(0);transition:transform .25s ease}
 .cn-cat.on{color:var(--ink)}.cn-cat.on::after{transform:scaleX(1)}
+/* in the Collection the categories are rounded pills, the current one filled */
+.cat-nav .cn-row{gap:6px}
+.cat-nav .cn-cat{align-items:center;height:34px;padding:0 14px;margin-right:0;border-radius:17px;border:1px solid var(--line);background:var(--surface);font-size:13.5px;font-weight:600;color:var(--ink);transition:background .2s,color .2s}
+.cat-nav .cn-cat::after{display:none}
+.cat-nav .cn-cat.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
 /* Women / Men as the page title: the current one in ink, the other faded beside it */
 .div-title{display:flex;gap:16px}
 .div-title button{font:inherit;letter-spacing:inherit;color:var(--faint);transition:color .2s}
 .div-title button.on{color:var(--ink)}
 /* family headings run across the grid */
-.fam-h{grid-column:1 / -1;display:flex;align-items:baseline;gap:6px;margin:10px 2px 0;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.fam-h{grid-column:1 / -1;display:flex;align-items:baseline;gap:6px;margin:12px 2px 0;font-size:14px;font-weight:600;color:var(--muted)}
 .fam-h:first-child{margin-top:0}
 /* filter chips (Orders) */
 .ftabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -18px;padding:0 18px}
@@ -335,9 +340,9 @@ input{font:inherit;color:inherit}
 .pc-flag,.pc-lock{position:absolute;left:5px;top:5px;display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;padding:3px 7px 3px 5px;border-radius:99px;max-width:calc(100% - 44px);white-space:nowrap;overflow:hidden}
 .pc-flag{background:var(--good);color:#fff}
 .pc-lock{background:var(--surface);color:var(--warn);border:1px solid var(--line)}
-.pc-info{display:flex;flex-direction:column;gap:4px;text-align:left;padding:0 1px 4px;min-width:0}
+.pc-info{display:flex;flex-direction:column;gap:7px;text-align:left;padding:2px 1px 6px;min-width:0}
 .pname{font-weight:620;font-size:13.5px;line-height:1.25}
-.pcard .prices{grid-template-columns:1fr;gap:1px}
+.pcard .prices{grid-template-columns:1fr;gap:4px}
 .pcard .prices span{flex-direction:row;justify-content:space-between;align-items:baseline;gap:4px}
 .pcard .prices small{text-transform:none;letter-spacing:0;font-size:13px;font-weight:400}
 .pcard .prices b{font-size:13px}
