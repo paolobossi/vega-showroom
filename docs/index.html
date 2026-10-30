@@ -345,14 +345,16 @@ input{font:inherit;color:inherit}
 
 /* ---------- order view ---------- */
 .ov{display:flex;flex-direction:column;height:100%;min-height:0}
-.ov-nav{flex:none;display:flex;align-items:center;gap:4px;padding:4px 8px 0;min-height:48px}
+.ov-nav{flex:none;display:flex;align-items:center;gap:4px;padding:4px 8px 4px;min-height:52px;border-bottom:1px solid var(--line)}
 .ov-nav-t{flex:1;min-width:0;text-align:center}
 .ov-shop{font:600 17px/1.2 var(--f-display);letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ov-id{font-size:12px;color:var(--muted)}
 .saved{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;color:var(--good);font-weight:600;animation:pulse .6s ease}
 @keyframes pulse{from{opacity:.2}to{opacity:1}}
-.ov-sub{flex:none;display:flex;flex-direction:column;gap:10px;padding:6px 16px 10px;border-bottom:1px solid var(--line)}
-.ov-buyer{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13.5px}
+/* order facts: three labelled columns at the top of the page, scrolling with it */
+.ov-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px}
+.ov-meta > div{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0;font-size:14.5px;font-weight:600}
+.ov-meta .saved{font-size:14.5px}
 .ov-body{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
 .ov-actions{position:absolute;z-index:19;left:50%;transform:translateX(-50%);bottom:calc(max(14px,calc(env(safe-area-inset-bottom,0px) - 6px)) + 70px);width:min(calc(100% - 28px),420px);display:flex;gap:10px}
 .ov-actions .cap-btn{box-shadow:0 8px 24px rgba(0,0,0,.18)}
@@ -369,7 +371,7 @@ input{font:inherit;color:inherit}
 .sel-meta small{font-size:10px;font-weight:700}
 .sel.open .sel-val small{color:var(--warn);font-weight:650}
 /* Women / Men on the order: underlined tabs; the budget summary below opens Budgets & KPIs */
-.ov-divs{display:flex;gap:6px;margin:0 -6px -10px}
+.ov-divs{display:flex;gap:6px;margin:4px -6px -6px;border-bottom:1px solid var(--line)}
 .ov-sum{display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px 12px}
 .ov-sum .bar{margin-top:8px}
 .ov-sum-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:14px}
@@ -378,7 +380,7 @@ input{font:inherit;color:inherit}
 .ov-sum-foot > span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .ov-sum-go{flex:none;display:inline-flex;align-items:center;gap:2px;color:var(--accent)}
 .ov-sum-go svg{transform:rotate(-90deg)}
-.ov-lines{padding:6px 16px 20px;display:flex;flex-direction:column;gap:14px}
+.ov-lines{padding:14px 16px 20px;display:flex;flex-direction:column;gap:14px}
 .lines-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:8px}
 .grp-head{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:0 2px 6px}
 .empty{background:var(--surface);border:1px dashed var(--line);border-radius:16px;padding:22px 18px;text-align:center;color:var(--muted);display:flex;flex-direction:column;gap:8px;align-items:center}
@@ -536,7 +538,6 @@ input{font:inherit;color:inherit}
 /* ---------- landscape: horizontal working layout ---------- */
 @container app (orientation: landscape){
   .ov-nav{min-height:40px;padding-top:2px}
-  .ov-sub{flex-direction:row;align-items:center;gap:12px;padding:2px 16px 6px}
   .ov-bar{padding:6px 14px max(6px,env(safe-area-inset-bottom,0px))}
   .cap-btn,.round{height:42px}
   .round{width:42px}
@@ -550,7 +551,6 @@ input{font:inherit;color:inherit}
   .ov-actions{bottom:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 8px)) + 54px)}
 }
 @container app (orientation: landscape) and (min-width: 600px){
-  .ov-sub{flex-direction:row;align-items:center;justify-content:space-between;padding:4px 16px 8px}
   .today-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start}
   .h1{font-size:28px}
   .pgrid{grid-template-columns:repeat(4,minmax(0,1fr))}
@@ -1598,13 +1598,14 @@ function OrderView({S, ui, act, order}) {
       <div class="ov-nav-t"><div class="ov-shop">${b.shop}</div><div class="ov-id">${orderNo(order)}</div></div>
       <span class="icon-btn" aria-hidden="true"></span>
     </div>
-    <div class="ov-sub">
-      <div class="ov-buyer"><span>${b.city}</span><${Pill} s=${order.status}/>
-        ${S.savedAt && html`<span class="saved" key=${S.savedAt}><${Icon} n="check" s=${13} w=${2.4}/>Saved ${hhmm(S.savedAt)}</span>`}</div>
-      ${b.divs.length > 1 && html`<div class="ov-divs" role="tablist">${b.divs.map(d => html`<button role="tab" aria-selected=${d === div} class=${'cn-cat' + (d === div ? ' on' : '')} onClick=${() => act.div(d)}>${DIV_TAB[d]}</button>`)}</div>`}
-    </div>
     <div class="ov-body">
       <div class="ov-lines">
+        <div class="ov-meta">
+          <div><span class="lbl">Status</span><${Pill} s=${order.status}/></div>
+          <div><span class="lbl">City</span><span>${b.city}</span></div>
+          <div><span class="lbl">Saved</span>${S.savedAt ? html`<span class="saved" key=${S.savedAt}><${Icon} n="check" s=${13} w=${2.4}/>${hhmm(S.savedAt)}</span>` : html`<span class="muted">—</span>`}</div>
+        </div>
+        ${b.divs.length > 1 && html`<div class="ov-divs" role="tablist">${b.divs.map(d => html`<button role="tab" aria-selected=${d === div} class=${'cn-cat' + (d === div ? ' on' : '')} onClick=${() => act.div(d)}>${DIV_TAB[d]}</button>`)}</div>`}
         <button class="ov-sum" onClick=${() => act.sheet({type:'kpis', orderId:order.id})} aria-label=${`Budgets and KPIs. ${DIV_LABEL[div]}: ${fmt(k.total)} of ${fmt(db)}`}>
           <div class="ov-sum-top"><span class="kpi-label">${DIV_LABEL[div]} budget</span><span class="num"><b>${fmt(k.total)}</b> <span class="muted">of ${fmt(db)}</span></span></div>
           <div class="bar"><div class=${'bar-fill ' + k.bst} style=${{width: Math.min(db ? k.total / db * 100 : 0, 100) + '%'}}></div></div>
