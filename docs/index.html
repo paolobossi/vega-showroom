@@ -338,12 +338,6 @@ input{font:inherit;color:inherit}
 @keyframes pulse{from{opacity:.2}to{opacity:1}}
 .ov-sub{flex:none;display:flex;flex-direction:column;gap:10px;padding:6px 16px 10px;border-bottom:1px solid var(--line)}
 .ov-buyer{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13.5px}
-.track{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
-.track div{display:flex;flex-direction:column;gap:4px;font-size:11px;font-weight:600;color:var(--faint);min-width:0}
-.track div::before{content:"";height:3px;border-radius:2px;background:var(--line)}
-.track div.done{color:var(--muted)}.track div.done::before{background:var(--good)}
-.track div.cur{color:var(--ink)}.track div.cur::before{background:var(--accent)}
-.track-note{font-size:12.5px;color:var(--muted);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .ov-body{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
 .ov-actions{position:absolute;z-index:19;left:50%;transform:translateX(-50%);bottom:calc(max(14px,calc(env(safe-area-inset-bottom,0px) - 6px)) + 70px);width:min(calc(100% - 28px),420px);display:flex;gap:10px}
 .ov-actions .cap-btn{box-shadow:0 8px 24px rgba(0,0,0,.18)}
@@ -522,7 +516,6 @@ input{font:inherit;color:inherit}
 @container app (orientation: landscape){
   .ov-nav{min-height:40px;padding-top:2px}
   .ov-sub{flex-direction:row;align-items:center;gap:12px;padding:2px 16px 6px}
-  .ov-sub .track{display:none}
   .ov-bar{padding:6px 14px max(6px,env(safe-area-inset-bottom,0px))}
   .cap-btn,.round{height:42px}
   .round{width:42px}
@@ -537,7 +530,6 @@ input{font:inherit;color:inherit}
 }
 @container app (orientation: landscape) and (min-width: 600px){
   .ov-sub{flex-direction:row;align-items:center;justify-content:space-between;padding:4px 16px 8px}
-  .ov-sub .track{flex:1;max-width:420px}
   .today-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start}
   .h1{font-size:28px}
   .pgrid{grid-template-columns:repeat(4,minmax(0,1fr))}
@@ -1508,18 +1500,6 @@ function SelLine({l, o, act, locked}) {
   </div>`;
 }
 
-function StatusTrack({o, d}) {
-  const steps = ['draft', 'shared', 'submitted', 'confirmed'], pt = partOf(o, d), i = steps.indexOf(pt.status), b = BUYERS[o.buyerId];
-  let note = 'Draft · you can still change it';
-  if (pt.status === 'shared') note = `With the client · closes in ${Math.max(0, 48 - Math.floor((Date.now() - (pt.at || o.sharedAt)) / 36e5))}h`;
-  if (pt.status === 'submitted') note = `${pt.signer ? 'Signed by the client' : 'Sent'}${pt.at ? ' at ' + hhmm(pt.at) : ''} · read-only, the commercial team confirms it for production`;
-  if (pt.status === 'confirmed') note = 'Confirmed for production';
-  return html`<div style="display:flex;flex-direction:column;gap:6px;min-width:0">
-    <div class="track">${steps.map((s, j) => html`<div class=${j < i ? 'done' : j === i ? 'cur' : ''}>${STATUS[s]}</div>`)}</div>
-    <div class="track-note"><span>${b.divs.length > 1 ? DIV_TAB[d] + ': ' : ''}${note}</span></div>
-  </div>`;
-}
-
 function OrderView({S, ui, act, order}) {
   const b = BUYERS[order.buyerId], div = b.divs.includes(ui.div) ? ui.div : b.divs[0];
   const [pane, setPane] = useState('sel');
@@ -1535,9 +1515,8 @@ function OrderView({S, ui, act, order}) {
       <span class="icon-btn" aria-hidden="true"></span>
     </div>
     <div class="ov-sub">
-      <div class="ov-buyer"><span>${b.city}</span>
+      <div class="ov-buyer"><span>${b.city}</span><${Pill} s=${order.status}/>
         ${S.savedAt && html`<span class="saved" key=${S.savedAt}><${Icon} n="check" s=${13} w=${2.4}/>Saved ${hhmm(S.savedAt)}</span>`}</div>
-      <${StatusTrack} o=${order} d=${div}/>
       <${Seg} full opts=${[['sel', `Selection · ${order.lines.length}`], ['kpi', 'Budgets & KPIs']]} val=${pane} on=${setPane}/>
     </div>
     <div class="ov-body">
