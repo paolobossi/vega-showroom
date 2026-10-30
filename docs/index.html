@@ -477,6 +477,13 @@ input{font:inherit;color:inherit}
 .qbtn{height:34px;padding:0 12px;border-radius:17px;border:1px solid var(--line);background:var(--surface);font-size:13px;font-weight:600}
 .qbtn:active{background:var(--surface-2)}
 .impact{display:flex;flex-direction:column;gap:6px;font-size:13.5px}
+/* product facts: grey label on the left, value on the right, one size throughout */
+.facts{gap:0;padding:4px 14px}
+.facts > div{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:11px 0;border-top:1px solid var(--line);font-size:15px}
+.facts > div:first-child{border-top:0}
+.facts > div > span:first-child{flex:none;color:var(--muted)}
+.facts > div > span:last-child{text-align:right;color:var(--ink)}
+.facts .link{font:inherit;color:var(--accent);font-weight:600}
 .impact-row{display:flex;justify-content:space-between;gap:10px;align-items:center}
 .sugs{display:flex;gap:10px;overflow-x:auto;margin:0 -18px;padding:0 18px 4px;scrollbar-width:none}
 .sug{flex:none;width:118px;text-align:left;display:flex;flex-direction:column;gap:5px}
@@ -608,6 +615,9 @@ const DIV_LABEL = {W:"Women's", M:"Men's"};
 const DIV_TAB = {W:'Women', M:'Men'};
 const CLUSTERS = ['Silver','Gold','Platinum','Diamond'];
 const DROPS = {D1:'Drop 1 · delivers 15 Jan', D2:'Drop 2 · delivers 20 Feb'};
+// "Drop 1 (15 January)"
+const MONTHS = {Jan:'January', Feb:'February', Mar:'March', Apr:'April', May:'May', Jun:'June', Jul:'July', Aug:'August', Sep:'September', Oct:'October', Nov:'November', Dec:'December'};
+const dropName = k => { const [n, when] = DROPS[k].split(' · delivers '), [d, m] = when.split(' '); return `${n} (${d} ${MONTHS[m] || m})`; };
 const STATUS = {none:'Not started', draft:'Draft', shared:'With client', submitted:'Sent', partial:'Partly sent', confirmed:'Confirmed'};
 
 const PRODUCTS = [
@@ -1397,17 +1407,19 @@ function ProductSheet({pid, S, ui, act}) {
       : why ? html`<button class="btn primary" disabled>${b.shop} · ${why}</button>`
       : has ? html`<button class="btn danger" style="flex:0 0 auto" onClick=${() => act.unselect(o.id, pid, c)}>Remove</button><button class="btn primary" onClick=${sizes}>Quantities</button>`
       : html`<button class="btn secondary" style="flex:0 0 auto" onClick=${sizes}>Quantities</button><button class="btn primary" onClick=${() => act.select(o.id, pid, c, 'search')}><${Icon} n="plus" s=${18} w=${2.4}/>Add to order</button>`}>
-    <div class="pd-head"><span class="pc-fam">${p.family}</span><h1 class="pd-name">${p.name}</h1>
-      <div class="pd-sub"><span class="code">${p.code}</span> · ${DIV_LABEL[p.div]} ${CAT_LABEL[p.cat].toLowerCase()}</div></div>
-    <${Prices} cls="lg" p=${p}/>
+    <div class="pd-head"><h1 class="pd-name">${p.name}</h1>
+      <div class="pd-sub"><span class="code">${p.code}</span></div></div>
     <div class="colours">${p.colours.map(x => html`<button class=${'colour' + (x === c ? ' on' : '')} onClick=${() => setC(x)}><span class="sw" style=${{background:COL[x][0]}}></span>${x}<span class="code">${COL[x][1]}</span>${inOrder(x) && html`<span class="flag-dot" title="In order"><${Icon} n="flag" s=${12} w=${2.4}/></span>`}</button>`)}</div>
+    <${Prices} cls="lg" p=${p}/>
     ${has && html`<div class="callout good"><${Icon} n="flag" s=${18}/><div>${cname(c)} is in ${b.shop}’s selection. Set quantities here or later in the order.</div></div>`}
-    <div class="panel">
-      <div class="impact-row"><span class="muted">Category</span><span>${DIV_LABEL[p.div]} ${CAT_LABEL[p.cat].toLowerCase()} · ${p.family} family</span></div>
-      <div class="impact-row"><span class="muted">Sizes</span><span class="code" style="color:var(--ink)">${p.sizes.join(' · ')}</span></div>
-      <div class="impact-row"><span class="muted">Delivery</span><span>${DROPS[p.drop]}</span></div>
+    <div class="panel facts">
+      <div><span>Gender</span><span>${DIV_TAB[p.div]}</span></div>
+      <div><span>Category</span><span>${CAT_LABEL[p.cat]}</span></div>
+      <div><span>Family</span><span>${p.family}</span></div>
+      <div><span>Sizes</span><span>${p.sizes.join(' · ')}</span></div>
+      <div><span>Delivery</span><span>${dropName(p.drop)}</span></div>
+      ${looks.length > 0 && html`<div><span>Appears in</span><span>${looks.map((l, i) => html`${i ? ', ' : ''}<button class="link" onClick=${() => act.sheet({type:'look', id:l.id})}>${lookNo(l)}${l.req ? ' (required)' : ''}</button>`)}</span></div>`}
     </div>
-    ${looks.length > 0 && html`<div class="lbl">Appears in</div><div class="filters">${looks.map(l => html`<button class="chip ai" onClick=${() => act.sheet({type:'look', id:l.id})}>${lookNo(l)}${l.req ? ' · required' : ''}</button>`)}</div>`}
   <//>`;
 }
 
