@@ -1020,28 +1020,29 @@ function LookTile({look}) {
   return html`<div class="look-tile"><img src=${lookSrc(look)[0]} alt=${`${lookNo(look)}, ${SHOW}`} loading="lazy" decoding="async" draggable="false"/></div>`;
 }
 
-// Guidelines sit as a banner above the looks: with a client in session it opens the same Budgets & KPIs sheet as the order page
-function GuideBanner({b, o, act}) {
-  if (!b) return html`<button class="ov-sum" onClick=${() => act.sheet({type:'guide'})}>
+// The house's buying guidelines for the season, the same for every client; a client's own budget and checks live on their order
+function GuideBanner({act}) {
+  return html`<button class="ov-sum" onClick=${() => act.sheet({type:'guide'})}>
     <div class="ov-sum-top"><span class="kpi-label">Buying guidelines</span></div>
-    <div class="small muted">Check in a client to see their budget, mix rules and required looks.</div>
-    <div class="ov-sum-foot"><span></span><span class="ov-sum-go">Drops & deliveries<${Icon} n="down" s=${15} w=${2.2}/></span></div>
-  </button>`;
-  const spent = b.divs.reduce((a, d) => a + kpi(o, d).total, 0), bud = b.divs.reduce((a, d) => a + divBudget(b, d), 0), open = issuesOf(o, b.divs).length, st = usedSt(spent, bud);
-  return html`<button class="ov-sum" onClick=${() => act.sheet({type:'kpis', orderId:o.id})} aria-label=${`Guidelines for ${b.shop}: ${fmt(spent)} of ${fmt(bud)}`}>
-    <div class="ov-sum-top"><span class="kpi-label">Guidelines</span><span class="num"><b>${fmt(spent)}</b> <span class="muted">of ${fmt(bud)}</span></span></div>
-    <div class="bar"><div class=${'bar-fill ' + (st === 'none' ? 'ok' : st)} style=${{width: Math.min(bud ? spent / bud * 100 : 0, 100) + '%'}}></div></div>
-    <div class="ov-sum-foot"><span class=${open ? 'st-warn' : 'st-ok'}>${open ? `${open} outside the guidelines` : 'Within the guidelines'}</span><span class="ov-sum-go">Budgets & KPIs<${Icon} n="down" s=${15} w=${2.2}/></span></div>
+    <div class="small muted">Mix rules, required looks and drops for Spring Summer 2027.</div>
+    <div class="ov-sum-foot"><span></span><span class="ov-sum-go">See the guidelines<${Icon} n="down" s=${15} w=${2.2}/></span></div>
   </button>`;
 }
 
 function GuideSheet({act}) {
-  return html`<${Sheet} title="Buying guidelines" sub="Spring Summer 2027" onClose=${act.close}>
-    <div class="small muted">Budgets, mix rules and required looks are set per client in the back office. Check in a client to see theirs, with their order so far.</div>
+  const rule = (r, d) => `${r.max != null ? 'No more than' : 'At least'} ${r.max != null ? r.max : r.min}% of the ${DIV_LABEL[d].toLowerCase()} order`;
+  return html`<${Sheet} tall title="Buying guidelines" sub="Spring Summer 2027" onClose=${act.close}>
+    ${['W', 'M'].map(d => html`<div class="lbl">${DIV_LABEL[d]} mix</div>
+      <div class="list">${RULES[d].map(r => html`<div class="row"><div class="row-main"><div class="row-title">${r.label}</div><div class="row-sub">${rule(r, d)}</div></div></div>`)}</div>`)}
+    <div class="lbl">Required looks</div>
+    <div class="list">${LOOKS.filter(l => l.req).map(l => html`<button class="row" onClick=${() => act.sheet({type:'look', id:l.id})}>
+      <div class="row-main"><div class="row-title">${lookNo(l)} · ${DIV_LABEL[l.div]}</div><div class="row-sub">Every piece in the order · ${l.items.length} pieces</div></div>
+      <span class="ov-sum-go"><${Icon} n="down" s=${16} w=${2.2}/></span></button>`)}</div>
     <div class="lbl">Drops</div>
     <div class="list">
       ${Object.entries(DROPS).map(([k, v]) => html`<div class="row"><div class="row-main"><div class="row-title">${v.split(' · ')[0]}</div><div class="row-sub">${v.split(' · ')[1]}</div></div><span class="chip">${PRODUCTS.filter(p => p.drop === k).length} styles</span></div>`)}
     </div>
+    <div class="small muted">Each client’s budget, and how their order stands against these guidelines, is on their order under Budgets & KPIs.</div>
   <//>`;
 }
 
@@ -1051,7 +1052,7 @@ function Today({S, ui, act}) {
     <header class="top top-bar mid"><h1 class="h1">Looks</h1>
       <button class="avatar" onClick=${() => act.sheet({type:'account'})} aria-label=${'Signed in as ' + rep.name + '. Switch account'}>${rep.ini}</button>
     </header>
-    <section class="sec"><${GuideBanner} b=${sb} o=${so} act=${act}/></section>
+    <section class="sec"><${GuideBanner} act=${act}/></section>
     <div class="today-grid">
       ${(sb ? sb.divs : ['W', 'M']).map(d => html`<section class="sec">
         <div class="sec-head"><h2>${DIV_LABEL[d]} lookbook & VM intent</h2></div>
