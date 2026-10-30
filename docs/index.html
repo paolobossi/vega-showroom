@@ -485,7 +485,7 @@ input{font:inherit;color:inherit}
 .facts > div:first-child{border-top:0}
 .facts > div > span:first-child{flex:none;color:var(--muted)}
 .facts > div > span:last-child{text-align:right;color:var(--ink)}
-.facts .link{font:inherit;color:var(--accent);font-weight:600}
+.facts .plain{font:inherit;color:inherit;padding:0}
 .impact-row{display:flex;justify-content:space-between;gap:10px;align-items:center}
 .sugs{display:flex;gap:10px;overflow-x:auto;margin:0 -18px;padding:0 18px 4px;scrollbar-width:none}
 .sug{flex:none;width:118px;text-align:left;display:flex;flex-direction:column;gap:5px}
@@ -1415,12 +1415,12 @@ function ProductSheet({pid, S, ui, act}) {
     <${Prices} cls="lg" p=${p}/>
     ${has && html`<div class="callout good"><${Icon} n="flag" s=${18}/><div>${cname(c)} is in ${b.shop}’s selection. Set quantities here or later in the order.</div></div>`}
     <div class="panel facts">
-      <div><span>Gender</span><span>${DIV_TAB[p.div]}</span></div>
+      <div><span>Division</span><span>${p.div === 'W' ? 'Womenswear' : 'Menswear'}</span></div>
       <div><span>Category</span><span>${CAT_LABEL[p.cat]}</span></div>
+      ${looks.length > 0 && html`<div><span>Appears in</span><span>${looks.map((l, i) => html`${i ? ', ' : ''}<button class="plain" onClick=${() => act.sheet({type:'look', id:l.id})}>${lookNo(l)}</button>`)}</span></div>`}
       <div><span>Family</span><span>${p.family}</span></div>
       <div><span>Sizes</span><span>${p.sizes.join(' · ')}</span></div>
       <div><span>Delivery</span><span>${dropName(p.drop)}</span></div>
-      ${looks.length > 0 && html`<div><span>Appears in</span><span>${looks.map((l, i) => html`${i ? ', ' : ''}<button class="link" onClick=${() => act.sheet({type:'look', id:l.id})}>${lookNo(l)}${l.req ? ' (required)' : ''}</button>`)}</span></div>`}
     </div>
   <//>`;
 }
