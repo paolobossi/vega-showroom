@@ -385,6 +385,8 @@ input{font:inherit;color:inherit}
 .ov-sum-foot > span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .ov-sum-go{flex:none;display:inline-flex;align-items:center;gap:2px;color:var(--accent)}
 .ov-sum-go svg{transform:rotate(-90deg)}
+.guide-row{display:flex;justify-content:space-between;align-items:center;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 14px 14px 16px;font-size:15px;font-weight:600;color:var(--ink);text-align:left}
+.guide-row svg{transform:rotate(-90deg);color:var(--muted)}
 .ov-lines{padding:14px 16px 20px;display:flex;flex-direction:column;gap:14px}
 .lines-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:8px}
 .grp-head{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:0 2px 6px}
@@ -1040,11 +1042,7 @@ function LookTile({look}) {
 
 // The house's buying guidelines for the season, the same for every client; a client's own budget and checks live on their order
 function GuideBanner({act}) {
-  return html`<button class="ov-sum" onClick=${() => act.sheet({type:'guide'})}>
-    <div class="ov-sum-top"><span class="kpi-label">Buying guidelines</span></div>
-    <div class="small muted">Mix rules, required looks and drops for Spring Summer 2027.</div>
-    <div class="ov-sum-foot"><span></span><span class="ov-sum-go">See the guidelines<${Icon} n="down" s=${15} w=${2.2}/></span></div>
-  </button>`;
+  return html`<button class="guide-row" onClick=${() => act.sheet({type:'guide'})}>Buying guidelines<${Icon} n="down" s=${18} w=${2.2}/></button>`;
 }
 
 function GuideSheet({act}) {
@@ -1120,9 +1118,7 @@ function CalendarTab({S, act}) {
         </button>`;
   return html`
     <header class="top top-bar mid"><h1 class="h1"><button class="h1-btn" onClick=${reloadApp} aria-label="Home. Tap to reload the app">Home</button></h1>
-      <div class="top-acts">
-        <button class="round-btn" onClick=${() => act.sheet({type:'newbuyer', appt:true})} aria-label="New appointment"><${Icon} n="plus" s=${20} w=${2.2}/></button>
-        <button class="avatar" onClick=${() => act.sheet({type:'account'})} aria-label=${'Signed in as ' + rep.name + '. Switch account'}>${rep.ini}</button></div>
+      <button class="avatar" onClick=${() => act.sheet({type:'account'})} aria-label=${'Signed in as ' + rep.name + '. Switch account'}>${rep.ini}</button>
     </header>
     <section class="sec">
       <div class="days" role="tablist" ref=${strip}>${SHOW_DAYS.map((d, i) => html`<button role="tab" aria-selected=${i === day} class=${'day' + (i === day ? ' on' : '')} onClick=${() => setDay(i)}>
