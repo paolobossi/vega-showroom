@@ -373,6 +373,7 @@ input{font:inherit;color:inherit}
 .ov-sum{display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px 12px}
 .ov-sum .bar{margin-top:8px}
 .ov-sum-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:14px}
+.ov-sum-top .num{white-space:nowrap}
 .ov-sum-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;font-size:13px;font-weight:600;white-space:nowrap}
 .ov-sum-foot > span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .ov-sum-go{flex:none;display:inline-flex;align-items:center;gap:2px;color:var(--accent)}
@@ -1019,18 +1020,29 @@ function LookTile({look}) {
   return html`<div class="look-tile"><img src=${lookSrc(look)[0]} alt=${`${lookNo(look)}, ${SHOW}`} loading="lazy" decoding="async" draggable="false"/></div>`;
 }
 
-function Guidelines({b, o}) {
-  if (!b) return html`<section class="sec">
-    <div class="sec-head"><h2>Buying guidelines</h2></div>
-    <div class="panel"><div class="small muted">Check in a client to see the required looks and mix rules that apply to them, with their order so far.</div></div>
+// Guidelines sit as a banner above the looks: with a client in session it opens the same Budgets & KPIs sheet as the order page
+function GuideBanner({b, o, act}) {
+  if (!b) return html`<button class="ov-sum" onClick=${() => act.sheet({type:'guide'})}>
+    <div class="ov-sum-top"><span class="kpi-label">Buying guidelines</span></div>
+    <div class="small muted">Check in a client to see their budget, mix rules and required looks.</div>
+    <div class="ov-sum-foot"><span></span><span class="ov-sum-go">Drops & deliveries<${Icon} n="down" s=${15} w=${2.2}/></span></div>
+  </button>`;
+  const spent = b.divs.reduce((a, d) => a + kpi(o, d).total, 0), bud = b.divs.reduce((a, d) => a + divBudget(b, d), 0), open = issuesOf(o, b.divs).length, st = usedSt(spent, bud);
+  return html`<button class="ov-sum" onClick=${() => act.sheet({type:'kpis', orderId:o.id})} aria-label=${`Guidelines for ${b.shop}: ${fmt(spent)} of ${fmt(bud)}`}>
+    <div class="ov-sum-top"><span class="kpi-label">Guidelines</span><span class="num"><b>${fmt(spent)}</b> <span class="muted">of ${fmt(bud)}</span></span></div>
+    <div class="bar"><div class=${'bar-fill ' + (st === 'none' ? 'ok' : st)} style=${{width: Math.min(bud ? spent / bud * 100 : 0, 100) + '%'}}></div></div>
+    <div class="ov-sum-foot"><span class=${open ? 'st-warn' : 'st-ok'}>${open ? `${open} outside the guidelines` : 'Within the guidelines'}</span><span class="ov-sum-go">Budgets & KPIs<${Icon} n="down" s=${15} w=${2.2}/></span></div>
+  </button>`;
+}
+
+function GuideSheet({act}) {
+  return html`<${Sheet} title="Buying guidelines" sub="Spring Summer 2027" onClose=${act.close}>
+    <div class="small muted">Budgets, mix rules and required looks are set per client in the back office. Check in a client to see theirs, with their order so far.</div>
+    <div class="lbl">Drops</div>
     <div class="list">
       ${Object.entries(DROPS).map(([k, v]) => html`<div class="row"><div class="row-main"><div class="row-title">${v.split(' · ')[0]}</div><div class="row-sub">${v.split(' · ')[1]}</div></div><span class="chip">${PRODUCTS.filter(p => p.drop === k).length} styles</span></div>`)}
     </div>
-  </section>`;
-  return html`<section class="sec">
-    <div class="sec-head"><h2>Guidelines · ${b.shop}</h2></div>
-    <div class="panel kpi">${b.divs.map(d => html`<${MixChecks} o=${o} d=${d}/>`)}</div>
-  </section>`;
+  <//>`;
 }
 
 function Today({S, ui, act}) {
@@ -1039,6 +1051,7 @@ function Today({S, ui, act}) {
     <header class="top top-bar mid"><h1 class="h1">Looks</h1>
       <button class="avatar" onClick=${() => act.sheet({type:'account'})} aria-label=${'Signed in as ' + rep.name + '. Switch account'}>${rep.ini}</button>
     </header>
+    <section class="sec"><${GuideBanner} b=${sb} o=${so} act=${act}/></section>
     <div class="today-grid">
       ${(sb ? sb.divs : ['W', 'M']).map(d => html`<section class="sec">
         <div class="sec-head"><h2>${DIV_LABEL[d]} lookbook & VM intent</h2></div>
@@ -1050,7 +1063,6 @@ function Today({S, ui, act}) {
           </button>`)}
         </div>
       </section>`)}
-      <${Guidelines} b=${sb} o=${so}/>
     </div>
     <div class="foot">Loewe showroom · powered by Vega</div>`;
 }
@@ -1855,6 +1867,7 @@ function App({onReset}) {
     : sh.type === 'picker' ? html`<${PickerSheet} sh=${sh} act=${act}/>`
     : sh.type === 'finish' ? html`<${FinishSheet} sh=${sh} S=${S} act=${act}/>`
     : sh.type === 'kpis' ? html`<${KpiSheet} sh=${sh} S=${S} act=${act}/>`
+    : sh.type === 'guide' ? html`<${GuideSheet} act=${act}/>`
     : sh.type === 'sign' ? html`<${SignSheet} sh=${sh} S=${S} act=${act}/>`
     : sh.type === 'look' ? html`<${LookSheet} id=${sh.id} S=${S} ui=${ui} act=${act}/>`
     : sh.type === 'product' ? html`<${ProductSheet} key=${sh.pid} pid=${sh.pid} S=${S} ui=${ui} act=${act}/>`
