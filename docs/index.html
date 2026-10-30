@@ -258,10 +258,12 @@ input{font:inherit;color:inherit}
 .appt-shop{font:600 18px/1.2 var(--f-display);letter-spacing:-.015em}
 .appt-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .appt-buyer{font-size:14px;color:var(--ink);margin-top:-3px}
-.appt-cats{font-size:13px;color:var(--muted)}
+.appt-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.appt-head .pill{flex:none;margin-top:1px}
+.appt-cats{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.appt-lbl{margin-top:14px}
 .appt-cats b{color:var(--ink);font-weight:600;margin-right:4px}
 .kv{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted)}
-.appt-side{display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;gap:6px;flex:none}
 .live{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .tile{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px;min-width:0}
 .tile b{display:block;font-size:20px;font-weight:650;font-variant-numeric:tabular-nums}
@@ -300,9 +302,21 @@ input{font:inherit;color:inherit}
 .cn-cat span{font-size:12px;font-weight:600;opacity:.75}
 .cn-cat::after{content:"";position:absolute;left:6px;right:6px;bottom:2px;height:2.5px;border-radius:2px;background:var(--ink);transform:scaleX(0);transition:transform .25s ease}
 .cn-cat.on{color:var(--ink)}.cn-cat.on::after{transform:scaleX(1)}
-.cn-fams{margin-top:4px}
-.cn-fam{flex:none;height:34px;padding:0 14px;border-radius:17px;border:1px solid var(--line);background:var(--surface);font-size:13.5px;font-weight:600;color:var(--ink);white-space:nowrap;transition:background .2s,color .2s}
-.cn-fam.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+/* Women / Men as the page title: the current one in ink, the other faded beside it */
+.div-title{display:flex;gap:16px}
+.div-title button{font:inherit;letter-spacing:inherit;color:var(--faint);transition:color .2s}
+.div-title button.on{color:var(--ink)}
+/* family headings run across the grid */
+.fam-h{grid-column:1 / -1;display:flex;align-items:baseline;gap:6px;margin:10px 2px 0;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.fam-h:first-child{margin-top:0}
+.fam-h span{font-weight:600;letter-spacing:0;opacity:.75}
+/* filter chips (Orders) */
+.ftabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -18px;padding:0 18px}
+.ftabs::-webkit-scrollbar{display:none}
+.ftab{flex:none;display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:17px;border:1px solid var(--line);background:var(--surface);font-size:13.5px;font-weight:600;color:var(--ink);white-space:nowrap;transition:background .2s,color .2s}
+.ftab span{font-weight:500;opacity:.6}
+.ftab.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.ftab .live-dot{color:#3CCB7F}
 .cat-main{display:flex;flex-direction:column;gap:24px;min-width:0;padding-top:4px}
 .cat-sec{display:flex;flex-direction:column;gap:8px}
 .cat-h{margin:0;display:flex;align-items:baseline;gap:8px;font:650 20px/1.2 var(--f-display);letter-spacing:-.02em}
@@ -710,7 +724,7 @@ function syncStatus(o) { const sts = [...new Set(BUYERS[o.buyerId].divs.map(d =>
 const canTake = (o, p) => { const b = BUYERS[o.buyerId];
   return !b.divs.includes(p.div) ? `No ${DIV_TAB[p.div].toLowerCase()}’s` : !available(b, p) ? 'Not available' : partLocked(o, p.div) ? `${DIV_TAB[p.div]} sent` : null; };
 
-// Runway looks, numbered in show order; required looks are part of the buying guidelines (the client buys every piece).
+// Runway looks; n is the show number and names the photos, the app labels them 01, 02… per division. Required looks are part of the buying guidelines (the client buys every piece).
 // Photos are the real looks from the LOEWE Spring Summer 2027 show on loewe.com: docs/img/looks/<look>_<view>.jpg
 const LOOKS = [
   {id:'L04', div:'W', n:4, req:true, pics:'front back detail1 detail2', items:[['w-amazona-s','Mocha'],['w-short-coat','Taupe Grey'],['w-balloon','Ivory'],['w-oval-loafer','Black']],
@@ -730,7 +744,7 @@ const RULES = {
   W:[{label:'Puzzle', max:30, has:p => p.family === 'Puzzle'}, {label:'Flamenco', max:30, has:p => p.family === 'Flamenco'}, {label:'Accessories', min:5, has:p => p.cat === 'acc'}],
   M:[{label:'Puzzle', max:30, has:p => p.family === 'Puzzle'}, {label:'Small leather goods', min:5, has:p => ['m-wallet', 'm-card'].includes(p.id)}],
 };
-const lookNo = l => 'Look ' + String(l.n).padStart(2, '0');
+const lookNo = l => 'Look ' + String(LOOKS.filter(x => x.div === l.div).findIndex(x => x.id === l.id) + 1).padStart(2, '0');
 const lookSrc = l => l.pics.split(' ').map(v => `img/looks/${String(l.n).padStart(2, '0')}_${v}.jpg`);
 const SHOW = 'Spring Summer 2027 show';
 
@@ -1027,7 +1041,7 @@ function Today({S, ui, act}) {
         <div class="look-list">
           ${LOOKS.filter(l => l.div === d).map(l => html`<button class="look" onClick=${() => act.sheet({type:'look', id:l.id})}>
             <${LookTile} look=${l}/>
-            <div class="look-h"><span class="look-t">${lookNo(l)}</span>${l.req && html`<span class="chip">Required</span>`}</div>
+            <div class="look-h"><span class="look-t">${lookNo(l)}</span></div>
             <div class="look-vm">${l.vm}</div>
           </button>`)}
         </div>
@@ -1065,11 +1079,10 @@ function CalendarTab({S, act}) {
   const row = b => html`<button class="appt" onClick=${() => act.sheet({type:'appt', bid:b.id})}>
           <div class="appt-time">${b.time}</div>
           <div class="appt-main">
-            <div class="appt-shop">${b.shop}</div>
+            <div class="appt-head"><span class="appt-shop">${b.shop}</span><${CheckPill} a=${S.appts[b.id]} o=${S.orders['o-' + b.id]}/></div>
             <div class="appt-buyer">${b.city}</div>
             ${b.divs.map(d => html`<div class="appt-cats"><b>${DIV_TAB[d]}</b> ${buyingCats(b, d).map(c => CAT_SHORT[c]).join(' · ') || 'No budget yet'}</div>`)}
           </div>
-          <div class="appt-side"><${CheckPill} a=${S.appts[b.id]} o=${S.orders['o-' + b.id]}/></div>
         </button>`;
   return html`
     <header class="top top-bar mid"><h1 class="h1"><button class="h1-btn" onClick=${reloadApp} aria-label="Home. Tap to reload the app">Home</button></h1>
@@ -1081,8 +1094,8 @@ function CalendarTab({S, act}) {
       <div class="days" role="tablist" ref=${strip}>${SHOW_DAYS.map((d, i) => html`<button role="tab" aria-selected=${i === day} class=${'day' + (i === day ? ' on' : '')} onClick=${() => setDay(i)}>
         <span>${d.toLocaleDateString('en-GB', {weekday:'short'})}</span><b>${d.getDate()}</b><span>Day ${i + 1}</span></button>`)}</div>
       ${!all.length && html`<div class="empty">No appointments on this day.</div>`}
-      ${now.length > 0 && html`<div class="lbl">Now</div><div class="appts now">${now.map(row)}</div>`}
-      ${list.length > 0 && html`${now.length > 0 && html`<div class="lbl">Today</div>`}<div class="appts">${list.map(row)}</div>`}
+      ${now.length > 0 && html`<div class="lbl appt-lbl">Now</div><div class="appts now">${now.map(row)}</div>`}
+      ${list.length > 0 && html`${now.length > 0 && html`<div class="lbl appt-lbl">Today</div>`}<div class="appts">${list.map(row)}</div>`}
     </section>`;
 }
 
@@ -1132,25 +1145,30 @@ function LookSheet({id, S, ui, act}) {
 /* =====================================================================
    Orders — the signed-in seller's orders, with submitter traceability
    ===================================================================== */
-// During a visit only that client's order shows, never the other clients' orders
+// Filter chips, never hidden orders: during a visit the Ongoing chip is picked, so only that client's order shows until the seller picks another
+const SENT = ['submitted', 'partial', 'confirmed'];
 function OrdersTab({S, ui, act}) {
-  const so = activeOrder(S, ui);
-  const rows = Object.values(S.orders).filter(o => so ? o.id === so.id : BUYERS[o.buyerId].rep === S.rep).map(o => { const b = BUYERS[o.buyerId];
+  const so = activeOrder(S, ui), [f, setF] = useState(so ? 'now' : 'all');
+  const all = Object.values(S.orders).filter(o => BUYERS[o.buyerId].rep === S.rep || (so && o.id === so.id)).map(o => { const b = BUYERS[o.buyerId];
     return {id:o.id, buyerId:o.buyerId, shop:b.shop, city:b.city, status:o.status,
       value:b.divs.reduce((a, d) => a + kpi(o, d).total, 0), units:b.divs.reduce((a, d) => a + kpi(o, d).units, 0),
       hoursLeft:o.status === 'shared' ? Math.max(0, 48 - Math.floor((Date.now() - o.sharedAt) / 36e5)) : null}; });
-  const sent = rows.filter(r => ['submitted', 'partial', 'confirmed'].includes(r.status)).length;
+  const sent = all.filter(r => SENT.includes(r.status)).length;
+  const F = [...(so ? [['now', 'Ongoing', r => r.id === so.id]] : []), ['all', 'All', () => true], ['draft', 'Draft', r => !SENT.includes(r.status)], ['sent', 'Sent', r => SENT.includes(r.status)]];
+  const cur = F.find(x => x[0] === f) || F[0], rows = all.filter(cur[2]);
   return html`
     <header class="top top-bar mid"><h1 class="h1">Orders</h1>
       ${!so && html`<button class="round-btn" onClick=${() => act.sheet({type:'newbuyer'})} aria-label="New session with a client"><${Icon} n="plus" s=${20} w=${2.2}/></button>`}</header>
     <section class="sec">
-      ${so ? html`<div class="small muted">During the visit only ${BUYERS[so.buyerId].shop}’s order shows here.</div>`
-        : html`<div class="live">
-        <div class="tile"><b>${fmt(rows.reduce((a, r) => a + r.value, 0) / 1000)}k</b><span>${rows.length} ${rows.length === 1 ? 'order' : 'orders'}</span></div>
+      <div class="live">
+        <div class="tile"><b>${fmt(all.reduce((a, r) => a + r.value, 0) / 1000)}k</b><span>${all.length} ${all.length === 1 ? 'order' : 'orders'}</span></div>
         <div class="tile"><b>${sent}</b><span>sent</span></div>
-        <div class="tile"><b>${rows.length - sent}</b><span>in draft</span></div>
-      </div>`}
-      ${!rows.length && html`<div class="empty">No orders yet. Check in a client from Home to start one.</div>`}
+        <div class="tile"><b>${all.length - sent}</b><span>in draft</span></div>
+      </div>
+      <div class="ftabs" role="tablist" aria-label="Show orders">${F.map(([k, l, test]) => html`<button role="tab" aria-selected=${cur[0] === k} class=${'ftab' + (cur[0] === k ? ' on' : '')} onClick=${() => setF(k)}>
+        ${k === 'now' && html`<i class="live-dot" aria-hidden="true"></i>`}${l}<span class="num">${all.filter(test).length}</span></button>`)}</div>
+      ${!all.length ? html`<div class="empty">No orders yet. Check in a client from Home to start one.</div>`
+        : !rows.length && html`<div class="empty">No ${cur[1].toLowerCase()} orders.</div>`}
       ${rows.length > 0 && html`<div class="list">
         ${rows.map(r => html`<button class="row" onClick=${() => act.openOrder(r.buyerId)}>
           <div class="row-main">
@@ -1181,11 +1199,11 @@ function ProductList({div, q, b, season, onPick}) {
 }
 
 // Collection card: photo opens the product page; + selects the style for the client, the flag marks it as in the order, × takes it out
-function PCard({p, o, act, anchor}) {
+function PCard({p, o, act}) {
   const mine = o && o.lines.find(l => l.pid === p.id), has = !!mine, c = mine ? mine.colour : p.colours[0], why = o && canTake(o, p);
   const lock = why;
   const add = () => o ? act.select(o.id, p.id, c, 'search') : act.sheet({type:'pick', item:{pid:p.id, colour:c, via:'search'}});
-  return html`<div class=${'pcard' + (lock && !has ? ' locked' : '') + (has ? ' has' : '')} id=${anchor ? 'c-' + anchor : null} data-spy=${anchor || null}>
+  return html`<div class=${'pcard' + (lock && !has ? ' locked' : '') + (has ? ' has' : '')}>
     <div class="pc-photo">
       <button class="pc-img" onClick=${() => act.sheet({type:'product', pid:p.id})} aria-label=${'Open ' + p.name}><${Thumb} pid=${p.id} colour=${c}/></button>
       ${has ? html`<span class="pc-flag"><${Icon} n="flag" s=${14} w=${2.4}/>In order</span>`
@@ -1194,7 +1212,6 @@ function PCard({p, o, act, anchor}) {
         : !(o && why) && html`<button class="pc-btn" onClick=${add} aria-label=${'Add ' + p.name + (o ? ' to ' + BUYERS[o.buyerId].shop : ' to an order')}><${Icon} n="plus" s=${18} w=${2.6}/></button>`}
     </div>
     <button class="pc-info" onClick=${() => act.sheet({type:'product', pid:p.id})}>
-      <span class="pc-fam">${p.family}</span>
       <span class="pname">${p.name}</span>
       <span class="pc-code">${p.code}</span>
       <${Prices} p=${p}/>
@@ -1203,9 +1220,10 @@ function PCard({p, o, act, anchor}) {
   </div>`;
 }
 
+// Three levels, two controls: Women / Men is the page title, categories are one sticky row, and families are headings in the grid
 function CatalogueTab({S, ui, act}) {
-  const so = activeOrder(S, ui), sb = so && BUYERS[so.buyerId];
-  const [q, setQ] = useState(''), [div, setDiv] = useState(sb ? sb.divs[0] : 'W'), [cur, setCur] = useState(null);
+  const so = activeOrder(S, ui), sb = so && BUYERS[so.buyerId], divs = sb ? sb.divs : ['W', 'M'];
+  const [q, setQ] = useState(''), [div, setDiv] = useState(divs[0]), [cur, setCur] = useState(null);
   const season = SEASONS.find(x => x.id === ui.catSeason);
   const ql = q.trim().toLowerCase();
   const items = PRODUCTS.filter(p => p.div === div && p.season === season.id && (!sb || available(sb, p)) && (!ui.catDrop || p.drop === ui.catDrop) && matches(p, ql));
@@ -1214,41 +1232,39 @@ function CatalogueTab({S, ui, act}) {
     return {cat:c, n:ps.length, fams:[...new Set(ps.map(p => p.family))].map(f => ({f, id:c + '-' + slug(f), ps:ps.filter(p => p.family === f)}))}; }).filter(g => g.n);
   const ref = useRef(null), nav = useRef(null), hold = useRef(0);
   const navBottom = () => nav.current ? nav.current.getBoundingClientRect().bottom : 0;
-  // scroll-spy: the last heading or family anchor that has passed under the sticky tabs is the current one
+  // scroll-spy: the last category heading that has passed under the sticky tabs is the current one
   useEffect(() => { const sc = ref.current && ref.current.closest('.screen'); if (!sc) return;
     const spy = () => { if (Date.now() < hold.current) return; const top = navBottom() + 12; let id = null;
       ref.current.querySelectorAll('[data-spy]').forEach(el => { if (el.getBoundingClientRect().top <= top) id = el.dataset.spy; }); setCur(id); };
-    spy(); sc.addEventListener('scroll', spy, {passive:true}); return () => sc.removeEventListener('scroll', spy); }, [div, ql, season.id, ui.catDrop]);
+    spy(); sc.addEventListener('scroll', spy, {passive:true}); return () => sc.removeEventListener('scroll', spy); }, [div, ql, season.id, ui.catDrop, groups.length]);
   // tap: glide to the target just below the tabs; the spy waits so the tabs don't flicker on the way
   const go = id => { const el = document.getElementById('c-' + id), sc = ref.current && ref.current.closest('.screen'); if (!el || !sc) return;
     hold.current = Date.now() + 700; setCur(id);
     // aim for where the tabs end once they are stuck to the top, not where they sit before the page scrolls
     const stuck = sc.getBoundingClientRect().top + nav.current.offsetHeight;
     sc.scrollTo({top: sc.scrollTop + el.getBoundingClientRect().top - stuck - 10, behavior:'smooth'}); };
-  const curCat = cur ? cur.split('-')[0] : groups[0] && groups[0].cat, cg = groups.find(g => g.cat === curCat) || groups[0];
-  const curFam = cur && cur.includes('-') ? cur : cg && cg.fams[0].id;
-  // keep the active tab and chip in view inside their scrolling rows
-  useEffect(() => { if (!nav.current) return; nav.current.querySelectorAll('.cn-cat.on, .cn-fam.on').forEach(el => { const row = el.parentElement;
-    row.scrollLeft = el.offsetLeft - row.clientWidth / 2 + el.offsetWidth / 2; }); }, [curCat, curFam]); // instant: a second smooth scroll would cancel the vertical glide in Chrome
+  const curCat = groups.some(g => g.cat === cur) ? cur : groups[0] && groups[0].cat;
+  // keep the active tab in view inside its scrolling row
+  useEffect(() => { if (!nav.current) return; nav.current.querySelectorAll('.cn-cat.on').forEach(el => { const row = el.parentElement;
+    row.scrollLeft = el.offsetLeft - row.clientWidth / 2 + el.offsetWidth / 2; }); }, [curCat]); // instant: a second smooth scroll would cancel the vertical glide in Chrome
+  const pickDiv = d => { setDiv(d); setCur(null); const sc = ref.current && ref.current.closest('.screen'); if (sc) sc.scrollTop = 0; };
   return html`
-    <header class="top top-bar mid"><h1 class="h1">Collection</h1></header>
+    <header class="top top-bar mid"><h1 class="h1 div-title" role="tablist" aria-label="Collection">${divs.map(d => html`<button role="tab" aria-selected=${d === div} class=${d === div ? 'on' : ''} onClick=${() => pickDiv(d)}>${DIV_TAB[d]}</button>`)}</h1></header>
     <section class="sec">
       <div class="searchrow">
-        <label class="search"><${Icon} n="search" s=${18}/><input id="cat-q" placeholder="Search style, code or family" value=${q} onInput=${e => setQ(e.target.value)}/></label>
+        <label class="search"><${Icon} n="search" s=${18}/><input id="cat-q" placeholder="Search" aria-label="Search style, code or family" value=${q} onInput=${e => setQ(e.target.value)}/></label>
         ${so && html`<button class="sq-btn" onClick=${() => { act.set({capDiv:div}); act.capture(true); }} aria-label="Photograph a sample"><${Icon} n="cam" s=${20} w=${2}/></button>`}
         <button class=${'sq-btn' + (ui.catDrop || season.id !== SEASONS[0].id ? ' on' : '')} onClick=${() => act.sheet({type:'filter'})} aria-label=${`Filters: ${season.name}` + (ui.catDrop ? `, ${DROPS[ui.catDrop].split(' · ')[0]}` : '')}><${Icon} n="filter" s=${20} w=${2}/></button>
       </div>
-      <${Seg} full opts=${[['W', DIV_TAB.W], ['M', DIV_TAB.M]]} val=${div} on=${setDiv}/>
       ${ui.catDrop && html`<button class="fchip" onClick=${() => act.set({catDrop:null})} aria-label="Clear drop filter">${DROPS[ui.catDrop]}<${Icon} n="x" s=${14} w=${2.2}/></button>`}
       ${!items.length ? html`<div class="empty">${ql ? `No styles match “${q}”. Try a style name or code.` : `No ${DIV_LABEL[div].toLowerCase()} styles in this collection.`}</div>`
       : html`<div ref=${ref}>
         <nav class="cat-nav" ref=${nav} aria-label="Categories">
           <div class="cn-row" role="tablist">${groups.map(g => html`<button role="tab" aria-selected=${curCat === g.cat} class=${'cn-cat' + (curCat === g.cat ? ' on' : '')} onClick=${() => go(g.cat)}>${CAT_LABEL[g.cat]}<span class="num">${g.n}</span></button>`)}</div>
-          <div class="cn-row cn-fams">${cg.fams.map(f => html`<button class=${'cn-fam' + (curFam === f.id ? ' on' : '')} aria-pressed=${curFam === f.id} onClick=${() => go(f.id)}>${f.f}</button>`)}</div>
         </nav>
         <div class="cat-main">${groups.map(g => html`<div class="cat-sec">
           <h2 class="cat-h" id=${'c-' + g.cat} data-spy=${g.cat}>${CAT_LABEL[g.cat]}<span class="num">${g.n}</span></h2>
-          <div class="pgrid">${g.fams.map(f => f.ps.map((p, i) => html`<${PCard} key=${p.id} p=${p} o=${so} act=${act} anchor=${i ? null : f.id}/>`))}</div>
+          <div class="pgrid">${g.fams.map(f => html`<div class="fam-h" key=${f.id}>${f.f}<span class="num">${f.ps.length}</span></div>${f.ps.map(p => html`<${PCard} key=${p.id} p=${p} o=${so} act=${act}/>`)}`)}</div>
         </div>`)}</div>
       </div>`}
     </section>`;
