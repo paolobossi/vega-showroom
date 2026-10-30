@@ -802,11 +802,18 @@ const KEY = 'vega-poc-v2';
 function loadState() {
   try { const s = JSON.parse(localStorage.getItem(KEY));
     if (s && s.orders) { s.rep = REPS[s.rep] ? s.rep : 'roberto'; s.buyers = s.buyers || {}; s.appts = s.appts || {}; delete s.budgets;
-      Object.assign(BUYERS, s.buyers);
+      Object.assign(BUYERS, s.buyers); oneOngoing(s.appts);
       // older saves: bulk totals not split by size go back to "no quantity yet"
       Object.values(s.orders).forEach(o => o.lines.forEach(l => { if (l.qty && l.qty.ALL) delete l.qty.ALL; }));
       return s; } } catch (e) {}
   return seedState();
+}
+// one client visit at a time on this device: older saves may hold several, so only the latest check-in stays ongoing
+function oneOngoing(appts, keep) {
+  const on = Object.keys(appts).filter(k => appts[k] && appts[k].in && !appts[k].out);
+  keep = keep || on.sort((x, y) => (appts[y].back || appts[y].in) - (appts[x].back || appts[x].in))[0];
+  on.forEach(k => { if (k !== keep) appts[k] = {...appts[k], out:Date.now()}; });
+  return appts;
 }
 function saveState(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
 const SKEY = 'vega-session';
@@ -1346,8 +1353,8 @@ function SizeSheet({sh, S, act}) {
   const setAll = arr => setDraft(d => ({...d, [col]: Object.fromEntries(p.sizes.map((s, i) => [s, arr[i] || 0]))}));
   const save = () => { if (dirty && !locked && !readOnly) { act.saveDraft(order.id, p.id, draft, sh.via || 'search', actor); return true; } return false; };
   const close = () => { if (save()) act.toast('Saved to order'); act.close(); };
-  const done = () => { save(); act.close(); act.toast(existing ? 'Order updated' : `Added to ${b.shop}`); };
-  const go = (pid, colour) => { if (save()) act.toast('Saved · ' + p.name); act.sheet({type:'size', orderId:order.id, pid, colour, via:'suggestion', actor}); };
+  const done = () => { save(); act.close(); act.toast(existing ? 'Order updated' : 'Added to order'); };
+  const go = (pid, colour) => { if (save()) act.toast('Saved to order'); act.sheet({type:'size', orderId:order.id, pid, colour, via:'suggestion', actor}); };
 
   const projected = useMemo(() => { const o = JSON.parse(JSON.stringify(order)); applyDraft(o, p.id, draft, 'x', actor); return o; }, [draft, order]);
   const k0 = kpi(order, p.div), k1 = kpi(projected, p.div);
@@ -1725,10 +1732,9 @@ function makeActs(setS, setUi, onReset) {
     // appointment record: every change is stored straight away (state persists on each update)
     appt: (bid, patch) => setS(s => ({...s, appts:{...s.appts, [bid]:{...(s.appts[bid] || {}), ...patch}}, savedAt:Date.now()})),
     // checking in starts the client session (black band on top) and opens the Collection; one client at a time, so whoever
-    // the seller was with is checked out. Checking in again after a check-out keeps the original start time.
-    checkIn: (bid, stay) => { const now = Date.now(), id = 'o-' + bid, rep = BUYERS[bid].rep;
-      setS(s => { const appts = {...s.appts};
-        Object.keys(appts).forEach(k => { if (k !== bid && BUYERS[k] && BUYERS[k].rep === rep && isOngoing(appts[k])) appts[k] = {...appts[k], out:now}; });
+    // was ongoing, for any seller on this device, is checked out. Checking in again after a check-out keeps the original start time.
+    checkIn: (bid, stay) => { const now = Date.now(), id = 'o-' + bid;
+      setS(s => { const appts = oneOngoing({...s.appts}, bid);
         const x = appts[bid] || {}; appts[bid] = x.in ? {...x, out:null, back:now} : {...x, in:now, out:null};
         return {...s, appts, orders: s.orders[id] ? s.orders : {...s.orders, [id]:newOrder(bid)}, savedAt:now}; });
       setUi(u => ({...u, session:id, div:BUYERS[bid].divs[0], sheet:null, capture:false, ...(stay ? {} : {tab:'catalogue', view:null})}));
@@ -1750,16 +1756,16 @@ function makeActs(setS, setUi, onReset) {
   a.select = (id, pid, colour, via) => { const p = P[pid];
     a.mut(id, o => { if (o.lines.some(l => l.pid === pid && l.colour === colour)) return;
       o.lines.push({id:uid(), pid, colour, qty:{}, via, by:'salesperson', at:Date.now()}); log(o, 'salesperson', `Selected ${p.name} · ${cname(colour)}${via === 'photo' ? ' (photo match)' : ''}`); });
-    a.toast(`Added ${p.name} · ${BUYERS[id.slice(2)].shop}`); };
+    a.toast('Added to order'); };
   // the whole runway look in one go: every piece the client can buy that isn't in the order yet
   a.selectLook = (id, look) => { let k = 0;
     a.mut(id, o => { look.items.forEach(([pid, colour]) => { if (canTake(o, P[pid]) || o.lines.some(l => l.pid === pid && l.colour === colour)) return;
       o.lines.push({id:uid(), pid, colour, qty:{}, via:'look', by:'salesperson', at:Date.now()}); k++; });
       log(o, 'salesperson', `Added ${lookNo(look)} · ${k} pieces`); });
-    a.close(); a.toast(`${lookNo(look)} added`); };
+    a.close(); a.toast('Added to order'); };
   a.unselect = (id, pid, colour, by='salesperson') => { const p = P[pid];
     a.mut(id, o => { o.lines = o.lines.filter(l => !(l.pid === pid && (!colour || l.colour === colour))); log(o, by, `Removed ${p.name}${colour ? ' · ' + cname(colour) : ''}`); });
-    setUi(u => u.sheet && (u.sheet.type === 'size' || u.sheet.type === 'product') ? {...u, sheet:null} : u); a.toast(`Removed ${p.name}`); };
+    setUi(u => u.sheet && (u.sheet.type === 'size' || u.sheet.type === 'product') ? {...u, sheet:null} : u); a.toast('Removed from order'); };
   // stepper on one-size styles; repeated taps update one log entry
   a.setUnits = (id, lineId, n) => a.mut(id, o => { const l = o.lines.find(x => x.id === lineId); if (!l) return; const p = P[l.pid];
     n = Math.max(0, Math.min(999, n)); l.qty = n ? {U: n} : {}; l.at = Date.now();
