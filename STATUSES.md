@@ -18,11 +18,11 @@ Checking in a new client automatically checks out the client the seller was with
 | Status | Meaning |
 |---|---|
 | Not started (`Not started`) | The client has an appointment but no products have been selected yet. |
-| Draft (`Draft`) | Products are being selected and quantities entered. Everything can still change. |
-| With client (`With client`) | A review link was sent; the client has 48 hours to check and sign it. |
-| Partly sent (`Partly sent`) | One division (Women or Men) is sent, the other is still open. |
-| Sent (`Sent`) | Every division has been sent, signed by the client on the phone or through the link. Read-only for the seller. |
-| Confirmed (`Confirmed`) | The commercial team confirmed it for production in the back office. |
+| Draft (`Draft`, grey) | Products are being selected and quantities entered. Everything can still change. |
+| With client (`With client`, amber) | A review link was sent; the client has 48 hours to check and sign it. |
+| Partly sent (`Partly sent`, blue) | One division (Women or Men) is sent, the other is still open. |
+| Sent (`Sent`, blue) | Every division has been sent, signed by the client on the phone or through the link. Read-only for the seller. |
+| Confirmed (`Confirmed`, solid green) | The commercial team confirmed it for production in the back office. |
 
 ## Order part (Women / Men, each on its own)
 
