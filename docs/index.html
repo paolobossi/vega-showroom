@@ -801,6 +801,23 @@ function applyDraft(o, pid, draft, via, by) {
   return msgs.length;
 }
 
+// orders from the visits on past show days: day 1 confirmed for production, day 2 sent, yesterday's still moving
+function pastOrders() {
+  const byDay = {};
+  return Object.fromEntries(Object.values(BUYERS).filter(b => b.day < 0).map(b => {
+    const [h, m] = b.time.split(':').map(Number), at = dayAt(b.day, h + 1, m + 15), n = byDay[b.day] = (byDay[b.day] || 0) + 1;
+    const st = b.day === -3 ? 'confirmed' : b.day === -2 ? 'submitted' : ['shared', 'draft', 'submitted'][(n - 1) % 3];
+    const lines = PRODUCTS.filter(p => b.divs.includes(p.div) && available(b, p) && p.season === 'SS27' && hash(b.id + p.id) % 3 === 0).slice(0, 8)
+      .map(p => ({id:uid(), pid:p.id, colour:p.colours[hash(p.id + b.id) % p.colours.length], via:'search', by:'salesperson', at,
+        qty:p.sizes.length === 1 ? {U:2 + hash(b.id + p.code) % 4} : Object.fromEntries(p.sizes.slice(1, -1).map(z => [z, 1 + hash(z + b.id) % 2]))}));
+    const o = {id:'o-' + b.id, buyerId:b.id, status:'draft', submittedBy:null, lines, parts:{},
+      log:[{at:dayAt(b.day, h, m + 4), by:'salesperson', text:'Session started in the showroom'}]};
+    if (st === 'shared') { b.divs.forEach(d => { o.parts[d] = {status:st, at}; }); o.sharedAt = at; }
+    else if (st !== 'draft') { b.divs.forEach(d => { o.parts[d] = {status:st, at, by:'client', signer:'Buyer'}; }); o.submittedBy = 'client'; o.submittedAt = at; }
+    if (st !== 'draft') o.log.push({at, by:st === 'shared' ? 'salesperson' : 'client', text:st === 'shared' ? 'Shared with the client · closes in 48h' : 'Signed and sent'});
+    syncStatus(o);
+    return [o.id, o]; }));
+}
 function newOrder(bid) {
   return {id:'o-' + bid, buyerId:bid, status:'draft', submittedBy:null, lines:[], log:[{at:Date.now(), by:'salesperson', text:'Session started in the showroom'}]};
 }
@@ -818,13 +835,13 @@ function seedState() {
   const o = {id:'o-dubois', buyerId:'dubois', status:'draft', submittedBy:null, lines,
     log:[{at:todayAt(10,2), by:'salesperson', text:'Session started in the showroom'},
       ...lines.map(l => ({at:l.at, by:'salesperson', text: units(l.qty) ? `Added ${P[l.pid].name} · ${cname(l.colour)} ×${units(l.qty)}${l.via === 'photo' ? ' (photo match)' : l.via === 'suggestion' ? ' (suggestion)' : ''}` : `Selected ${P[l.pid].name} · ${cname(l.colour)}`}))]};
-  return {orders:{'o-dubois':o}, rep:'roberto', buyers:{}, appts:{...pastAppts(), dubois:{in:todayAt(10, 2)}}, savedAt:null};
+  return {orders:{...pastOrders(), 'o-dubois':o}, rep:'roberto', buyers:{}, appts:{...pastAppts(), dubois:{in:todayAt(10, 2)}}, savedAt:null};
 }
 const KEY = 'vega-poc-v2';
 function loadState() {
   try { const s = JSON.parse(localStorage.getItem(KEY));
     if (s && s.orders) { s.rep = REPS[s.rep] ? s.rep : 'roberto'; s.buyers = s.buyers || {}; s.appts = s.appts || {}; delete s.budgets;
-      Object.assign(BUYERS, s.buyers); s.appts = {...pastAppts(), ...s.appts}; oneOngoing(s.appts);
+      Object.assign(BUYERS, s.buyers); s.appts = {...pastAppts(), ...s.appts}; s.orders = {...pastOrders(), ...s.orders}; oneOngoing(s.appts);
       // older saves: bulk totals not split by size go back to "no quantity yet"
       Object.values(s.orders).forEach(o => o.lines.forEach(l => { if (l.qty && l.qty.ALL) delete l.qty.ALL; }));
       return s; } } catch (e) {}
@@ -1036,7 +1053,8 @@ const myBuyers = S => Object.values(BUYERS).filter(b => b.rep === S.rep).sort((x
 const isOngoing = a => !!(a && a.in && !a.out);
 // the client the seller is with right now (checked in, not yet out)
 const ongoingBuyer = S => myBuyers(S).find(b => isOngoing(S.appts[b.id]));
-const CheckPill = ({a}) => !a || !a.in ? null : a.out ? html`<span class="pill s-out" title="Checked out">Out ${hhmm(a.out)}</span>`
+// after the visit the row shows where the order stands
+const CheckPill = ({a, o}) => !a || !a.in ? null : a.out ? (o ? html`<${Pill} s=${o.status}/>` : null)
   : html`<span class="pill s-in" title=${'Checked in at ' + hhmm(a.in)}><i class="live-dot" aria-hidden="true"></i>Ongoing</span>`;
 
 function CalendarTab({S, act}) {
@@ -1051,7 +1069,7 @@ function CalendarTab({S, act}) {
             <div class="appt-buyer">${b.city}</div>
             ${b.divs.map(d => html`<div class="appt-cats"><b>${DIV_TAB[d]}</b> ${buyingCats(b, d).map(c => CAT_SHORT[c]).join(' · ') || 'No budget yet'}</div>`)}
           </div>
-          <div class="appt-side"><${CheckPill} a=${S.appts[b.id]}/></div>
+          <div class="appt-side"><${CheckPill} a=${S.appts[b.id]} o=${S.orders['o-' + b.id]}/></div>
         </button>`;
   return html`
     <header class="top top-bar mid"><h1 class="h1"><button class="h1-btn" onClick=${reloadApp} aria-label="Home. Tap to reload the app">Home</button></h1>
