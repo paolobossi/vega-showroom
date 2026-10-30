@@ -257,7 +257,8 @@ input{font:inherit;color:inherit}
 .appt-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
 .appt-shop{font:600 18px/1.2 var(--f-display);letter-spacing:-.015em}
 .appt-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-.appt-buyer{font-size:14px;color:var(--ink);margin-top:-3px}
+.appt-buyer{display:flex;align-items:center;gap:4px;font-size:14px;color:var(--ink);margin-top:-3px}
+.appt-buyer svg{flex:none;color:var(--muted)}
 .appt-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
 .appt-head .pill{flex:none;margin-top:1px}
 .appt-cats{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -892,7 +893,7 @@ function alternatives(p) {
    ===================================================================== */
 const IC = {
   expand:'M14 4h6v6M10 20H4v-6M20 4l-6.5 6.5M4 20l6.5-6.5',
-  back:'M15 5l-7 7 7 7', cam:'M4 8h3l2-3h6l2 3h3v11H4z M12 17a4 4 0 100-8 4 4 0 000 8z',
+  back:'M15 5l-7 7 7 7', pin:'M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0113 0c0 5.4-6.5 11-6.5 11z M12 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z', cam:'M4 8h3l2-3h6l2 3h3v11H4z M12 17a4 4 0 100-8 4 4 0 000 8z',
   today:'M4 6h16v14H4z M4 10h16 M8 3v4 M16 3v4', orders:'M6 4h12v16H6z M9 9h6 M9 13h6 M9 17h3',
   grid:'M4 4h7v7H4z M13 4h7v7h-7z M4 13h7v7H4z M13 13h7v7h-7z', search:'M11 18a7 7 0 100-14 7 7 0 000 14z M16 16l5 5',
   lock:'M6 11h12v9H6z M9 11V8a3 3 0 016 0v3', x:'M6 6l12 12 M18 6L6 18', share:'M12 15V4 M8 8l4-4 4 4 M5 13v7h14v-7', sign:'M16.5 3.5l4 4L9 19l-5 1 1-5z M14 6l4 4 M13 21h8',
@@ -1083,7 +1084,7 @@ function CalendarTab({S, act}) {
           <div class="appt-time">${b.time}</div>
           <div class="appt-main">
             <div class="appt-head"><span class="appt-shop">${b.shop}</span><${CheckPill} a=${S.appts[b.id]} o=${S.orders['o-' + b.id]}/></div>
-            <div class="appt-buyer">${b.city}</div>
+            <div class="appt-buyer"><${Icon} n="pin" s=${14} w=${2}/>${b.city}</div>
             ${b.divs.map(d => html`<div class="appt-cats"><b>${DIV_TAB[d]}</b> ${buyingCats(b, d).map(c => CAT_SHORT[c]).join(' · ') || 'No budget yet'}</div>`)}
           </div>
         </button>`;
