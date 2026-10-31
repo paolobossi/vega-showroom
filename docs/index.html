@@ -220,21 +220,20 @@ input{font:inherit;color:inherit}
 .st-ok{color:var(--good)}.st-warn{color:var(--warn)}.st-bad{color:var(--bad)}.st-none{color:var(--muted)}
 .flag-txt{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:700;color:var(--good)}
 .flag-dot{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--good);color:#fff}
-/* carousel: portrait shots, swipe or tap to enlarge */
-.car{position:relative;display:flex;flex-direction:column;gap:8px}
-.car-exp{position:absolute;z-index:2;top:10px;right:10px;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.88);color:#141619;box-shadow:0 1px 4px rgba(0,0,0,.12);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+/* carousel: portrait shots, swipe; tap opens them full screen (and tap there comes back) */
+.car{position:relative;display:flex;flex-direction:column}
 .car-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;border-radius:18px;background:#F0F0F0}
 .car-track::-webkit-scrollbar{display:none}
 .car-slide{position:relative;flex:0 0 100%;scroll-snap-align:center;aspect-ratio:4/5;max-height:52cqh;background:#F0F0F0}
 .car-slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block}
 .car.cover .car-slide img{object-fit:cover;object-position:50% 30%}
-.car-dots{display:flex;justify-content:center;gap:6px}
-.car-dots i{width:6px;height:6px;border-radius:50%;background:var(--line);transition:background .2s,width .2s}
-.car-dots i.on{background:var(--ink);width:16px;border-radius:3px}
+.car-dots{position:absolute;z-index:2;left:50%;bottom:12px;transform:translateX(-50%);display:flex;gap:6px;padding:6px 8px;border-radius:999px;background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);pointer-events:none}
+.car-dots i{width:6px;height:6px;border-radius:50%;background:rgba(20,22,25,.25);transition:background .2s,width .2s}
+.car-dots i.on{background:#141619;width:16px;border-radius:3px}
 .zoom{position:absolute;inset:0;z-index:50;background:var(--bg);display:flex;flex-direction:column;animation:fade .2s ease}
 .zoom-top{flex:none;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 8px 8px 18px}
 .zoom-t{font:650 18px/1.2 var(--f-display);letter-spacing:-.015em}
-.zoom .car{flex:1;min-height:0;padding-bottom:6px}
+.zoom .car{flex:1;min-height:0}
 .zoom .car-track{flex:1;min-height:0;border-radius:0}
 .zoom .car-slide{aspect-ratio:auto;max-height:none;height:100%}
 .zoom-foot{flex:none;display:flex;flex-direction:column;gap:8px;padding:10px 18px max(14px,env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--surface)}
@@ -450,14 +449,16 @@ input{font:inherit;color:inherit}
 .sheet.media .sheet-body{padding-top:0}
 .sheet.media .car{margin:0 -18px}
 .sheet.media .car-track{border-radius:0}
-/* in a sheet the photos take the full width: product shots in a square (cropped a little below the middle: bags sit low, clothes hang from the top), looks at their own 3:4 */
-.sheet.media .car-slide{aspect-ratio:1/1;max-height:none}
+/* in a sheet the photos take the full width at 3:4; product shots are cropped a little below the middle (bags sit low, clothes hang from the top) */
+.sheet.media .car-slide{aspect-ratio:3/4;max-height:none}
 .sheet.media .car:not(.cover) .car-slide img{object-fit:cover;object-position:50% 65%}
-.sheet.media .car.cover .car-slide{aspect-ratio:3/4}
+/* page: the product detail fills the screen like a page, over the tab bar, and slides in from the right */
+.sheet.media.page{top:0;bottom:0;height:auto;max-height:none;max-width:none;border-radius:0;box-shadow:none;animation:push .26s cubic-bezier(.2,.8,.2,1)}
+.sheet.page .sheet-x{top:max(12px,env(safe-area-inset-top,0px))}
 .sheet-x{position:absolute;z-index:3;top:12px;left:12px;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.88);color:#141619;box-shadow:0 1px 4px rgba(0,0,0,.12);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
-.sheet.media .car-exp{top:12px;right:12px}
 @keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
 @keyframes fade{from{opacity:0}}
+@keyframes push{from{transform:translateX(24px);opacity:0}to{transform:none;opacity:1}}
 .lbl{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .callout{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;line-height:1.4;padding:10px 12px;border-radius:12px}
 .callout.warn{background:var(--warn-bg);color:var(--warn)}
@@ -950,14 +951,16 @@ const Stepper = ({n, on, label}) => html`<div class="stp">
   <button aria-label=${'One more, ' + label} onClick=${() => on(n + 1)}><${Icon} n="plus" s=${16} w=${2.4}/></button></div>`;
 
 // Swipeable product shots; tap opens them full screen
-function Carousel({p, colour, src=viewsOf(p, colour), alt=`${p.name}, ${colour}`, onOpen, start=0, full, cover}) {
+function Carousel({p, colour, src=viewsOf(p, colour), alt=`${p.name}, ${colour}`, onOpen, openLabel='Open photo full screen', start=0, at, full, cover}) {
   const [i, setI] = useState(start), ref = useRef(null);
   useEffect(() => { const el = ref.current; if (el && start) el.scrollLeft = start * el.clientWidth; }, []);
+  // coming back from full screen lands on the photo that was showing there
+  const at0 = useRef(at);
+  useEffect(() => { const el = ref.current; if (el && at && at !== at0.current) el.scrollLeft = at.k * el.clientWidth; }, [at]);
   useEffect(() => { setI(0); if (ref.current && !full) ref.current.scrollLeft = 0; }, [colour]);
   const onScroll = e => { const el = e.currentTarget; setI(Math.round(el.scrollLeft / Math.max(1, el.clientWidth))); };
   return html`<div class=${'car' + (full ? ' full' : '') + (cover ? ' cover' : '')}>
-    ${onOpen && !full && html`<button class="car-exp" onClick=${() => onOpen(i)} aria-label="Open photos full screen"><${Icon} n="expand" s=${18} w=${2}/></button>`}
-    <div class="car-track" ref=${ref} onScroll=${onScroll}>${src.map((s, k) => html`<button class="car-slide" onClick=${() => onOpen && onOpen(k)} aria-label=${onOpen ? `Enlarge photo ${k + 1} of ${src.length}` : `Photo ${k + 1} of ${src.length}`}>
+    <div class="car-track" ref=${ref} onScroll=${onScroll}>${src.map((s, k) => html`<button class="car-slide" onClick=${() => onOpen && onOpen(k)} aria-label=${onOpen ? `${openLabel}, ${k + 1} of ${src.length}` : `Photo ${k + 1} of ${src.length}`}>
       <img src=${s} alt=${`${alt}, view ${k + 1}`} loading=${k ? 'lazy' : 'eager'} decoding="async" draggable="false"/></button>`)}</div>
     <div class="car-dots" aria-hidden="true">${src.map((s, k) => html`<i class=${k === i ? 'on' : ''}></i>`)}</div>
   </div>`;
@@ -966,11 +969,12 @@ function Carousel({p, colour, src=viewsOf(p, colour), alt=`${p.name}, ${colour}`
 // product photos, or a runway look's photos when z.look is set
 function Zoom({z, act}) {
   const l = z.look && LOOKS.find(x => x.id === z.look), p = P[z.pid], t = l ? lookNo(l) : p.name;
+  const back = k => act.set({zoom:null, photoAt:{k}});
   return html`<div class="zoom" role="dialog" aria-label=${t + ' photos'}>
     <div class="zoom-top"><div style="min-width:0"><div class="zoom-t">${t}</div><div class="small muted">${l ? SHOW : html`<${Colour} c=${z.colour}/>`}</div></div>
       <button class="icon-btn" onClick=${() => act.set({zoom:null})} aria-label="Close photos"><${Icon} n="x"/></button></div>
-    ${l ? html`<${Carousel} full src=${lookSrc(l)} alt=${t} start=${z.i || 0}/>`
-      : html`<${Carousel} full p=${p} colour=${z.colour} start=${z.i || 0}/>
+    ${l ? html`<${Carousel} full src=${lookSrc(l)} alt=${t} start=${z.i || 0} onOpen=${back} openLabel="Back to details"/>`
+      : html`<${Carousel} full p=${p} colour=${z.colour} start=${z.i || 0} onOpen=${back} openLabel="Back to details"/>
     <div class="zoom-foot"><span class="pc-code">${p.code}</span><${Prices} p=${p}/></div>`}
   </div>`;
 }
@@ -979,11 +983,12 @@ const By = ({by}) => by ? html`<span class=${'by ' + by}><${Icon} n="user" s=${1
 const Seg = ({opts, val, on, full}) => html`<div class=${'seg' + (full ? ' full' : '')} role="tablist">${opts.map(([v, l]) => html`<button role="tab" aria-selected=${v === val} class=${v === val ? 'on' : ''} onClick=${() => on(v)}>${l}</button>`)}</div>`;
 
 // media: photos lead the sheet edge to edge, no header, close on the top left
-function Sheet({title, sub, onClose, children, tall, foot, media}) {
-  return html`<div class="scrim" onClick=${onClose}></div>
-    <div class=${'sheet' + (tall ? ' tall' : '') + (media ? ' media' : '')} role="dialog" aria-label=${title}>
-      <div class="sheet-grab"></div>
-      ${media ? html`<button class="sheet-x" onClick=${onClose} aria-label="Close"><${Icon} n="x" s=${18} w=${2.2}/></button>`
+// page: full screen with a back button instead of a sheet over a scrim
+function Sheet({title, sub, onClose, children, tall, foot, media, page}) {
+  return html`${!page && html`<div class="scrim" onClick=${onClose}></div>`}
+    <div class=${'sheet' + (tall ? ' tall' : '') + (media ? ' media' : '') + (page ? ' page' : '')} role="dialog" aria-label=${title}>
+      ${!page && html`<div class="sheet-grab"></div>`}
+      ${media ? html`<button class="sheet-x" onClick=${onClose} aria-label=${page ? 'Back' : 'Close'}><${Icon} n=${page ? 'back' : 'x'} s=${18} w=${2.2}/></button>`
         : html`<div class="sheet-head"><div style="min-width:0"><div class="sheet-title">${title}</div>${sub && html`<div class="sheet-sub">${sub}</div>`}</div>
         <button class="icon-btn" onClick=${onClose} aria-label="Close"><${Icon} n="x"/></button></div>`}
       <div class="sheet-body">${media}${children}</div>
@@ -1162,7 +1167,7 @@ function LookSheet({id, S, ui, act}) {
   const out = o ? l.items.filter(([pid, c]) => !o.lines.some(x => x.pid === pid && x.colour === c)) : [];
   const missing = out.filter(([pid]) => !canTake(o, P[pid])), why = o && out.length && !missing.length && canTake(o, P[out[0][0]]);
   return html`<${Sheet} tall title=${lookNo(l)} onClose=${act.close}
-    media=${html`<${Carousel} cover src=${lookSrc(l)} alt=${lookNo(l)} onOpen=${i => act.set({zoom:{look:l.id, i}})}/>`}
+    media=${html`<${Carousel} cover src=${lookSrc(l)} alt=${lookNo(l)} at=${ui.photoAt} onOpen=${i => act.set({zoom:{look:l.id, i}})}/>`}
     foot=${o && html`<button class="btn primary" disabled=${!missing.length} onClick=${() => act.selectLook(o.id, l)}>${missing.length ? `Add the whole look · ${missing.length} ${missing.length === 1 ? 'piece' : 'pieces'}` : why || 'Whole look is in the order'}</button>`}>
     <div class="pd-head"><span class="pc-fam">${DIV_LABEL[l.div]} · ${SHOW}${l.req ? ' · required look' : ''}</span><h1 class="pd-name">${lookNo(l)}</h1></div>
     <div class="callout info"><${Icon} n="spark" s=${18}/><div><b>VM intent.</b> ${l.vm}</div></div>
@@ -1411,8 +1416,8 @@ function ProductSheet({pid, S, ui, act}) {
   const item = {pid, colour:c, via:'search'}, pick = () => act.sheet({type:'pick', item});
   const inOrder = x => o && o.lines.some(l => l.pid === pid && l.colour === x), has = inOrder(c);
   const sizes = () => act.sheet({type:'size', orderId:o.id, ...item});
-  return html`<${Sheet} tall title=${p.name} onClose=${act.close}
-    media=${html`<${Carousel} p=${p} colour=${c} onOpen=${i => act.set({zoom:{pid, colour:c, i}})}/>`}
+  return html`<${Sheet} page title=${p.name} onClose=${act.close}
+    media=${html`<${Carousel} p=${p} colour=${c} at=${ui.photoAt} onOpen=${i => act.set({zoom:{pid, colour:c, i}})}/>`}
     foot=${!o ? html`<button class="btn primary" onClick=${pick}>Add to an order…</button>`
       : why ? html`<button class="btn primary" disabled>${b.shop} · ${why}</button>`
       : has ? html`<button class="btn danger" style="flex:0 0 auto" onClick=${() => act.unselect(o.id, pid, c)}>Remove</button><button class="btn primary" onClick=${sizes}>Quantities</button>`
