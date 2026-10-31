@@ -1657,7 +1657,7 @@ function SelLine({l, o, act, locked}) {
 }
 
 // One switch only (Women / Men); budgets and guideline checks open from the summary card at the top of the selection
-function OrderView({S, ui, act, order}) {
+function OrderView({S, ui, act, order, asTab}) {
   const b = BUYERS[order.buyerId], div = b.divs.includes(ui.div) ? ui.div : b.divs[0];
   const k = kpi(order, div), db = divBudget(b, div), open = issuesOf(order, [div]).length;
   const lines = order.lines.filter(l => P[l.pid].div === div);
@@ -1667,7 +1667,7 @@ function OrderView({S, ui, act, order}) {
   const inVisit = ui.session === order.id;
   return html`<div class="ov">
     <div class="ov-nav">
-      <button class="icon-btn" onClick=${act.back} aria-label="Back"><${Icon} n="back"/></button>
+      ${asTab ? html`<span class="icon-btn" aria-hidden="true"></span>` : html`<button class="icon-btn" onClick=${act.back} aria-label="Back"><${Icon} n="back"/></button>`}
       <div class="ov-nav-t"><div class="ov-shop">${b.shop}</div><div class="ov-id">${orderNo(order)}</div></div>
       <span class="icon-btn" aria-hidden="true"></span>
     </div>
@@ -1963,10 +1963,11 @@ function App({onReset}) {
   const ongoing = ongoingBuyer(S), sessionOk = !!activeOrder(S, ui);
   useEffect(() => { if (ongoing && !sessionOk && !buyerView) act.startSession(ongoing.id); }, [ongoing && ongoing.id, sessionOk, !!buyerView]);
   // the client in session rides as a pill above the tab bar on every tab; the tab bar is always there
-  const so = activeOrder(S, ui), pill = !!(so && !order), capDiv = so && (BUYERS[so.buyerId].divs.includes(ui.capDiv) ? ui.capDiv : BUYERS[so.buyerId].divs[0]);
+  // with a client in session, the Orders tab opens that client's order straight away (the list would only hold that one)
+  const so = activeOrder(S, ui), shown = order || (ui.tab === 'orders' && so) || null, pill = !!(so && !shown), capDiv = so && (BUYERS[so.buyerId].divs.includes(ui.capDiv) ? ui.capDiv : BUYERS[so.buyerId].divs[0]);
   if (buyerView) return html`<div class="app"><${BuyerView} S=${S} ui=${ui} act=${act}/>${sheet}${toast}</div>`;
   return html`<div class=${'app' + (pill ? ' with-pill' : '')}>
-    ${order ? html`<${OrderView} S=${S} ui=${ui} act=${act} order=${order}/>` : html`
+    ${shown ? html`<${OrderView} S=${S} ui=${ui} act=${act} order=${shown} asTab=${!order}/>` : html`
       <div class=${'screen tabbed' + (pill ? ' with-pill' : '')}>
         ${ui.tab === 'calendar' && html`<${CalendarTab} S=${S} act=${act}/>`}
         ${ui.tab === 'today' && html`<${Today} S=${S} ui=${ui} act=${act}/>`}
