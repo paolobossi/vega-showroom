@@ -141,6 +141,11 @@ input{font:inherit;color:inherit}
 .pd-name{margin:0;font:650 26px/1.15 var(--f-display);letter-spacing:-.02em;text-wrap:balance}
 .pd-sub{font-size:14px;color:var(--muted)}
 .pd-sub .code{color:var(--ink);font-weight:400}
+/* product page actions sit in the page under the prices, as full pills */
+.pd-cta{display:flex;flex-direction:column;gap:10px}
+.pd-cta .btn{width:100%;min-height:52px;border-radius:999px}
+.btn.black{background:var(--ink);color:var(--bg)}
+.btn.outline{border:1px solid var(--ink)}
 .pin{display:flex;flex-direction:column;align-items:center;gap:14px;padding:4px 0 6px}
 .pin-t{font-size:16px;font-weight:600}
 .pin-dots{display:flex;gap:16px;margin:2px 0 6px}
@@ -1417,15 +1422,15 @@ function ProductSheet({pid, S, ui, act}) {
   const inOrder = x => o && o.lines.some(l => l.pid === pid && l.colour === x), has = inOrder(c);
   const sizes = () => act.sheet({type:'size', orderId:o.id, ...item});
   return html`<${Sheet} page title=${p.name} onClose=${act.close}
-    media=${html`<${Carousel} p=${p} colour=${c} at=${ui.photoAt} onOpen=${i => act.set({zoom:{pid, colour:c, i}})}/>`}
-    foot=${!o ? html`<button class="btn primary" onClick=${pick}>Add to an order…</button>`
-      : why ? html`<button class="btn primary" disabled>${b.shop} · ${why}</button>`
-      : has ? html`<button class="btn danger" style="flex:0 0 auto" onClick=${() => act.unselect(o.id, pid, c)}>Remove</button><button class="btn primary" onClick=${sizes}>Quantities</button>`
-      : html`<button class="btn secondary" style="flex:0 0 auto" onClick=${sizes}>Quantities</button><button class="btn primary" onClick=${() => act.select(o.id, pid, c, 'search')}><${Icon} n="plus" s=${18} w=${2.4}/>Add to order</button>`}>
+    media=${html`<${Carousel} p=${p} colour=${c} at=${ui.photoAt} onOpen=${i => act.set({zoom:{pid, colour:c, i}})}/>`}>
     <div class="pd-head"><h1 class="pd-name">${p.name}</h1>
       <div class="pd-sub"><span class="code">${p.code}</span></div></div>
     <div class="colours">${p.colours.map(x => html`<button class=${'colour' + (x === c ? ' on' : '')} onClick=${() => setC(x)}><span class="sw" style=${{background:COL[x][0]}}></span>${x}<span class="code">${COL[x][1]}</span>${inOrder(x) && html`<span class="flag-dot" title="In order"><${Icon} n="flag" s=${12} w=${2.4}/></span>`}</button>`)}</div>
     <${Prices} cls="lg" p=${p}/>
+    <div class="pd-cta">${!o ? html`<button class="btn black" onClick=${pick}>Add to order</button>`
+      : why ? html`<button class="btn black" disabled>${b.shop} · ${why}</button>`
+      : has ? html`<button class="btn black" onClick=${sizes}>Quantities</button><button class="btn danger" onClick=${() => act.unselect(o.id, pid, c)}>Remove from order</button>`
+      : html`<button class="btn black" onClick=${() => act.select(o.id, pid, c, 'search')}>Add to order</button><button class="btn outline" onClick=${sizes}>Quantities</button>`}</div>
     <div class="panel facts">
       <div><span>Division</span><span>${p.div === 'W' ? 'Womenswear' : 'Menswear'}</span></div>
       <div><span>Category</span><span>${CAT_LABEL[p.cat]}</span></div>
