@@ -1153,10 +1153,13 @@ function CalendarTab({S, act}) {
     </section>`;
 }
 
-// Before the check-in only Check in shows, at the bottom where the thumb is; checking in opens the Collection for that client
+// Before the check-in only Check in shows, at the bottom where the thumb is; checking in opens the Collection for that client.
+// From the client pill above the tab bar (sh.pill) the visit can be ended in one tap, or the order opened.
 function ApptSheet({sh, S, act}) {
   const b = BUYERS[sh.bid], o = S.orders['o-' + b.id], a = S.appts[b.id] || {}, isIn = isOngoing(a);
   const foot = !a.in ? html`<button class="btn go" onClick=${() => act.checkIn(b.id)}><${Icon} n="check" s=${18} w=${2.2}/>Check in</button>`
+    : isIn && sh.pill ? html`<button class="btn secondary" style="flex:0 0 auto" onClick=${() => act.openOrder(b.id)}>View order</button>
+        <button class="btn primary" onClick=${() => { act.checkOut(b.id); act.close(); }}>Check out</button>`
     : isIn ? html`<button class="btn secondary" style="flex:0 0 auto" onClick=${() => act.checkOut(b.id)}>Check out</button>
         <button class="btn primary" onClick=${() => act.addProducts(b.id)}>Add products</button>`
     : html`${o && html`<button class="btn secondary" style="flex:0 0 auto" onClick=${() => act.openOrder(b.id)}>View order</button>`}
@@ -1848,7 +1851,7 @@ function SessionBar({S, ui, act}) {
   const o = activeOrder(S, ui); if (!o) return null;
   const b = BUYERS[o.buyerId], v = b.divs.reduce((a, d) => a + kpi(o, d).total, 0), n = b.divs.reduce((a, d) => a + kpi(o, d).units, 0);
   return html`<div class="sbar" role="status">
-    <button class="sbar-main" onClick=${() => act.openOrder(b.id)} aria-label=${`Ordering for ${b.shop}: ${o.lines.length} selected, ${n} units, ${fmt(v)}. Open order`}>
+    <button class="sbar-main" onClick=${() => act.sheet({type:'appt', bid:b.id, pill:true})} aria-label=${`Ordering for ${b.shop}: ${o.lines.length} selected, ${n} units, ${fmt(v)}. Open visit to check out`}>
       <span class="sbar-dot" aria-hidden="true"></span><span class="sbar-t"><b>${b.shop}</b></span></button>
   </div>`;
 }
