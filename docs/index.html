@@ -146,6 +146,13 @@ input{font:inherit;color:inherit}
 .pd-cta .btn{width:100%;min-height:52px;border-radius:999px}
 .btn.black{background:var(--ink);color:var(--bg)}
 .btn.outline{border:1px solid var(--ink)}
+.btn.outline.danger{border-color:var(--bad)}
+.pd-qty{display:flex;flex-direction:column;gap:10px}
+.pd-budget{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;white-space:nowrap}
+.pd-qty .quick{flex-wrap:nowrap;overflow-x:auto;margin:0 -18px;padding:0 18px;scrollbar-width:none}
+.pd-qty .qbtn{flex:none}
+.pd-in{display:flex;align-items:center;justify-content:center;gap:6px;min-height:52px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-weight:650;font-size:15.5px}
+.pd-in svg{color:var(--good)}
 .pin{display:flex;flex-direction:column;align-items:center;gap:14px;padding:4px 0 6px}
 .pin-t{font-size:16px;font-weight:600}
 .pin-dots{display:flex;gap:16px;margin:2px 0 6px}
@@ -1414,23 +1421,58 @@ function FilterSheet({ui, act}) {
   <//>`;
 }
 
-function ProductSheet({pid, S, ui, act}) {
-  const p = P[pid], o = activeOrder(S, ui), b = o && BUYERS[o.buyerId], why = o && canTake(o, p);
-  const [c, setC] = useState(() => { const l = o && o.lines.find(x => x.pid === pid); return l ? l.colour : p.colours[0]; });
+// Product page: with a client in session, sizes and quantities are set right here. A colour not in the order yet is a draft
+// until Add to order (with or without quantities); once it is in the order every tap saves straight away.
+function ProductSheet({pid, colour, orderId, S, ui, act}) {
+  const p = P[pid], o = orderId ? S.orders[orderId] : activeOrder(S, ui), b = o && BUYERS[o.buyerId], why = o && canTake(o, p);
+  const [c, setC] = useState(() => { const l = o && o.lines.find(x => x.pid === pid); return colour || (l ? l.colour : p.colours[0]); });
+  const [pending, setPending] = useState({});
   const looks = LOOKS.filter(l => l.items.some(([x]) => x === pid));
-  const item = {pid, colour:c, via:'search'}, pick = () => act.sheet({type:'pick', item});
-  const inOrder = x => o && o.lines.some(l => l.pid === pid && l.colour === x), has = inOrder(c);
-  const sizes = () => act.sheet({type:'size', orderId:o.id, ...item});
+  const pick = () => act.sheet({type:'pick', item:{pid, colour:c, via:'search'}});
+  const lineOf = x => o && o.lines.find(l => l.pid === pid && l.colour === x), line = lineOf(c);
+  const q = line ? line.qty : pending[c] || {}, u = units(q);
+  const setQ = next => { next = Object.fromEntries(Object.entries(next).filter(([, n]) => n > 0).map(([k, n]) => [k, Math.min(99, n)]));
+    if (line) act.setQty(o.id, line.id, next); else setPending(d => ({...d, [c]: next})); };
+  const setQty = (sz, n) => setQ({...q, [sz]: Math.max(0, n)});
+  const setAll = arr => setQ(Object.fromEntries(p.sizes.map((sz, i) => [sz, arr[i] || 0])));
+  const add = () => { act.select(o.id, pid, c, 'search', q); setPending(d => ({...d, [c]: {}})); };
+  const edit = o && !why;
+  // budget line: where this category lands with what's on the page
+  const mix = useMemo(() => { if (!edit) return null;
+    const x = JSON.parse(JSON.stringify(o)); if (!line && u) x.lines.push({pid, colour:c, qty:q});
+    return [kpi(o, p.div).mix.find(m => m.cat === p.cat), kpi(x, p.div).mix.find(m => m.cat === p.cat)]; }, [o, c, q, edit]);
+  const curves = CURVES[p.sizes.length] || [];
+  const val = n => `${n} ${n === 1 ? 'unit' : 'units'} · ${fmt(n * p.price)}`;
   return html`<${Sheet} page title=${p.name} onClose=${act.close}
     media=${html`<${Carousel} p=${p} colour=${c} at=${ui.photoAt} onOpen=${i => act.set({zoom:{pid, colour:c, i}})}/>`}>
     <div class="pd-head"><h1 class="pd-name">${p.name}</h1>
       <div class="pd-sub"><span class="code">${p.code}</span></div></div>
-    <div class="colours">${p.colours.map(x => html`<button class=${'colour' + (x === c ? ' on' : '')} onClick=${() => setC(x)}><span class="sw" style=${{background:COL[x][0]}}></span>${x}<span class="code">${COL[x][1]}</span>${inOrder(x) && html`<span class="flag-dot" title="In order"><${Icon} n="flag" s=${12} w=${2.4}/></span>`}</button>`)}</div>
+    <div class="colours">${p.colours.map(x => html`<button class=${'colour' + (x === c ? ' on' : '')} onClick=${() => setC(x)}><span class="sw" style=${{background:COL[x][0]}}></span>${x}<span class="code">${COL[x][1]}</span>${lineOf(x) && html`<span class="flag-dot" title="In order"><${Icon} n="flag" s=${12} w=${2.4}/></span>`}</button>`)}</div>
     <${Prices} cls="lg" p=${p}/>
+    ${edit && html`<div class="pd-qty">
+      ${p.sizes.length > 1 ? html`
+        <div class="sizes">${p.sizes.map(sz => html`<div class=${'size-cell' + (q[sz] ? ' has' : '')}>
+          <div class="sz">${sz}</div>
+          <button class="step" aria-label=${'Add one size ' + sz} onClick=${() => setQty(sz, (q[sz] || 0) + 1)}>+</button>
+          <div class="qty num">${q[sz] || 0}</div>
+          <button class="step" aria-label=${'Remove one size ' + sz} onClick=${() => setQty(sz, (q[sz] || 0) - 1)}>−</button>
+        </div>`)}</div>
+        <div class="quick">${curves.map(([l, arr]) => html`<button class="qbtn" onClick=${() => setAll(arr)}>${l}</button>`)}
+          <button class="qbtn" onClick=${() => setAll(p.sizes.map(sz => (q[sz] || 0) + 1))}>+1 each</button>
+          ${u > 0 && html`<button class="qbtn" onClick=${() => setAll([])}>Clear</button>`}</div>` : html`
+        <div class="single">
+          <button class="step lg" aria-label="Remove one" onClick=${() => setQty('U', (q.U || 0) - 1)}>−</button>
+          <div class="qty xl num">${q.U || 0}</div>
+          <button class="step lg" aria-label="Add one" onClick=${() => setQty('U', (q.U || 0) + 1)}>+</button>
+        </div>
+        <div class="quick">${[1, 2, 3, 4, 6].map(n => html`<button class="qbtn" onClick=${() => setQty('U', n)}>${n}</button>`)}${u > 0 && html`<button class="qbtn" onClick=${() => setQty('U', 0)}>Clear</button>`}</div>`}
+      ${mix && mix[1].budget > 0 && html`<div class="pd-budget"><span class="muted">${CAT_LABEL[p.cat]}</span>
+        <span class="num">${mix[1].value !== mix[0].value && html`<span class="muted">${fmt(mix[0].value)} → </span>`}<b class=${'st-' + mix[1].st}>${fmt(mix[1].value)}</b> <span class="muted">of ${fmt(mix[1].budget)}</span></span></div>`}
+    </div>`}
     <div class="pd-cta">${!o ? html`<button class="btn black" onClick=${pick}>Add to order</button>`
-      : why ? html`<button class="btn black" disabled>${b.shop} · ${why}</button>`
-      : has ? html`<button class="btn black" onClick=${sizes}>Quantities</button><button class="btn danger" onClick=${() => act.unselect(o.id, pid, c)}>Remove from order</button>`
-      : html`<button class="btn black" onClick=${() => act.select(o.id, pid, c, 'search')}>Add to order</button><button class="btn outline" onClick=${sizes}>Quantities</button>`}</div>
+      : why ? html`${line && html`<div class="pd-in">In order · ${u ? val(u) : 'no quantity'}</div>`}<button class="btn black" disabled>${b.shop} · ${why}</button>`
+      : line ? html`<div class="pd-in"><${Icon} n="check" s=${18} w=${2.4}/>In order · ${u ? val(u) : 'no quantity yet'}</div><button class="btn outline danger" onClick=${() => act.unselect(o.id, pid, c)}>Remove from order</button>`
+      : html`<button class="btn black" onClick=${add}>Add to order${u ? ' · ' + val(u) : ''}</button>`}</div>
     <div class="panel facts">
       <div><span>Division</span><span>${p.div === 'W' ? 'Womenswear' : 'Menswear'}</span></div>
       <div><span>Category</span><span>${CAT_LABEL[p.cat]}</span></div>
@@ -1594,7 +1636,7 @@ function LineRow({l, onClick}) {
 // One style-colour in the client's selection: quantity can wait; sized styles get a quantity per size, one-size styles a count
 function SelLine({l, o, act, locked}) {
   const p = P[l.pid], u = units(l.qty), sized = p.sizes.length > 1;
-  const edit = () => act.sheet({type:'size', orderId:o.id, pid:l.pid, colour:l.colour, via:l.via});
+  const edit = () => act.sheet({type:'product', orderId:o.id, pid:l.pid, colour:l.colour});
   return html`<div class=${'sel' + (u ? '' : ' open')}>
     <button class="sel-info" onClick=${edit}>
       <${Thumb} pid=${l.pid} colour=${l.colour}/>
@@ -1859,9 +1901,10 @@ function makeActs(setS, setUi, onReset) {
   };
   a.saveDraft = (id, pid, draft, via, by) => a.mut(id, o => applyDraft(o, pid, draft, via, by));
   // selection without quantity: the style-colour joins the order at zero units
-  a.select = (id, pid, colour, via) => { const p = P[pid];
+  a.select = (id, pid, colour, via, qty={}) => { const p = P[pid], u = units(qty);
     a.mut(id, o => { if (o.lines.some(l => l.pid === pid && l.colour === colour)) return;
-      o.lines.push({id:uid(), pid, colour, qty:{}, via, by:'salesperson', at:Date.now()}); log(o, 'salesperson', `Selected ${p.name} · ${cname(colour)}${via === 'photo' ? ' (photo match)' : ''}`); });
+      o.lines.push({id:uid(), pid, colour, qty:{...qty}, via, by:'salesperson', at:Date.now()});
+      log(o, 'salesperson', `${u ? 'Added' : 'Selected'} ${p.name} · ${cname(colour)}${u ? ' ×' + u : ''}${via === 'photo' ? ' (photo match)' : ''}`); });
     a.toast('Added to order'); };
   // the whole runway look in one go: every piece the client can buy that isn't in the order yet
   a.selectLook = (id, look) => { let k = 0;
@@ -1871,11 +1914,16 @@ function makeActs(setS, setUi, onReset) {
     a.close(); a.toast('Added to order'); };
   a.unselect = (id, pid, colour, by='salesperson') => { const p = P[pid];
     a.mut(id, o => { o.lines = o.lines.filter(l => !(l.pid === pid && (!colour || l.colour === colour))); log(o, by, `Removed ${p.name}${colour ? ' · ' + cname(colour) : ''}`); });
-    setUi(u => u.sheet && (u.sheet.type === 'size' || u.sheet.type === 'product') ? {...u, sheet:null} : u); a.toast('Removed from order'); };
+    setUi(u => u.sheet && u.sheet.type === 'size' ? {...u, sheet:null} : u); a.toast('Removed from order'); };
   // stepper on one-size styles; repeated taps update one log entry
   a.setUnits = (id, lineId, n) => a.mut(id, o => { const l = o.lines.find(x => x.id === lineId); if (!l) return; const p = P[l.pid];
     n = Math.max(0, Math.min(999, n)); l.qty = n ? {U: n} : {}; l.at = Date.now();
     const key = 'u:' + lineId, last = o.log[o.log.length - 1], text = `Set ${p.name} · ${cname(l.colour)} to ×${n}`;
+    if (last && last.key === key) { last.text = text; last.at = Date.now(); } else o.log.push({at:Date.now(), by:'salesperson', text, key}); });
+  // sizes on a line from the product page; repeated taps update one log entry
+  a.setQty = (id, lineId, qty) => a.mut(id, o => { const l = o.lines.find(x => x.id === lineId); if (!l) return; const p = P[l.pid];
+    l.qty = qty; l.at = Date.now();
+    const key = 'u:' + lineId, last = o.log[o.log.length - 1], text = `Set ${p.name} · ${cname(l.colour)} to ×${units(qty)}`;
     if (last && last.key === key) { last.text = text; last.at = Date.now(); } else o.log.push({at:Date.now(), by:'salesperson', text, key}); });
   // each division is sent on its own; the order's overall status follows from its parts
   a.share = (id, divs) => a.mut(id, o => { const now = Date.now(); o.parts = o.parts || {};
@@ -1903,7 +1951,7 @@ function App({onReset}) {
     : sh.type === 'guide' ? html`<${GuideSheet} act=${act}/>`
     : sh.type === 'sign' ? html`<${SignSheet} sh=${sh} S=${S} act=${act}/>`
     : sh.type === 'look' ? html`<${LookSheet} id=${sh.id} S=${S} ui=${ui} act=${act}/>`
-    : sh.type === 'product' ? html`<${ProductSheet} key=${sh.pid} pid=${sh.pid} S=${S} ui=${ui} act=${act}/>`
+    : sh.type === 'product' ? html`<${ProductSheet} key=${sh.pid} pid=${sh.pid} colour=${sh.colour} orderId=${sh.orderId} S=${S} ui=${ui} act=${act}/>`
     : sh.type === 'filter' ? html`<${FilterSheet} ui=${ui} act=${act}/>`
     : sh.type === 'account' ? html`<${AccountSheet} S=${S} act=${act}/>`
     : sh.type === 'newbuyer' ? html`<${NewBuyerSheet} S=${S} sh=${sh} act=${act}/>`
