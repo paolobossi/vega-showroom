@@ -142,13 +142,12 @@ input{font:inherit;color:inherit}
 .pd-sub{font-size:14px;color:var(--muted)}
 .pd-sub .code{color:var(--ink);font-weight:400}
 /* product page actions sit in the page under the prices, as full pills */
-.pd-cta{display:flex;flex-direction:column;gap:10px}
+.pd-cta{display:flex;flex-direction:column;gap:10px;margin:10px 0 14px}
 .pd-cta .btn{width:100%;min-height:52px;border-radius:999px}
 .btn.black{background:var(--ink);color:var(--bg)}
 .btn.outline{border:1px solid var(--ink)}
 .btn.outline.danger{border-color:var(--bad)}
 .pd-qty{display:flex;flex-direction:column;gap:10px}
-.pd-budget{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;white-space:nowrap}
 .pd-qty .quick{flex-wrap:nowrap;overflow-x:auto;margin:0 -18px;padding:0 18px;scrollbar-width:none}
 .pd-qty .qbtn{flex:none}
 .pd-in{display:flex;align-items:center;justify-content:center;gap:6px;min-height:52px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-weight:650;font-size:15.5px}
@@ -569,8 +568,11 @@ input{font:inherit;color:inherit}
 .bv-head{flex:none;padding:12px 18px 12px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:8px;background:var(--surface)}
 .demo-bar{flex:none;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 12px 6px 16px;background:var(--ink);color:var(--bg);font-size:12.5px;font-weight:600}
 .demo-bar button{color:var(--bg);text-decoration:underline;font-weight:700;padding:6px 4px}
-.toast{position:absolute;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:99px;font-size:14px;font-weight:600;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis;animation:up .2s ease;display:flex;gap:6px;align-items:center}
+.toast{position:absolute;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:99px;font-size:14px;font-weight:600;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis;animation:toast .2s ease;display:flex;gap:6px;align-items:center}
+@keyframes toast{from{transform:translate(-50%,16px);opacity:0}}
 .app.with-pill .toast{bottom:calc(130px + env(safe-area-inset-bottom,0px))}
+/* the product page covers the tab bar, so its messages sit at the very bottom */
+.app:has(.sheet.page) .toast{bottom:max(20px,env(safe-area-inset-bottom,0px))}
 
 /* ---------- landscape: horizontal working layout ---------- */
 @container app (orientation: landscape){
@@ -1440,12 +1442,8 @@ function ProductSheet({pid, colour, orderId, S, ui, act}) {
   const setAll = arr => setQ(Object.fromEntries(p.sizes.map((sz, i) => [sz, arr[i] || 0])));
   const add = () => { act.select(o.id, pid, c, 'search', q); setPending(d => ({...d, [c]: {}})); };
   const edit = o && !why;
-  // budget line: where this category lands with what's on the page
-  const mix = useMemo(() => { if (!edit) return null;
-    const x = JSON.parse(JSON.stringify(o)); if (!line && u) x.lines.push({pid, colour:c, qty:q});
-    return [kpi(o, p.div).mix.find(m => m.cat === p.cat), kpi(x, p.div).mix.find(m => m.cat === p.cat)]; }, [o, c, q, edit]);
   const curves = CURVES[p.sizes.length] || [];
-  const val = n => `${n} ${n === 1 ? 'unit' : 'units'} · ${fmt(n * p.price)}`;
+  const val = n => `${n} ${n === 1 ? 'unit' : 'units'}`;
   return html`<${Sheet} page title=${p.name} onClose=${act.close}
     media=${html`<${Carousel} p=${p} colour=${c} at=${ui.photoAt} onOpen=${i => act.set({zoom:{pid, colour:c, i}})}/>`}>
     <div class="pd-head"><h1 class="pd-name">${p.name}</h1>
@@ -1469,8 +1467,6 @@ function ProductSheet({pid, colour, orderId, S, ui, act}) {
           <button class="step lg" aria-label="Add one" onClick=${() => setQty('U', (q.U || 0) + 1)}>+</button>
         </div>
         <div class="quick">${[1, 2, 3, 4, 6].map(n => html`<button class="qbtn" onClick=${() => setQty('U', n)}>${n}</button>`)}${u > 0 && html`<button class="qbtn" onClick=${() => setQty('U', 0)}>Clear</button>`}</div>`}
-      ${mix && mix[1].budget > 0 && html`<div class="pd-budget"><span class="muted">${CAT_LABEL[p.cat]}</span>
-        <span class="num">${mix[1].value !== mix[0].value && html`<span class="muted">${fmt(mix[0].value)} → </span>`}<b class=${'st-' + mix[1].st}>${fmt(mix[1].value)}</b> <span class="muted">of ${fmt(mix[1].budget)}</span></span></div>`}
     </div>`}
     <div class="pd-cta">${!o ? html`<button class="btn black" onClick=${pick}>Add to order</button>`
       : why ? html`${line && html`<div class="pd-in">In order · ${u ? val(u) : 'no quantity'}</div>`}<button class="btn black" disabled>${b.shop} · ${why}</button>`
