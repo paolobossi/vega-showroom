@@ -54,7 +54,7 @@ The whole order's status is worked out from its parts: all the same → that sta
 
 | Status | Meaning |
 |---|---|
-| Available (`Add` button) | The client can buy it. Add sits at the bottom of the card, under the prices; tapping it puts the style in the order with one unit (one per size on sized styles). |
+| Available (`Add` button) | The client can buy it. Add sits at the bottom of the card, under the prices; tapping it puts the style in the order at zero units and slides its product page up over the Collection to enter sizes. |
 | In order (`− units +` at the bottom of the card) | Already in the client's selection. Add turns into this, in the same place and at the same height. + and − change one unit (one per size on sized styles); at the last step − is a bin that takes it out; the number opens the product page for the sizes. |
 | Not available (`Not available`) | Not open to this client's tier (see Client tier). Hidden from the Collection during a visit. |
 | Division not bought (`No men’s` / `No women’s`) | The client doesn't buy that division. |

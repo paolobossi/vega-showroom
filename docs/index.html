@@ -485,7 +485,8 @@ input{font:inherit;color:inherit}
 /* media sheet: photos run edge to edge under the rounded top, close floats on the top left */
 .sheet.media{overflow:hidden}
 /* the product page rises almost to the top, over the page title; a sliver stays visible so it still reads as a sheet */
-.sheet.media.tall{height:calc(100% - 12px);max-height:none}
+.sheet.media.tall{height:calc(100% - 12px);max-height:none;animation:slide .32s cubic-bezier(.2,.8,.2,1)}
+@keyframes slide{from{transform:translateY(100%)}to{transform:none}}
 .sheet.media .sheet-grab{position:absolute;z-index:3;top:0;left:0;right:0;background:rgba(20,22,25,.22)}
 .sheet.media .sheet-body{padding-top:0}
 .sheet.media .car{margin:0 -18px}
@@ -1315,14 +1316,15 @@ function ProductList({div, q, b, season, onPick}) {
   </button>`)}</div>`;
 }
 
-// Collection card: photo opens the product page; Add at the bottom puts the style in the client's order with one unit (one per size when sized),
-// then turns into − units + in the same place to edit it right there; the number opens the product page for the sizes. The back-office tag sits on the photo
+// Collection card: photo opens the product page; Add at the bottom puts the style in the client's order at zero units and opens its page,
+// then turns into − units + in the same place to edit it right there (one unit, or one per size when sized); the number opens the product page for the sizes. The back-office tag sits on the photo
 const stepQty = (p, q, d) => Object.fromEntries(p.sizes.map(sz => [sz, Math.min(99, Math.max(0, (q[sz] || 0) + d))]).filter(([, n]) => n > 0));
 function PCard({p, o, act}) {
   const mine = o && o.lines.find(l => l.pid === p.id), has = !!mine, c = mine ? mine.colour : p.colours[0], why = o && canTake(o, p);
   const lock = why, q = has ? mine.qty || {} : {}, last = Math.max(0, ...p.sizes.map(sz => q[sz] || 0)) <= 1;
-  const add = () => o ? act.select(o.id, p.id, c, 'search', stepQty(p, {}, 1)) : act.sheet({type:'pick', item:{pid:p.id, colour:c, via:'search'}});
   const open = () => act.sheet({type:'product', pid:p.id, colour:c});
+  // Add puts the style in the order at zero units and opens its page over the Collection to enter sizes
+  const add = () => { if (!o) return act.sheet({type:'pick', item:{pid:p.id, colour:c, via:'search'}}); act.select(o.id, p.id, c, 'search'); open(); };
   return html`<div class=${'pcard' + (lock && !has ? ' locked' : '')}>
     <div class="pc-photo">
       <button class="pc-img" onClick=${() => act.sheet({type:'product', pid:p.id})} aria-label=${'Open ' + p.name}><${Thumb} pid=${p.id} colour=${c}/></button>
@@ -1540,7 +1542,7 @@ function ProductSheet({pid, colour, orderId, S, ui, act}) {
   const edit = o && !why;
   const curves = CURVES[p.sizes.length] || [];
   const val = n => `${n} ${n === 1 ? 'unit' : 'units'}`;
-  return html`<${Sheet} page title=${p.name} onClose=${act.close}
+  return html`<${Sheet} tall title=${p.name} onClose=${act.close}
     media=${html`<div class="pd-media"><${Carousel} p=${p} colour=${c} at=${ui.photoAt} onOpen=${i => act.set({zoom:{pid, colour:c, i}})}/><${Tag} p=${p}/></div>`}>
     <div class="pd-head"><h1 class="pd-name">${p.name}</h1>
       <div class="pd-sub"><span class="code">${p.code}</span></div></div>
@@ -1947,7 +1949,7 @@ function BuyerView({S, ui, act}) {
    ===================================================================== */
 const GUIDE_STEPS = [
   'In Home, Maison Dubois is ongoing. Open another client and tap Check in at the bottom: the visit switches and the Collection opens.',
-  'In the Collection, tap + on a photo to select a style. Only styles the client can buy show; Filters choose the collection and the drop.',
+  'In the Collection, tap Add under a style to put it in the order and enter its sizes. Only styles the client can buy show; Filters choose the collection and the drop.',
   'Tap the client bar at the top to open the order: enter sizes line by line, then see Budgets & KPIs for mix rules, required looks and drops.',
   'Tap the send button: the client signs on the phone, or gets a link to review within 48 hours. Women’s and men’s can be sent separately.',
   'A sent part is read-only here. The commercial team confirms it for production in the back office.',
