@@ -40,10 +40,20 @@ The whole order's status is worked out from its parts: all the same → that sta
 | Status | Meaning |
 |---|---|
 | Available (`+` button) | The client can buy it; tapping + adds it to the order. |
-| In order (`In order`) | Already in the client's selection; × takes it out. |
+| In order (green outline) | Already in the client's selection; × takes it out. |
 | Not available (`Not available`) | Not open to this client's level (set in the back office). Hidden from the Collection during a visit. |
 | Division not bought (`No men’s` / `No women’s`) | The client doesn't buy that division. |
 | Division sent (`Women sent` / `Men sent`) | That part of the order is sent, so nothing more can be added to it. |
+
+## Product tag (set in the back office, shown on the photo)
+
+| Tag | Meaning |
+|---|---|
+| Must have (`Must have`, black) | One of the season's hero pieces. |
+| Essential (`Essential`, white) | A core style. |
+| None | No tag on the photo. |
+
+A style that can't be bought shows why instead of its tag.
 
 ## Guideline checks (Budgets & KPIs, Home guidelines)
 
