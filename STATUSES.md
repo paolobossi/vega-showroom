@@ -55,8 +55,7 @@ The whole order's status is worked out from its parts: all the same → that sta
 | Status | Meaning |
 |---|---|
 | Available (`Add` button) | The client can buy it. Add sits at the bottom of the card, under the prices; tapping it puts the style in the order at zero units and slides its product page up over the Collection to enter sizes. |
-| In order, one-size style (`− units +` at the bottom of the card) | Already in the client's selection. Add turns into this, in the same place and at the same height. + and − change one unit at a time; at the last step − is a bin that takes it out; the number opens the product page. |
-| In order, sized style (`Edit` at the bottom of the card) | Already in the client's selection. Edit opens the product page again to set the quantity per size. |
+| In order (`Edit`, black, at the bottom of the card) | Already in the client's selection. Add turns into Edit, in the same place and at the same height; Edit opens the product page again, where colours and quantities are set. The card itself never shows a quantity. |
 | Not available (`Not available`) | Not open to this client's tier (see Client tier). Hidden from the Collection during a visit. |
 | Division not bought (`No men’s` / `No women’s`) | The client doesn't buy that division. |
 | Division sent (`Women sent` / `Men sent`) | That part of the order is sent, so nothing more can be added to it. |
@@ -137,10 +136,10 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 ### 6. Adding a style and entering quantities
 - [ ] 6.1 Each card shows photo, name, code, wholesale and retail price, colour dots and an outlined **Add** button at the bottom.
 - [ ] 6.2 Tap Add → the product page slides up as a bottom sheet over the Collection; it says "In order · no quantity yet"; toast "Added to order".
-- [ ] 6.3 Sized style: tap Add, tap + on two sizes in the sheet, close it → the card shows **Edit** in the same box, at the same height as Add; Edit opens the product page again with the sizes entered.
-- [ ] 6.4 One-size style (e.g. a bag): tap Add, close the sheet without entering anything → the card shows bin · 0 · +; the style is in the order with no quantity.
-- [ ] 6.5 One-size style on the card: + adds exactly one unit each tap; − removes one; at the last step − is a bin, and the bin takes the style out of the order (the card goes back to Add).
-- [ ] 6.6 Tap the number on a one-size card → the product page opens on that colour.
+- [ ] 6.3 Tap Add, set quantities (or nothing) in the sheet and close it → the card shows **Edit** in black, in the same place and at the same height as Add; no quantity on the card.
+- [ ] 6.4 Tap Edit → the product page opens again on the colour in the order, with the quantities entered; another colour can be added from there.
+- [ ] 6.5 Remove from order on the product page → the card goes back to Add.
+- [ ] 6.6 Add stays outlined (white) and Edit black, so the styles already in the order stand out in the grid.
 - [ ] 6.7 Product page: size curves (Core, Full), "+1 each" and Clear work on sized styles; one-size styles have only − / +, with no preset numbers.
 - [ ] 6.8 Product page, another colour not in the order: set quantities, then **Add to order · N units** → that colour joins the order; colours in the order carry a flag.
 - [ ] 6.9 Product page: Remove from order takes that colour out.

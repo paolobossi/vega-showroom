@@ -368,12 +368,9 @@ input{font:inherit;color:inherit}
 .pc-img{display:block;width:100%}
 .pc-photo .thumb{width:100%;height:auto;aspect-ratio:1;border-radius:10px}
 .pcard.locked .pc-img{opacity:.5}
-/* under the card info: Add, which turns into bin/− units + (one-size styles, one unit a step) or Edit (sized styles) in the same outlined box, same height */
-.pc-act{margin-top:auto;display:flex;align-items:center;height:40px;border:1.5px solid color-mix(in srgb,var(--ink) 20%,transparent);border-radius:12px;background:var(--surface);color:var(--ink);overflow:hidden}
-.pc-add{width:100%;justify-content:center;font-size:14.5px;font-weight:650}
-.pc-qty{justify-content:space-between}
-.pc-qty button{display:grid;place-items:center;width:42px;height:100%;color:inherit}
-.pc-qty .n{flex:1;width:auto;font-size:15.5px;font-weight:700;font-variant-numeric:tabular-nums}
+/* under the card info: Add, or Edit in black once the style is in the order; both open the product page for colours and quantities */
+.pc-act{margin-top:auto;display:flex;align-items:center;justify-content:center;width:100%;height:40px;border:1.5px solid color-mix(in srgb,var(--ink) 20%,transparent);border-radius:12px;background:var(--surface);color:var(--ink);font-size:14.5px;font-weight:650}
+.pc-act.on{background:var(--band);border-color:var(--band);color:var(--band-ink)}
 .pc-lock{position:absolute;left:5px;top:5px;display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;padding:3px 7px 3px 5px;border-radius:99px;max-width:calc(100% - 44px);white-space:nowrap;overflow:hidden}
 /* back-office tag on the photo: Must have in black, Essential in white */
 .ptag{position:absolute;z-index:2;left:6px;top:6px;padding:4px 9px;border-radius:99px;font-size:10.5px;font-weight:700;letter-spacing:.02em;white-space:nowrap;pointer-events:none}
@@ -1317,11 +1314,10 @@ function ProductList({div, q, b, season, onPick}) {
 }
 
 // Collection card: photo opens the product page; Add at the bottom puts the style in the client's order at zero units and opens its page.
-// Then one-size styles get − units + in the same place, one unit at a time; sized styles get Edit, which opens the page again for the sizes. The back-office tag sits on the photo
-const stepQty = (p, q, d) => Object.fromEntries(p.sizes.map(sz => [sz, Math.min(99, Math.max(0, (q[sz] || 0) + d))]).filter(([, n]) => n > 0));
+// Once it is in the order the button reads Edit, in black, and opens the page again: colours and quantities are set there, never on the card.
 function PCard({p, o, act}) {
   const mine = o && o.lines.find(l => l.pid === p.id), has = !!mine, c = mine ? mine.colour : p.colours[0], why = o && canTake(o, p);
-  const lock = why, q = has ? mine.qty || {} : {}, last = Math.max(0, ...p.sizes.map(sz => q[sz] || 0)) <= 1;
+  const lock = why;
   const open = () => act.sheet({type:'product', pid:p.id, colour:c});
   // Add puts the style in the order at zero units and opens its page over the Collection to enter sizes
   const add = () => { if (!o) return act.sheet({type:'pick', item:{pid:p.id, colour:c, via:'search'}}); act.select(o.id, p.id, c, 'search'); open(); };
@@ -1336,13 +1332,8 @@ function PCard({p, o, act}) {
       <${Prices} p=${p}/>
       <span class="dots">${p.colours.map(x => html`<span class="sw" style=${{background:COL[x][0]}}></span>`)}</span>
     </button>
-    ${has ? !why && (p.sizes.length > 1 ? html`<button class="pc-act pc-add" onClick=${open} aria-label=${'Edit sizes of ' + p.name + ' · ' + units(q) + ' units'}>Edit</button>`
-      : html`<div class="pc-act pc-qty">
-        <button onClick=${() => last ? act.unselect(o.id, p.id, c) : act.setQty(o.id, mine.id, stepQty(p, q, -1))} aria-label=${last ? 'Remove ' + p.name + ' from the order' : 'One less'}><${Icon} n=${last ? 'bin' : 'minus'} s=${last ? 17 : 18} w=${2.4}/></button>
-        <button class="n" onClick=${open} aria-label=${units(q) + ' units. Open the product'}>${units(q)}</button>
-        <button onClick=${() => act.setQty(o.id, mine.id, stepQty(p, q, 1))} aria-label="One more"><${Icon} n="plus" s=${18} w=${2.4}/></button>
-      </div>`)
-      : !(o && why) && html`<button class="pc-act pc-add" onClick=${add} aria-label=${'Add ' + p.name + (o ? ' to ' + BUYERS[o.buyerId].shop : ' to an order')}>Add</button>`}
+    ${has ? !why && html`<button class="pc-act on" onClick=${open} aria-label=${'Edit ' + p.name + ' in the order'}>Edit</button>`
+      : !(o && why) && html`<button class="pc-act" onClick=${add} aria-label=${'Add ' + p.name + (o ? ' to ' + BUYERS[o.buyerId].shop : ' to an order')}>Add</button>`}
   </div>`;
 }
 
