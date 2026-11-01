@@ -96,7 +96,7 @@ input{font:inherit;color:inherit}
 .screen{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
 /* floating pill tab bar; content scrolls underneath */
 .screen.tabbed{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
-.screen.tabbed.with-pill{padding-bottom:calc(160px + env(safe-area-inset-bottom,0px))}
+.screen.tabbed.with-pill{padding-bottom:calc(154px + env(safe-area-inset-bottom,0px))}
 /* the client pill and the tab bar float together at the bottom; the pill takes the tab bar's width */
 .dock{position:absolute;z-index:20;left:50%;transform:translateX(-50%);bottom:max(14px,calc(env(safe-area-inset-bottom,0px) - 6px));display:flex;flex-direction:column;gap:8px}
 .tabbar{display:flex;gap:2px;padding:5px;border-radius:999px;
@@ -104,20 +104,20 @@ input{font:inherit;color:inherit}
   border:1px solid color-mix(in srgb,var(--line) 70%,transparent);box-shadow:0 10px 30px rgba(0,0,0,.14),0 1px 3px rgba(0,0,0,.08)}
 .tab{display:flex;flex-direction:column;align-items:center;gap:1px;font-size:10.5px;font-weight:600;color:var(--muted);min-width:74px;padding:7px 10px 6px;border-radius:999px;transition:background .2s,color .2s}
 .tab.on{color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
-/* client in session: a black pill above the tab bar, on every tab, with the last two pieces added as photos; tapping it opens the visit */
-.sbar{align-self:center;display:flex;align-items:center;gap:11px;max-width:100%;min-width:0;padding:5px 24px 5px 5px;border-radius:999px;background:var(--band);color:var(--band-ink);text-align:left;border:1px solid rgba(255,255,255,.1);box-shadow:0 10px 26px rgba(0,0,0,.24);animation:rise .3s cubic-bezier(.2,.8,.2,1)}
+/* client in session: a black pill above the tab bar, on every tab, with the first two pieces added as photos (they stay put as more are added); tapping it opens the order */
+.sbar{align-self:center;display:flex;align-items:center;gap:11px;max-width:100%;min-width:0;padding:4px 22px 4px 4px;border-radius:999px;background:var(--band);color:var(--band-ink);text-align:left;border:1px solid rgba(255,255,255,.1);box-shadow:0 10px 26px rgba(0,0,0,.24);animation:rise .3s cubic-bezier(.2,.8,.2,1)}
 @keyframes rise{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
 .sbar-ph{position:relative;flex:none;display:flex}
-.sbar-c{width:46px;height:46px;border-radius:50%;border:2px solid var(--band);background:#fff;overflow:hidden}
-.sbar-c + .sbar-c{margin-left:-18px}
+.sbar-c{width:42px;height:42px;border-radius:50%;border:2px solid var(--band);background:#fff;overflow:hidden}
+.sbar-c + .sbar-c{margin-left:-16px;border:3px solid var(--band)}
 /* the photos are full-length shots: zoom in so the piece fills the circle */
 .sbar-c img{width:100%;height:100%;object-fit:cover;object-position:50% 62%;transform:scale(1.5)}
-.sbar-none{display:grid;width:46px;height:46px;border-radius:50%;border:2px solid var(--band);place-items:center;background:#2A2C30 !important;color:rgba(255,255,255,.7)}
+.sbar-none{display:grid;width:42px;height:42px;border-radius:50%;border:2px solid var(--band);place-items:center;background:#2A2C30 !important;color:rgba(255,255,255,.7)}
 @keyframes beat{from{transform:scale(1);opacity:.7}to{transform:scale(2.6);opacity:0}}
 .sbar-t{min-width:0;display:flex;flex-direction:column;gap:1px;line-height:1.2}
 .sbar-t b,.sbar-t span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sbar-t b{font-size:16.5px;font-weight:700;letter-spacing:-.01em}
-.sbar-t span{font-size:13px;font-weight:500;opacity:.7}
+.sbar-t b{font-size:15px;font-weight:700;letter-spacing:-.01em}
+.sbar-t span{font-size:12px;font-weight:500;opacity:.7}
 .top{padding:14px 18px 6px}
 /* Profile: the seller, their orders, passcode and sign out */
 .prof{display:flex;align-items:center;gap:14px;padding:4px 2px 6px}
@@ -592,7 +592,7 @@ input{font:inherit;color:inherit}
 .demo-bar button{color:var(--bg);text-decoration:underline;font-weight:700;padding:6px 4px}
 .toast{position:absolute;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:99px;font-size:14px;font-weight:600;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis;animation:toast .2s ease;display:flex;gap:6px;align-items:center}
 @keyframes toast{from{transform:translate(-50%,16px);opacity:0}}
-.app.with-pill .toast{bottom:calc(156px + env(safe-area-inset-bottom,0px))}
+.app.with-pill .toast{bottom:calc(150px + env(safe-area-inset-bottom,0px))}
 /* the product page covers the tab bar, so its messages sit at the very bottom */
 .app:has(.sheet.page) .toast{bottom:max(20px,env(safe-area-inset-bottom,0px))}
 
@@ -606,7 +606,7 @@ input{font:inherit;color:inherit}
   .tabbar{padding:4px}
   .tab{flex-direction:row;gap:6px;font-size:12.5px;padding:6px 16px}
   .screen.tabbed{padding-bottom:64px}
-  .screen.tabbed.with-pill{padding-bottom:120px}
+  .screen.tabbed.with-pill{padding-bottom:114px}
   .ov-body{padding-bottom:72px}
   .ov-actions{bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 8px))}
 }
@@ -1910,9 +1910,9 @@ function SessionBar({S, ui, act}) {
   const o = activeOrder(S, ui); if (!o) return null;
   const b = BUYERS[o.buyerId], n = o.lines.length, u = b.divs.reduce((a, d) => a + kpi(o, d).units, 0);
   return html`<button class="sbar" onClick=${() => act.openOrder(b.id)} aria-label=${`Ordering for ${b.shop}: ${n} ${n === 1 ? 'item' : 'items'}, ${u} units. Open the order`}>
-    <span class="sbar-ph" aria-hidden="true">${n ? o.lines.slice(-2).map(l => html`<span class="sbar-c"><img src=${imgSrc(P[l.pid], l.colour)} alt="" draggable="false"/></span>`)
+    <span class="sbar-ph" aria-hidden="true">${n ? o.lines.slice(0, 2).map(l => html`<span class="sbar-c"><img src=${imgSrc(P[l.pid], l.colour)} alt="" draggable="false"/></span>`)
       : html`<span class="sbar-none"><${Icon} n="orders" s=${20}/></span>`}</span>
-    <span class="sbar-t"><b>${b.shop}</b><span>${n ? `View order · ${n} ${n === 1 ? 'item' : 'items'}` : 'View order · nothing yet'}</span></span>
+    <span class="sbar-t"><b>${b.shop}</b><span>View order</span></span>
   </button>`;
 }
 
