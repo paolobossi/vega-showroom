@@ -113,8 +113,6 @@ input{font:inherit;color:inherit}
 /* the photos are full-length shots: zoom in so the piece fills the circle */
 .sbar-c img{width:100%;height:100%;object-fit:cover;object-position:50% 62%;transform:scale(1.5)}
 .sbar-none{display:grid;width:46px;height:46px;border-radius:50%;border:2px solid var(--band);place-items:center;background:#2A2C30 !important;color:rgba(255,255,255,.7)}
-.sbar-dot{position:absolute;left:1px;bottom:1px;width:12px;height:12px;border-radius:50%;background:#3CCB7F;border:2.5px solid var(--band)}
-.sbar-dot::after{content:"";position:absolute;inset:0;border-radius:50%;background:#3CCB7F;animation:beat 1.8s ease-out infinite}
 @keyframes beat{from{transform:scale(1);opacity:.7}to{transform:scale(2.6);opacity:0}}
 .sbar-t{min-width:0;display:flex;flex-direction:column;gap:1px;line-height:1.2}
 .sbar-t b,.sbar-t span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1105,11 +1103,9 @@ function GuideSheet({act}) {
 }
 
 function Today({S, ui, act}) {
-  const rep = REPS[S.rep], so = activeOrder(S, ui), sb = so && BUYERS[so.buyerId];
+  const so = activeOrder(S, ui), sb = so && BUYERS[so.buyerId];
   return html`
-    <header class="top top-bar mid"><h1 class="h1">Looks</h1>
-      <button class="avatar" onClick=${() => act.tab('profile')} aria-label=${'Signed in as ' + rep.name + '. Open profile'}>${rep.ini}</button>
-    </header>
+    <header class="top top-bar mid"><h1 class="h1">Looks</h1></header>
     <section class="sec"><${GuideBanner} act=${act}/></section>
     <div class="today-grid">
       ${(sb ? sb.divs : ['W', 'M']).map(d => html`<section class="sec">
@@ -1146,7 +1142,7 @@ const CheckPill = ({a, o}) => !a || !a.in ? null : a.out ? (o ? html`<${Pill} s=
   : html`<span class="pill s-in" title=${'Checked in at ' + hhmm(a.in)}><i class="live-dot" aria-hidden="true"></i>Ongoing</span>`;
 
 function CalendarTab({S, act}) {
-  const rep = REPS[S.rep], [day, setDay] = useState(TODAY_IDX), strip = useRef(null);
+  const [day, setDay] = useState(TODAY_IDX), strip = useRef(null);
   // open with today in view, one past day showing to its left
   useEffect(() => { const el = strip.current, t = el && el.children[TODAY_IDX]; if (t) el.scrollLeft = t.offsetLeft - el.offsetLeft - t.offsetWidth - 8; }, []);
   const all = myBuyers(S).filter(b => dayOf(b) === DAY_OFFS[day]), now = all.filter(b => isOngoing(S.appts[b.id])), list = all.filter(b => !now.includes(b));
@@ -1160,7 +1156,6 @@ function CalendarTab({S, act}) {
         </button>`;
   return html`
     <header class="top top-bar mid"><h1 class="h1"><button class="h1-btn" onClick=${reloadApp} aria-label="Home. Tap to reload the app">Home</button></h1>
-      <button class="avatar" onClick=${() => act.tab('profile')} aria-label=${'Signed in as ' + rep.name + '. Open profile'}>${rep.ini}</button>
     </header>
     <section class="sec">
       <div class="days" role="tablist" ref=${strip}>${SHOW_DAYS.map((d, i) => html`<button role="tab" aria-selected=${i === day} class=${'day' + (i === day ? ' on' : '')} onClick=${() => setDay(i)}>
@@ -1899,7 +1894,7 @@ function SessionBar({S, ui, act}) {
   const b = BUYERS[o.buyerId], n = o.lines.length, u = b.divs.reduce((a, d) => a + kpi(o, d).units, 0);
   return html`<button class="sbar" onClick=${() => act.sheet({type:'appt', bid:b.id, pill:true})} aria-label=${`Ordering for ${b.shop}: ${n} ${n === 1 ? 'item' : 'items'}, ${u} units. Open the visit`}>
     <span class="sbar-ph" aria-hidden="true">${n ? o.lines.slice(-2).map(l => html`<span class="sbar-c"><img src=${imgSrc(P[l.pid], l.colour)} alt="" draggable="false"/></span>`)
-      : html`<span class="sbar-none"><${Icon} n="orders" s=${20}/></span>`}<span class="sbar-dot"></span></span>
+      : html`<span class="sbar-none"><${Icon} n="orders" s=${20}/></span>`}</span>
     <span class="sbar-t"><b>${b.shop}</b><span>${n ? `View order · ${n} ${n === 1 ? 'item' : 'items'}` : 'View order · nothing yet'}</span></span>
   </button>`;
 }
