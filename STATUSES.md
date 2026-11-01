@@ -39,8 +39,8 @@ The whole order's status is worked out from its parts: all the same → that sta
 
 | Status | Meaning |
 |---|---|
-| Available (`+` button) | The client can buy it; tapping + adds it to the order. |
-| In order (green outline) | Already in the client's selection; × takes it out. |
+| Available (`+` button) | The client can buy it; tapping + adds it to the order with one unit (one per size on sized styles). |
+| In order (`− units +` on the photo) | Already in the client's selection. + and − change one unit (one per size on sized styles); at the last step − is a bin that takes it out; the number opens the product page for the sizes. |
 | Not available (`Not available`) | Not open to this client's level (set in the back office). Hidden from the Collection during a visit. |
 | Division not bought (`No men’s` / `No women’s`) | The client doesn't buy that division. |
 | Division sent (`Women sent` / `Men sent`) | That part of the order is sent, so nothing more can be added to it. |

@@ -357,13 +357,15 @@ input{font:inherit;color:inherit}
 .pc-fam{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
 .pgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .pcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:6px;display:flex;flex-direction:column;gap:6px;min-width:0}
-.pcard.has{border-color:var(--good);box-shadow:inset 0 0 0 1px var(--good)}
 .pc-photo{position:relative}
 .pc-img{display:block;width:100%}
 .pc-photo .thumb{width:100%;height:auto;aspect-ratio:1;border-radius:10px}
 .pcard.locked .pc-img{opacity:.5}
 .pc-btn{position:absolute;right:5px;bottom:5px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--accent-ink);box-shadow:0 2px 8px rgba(0,0,0,.2)}
-.pc-btn.x{top:5px;bottom:auto;width:30px;height:30px;background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+/* in the order: − units + on the photo; one-size styles step one unit, sized styles one per size; at the last step − becomes the bin */
+.pc-qty{position:absolute;left:5px;right:5px;bottom:5px;display:flex;align-items:center;justify-content:space-between;height:38px;border-radius:999px;background:var(--band);color:var(--band-ink);box-shadow:0 4px 12px rgba(0,0,0,.22)}
+.pc-qty button{display:grid;place-items:center;width:40px;height:38px;color:inherit;border-radius:999px}
+.pc-qty .n{flex:1;width:auto;font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
 .pc-lock{position:absolute;left:5px;top:5px;display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;padding:3px 7px 3px 5px;border-radius:99px;max-width:calc(100% - 44px);white-space:nowrap;overflow:hidden}
 /* back-office tag on the photo: Must have in black, Essential in white */
 .ptag{position:absolute;z-index:2;left:6px;top:6px;padding:4px 9px;border-radius:99px;font-size:10.5px;font-weight:700;letter-spacing:.02em;white-space:nowrap;pointer-events:none}
@@ -966,6 +968,7 @@ const IC = {
   grid:'M4 4h7v7H4z M13 4h7v7h-7z M4 13h7v7H4z M13 13h7v7h-7z', search:'M11 18a7 7 0 100-14 7 7 0 000 14z M16 16l5 5',
   lock:'M6 11h12v9H6z M9 11V8a3 3 0 016 0v3', x:'M6 6l12 12 M18 6L6 18', share:'M12 15V4 M8 8l4-4 4 4 M5 13v7h14v-7', sign:'M16.5 3.5l4 4L9 19l-5 1 1-5z M14 6l4 4 M13 21h8',
   check:'M5 12l5 5 9-10', export:'M12 4v11 M8 11l4 4 4-4 M5 20h14', clock:'M12 21a9 9 0 100-18 9 9 0 000 18z M12 7v5l3 2',
+  bin:'M4 7h16 M9 7V4h6v3 M6 7l1 13h10l1-13 M10 11v6 M14 11v6',
   user:'M12 12a4 4 0 100-8 4 4 0 000 8z M4 21c1-4 4-6 8-6s7 2 8 6', out:'M14 4h5v16h-5 M10 8l-4 4 4 4 M6 12h10', spark:'M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z',
   info:'M12 21a9 9 0 100-18 9 9 0 000 18z M12 11v6 M12 7.5v.01', history:'M4 12a8 8 0 108-8 8 8 0 00-6.5 3.3 M4 4v4h4 M12 8v4l3 2',
   copy:'M8 8h11v12H8z M5 16V4h11', alert:'M12 4l9 16H3z M12 10v4 M12 17v.01',
@@ -1295,17 +1298,23 @@ function ProductList({div, q, b, season, onPick}) {
   </button>`)}</div>`;
 }
 
-// Collection card: photo opens the product page; + selects the style for the client; in the order the card has a green outline and × takes it out.
-// The back-office tag (Must have, Essential) sits on the photo
+// Collection card: photo opens the product page; + adds the style to the client's order with one unit (one per size when sized),
+// then − units + on the photo edit it right there and the number opens the product page for the sizes. The back-office tag sits on the photo
+const stepQty = (p, q, d) => Object.fromEntries(p.sizes.map(sz => [sz, Math.min(99, Math.max(0, (q[sz] || 0) + d))]).filter(([, n]) => n > 0));
 function PCard({p, o, act}) {
   const mine = o && o.lines.find(l => l.pid === p.id), has = !!mine, c = mine ? mine.colour : p.colours[0], why = o && canTake(o, p);
-  const lock = why;
-  const add = () => o ? act.select(o.id, p.id, c, 'search') : act.sheet({type:'pick', item:{pid:p.id, colour:c, via:'search'}});
-  return html`<div class=${'pcard' + (lock && !has ? ' locked' : '') + (has ? ' has' : '')}>
+  const lock = why, q = has ? mine.qty || {} : {}, last = Math.max(0, ...p.sizes.map(sz => q[sz] || 0)) <= 1;
+  const add = () => o ? act.select(o.id, p.id, c, 'search', stepQty(p, {}, 1)) : act.sheet({type:'pick', item:{pid:p.id, colour:c, via:'search'}});
+  const open = () => act.sheet({type:'product', pid:p.id, colour:c});
+  return html`<div class=${'pcard' + (lock && !has ? ' locked' : '')}>
     <div class="pc-photo">
       <button class="pc-img" onClick=${() => act.sheet({type:'product', pid:p.id})} aria-label=${'Open ' + p.name}><${Thumb} pid=${p.id} colour=${c}/></button>
-      ${lock && !has ? html`<span class="pc-lock"><${Icon} n="lock" s=${11} w=${2.4}/>${lock}</span>` : html`<${Tag} p=${p}/>`}
-      ${has ? html`<button class="pc-btn x" onClick=${() => act.unselect(o.id, p.id)} aria-label=${'Remove ' + p.name + ' from the order'}><${Icon} n="x" s=${16} w=${2.6}/></button>`
+      ${lock ? html`<span class="pc-lock"><${Icon} n="lock" s=${11} w=${2.4}/>${lock}</span>` : html`<${Tag} p=${p}/>`}
+      ${has ? !why && html`<div class="pc-qty">
+          <button onClick=${() => last ? act.unselect(o.id, p.id, c) : act.setQty(o.id, mine.id, stepQty(p, q, -1))} aria-label=${last ? 'Remove ' + p.name + ' from the order' : 'One less'}><${Icon} n=${last ? 'bin' : 'minus'} s=${last ? 17 : 18} w=${2.4}/></button>
+          <button class="n" onClick=${open} aria-label=${units(q) + ' units. Open sizes'}>${units(q)}</button>
+          <button onClick=${() => act.setQty(o.id, mine.id, stepQty(p, q, 1))} aria-label=${p.sizes.length > 1 ? 'One more in each size' : 'One more'}><${Icon} n="plus" s=${18} w=${2.4}/></button>
+        </div>`
         : !(o && why) && html`<button class="pc-btn" onClick=${add} aria-label=${'Add ' + p.name + (o ? ' to ' + BUYERS[o.buyerId].shop : ' to an order')}><${Icon} n="plus" s=${18} w=${2.6}/></button>`}
     </div>
     <button class="pc-info" onClick=${() => act.sheet({type:'product', pid:p.id})}>
