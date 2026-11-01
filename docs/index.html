@@ -150,7 +150,7 @@ input{font:inherit;color:inherit}
 .h1-btn{font:inherit;letter-spacing:inherit;color:inherit;text-align:left}
 .h1-btn:active{opacity:.5}
 .fpage{position:absolute;inset:0;z-index:45;background:var(--bg);display:flex;flex-direction:column;animation:fade .2s ease}
-.fpage-head{flex:none;display:flex;justify-content:space-between;align-items:center;padding:8px 8px 0}
+.fpage-head{flex:none;display:flex;justify-content:space-between;align-items:center;padding:4px 4px 0}
 .fpage-body{flex:1;min-height:0;overflow-y:auto;width:100%;max-width:640px;margin:0 auto;padding:4px 20px max(24px,env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:18px}
 .fpage-body > *{flex-shrink:0}
 .fpage-body > .pin{margin:auto 0}
@@ -268,7 +268,9 @@ input{font:inherit;color:inherit}
 .car-dots i{width:6px;height:6px;border-radius:50%;background:rgba(20,22,25,.25);transition:background .2s,width .2s}
 .car-dots i.on{background:#141619;width:16px;border-radius:3px}
 .zoom{position:absolute;inset:0;z-index:50;background:var(--bg);display:flex;flex-direction:column;animation:fade .2s ease}
-.zoom-top{flex:none;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 8px 8px 18px}
+.zoom-top{flex:none;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:4px 4px 4px 18px}
+/* close on the full-screen photos and full-screen pages: a 52px target, easy to hit with a thumb */
+.zoom-top .icon-btn,.fpage-head .icon-btn{width:52px;height:52px;border-radius:26px}
 .zoom-t{font:650 18px/1.2 var(--f-display);letter-spacing:-.015em}
 .zoom .car{flex:1;min-height:0}
 .zoom .car-track{flex:1;min-height:0;border-radius:0}
@@ -504,7 +506,9 @@ input{font:inherit;color:inherit}
 /* page: the product detail fills the screen like a page, over the tab bar, and slides in from the right */
 .sheet.media.page{top:0;bottom:0;height:auto;max-height:none;max-width:none;border-radius:0;box-shadow:none;animation:push .26s cubic-bezier(.2,.8,.2,1)}
 .sheet.page .sheet-x{top:max(12px,env(safe-area-inset-top,0px))}
-.sheet-x{position:absolute;z-index:3;top:12px;left:12px;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.88);color:#141619;box-shadow:0 1px 4px rgba(0,0,0,.12);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.sheet-x{position:absolute;z-index:3;top:10px;left:10px;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.88);color:#141619;box-shadow:0 1px 4px rgba(0,0,0,.12);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+/* product page close: a 44px circle with an invisible margin around it, so a near miss still closes */
+.sheet-x::after{content:'';position:absolute;inset:-10px;border-radius:50%}
 @keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
 @keyframes fade{from{opacity:0}}
 @keyframes push{from{transform:translateX(24px);opacity:0}to{transform:none;opacity:1}}
@@ -614,11 +618,9 @@ input{font:inherit;color:inherit}
 .bv-head{flex:none;padding:12px 18px 12px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:8px;background:var(--surface)}
 .demo-bar{flex:none;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 12px 6px 16px;background:var(--ink);color:var(--bg);font-size:12.5px;font-weight:600}
 .demo-bar button{color:var(--bg);text-decoration:underline;font-weight:700;padding:6px 4px}
-.toast{position:absolute;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:99px;font-size:14px;font-weight:600;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis;animation:toast .2s ease;display:flex;gap:6px;align-items:center}
-@keyframes toast{from{transform:translate(-50%,16px);opacity:0}}
-.app.with-pill .toast{bottom:calc(150px + env(safe-area-inset-bottom,0px))}
-/* the product page covers the tab bar, so its messages sit at the very bottom */
-.app:has(.sheet.page) .toast{bottom:max(20px,env(safe-area-inset-bottom,0px))}
+/* every message slides up from the bottom edge of the screen, over the tab bar and the floating buttons */
+.toast{position:absolute;left:50%;bottom:max(16px,calc(env(safe-area-inset-bottom,0px) - 4px));transform:translateX(-50%);z-index:60;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:99px;font-size:14px;font-weight:600;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis;animation:toast .32s cubic-bezier(.2,.8,.2,1);display:flex;gap:6px;align-items:center}
+@keyframes toast{from{transform:translate(-50%,calc(100% + 40px))}}
 
 /* ---------- landscape: horizontal working layout ---------- */
 @container app (orientation: landscape){
@@ -641,7 +643,6 @@ input{font:inherit;color:inherit}
   .vf-stage{transform:translate(-50%,-42%)}
   .sheet,.match{max-height:94%}
   .sheet.tall{height:94%}
-  .toast{bottom:80px}
 }
 @container app (min-width: 700px) and (orientation: portrait){
   .pgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -1054,7 +1055,7 @@ function Sheet({title, sub, onClose, children, tall, foot, media, page}) {
   return html`${!page && html`<div class="scrim" onClick=${onClose}></div>`}
     <div class=${'sheet' + (tall ? ' tall' : '') + (media ? ' media' : '') + (page ? ' page' : '')} role="dialog" aria-label=${title}>
       ${!page && html`<div class="sheet-grab"></div>`}
-      ${media ? html`<button class="sheet-x" onClick=${onClose} aria-label=${page ? 'Back' : 'Close'}><${Icon} n=${page ? 'back' : 'x'} s=${18} w=${2.2}/></button>`
+      ${media ? html`<button class="sheet-x" onClick=${onClose} aria-label=${page ? 'Back' : 'Close'}><${Icon} n=${page ? 'back' : 'x'} s=${20} w=${2.2}/></button>`
         : html`<div class="sheet-head"><div style="min-width:0"><div class="sheet-title">${title}</div>${sub && html`<div class="sheet-sub">${sub}</div>`}</div>
         <button class="icon-btn" onClick=${onClose} aria-label="Close"><${Icon} n="x"/></button></div>`}
       <div class="sheet-body">${media}${children}</div>

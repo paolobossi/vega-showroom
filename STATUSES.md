@@ -204,3 +204,5 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 13.3 Landscape (iPad or the side panel's Landscape switch): layouts hold, nothing overlaps the pill or the floating buttons.
 - [ ] 13.4 Dark mode on the phone: text stays readable; the pill and the Must have tag stay black.
 - [ ] 13.5 Nothing sits under the notch or the home indicator; the last card in the Collection scrolls clear of the pill and tab bar.
+- [ ] 13.6 Every message (toast) slides up from the bottom edge of the screen and sits just above it, the same on every screen: over the tab bar and the client pill, over a product page and over the order buttons.
+- [ ] 13.7 Close buttons are easy to hit: the × on the product page (a 44px circle, and a near miss just outside it still closes), on the full-screen photos and on the full-screen pages (Set passcode, Sign the order, sign-in).
