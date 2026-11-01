@@ -301,7 +301,8 @@ input{font:inherit;color:inherit}
 .appt-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
 .appt-head .pill{flex:none;margin-top:1px}
 .appt-cats{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.appt-lbl{margin-top:14px}
+/* section headings on Home (Now, Today) and in the order (Ready-to-wear, Bags…): sentence case, black, a step above body text */
+.lbl.appt-lbl{margin-top:14px;font-size:16px;font-weight:650;letter-spacing:-.01em;text-transform:none;color:var(--ink)}
 .appt-cats b{color:var(--ink);font-weight:600;margin-right:4px}
 .kv{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted)}
 .live{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
@@ -437,7 +438,7 @@ input{font:inherit;color:inherit}
 .guide-row svg{transform:rotate(-90deg);color:var(--muted)}
 .ov-lines{padding:14px 16px 20px;display:flex;flex-direction:column;gap:14px}
 .lines-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:8px}
-.grp-head{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:0 2px 6px}
+.grp-head{display:flex;justify-content:space-between;align-items:baseline;font-size:16px;font-weight:650;letter-spacing:-.01em;color:var(--ink);padding:0 2px 8px}
 .empty{background:var(--surface);border:1px dashed var(--line);border-radius:16px;padding:22px 18px;text-align:center;color:var(--muted);display:flex;flex-direction:column;gap:8px;align-items:center}
 .ov-bar{flex:none;display:flex;gap:10px;align-items:center;padding:10px 14px max(12px,env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--surface)}
 .cap-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;height:54px;border-radius:27px;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:16px;white-space:nowrap;min-width:0}
@@ -515,11 +516,12 @@ input{font:inherit;color:inherit}
 .callout svg{flex:none;margin-top:1px}
 /* order page: where the order stands, once it has left the draft */
 .ov-state{display:flex;gap:12px;align-items:center;padding:14px 16px;border-radius:16px;box-shadow:none !important}
+.ov-state > div{min-width:0}
 .ov-state-ic{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:currentColor}
 .ov-state-ic svg{color:var(--surface)}
 .s-confirmed .ov-state-ic{background:var(--surface)} .s-confirmed .ov-state-ic svg{color:var(--good)}
 .ov-state b{display:block;font:650 19px/1.2 var(--f-display);letter-spacing:-.01em}
-.ov-state div span{display:block;font-size:13px;line-height:1.4;margin-top:2px;opacity:.9}
+.ov-state div span{display:block;font-size:13px;line-height:1.4;margin-top:2px;opacity:.9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px}
 
 /* size sheet */
@@ -1771,12 +1773,12 @@ function OrderView({S, ui, act, order}) {
   // products are added during the visit: for another client, Check in switches the visit to them
   const inVisit = ui.session === order.id;
   const st = order.status, when = t => new Date(t).toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
-  const signed = b.divs.filter(d => partLocked(order, d)).map(d => { const x = partOf(order, d);
-    return `${DIV_TAB[d]} signed${x.signer ? ' by ' + x.signer : ''}${x.at ? ' · ' + when(x.at) : ''}`; });
-  const stateSub = st === 'shared' ? `Review link sent · ${Math.max(0, 48 - Math.floor((Date.now() - order.sharedAt) / 36e5))}h left to sign`
-    : st === 'partial' ? [...signed, ...b.divs.filter(d => !partLocked(order, d)).map(d => `${DIV_TAB[d]} still a draft`)].join('. ')
-    : st === 'confirmed' ? 'Confirmed for production by the commercial team'
-    : signed.join('. ') + (signed.length ? '. ' : '') + 'The commercial team confirms it for production';
+  // the line under the banner title: one short line that never repeats the title
+  const last = b.divs.map(d => partOf(order, d)).filter(x => x.at).sort((x, y) => y.at - x.at)[0];
+  const stateSub = st === 'shared' ? `Link sent · ${Math.max(0, 48 - Math.floor((Date.now() - order.sharedAt) / 36e5))}h left to sign`
+    : st === 'partial' ? b.divs.map(d => `${DIV_TAB[d]} ${partLocked(order, d) ? 'signed' : 'still a draft'}`).join(' · ')
+    : st === 'confirmed' ? 'Ready for production'
+    : last ? `Signed${last.signer ? ' by ' + last.signer : ''} · ${when(last.at)}` : 'Signed by the client';
   return html`<div class="ov">
     <div class="ov-nav">
       <button class="icon-btn" onClick=${act.back} aria-label="Back"><${Icon} n="back"/></button>

@@ -102,7 +102,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 ### 2. Home and appointments
 - [ ] 2.1 Home opens on today, with one past day visible to the left of today in the day strip.
 - [ ] 2.2 Tap other days → each shows its appointments, or "No appointments on this day."
-- [ ] 2.3 The ongoing client sits under **Now** with a green Ongoing tag; the others under **Today**, each with time, city and what they buy per division.
+- [ ] 2.3 The ongoing client sits under **Now** with a green Ongoing tag; the others under **Today** (both headings in sentence case, black, slightly larger than the text), each with time, city and what they buy per division.
 - [ ] 2.4 Tap a client not yet checked in → sheet with Budget and Notes, and only **Check in** at the bottom.
 - [ ] 2.5 Type in Notes, close and reopen → the note is kept ("Saved automatically").
 - [ ] 2.6 Tap the ongoing client → "Ongoing since …", with Check out and Add products.
@@ -166,7 +166,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 9.1 The header shows only the client name (no order code) and a back button.
 - [ ] 9.2 Status, City and Saved time; Women / Men switch for clients who buy both.
 - [ ] 9.3 Budget card: spend of budget, bar coloured green / amber / red, and "Within the guidelines" or "N outside the guidelines"; tap → Budgets & KPIs (budget per category, mix rules, required looks).
-- [ ] 9.4 Lines grouped by category with totals. Each line: name, item code in regular black with a white Drop 1 / Drop 2 tag next to it, then the colour; no wholesale or retail price, only the line total and units. One-size lines have a − / + stepper; sized lines show the sizes as "36 x1" and a full-width Enter sizes / Edit sizes button (like Edit on the Collection cards); lines without quantity say "No quantity yet".
+- [ ] 9.4 Lines grouped by category with totals; the category headings (Ready-to-wear, Bags…) are in sentence case and black, like Now / Today on Home. Each line: name, item code in regular black with a white Drop 1 / Drop 2 tag next to it, then the colour; no wholesale or retail price, only the line total and units. One-size lines have a − / + stepper; sized lines show the sizes as "36 x1" and a full-width Enter sizes / Edit sizes button (like Edit on the Collection cards); lines without quantity say "No quantity yet".
 - [ ] 9.5 × on a line → the native iOS alert "Delete [style] in [colour] from the order?"; Cancel keeps it, OK removes it.
 - [ ] 9.6 A division with no products shows "No … products yet. Tap Add on any style in the Collection".
 - [ ] 9.7 During the visit the bottom buttons are **Save draft** and **Review and sign**; outside a visit, a round sign button and Check in to add products.
@@ -179,12 +179,12 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 10.4 Sign and send → full-screen "Sign the order": client, parts, units and value; Confirm stays disabled until a name is typed and a signature drawn.
 - [ ] 10.5 Confirm and send (all parts) → checked out, back to Home; toast "Women + Men sent · … checked out"; the row shows Sent.
 - [ ] 10.6 Sign only Women for a Women + Men client → also checked out and back to Home; the row shows Partly sent.
-- [ ] 10.7 Open that order → banner "Partly sent" with "Women signed by [name] · [date, time]. Men still a draft"; the tick is centred in its circle; Women lines are read-only, with the note that the women's order has been sent.
+- [ ] 10.7 Open that order → banner "Partly sent" with one line "Women signed · Men still a draft"; the tick is centred in its circle; Women lines are read-only, with the note that the women's order has been sent.
 - [ ] 10.8 Check the client in again → in the Collection, women's styles show "Women sent" and can't be added; Men can still be completed and signed.
-- [ ] 10.9 Fully sent order → banner "Sent", who signed and when, "The commercial team confirms it for production".
+- [ ] 10.9 Fully sent order → banner "Sent" with one line "Signed by [name] · [date, time]". A confirmed order → "Confirmed" with "Ready for production". The line under a banner title never repeats the title and never wraps.
 
 ### 11. Review link (client signs later)
-- [ ] 11.1 Review and sign → **Send the link to the client** → toast "Link sent · closes in 48h"; the link box with Copy appears; the order shows With client and the banner "Review link sent · 48h left to sign".
+- [ ] 11.1 Review and sign → **Send the link to the client** → toast "Link sent · closes in 48h"; the link box with Copy appears; the order shows With client and the banner line "Link sent · 48h left to sign".
 - [ ] 11.2 Copy → toast "Copied".
 - [ ] 11.3 Open as the client (demo) → "Your SS27 order" with "Closes in 48h", budgets and mix checks, the lines, Add a style, and Review and sign.
 - [ ] 11.4 As the client, change a quantity or add a style → the change shows on the seller's order; in the client view the line is marked as the client's.
