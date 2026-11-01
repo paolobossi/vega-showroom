@@ -54,8 +54,8 @@ The whole order's status is worked out from its parts: all the same → that sta
 
 | Status | Meaning |
 |---|---|
-| Available (`Add` button) | The client can buy it. Add sits at the bottom of the card, under the prices; tapping it puts the style in the order at zero units and slides its product page up over the Collection to enter sizes. |
-| In order (`Edit`, black, at the bottom of the card) | Already in the client's selection. Add turns into Edit, in the same place and at the same height; Edit opens the product page again, where colours and quantities are set. The card itself never shows a quantity. |
+| Available (`Add`, black) | The client can buy it. Add sits at the bottom of the card, under the prices; tapping it puts the style in the order at zero units and slides its product page up over the Collection to enter sizes. |
+| In order (`Edit · N units`, outlined, at the bottom of the card) | Already in the client's selection. Add turns into Edit, in the same place and at the same height, with the units of that style across all its colours (0 until quantities are set). Edit opens the product page again, where colours and quantities are set. |
 | Not available (`Not available`) | Not open to this client's tier (see Client tier). Hidden from the Collection during a visit. |
 | Division not bought (`No men’s` / `No women’s`) | The client doesn't buy that division. |
 | Division sent (`Women sent` / `Men sent`) | That part of the order is sent, so nothing more can be added to it. |
@@ -134,12 +134,12 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 5.5 New session (Profile → Orders → +) → the new client sees only the Silver styles.
 
 ### 6. Adding a style and entering quantities
-- [ ] 6.1 Each card shows photo, name, code, wholesale and retail price, colour dots and an outlined **Add** button at the bottom.
+- [ ] 6.1 Each card shows photo, name, code, wholesale and retail price, colour dots and a black **Add** button at the bottom.
 - [ ] 6.2 Tap Add → the product page slides up as a bottom sheet over the Collection; it says "In order · no quantity yet"; toast "Added to order".
-- [ ] 6.3 Tap Add, set quantities (or nothing) in the sheet and close it → the card shows **Edit** in black, in the same place and at the same height as Add; no quantity on the card.
+- [ ] 6.3 Tap Add, set quantities (or nothing) in the sheet and close it → the card shows **Edit · N units** outlined, in the same place and at the same height as Add (Edit · 0 units if nothing was set).
 - [ ] 6.4 Tap Edit → the product page opens again on the colour in the order, with the quantities entered; another colour can be added from there.
 - [ ] 6.5 Remove from order on the product page → the card goes back to Add.
-- [ ] 6.6 Add stays outlined (white) and Edit black, so the styles already in the order stand out in the grid.
+- [ ] 6.6 Add is black, Edit outlined; with two colours in the order (e.g. Small Amazona 180 in Mocha ×3 and Black ×2) Edit shows the total across colours: Edit · 5 units.
 - [ ] 6.7 Product page: size curves (Core, Full), "+1 each" and Clear work on sized styles; one-size styles have only − / +, with no preset numbers.
 - [ ] 6.8 Product page, another colour not in the order: set quantities, then **Add to order · N units** → that colour joins the order; colours in the order carry a flag.
 - [ ] 6.9 Product page: Remove from order takes that colour out.

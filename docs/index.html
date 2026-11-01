@@ -368,7 +368,7 @@ input{font:inherit;color:inherit}
 .pc-img{display:block;width:100%}
 .pc-photo .thumb{width:100%;height:auto;aspect-ratio:1;border-radius:10px}
 .pcard.locked .pc-img{opacity:.5}
-/* under the card info: Add, or Edit in black once the style is in the order; both open the product page for colours and quantities */
+/* under the card info: Add in black, or Edit outlined once the style is in the order (with its units across colours); both open the product page */
 .pc-act{margin-top:auto;display:flex;align-items:center;justify-content:center;width:100%;height:40px;border:1.5px solid color-mix(in srgb,var(--ink) 20%,transparent);border-radius:12px;background:var(--surface);color:var(--ink);font-size:14.5px;font-weight:650}
 .pc-act.on{background:var(--band);border-color:var(--band);color:var(--band-ink)}
 .pc-lock{position:absolute;left:5px;top:5px;display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;padding:3px 7px 3px 5px;border-radius:99px;max-width:calc(100% - 44px);white-space:nowrap;overflow:hidden}
@@ -1314,10 +1314,10 @@ function ProductList({div, q, b, season, onPick}) {
 }
 
 // Collection card: photo opens the product page; Add at the bottom puts the style in the client's order at zero units and opens its page.
-// Once it is in the order the button reads Edit, in black, and opens the page again: colours and quantities are set there, never on the card.
+// Once it is in the order the button reads Edit with the units across all colours, and opens the page again: colours and quantities are set there, never on the card.
 function PCard({p, o, act}) {
   const mine = o && o.lines.find(l => l.pid === p.id), has = !!mine, c = mine ? mine.colour : p.colours[0], why = o && canTake(o, p);
-  const lock = why;
+  const lock = why, total = has ? o.lines.filter(l => l.pid === p.id).reduce((a, l) => a + units(l.qty), 0) : 0;
   const open = () => act.sheet({type:'product', pid:p.id, colour:c});
   // Add puts the style in the order at zero units and opens its page over the Collection to enter sizes
   const add = () => { if (!o) return act.sheet({type:'pick', item:{pid:p.id, colour:c, via:'search'}}); act.select(o.id, p.id, c, 'search'); open(); };
@@ -1332,8 +1332,8 @@ function PCard({p, o, act}) {
       <${Prices} p=${p}/>
       <span class="dots">${p.colours.map(x => html`<span class="sw" style=${{background:COL[x][0]}}></span>`)}</span>
     </button>
-    ${has ? !why && html`<button class="pc-act on" onClick=${open} aria-label=${'Edit ' + p.name + ' in the order'}>Edit</button>`
-      : !(o && why) && html`<button class="pc-act" onClick=${add} aria-label=${'Add ' + p.name + (o ? ' to ' + BUYERS[o.buyerId].shop : ' to an order')}>Add</button>`}
+    ${has ? !why && html`<button class="pc-act" onClick=${open} aria-label=${'Edit ' + p.name + ' in the order: ' + total + ' units'}>Edit · ${total} ${total === 1 ? 'unit' : 'units'}</button>`
+      : !(o && why) && html`<button class="pc-act on" onClick=${add} aria-label=${'Add ' + p.name + (o ? ' to ' + BUYERS[o.buyerId].shop : ' to an order')}>Add</button>`}
   </div>`;
 }
 
