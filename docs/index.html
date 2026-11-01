@@ -399,6 +399,7 @@ input{font:inherit;color:inherit}
 .ov-actions{position:absolute;z-index:19;left:50%;transform:translateX(-50%);bottom:max(16px,calc(env(safe-area-inset-bottom,0px) - 4px));width:min(calc(100% - 28px),420px);display:flex;gap:10px}
 .ov-actions .cap-btn{box-shadow:0 8px 24px rgba(0,0,0,.18)}
 .ov-actions .round{background:var(--surface);box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.ov-actions .cap-btn.ghost{flex:none;padding:0 22px;background:var(--surface);color:var(--ink);border:1px solid var(--line);box-shadow:0 8px 24px rgba(0,0,0,.12)}
 .sel{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 4px;padding:12px 8px 12px 14px;border-top:1px solid var(--line)}
 .sel:first-child{border-top:0}
 .sel-info{display:flex;gap:12px;align-items:center;text-align:left;min-width:0}
@@ -1756,7 +1757,8 @@ function OrderView({S, ui, act, order}) {
       </div>
     </div>
     <div class="ov-actions">
-      ${inVisit ? html`<button class="cap-btn" onClick=${() => act.sheet({type:'finish', orderId:order.id})}><${Icon} n="sign" w=${2.2}/>Review and sign</button>`
+      ${inVisit ? html`<button class="cap-btn ghost" onClick=${() => act.endVisit(b.id, `Draft saved · ${b.shop} checked out`)}>Save draft</button>
+        <button class="cap-btn" onClick=${() => act.sheet({type:'finish', orderId:order.id})}><${Icon} n="sign" w=${2.2}/>Review and sign</button>`
         : html`<button class="round" onClick=${() => act.sheet({type:'finish', orderId:order.id})} aria-label="Review and sign"><${Icon} n="sign"/></button>
         <button class="cap-btn" disabled=${allSent} onClick=${() => act.checkIn(b.id)}><${Icon} n="check" w=${2.4}/>Check in to add products</button>`}
     </div>
@@ -1846,7 +1848,9 @@ function SignSheet({sh, S, act}) {
   const o = S.orders[sh.orderId], b = BUYERS[o.buyerId];
   const [name, setName] = useState(''), [signed, setSigned] = useState(false);
   const value = sh.divs.reduce((a, d) => a + kpi(o, d).total, 0), n = sh.divs.reduce((a, d) => a + kpi(o, d).units, 0);
-  const send = () => { act.send(o.id, sh.divs, 'client', name.trim()); act.close(); act.toast(`${sh.divs.map(d => DIV_TAB[d]).join(' + ')} sent`); };
+  const sent = `${sh.divs.map(d => DIV_TAB[d]).join(' + ')} sent`, all = b.divs.every(d => sh.divs.includes(d) || partLocked(o, d));
+  const send = () => { act.send(o.id, sh.divs, 'client', name.trim());
+    if (all && isOngoing(S.appts[b.id])) act.endVisit(b.id, `${sent} · ${b.shop} checked out`); else { act.close(); act.toast(sent); } };
   return html`<${FullPage} title="Sign the order" onClose=${act.close}
     foot=${html`<button class="btn primary" disabled=${!name.trim() || !signed} onClick=${send}>Confirm and send · ${fmt(value)}</button>`}>
     <h1 class="h1">Sign the order</h1>
@@ -1953,6 +1957,8 @@ function makeActs(setS, setUi, onReset) {
         return {...s, appts, orders: s.orders[id] ? s.orders : {...s.orders, [id]:newOrder(bid)}, savedAt:now}; });
       setUi(u => ({...u, session:id, div:BUYERS[bid].divs[0], sheet:null, capture:false, ...(stay ? {} : {tab:'catalogue', view:null})}));
       a.toast(`Checked in · ${BUYERS[bid].shop}`); },
+    // the two ways a visit ends from the order: Save draft, or the client signs what is left to send. Both go back to Home
+    endVisit: (bid, msg) => { a.appt(bid, {out:Date.now()}); setUi(u => ({...u, session: u.session === 'o-' + bid ? null : u.session, view:null, sheet:null, sub:null, tab:'calendar'})); a.toast(msg); },
     checkOut: bid => { a.appt(bid, {out:Date.now()}); setUi(u => u.session === 'o-' + bid ? {...u, session:null} : u); a.toast(`Checked out · ${BUYERS[bid].shop}`); },
     note: (bid, text) => a.appt(bid, {notes:text}),
     // the client in session: land in the Collection to add products
