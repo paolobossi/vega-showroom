@@ -413,11 +413,14 @@ input{font:inherit;color:inherit}
 .sel-info{display:flex;gap:12px;align-items:center;text-align:left;min-width:0}
 .sel-x{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--muted);align-self:start}
 .sel-ctl{grid-column:1 / -1;display:flex;align-items:center;gap:10px;padding-left:68px;padding-right:6px;flex-wrap:wrap}
-.sel-sz{font-size:13px;font-weight:650;color:var(--accent);padding:6px 2px}
+/* sized lines: Enter sizes / Edit sizes as a full-width button, like Edit on the Collection cards */
+.sel-edit{grid-column:1 / -1;margin:2px 6px 0 0}
 .sel-val{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;line-height:1.2}
 .sel-val small{font-size:11.5px;color:var(--muted)}
-.sel-meta{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
-.sel-meta small{font-size:10px;font-weight:700}
+.sel-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12.5px}
+.sel-code{color:var(--ink);font-weight:400;letter-spacing:.02em}
+/* the delivery drop: white tag with a grey outline next to the item code */
+.drop-tag{font-size:11px;font-weight:600;line-height:1;padding:3px 7px;border-radius:99px;background:var(--surface);border:1px solid var(--line);color:var(--ink)}
 .sel.open .sel-val small{color:var(--warn);font-weight:650}
 /* Women / Men on the order: underlined tabs; the budget summary below opens Budgets & KPIs */
 .ov-divs{display:flex;gap:6px;margin:4px -6px -6px;border-bottom:1px solid var(--line)}
@@ -1724,7 +1727,7 @@ function LineRow({l, onClick}) {
       <div class="row-title">${p.name}</div>
       <div class="row-sub"><${Colour} c=${l.colour}/></div>
       <div class="row-sub"><span class="pc-code">${p.code}</span></div>
-      ${p.sizes.length > 1 && html`<div class="szs">${p.sizes.filter(s => l.qty[s]).map(s => html`<span class="sz-chip">${s}·${l.qty[s]}</span>`)}</div>`}
+      ${p.sizes.length > 1 && html`<div class="szs">${p.sizes.filter(s => l.qty[s]).map(s => html`<span class="sz-chip">${s} x${l.qty[s]}</span>`)}</div>`}
     </div>
     <div class="row-side">
       <span class="row-val">${units(l.qty) ? fmt(lineValue(l)) : '—'}</span>
@@ -1743,18 +1746,18 @@ function SelLine({l, o, act, locked}) {
       <${Thumb} pid=${l.pid} colour=${l.colour}/>
       <span class="row-main">
         <span class="row-title">${p.name}</span>
+        <span class="sel-meta"><span class="sel-code">${p.code}</span><span class="drop-tag">${DROPS[p.drop].split(' · ')[0]}</span></span>
         <span class="row-sub"><${Colour} c=${l.colour}/></span>
-        <span class="sel-meta"><span class="pc-code">${p.code}</span><span class="num">${fmt(p.price)} <small>W</small> · ${fmt(p.rrp)} <small>R</small></span><span>${DROPS[p.drop].split(' · ')[0]}</span></span>
       </span>
     </button>
-    ${!locked && html`<button class="sel-x" onClick=${() => act.unselect(o.id, l.pid, l.colour)} aria-label=${'Remove ' + p.name + ' ' + l.colour}><${Icon} n="x" s=${16} w=${2.2}/></button>`}
+    ${!locked && html`<button class="sel-x" onClick=${() => confirm(`Delete ${p.name} in ${l.colour} from the order?`) && act.unselect(o.id, l.pid, l.colour)} aria-label=${'Remove ' + p.name + ' ' + l.colour}><${Icon} n="x" s=${16} w=${2.2}/></button>`}
     <div class="sel-ctl">
-      ${sized ? html`${u > 0 && html`<span class="szs">${p.sizes.filter(s => l.qty[s]).map(s => html`<span class="sz-chip">${s}·${l.qty[s]}</span>`)}</span>`}
-          ${!locked && html`<button class="sel-sz" onClick=${edit}>${u ? 'Edit sizes' : 'Enter sizes'}</button>`}`
+      ${sized ? u > 0 && html`<span class="szs">${p.sizes.filter(s => l.qty[s]).map(s => html`<span class="sz-chip">${s} x${l.qty[s]}</span>`)}</span>`
         : locked ? html`<span class="small muted num">×${u}</span>`
         : html`<${Stepper} n=${u} label=${p.name} on=${n => act.setUnits(o.id, l.id, n)}/>`}
       <span class="sel-val num">${u ? html`<b>${fmt(lineValue(l))}</b><small>×${u}</small>` : html`<small>No quantity yet</small>`}</span>
     </div>
+    ${sized && !locked && html`<button class="pc-act sel-edit" onClick=${edit}>${u ? 'Edit sizes' : 'Enter sizes'}</button>`}
   </div>`;
 }
 

@@ -166,8 +166,8 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 9.1 The header shows only the client name (no order code) and a back button.
 - [ ] 9.2 Status, City and Saved time; Women / Men switch for clients who buy both.
 - [ ] 9.3 Budget card: spend of budget, bar coloured green / amber / red, and "Within the guidelines" or "N outside the guidelines"; tap → Budgets & KPIs (budget per category, mix rules, required looks).
-- [ ] 9.4 Lines grouped by category with totals; one-size lines have a − / + stepper; sized lines show size chips and Enter sizes / Edit sizes; lines without quantity say "No quantity yet".
-- [ ] 9.5 × on a line removes it.
+- [ ] 9.4 Lines grouped by category with totals. Each line: name, item code in regular black with a white Drop 1 / Drop 2 tag next to it, then the colour; no wholesale or retail price, only the line total and units. One-size lines have a − / + stepper; sized lines show the sizes as "36 x1" and a full-width Enter sizes / Edit sizes button (like Edit on the Collection cards); lines without quantity say "No quantity yet".
+- [ ] 9.5 × on a line → the native iOS alert "Delete [style] in [colour] from the order?"; Cancel keeps it, OK removes it.
 - [ ] 9.6 A division with no products shows "No … products yet. Tap Add on any style in the Collection".
 - [ ] 9.7 During the visit the bottom buttons are **Save draft** and **Review and sign**; outside a visit, a round sign button and Check in to add products.
 - [ ] 9.8 Save draft → the client is checked out; back to Home; toast "Draft saved · … checked out"; the row shows Draft.
