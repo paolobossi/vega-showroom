@@ -395,7 +395,6 @@ input{font:inherit;color:inherit}
 .ov-nav{flex:none;display:flex;align-items:center;gap:4px;padding:4px 8px 4px;min-height:52px;border-bottom:1px solid var(--line)}
 .ov-nav-t{flex:1;min-width:0;text-align:center}
 .ov-shop{font:600 17px/1.2 var(--f-display);letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ov-id{font-size:12px;color:var(--muted)}
 .saved{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;color:var(--good);font-weight:600;animation:pulse .6s ease}
 @keyframes pulse{from{opacity:.2}to{opacity:1}}
 /* order facts: three labelled columns at the top of the page, scrolling with it */
@@ -513,7 +512,7 @@ input{font:inherit;color:inherit}
 .ov-state-ic svg{color:var(--surface)}
 .s-confirmed .ov-state-ic{background:var(--surface)} .s-confirmed .ov-state-ic svg{color:var(--good)}
 .ov-state b{display:block;font:650 19px/1.2 var(--f-display);letter-spacing:-.01em}
-.ov-state span{display:block;font-size:13px;line-height:1.4;margin-top:2px;opacity:.9}
+.ov-state div span{display:block;font-size:13px;line-height:1.4;margin-top:2px;opacity:.9}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px}
 
 /* size sheet */
@@ -857,7 +856,6 @@ const dayAt = (off, h, m) => todayAt(h, m) + off * 864e5;
 const pastAppts = () => Object.fromEntries(Object.values(BUYERS).filter(b => b.day < 0).map(b => { const [h, m] = b.time.split(':').map(Number);
   return [b.id, {in:dayAt(b.day, h, m + 4), out:dayAt(b.day, h + 1, m + 20)}]; }));
 const rank = c => CLUSTERS.indexOf(c);
-const orderNo = o => 'LOE-SS27-' + BUYERS[o.buyerId].code;
 
 function log(o, by, text) { o.log.push({at: Date.now(), by, text}); }
 
@@ -1772,7 +1770,7 @@ function OrderView({S, ui, act, order}) {
   return html`<div class="ov">
     <div class="ov-nav">
       <button class="icon-btn" onClick=${act.back} aria-label="Back"><${Icon} n="back"/></button>
-      <div class="ov-nav-t"><div class="ov-shop">${b.shop}</div><div class="ov-id">${orderNo(order)}</div></div>
+      <div class="ov-nav-t"><div class="ov-shop">${b.shop}</div></div>
       <span class="icon-btn" aria-hidden="true"></span>
     </div>
     <div class="ov-body">
@@ -1839,7 +1837,7 @@ function FinishSheet({sh, S, act}) {
   const value = sel.reduce((a, d) => a + kpi(o, d).total, 0);
   const shared = sel.length > 0 && sel.every(d => partOf(o, d).status === 'shared');
   const link = `loewe.vega.app/o/${b.code}-${sel.join('')}${String(o.lines.length).padStart(2, '0')}`;
-  return html`<${Sheet} title="Review and sign" sub=${orderNo(o)} onClose=${act.close}>
+  return html`<${Sheet} title="Review and sign" sub=${b.shop} onClose=${act.close}>
     ${!open.length ? html`<div class="callout good"><${Icon} n="check" s=${18}/><div>Everything is sent. The commercial team reviews the order and confirms it for production.</div></div>` : html`
       <div class="lbl">What to send</div>
       <div class="list">${b.divs.map(d => { const k = kpi(o, d), st = partOf(o, d).status, can = open.includes(d) && filled(d);
@@ -1900,7 +1898,7 @@ function SignSheet({sh, S, act}) {
     <h1 class="h1">Sign the order</h1>
     <div class="panel">
       <div class="bud-head"><span>${b.shop}</span><span class="num">${fmt(value)}</span></div>
-      <div class="small muted">${sh.divs.map(d => DIV_LABEL[d]).join(' and ')} · ${n} units · ${orderNo(o)}</div>
+      <div class="small muted">${sh.divs.map(d => DIV_LABEL[d]).join(' and ')} · ${n} units</div>
     </div>
     <label class="field"><span class="lbl">Name of the person signing</span><input class="inp" value=${name} onInput=${e => setName(e.target.value)} autocomplete="off"/></label>
     <div class="field"><span class="lbl">Signature</span><${SignPad} onSigned=${setSigned}/></div>

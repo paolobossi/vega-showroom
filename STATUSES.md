@@ -2,6 +2,21 @@
 
 The states each object can be in, as the showroom app shows them today. The label in the app is in brackets.
 
+## Client tier (set in the back office when the client is added)
+
+Every client gets one tier. It is back-office logic only: the seller never sees it in the app, only its effects. Each tier sees everything the tiers below it see, plus its own styles.
+
+| Tier | Styles open to the client | Default budget split, Women (Bags / RTW / Shoes / Acc.) | Default budget split, Men (Bags / RTW / Shoes / Acc.) |
+|---|---|---|---|
+| Silver | The core collection: 27 styles. | 50 / 20 / 15 / 15 % | 25 / 45 / 20 / 10 % |
+| Gold | Silver + 9 styles: Mini Featherlight Puzzle, Small Puzzle Edge, Large Featherlight Puzzle, Squad backpack, the puffer jackets, the short coat, Dive mule, Grip sneaker. | 45 / 25 / 15 / 15 % | 25 / 45 / 20 / 10 % |
+| Platinum | Gold + 2 styles: Medium Bilbao bucket, Small Whisker bag. | 40 / 30 / 15 / 15 % | 30 / 40 / 20 / 10 % |
+| Diamond | Everything, including styles set as Diamond only (none in this demo). | 35 / 35 / 15 / 15 % | 30 / 40 / 20 / 10 % |
+
+- **What the tier drives:** which styles the client can buy (a style set for a higher tier shows as Not available and is hidden during a visit), and how the division budget is split by category until the back office sets a budget per category for that client (±5 points tolerance).
+- **On each style** the back office sets the lowest tier that can buy it.
+- **A client added in the showroom** (New session, no back-office profile yet) starts as Silver until the back office assigns a tier.
+
 ## Client visit (appointment)
 
 | Status | Meaning |
@@ -41,7 +56,7 @@ The whole order's status is worked out from its parts: all the same → that sta
 |---|---|
 | Available (`+` button) | The client can buy it; tapping + adds it to the order with one unit (one per size on sized styles). |
 | In order (`− units +` on the photo) | Already in the client's selection. + and − change one unit (one per size on sized styles); at the last step − is a bin that takes it out; the number opens the product page for the sizes. |
-| Not available (`Not available`) | Not open to this client's level (set in the back office). Hidden from the Collection during a visit. |
+| Not available (`Not available`) | Not open to this client's tier (see Client tier). Hidden from the Collection during a visit. |
 | Division not bought (`No men’s` / `No women’s`) | The client doesn't buy that division. |
 | Division sent (`Women sent` / `Men sent`) | That part of the order is sent, so nothing more can be added to it. |
 
