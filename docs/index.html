@@ -1251,7 +1251,7 @@ function Profile({S, ui, act}) {
           <div class="row-main"><div class="row-title">${S.pins[S.rep] ? 'Change passcode' : 'Set passcode'}</div><div class="row-sub">${S.pins[S.rep] ? '4-digit code to sign in' : 'Not set: any 4 digits sign you in'}</div></div><${Icon} n="next" s=${18}/></button>
       </div>
       <div class="list"><button class="row" onClick=${() => act.sheet({type:'feedback'})}><span class="row-ic"><${Icon} n="msg" s=${19}/></span>
-          <div class="row-main"><div class="row-title">Leave feedback</div><div class="row-sub">Tell us what works and what doesn’t</div></div><${Icon} n="next" s=${18}/></button></div>
+          <div class="row-main"><div class="row-title">Leave feedback</div><div class="row-sub">About the app: what works, what doesn’t</div></div><${Icon} n="next" s=${18}/></button></div>
       <div class="list"><button class="row out" onClick=${act.signOut}><span class="row-ic"><${Icon} n="out" s=${19}/></span><div class="row-main"><div class="row-title">Sign out</div></div></button></div>
     </section>`;
 }
@@ -1434,14 +1434,14 @@ function SignIn({S, act}) {
   </div>`;
 }
 
-// Feedback on the app: a note and screenshots. In this mockup it stays on the device (the note and how many screenshots, not the images)
+// Sellers’ feedback on the app itself (for the Vega team): a note and screenshots. In this mockup it stays on the device (the note and how many screenshots, not the images)
 function FeedbackSheet({act}) {
   const [text, setText] = useState(''), [shots, setShots] = useState([]);
   const pick = e => { [...e.target.files].forEach(f => { const r = new FileReader(); r.onload = () => setShots(x => [...x, {id:uid(), src:r.result}]); r.readAsDataURL(f); }); e.target.value = ''; };
   const ok = text.trim() || shots.length;
-  return html`<${Sheet} title="Leave feedback" sub="What works, what doesn’t, what’s missing" onClose=${act.close}
+  return html`<${Sheet} title="Leave feedback" sub="About the app: what works, what doesn’t, what’s missing" onClose=${act.close}
     foot=${html`<button class="btn primary" disabled=${!ok} onClick=${() => act.feedback(text.trim(), shots.length)}>Send feedback</button>`}>
-    <label class="field"><span class="lbl">Your feedback</span>
+    <label class="field"><span class="lbl">Your feedback on the app</span>
       <textarea class="inp area" rows="6" placeholder="e.g. On the product page I’d like to…" value=${text} onInput=${e => setText(e.target.value)}></textarea></label>
     <div class="field"><span class="lbl">Screenshots</span>
       ${shots.length > 0 && html`<div class="fb-shots">${shots.map(x => html`<div class="fb-shot"><img src=${x.src} alt="Screenshot"/>
