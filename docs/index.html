@@ -96,7 +96,7 @@ input{font:inherit;color:inherit}
 .screen{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
 /* floating pill tab bar; content scrolls underneath */
 .screen.tabbed{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
-.screen.tabbed.with-pill{padding-bottom:calc(134px + env(safe-area-inset-bottom,0px))}
+.screen.tabbed.with-pill{padding-bottom:calc(160px + env(safe-area-inset-bottom,0px))}
 /* the client pill and the tab bar float together at the bottom; the pill takes the tab bar's width */
 .dock{position:absolute;z-index:20;left:50%;transform:translateX(-50%);bottom:max(14px,calc(env(safe-area-inset-bottom,0px) - 6px));display:flex;flex-direction:column;gap:8px}
 .tabbar{display:flex;gap:2px;padding:5px;border-radius:999px;
@@ -104,18 +104,32 @@ input{font:inherit;color:inherit}
   border:1px solid color-mix(in srgb,var(--line) 70%,transparent);box-shadow:0 10px 30px rgba(0,0,0,.14),0 1px 3px rgba(0,0,0,.08)}
 .tab{display:flex;flex-direction:column;align-items:center;gap:1px;font-size:10.5px;font-weight:600;color:var(--muted);min-width:74px;padding:7px 10px 6px;border-radius:999px;transition:background .2s,color .2s}
 .tab.on{color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
-/* client in session: a thin black pill 8px above the tab bar, on every tab; tapping it opens the order */
-.sbar{display:flex;border-radius:999px;background:var(--band);color:var(--band-ink);border:1px solid rgba(255,255,255,.1);box-shadow:0 6px 18px rgba(0,0,0,.16);animation:rise .3s cubic-bezier(.2,.8,.2,1)}
+/* client in session: a black pill above the tab bar, on every tab, with the last two pieces added as photos; tapping it opens the visit */
+.sbar{align-self:center;display:flex;align-items:center;gap:11px;max-width:100%;min-width:0;padding:5px 24px 5px 5px;border-radius:999px;background:var(--band);color:var(--band-ink);text-align:left;border:1px solid rgba(255,255,255,.1);box-shadow:0 10px 26px rgba(0,0,0,.24);animation:rise .3s cubic-bezier(.2,.8,.2,1)}
 @keyframes rise{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
-.sbar-main{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:8px;color:inherit;min-height:28px;padding:0 14px}
-.sbar-dot{position:relative;flex:none;width:6px;height:6px;border-radius:50%;background:#3CCB7F}
+.sbar-ph{position:relative;flex:none;display:flex}
+.sbar-c{width:46px;height:46px;border-radius:50%;border:2px solid var(--band);background:#fff;overflow:hidden}
+.sbar-c + .sbar-c{margin-left:-18px}
+/* the photos are full-length shots: zoom in so the piece fills the circle */
+.sbar-c img{width:100%;height:100%;object-fit:cover;object-position:50% 62%;transform:scale(1.5)}
+.sbar-none{display:grid;width:46px;height:46px;border-radius:50%;border:2px solid var(--band);place-items:center;background:#2A2C30 !important;color:rgba(255,255,255,.7)}
+.sbar-dot{position:absolute;left:1px;bottom:1px;width:12px;height:12px;border-radius:50%;background:#3CCB7F;border:2.5px solid var(--band)}
 .sbar-dot::after{content:"";position:absolute;inset:0;border-radius:50%;background:#3CCB7F;animation:beat 1.8s ease-out infinite}
-@keyframes beat{from{transform:scale(1);opacity:.7}to{transform:scale(3.2);opacity:0}}
-.sbar-t{flex:0 1 auto;min-width:0;display:flex;align-items:baseline;gap:6px;line-height:1.2}
-.sbar-t b,.sbar-t span{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sbar-t b{font-size:12.5px;font-weight:600}
-.sbar-t span{font-size:12.5px;font-weight:400;opacity:.65}
+@keyframes beat{from{transform:scale(1);opacity:.7}to{transform:scale(2.6);opacity:0}}
+.sbar-t{min-width:0;display:flex;flex-direction:column;gap:1px;line-height:1.2}
+.sbar-t b,.sbar-t span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sbar-t b{font-size:16.5px;font-weight:700;letter-spacing:-.01em}
+.sbar-t span{font-size:13px;font-weight:500;opacity:.7}
 .top{padding:14px 18px 6px}
+/* Profile: the seller, their orders, passcode and sign out */
+.prof{display:flex;align-items:center;gap:14px;padding:4px 2px 6px}
+.prof .avatar{width:58px;height:58px;font-size:19px}
+.prof-n{font:650 21px/1.2 var(--f-display);letter-spacing:-.02em}
+.row-ic{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--surface-2);color:var(--ink)}
+.row.out{color:var(--bad)}
+.row.out .row-ic{background:color-mix(in srgb,var(--bad) 12%,transparent);color:var(--bad)}
+.sub-nav{padding:8px 8px 0;margin-bottom:-10px}
+.signin .fpage-body{justify-content:center}
 .maison{font:600 11.5px var(--f-display);letter-spacing:.28em;text-transform:uppercase}
 .eyebrow{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:10px}
 .h1{font:650 32px/1.1 var(--f-display);margin:4px 0 0;letter-spacing:-.03em}
@@ -157,6 +171,9 @@ input{font:inherit;color:inherit}
 .pin-dots{display:flex;gap:16px;margin:2px 0 6px}
 .pin-dots i{width:13px;height:13px;border-radius:50%;border:1.5px solid var(--ink);transition:background .12s}
 .pin-dots i.on{background:var(--ink)}
+.pin-t.bad{color:var(--bad)}
+.pin-dots.bad{animation:shake .32s}
+@keyframes shake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
 .pin-pad{display:grid;grid-template-columns:repeat(3,72px);gap:14px 26px}
 .pin-k{width:72px;height:72px;border-radius:50%;background:var(--surface);border:1px solid var(--line);font-size:28px;font-weight:500;display:grid;place-items:center;font-variant-numeric:tabular-nums}
 .pin-k:active:not(:disabled){background:var(--surface-2)}
@@ -570,7 +587,7 @@ input{font:inherit;color:inherit}
 .demo-bar button{color:var(--bg);text-decoration:underline;font-weight:700;padding:6px 4px}
 .toast{position:absolute;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:99px;font-size:14px;font-weight:600;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis;animation:toast .2s ease;display:flex;gap:6px;align-items:center}
 @keyframes toast{from{transform:translate(-50%,16px);opacity:0}}
-.app.with-pill .toast{bottom:calc(130px + env(safe-area-inset-bottom,0px))}
+.app.with-pill .toast{bottom:calc(156px + env(safe-area-inset-bottom,0px))}
 /* the product page covers the tab bar, so its messages sit at the very bottom */
 .app:has(.sheet.page) .toast{bottom:max(20px,env(safe-area-inset-bottom,0px))}
 
@@ -584,8 +601,7 @@ input{font:inherit;color:inherit}
   .tabbar{padding:4px}
   .tab{flex-direction:row;gap:6px;font-size:12.5px;padding:6px 16px}
   .screen.tabbed{padding-bottom:64px}
-  .screen.tabbed.with-pill{padding-bottom:96px}
-  .sbar-main{min-height:24px}
+  .screen.tabbed.with-pill{padding-bottom:120px}
   .ov-body{padding-bottom:116px}
   .ov-actions{bottom:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 8px)) + 54px)}
 }
@@ -899,12 +915,12 @@ function seedState() {
   const o = {id:'o-dubois', buyerId:'dubois', status:'draft', submittedBy:null, lines,
     log:[{at:todayAt(10,2), by:'salesperson', text:'Session started in the showroom'},
       ...lines.map(l => ({at:l.at, by:'salesperson', text: units(l.qty) ? `Added ${P[l.pid].name} · ${cname(l.colour)} ×${units(l.qty)}${l.via === 'photo' ? ' (photo match)' : l.via === 'suggestion' ? ' (suggestion)' : ''}` : `Selected ${P[l.pid].name} · ${cname(l.colour)}`}))]};
-  return {orders:{...pastOrders(), 'o-dubois':o}, rep:'roberto', buyers:{}, appts:{...pastAppts(), dubois:{in:todayAt(10, 2)}}, savedAt:null};
+  return {orders:{...pastOrders(), 'o-dubois':o}, rep:'roberto', buyers:{}, appts:{...pastAppts(), dubois:{in:todayAt(10, 2)}}, pins:{}, savedAt:null};
 }
 const KEY = 'vega-poc-v2';
 function loadState() {
   try { const s = JSON.parse(localStorage.getItem(KEY));
-    if (s && s.orders) { s.rep = REPS[s.rep] ? s.rep : 'roberto'; s.buyers = s.buyers || {}; s.appts = s.appts || {}; delete s.budgets;
+    if (s && s.orders) { s.rep = REPS[s.rep] ? s.rep : 'roberto'; s.buyers = s.buyers || {}; s.appts = s.appts || {}; s.pins = s.pins || {}; delete s.budgets;
       Object.assign(BUYERS, s.buyers); s.appts = {...pastAppts(), ...s.appts}; s.orders = {...pastOrders(), ...s.orders}; oneOngoing(s.appts);
       // older saves: bulk totals not split by size go back to "no quantity yet"
       Object.values(s.orders).forEach(o => o.lines.forEach(l => { if (l.qty && l.qty.ALL) delete l.qty.ALL; }));
@@ -941,7 +957,7 @@ const IC = {
   grid:'M4 4h7v7H4z M13 4h7v7h-7z M4 13h7v7H4z M13 13h7v7h-7z', search:'M11 18a7 7 0 100-14 7 7 0 000 14z M16 16l5 5',
   lock:'M6 11h12v9H6z M9 11V8a3 3 0 016 0v3', x:'M6 6l12 12 M18 6L6 18', share:'M12 15V4 M8 8l4-4 4 4 M5 13v7h14v-7', sign:'M16.5 3.5l4 4L9 19l-5 1 1-5z M14 6l4 4 M13 21h8',
   check:'M5 12l5 5 9-10', export:'M12 4v11 M8 11l4 4 4-4 M5 20h14', clock:'M12 21a9 9 0 100-18 9 9 0 000 18z M12 7v5l3 2',
-  user:'M12 12a4 4 0 100-8 4 4 0 000 8z M4 21c1-4 4-6 8-6s7 2 8 6', spark:'M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z',
+  user:'M12 12a4 4 0 100-8 4 4 0 000 8z M4 21c1-4 4-6 8-6s7 2 8 6', out:'M14 4h5v16h-5 M10 8l-4 4 4 4 M6 12h10', spark:'M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z',
   info:'M12 21a9 9 0 100-18 9 9 0 000 18z M12 11v6 M12 7.5v.01', history:'M4 12a8 8 0 108-8 8 8 0 00-6.5 3.3 M4 4v4h4 M12 8v4l3 2',
   copy:'M8 8h11v12H8z M5 16V4h11', alert:'M12 4l9 16H3z M12 10v4 M12 17v.01',
   filter:'M4 7h16 M7 12h10 M10 17h4', down:'M6 9l6 6 6-6', plus:'M12 5v14 M5 12h14', minus:'M5 12h14', flag:'M5 21V3.5 M5 4h14l-3.5 4.5L19 13H5', next:'M9 6l6 6-6 6', home:'M4 11l8-7 8 7 M6 9.5V20h12V9.5 M10 20v-5h4v5', note:'M5 4h14v16H5z M8 9h8 M8 13h8 M8 17h5',
@@ -1092,7 +1108,7 @@ function Today({S, ui, act}) {
   const rep = REPS[S.rep], so = activeOrder(S, ui), sb = so && BUYERS[so.buyerId];
   return html`
     <header class="top top-bar mid"><h1 class="h1">Looks</h1>
-      <button class="avatar" onClick=${() => act.sheet({type:'account'})} aria-label=${'Signed in as ' + rep.name + '. Switch account'}>${rep.ini}</button>
+      <button class="avatar" onClick=${() => act.tab('profile')} aria-label=${'Signed in as ' + rep.name + '. Open profile'}>${rep.ini}</button>
     </header>
     <section class="sec"><${GuideBanner} act=${act}/></section>
     <div class="today-grid">
@@ -1144,7 +1160,7 @@ function CalendarTab({S, act}) {
         </button>`;
   return html`
     <header class="top top-bar mid"><h1 class="h1"><button class="h1-btn" onClick=${reloadApp} aria-label="Home. Tap to reload the app">Home</button></h1>
-      <button class="avatar" onClick=${() => act.sheet({type:'account'})} aria-label=${'Signed in as ' + rep.name + '. Switch account'}>${rep.ini}</button>
+      <button class="avatar" onClick=${() => act.tab('profile')} aria-label=${'Signed in as ' + rep.name + '. Open profile'}>${rep.ini}</button>
     </header>
     <section class="sec">
       <div class="days" role="tablist" ref=${strip}>${SHOW_DAYS.map((d, i) => html`<button role="tab" aria-selected=${i === day} class=${'day' + (i === day ? ' on' : '')} onClick=${() => setDay(i)}>
@@ -1206,6 +1222,24 @@ function LookSheet({id, S, ui, act}) {
    ===================================================================== */
 // During a visit only the ongoing client's order shows; with no one ongoing, every order with filter chips
 const SENT = ['submitted', 'partial', 'confirmed'];
+function Profile({S, ui, act}) {
+  if (ui.sub === 'orders') return html`<${OrdersTab} S=${S} ui=${ui} act=${act}/>`;
+  const rep = REPS[S.rep], so = activeOrder(S, ui);
+  const mine = Object.values(S.orders).filter(o => BUYERS[o.buyerId].rep === S.rep), sent = mine.filter(o => SENT.includes(o.status)).length;
+  return html`
+    <header class="top top-bar mid"><h1 class="h1">Profile</h1></header>
+    <section class="sec">
+      <div class="prof"><span class="avatar">${rep.ini}</span><div><div class="prof-n">${rep.name}</div><div class="small muted">Seller · showroom</div></div></div>
+      <div class="list">
+        <button class="row" onClick=${() => act.set({sub:'orders'})}><span class="row-ic"><${Icon} n="orders" s=${19}/></span>
+          <div class="row-main"><div class="row-title">Orders</div><div class="row-sub">${so ? BUYERS[so.buyerId].shop + ' · in session' : `${mine.length} ${mine.length === 1 ? 'order' : 'orders'} · ${sent} sent`}</div></div><${Icon} n="next" s=${18}/></button>
+        <button class="row" onClick=${() => act.sheet({type:'passcode'})}><span class="row-ic"><${Icon} n="lock" s=${19}/></span>
+          <div class="row-main"><div class="row-title">${S.pins[S.rep] ? 'Change passcode' : 'Set passcode'}</div><div class="row-sub">${S.pins[S.rep] ? '4-digit code to sign in' : 'Not set: any 4 digits sign you in'}</div></div><${Icon} n="next" s=${18}/></button>
+      </div>
+      <div class="list"><button class="row out" onClick=${act.signOut}><span class="row-ic"><${Icon} n="out" s=${19}/></span><div class="row-main"><div class="row-title">Sign out</div></div></button></div>
+    </section>`;
+}
+
 function OrdersTab({S, ui, act}) {
   const so = activeOrder(S, ui), [f, setF] = useState('all');
   const all = Object.values(S.orders).filter(o => BUYERS[o.buyerId].rep === S.rep || (so && o.id === so.id)).map(o => { const b = BUYERS[o.buyerId];
@@ -1216,6 +1250,7 @@ function OrdersTab({S, ui, act}) {
   const F = [['all', 'All', () => true], ['draft', 'Draft', r => !SENT.includes(r.status)], ['sent', 'Sent', r => SENT.includes(r.status)]];
   const cur = F.find(x => x[0] === f) || F[0], rows = so ? all.filter(r => r.id === so.id) : all.filter(cur[2]);
   return html`
+    <div class="sub-nav"><button class="icon-btn" onClick=${() => act.set({sub:null})} aria-label="Back to profile"><${Icon} n="back"/></button></div>
     <header class="top top-bar mid"><h1 class="h1">Orders</h1>
       ${!so && html`<button class="round-btn" onClick=${() => act.sheet({type:'newbuyer'})} aria-label="New session with a client"><${Icon} n="plus" s=${20} w=${2.2}/></button>`}</header>
     <section class="sec">
@@ -1330,17 +1365,19 @@ function CatalogueTab({S, ui, act}) {
     </section>`;
 }
 
-// Switching seller asks for that seller's 4-digit code (demo: any 4 digits are accepted)
-function PinPad({rep, onDone, onBack}) {
-  const [pin, setPin] = useState('');
-  const press = k => setPin(p => k === 'del' ? p.slice(0, -1) : p.length < 4 ? p + k : p);
-  useEffect(() => { if (pin.length === 4) { const t = setTimeout(onDone, 180); return () => clearTimeout(t); } }, [pin]);
+// Signing in asks for the seller's 4-digit code: the passcode set in Profile, or any 4 digits until one is set.
+// check returns an error to show (and the pad clears), or nothing to accept the code
+function PinPad({rep, title, check, onDone, onBack}) {
+  const [pin, setPin] = useState(''), [bad, setBad] = useState(null);
+  const press = k => { setBad(null); setPin(p => k === 'del' ? p.slice(0, -1) : p.length < 4 ? p + k : p); };
+  useEffect(() => { if (pin.length === 4) { const t = setTimeout(() => { const err = check && check(pin);
+    if (err) { setBad(err); setPin(''); } else onDone(pin); }, 180); return () => clearTimeout(t); } }, [pin]);
   useEffect(() => { const key = e => { if (/^[0-9]$/.test(e.key)) press(e.key); else if (e.key === 'Backspace') press('del'); };
     window.addEventListener('keydown', key); return () => window.removeEventListener('keydown', key); }, []);
   return html`<div class="pin">
     <span class="avatar">${rep.ini}</span>
-    <div class="pin-t">Enter ${rep.name}’s code</div>
-    <div class="pin-dots" role="status" aria-label=${pin.length + ' of 4 digits entered'}>${[0, 1, 2, 3].map(i => html`<i class=${i < pin.length ? 'on' : ''}></i>`)}</div>
+    <div class=${'pin-t' + (bad ? ' bad' : '')} role="status">${bad || title || `Enter ${rep.name}’s code`}</div>
+    <div class=${'pin-dots' + (bad ? ' bad' : '')} aria-label=${pin.length + ' of 4 digits entered'}>${[0, 1, 2, 3].map(i => html`<i class=${i < pin.length ? 'on' : ''}></i>`)}</div>
     <div class="pin-pad">${['1', '2', '3', '4', '5', '6', '7', '8', '9', 'back', '0', 'del'].map(k => k === 'back'
       ? html`<button class="pin-k txt" onClick=${onBack}>Cancel</button>`
       : k === 'del' ? html`<button class="pin-k txt" onClick=${() => press('del')} aria-label="Delete" disabled=${!pin}><${Icon} n="back" s=${22}/></button>`
@@ -1358,16 +1395,30 @@ function FullPage({title, onClose, onBack, children, foot}) {
   </div>`;
 }
 
-function AccountSheet({S, act}) {
+const pinCheck = (S, id) => pin => S.pins[id] && pin !== S.pins[id] ? 'Wrong code. Try again.' : null;
+
+// after Sign out: the full-screen list of sellers; the one who picks their name enters their code
+function SignIn({S, act}) {
   const [to, setTo] = useState(null);
-  if (to) return html`<${FullPage} title="Enter code" onClose=${act.close} onBack=${() => setTo(null)}><${PinPad} rep=${REPS[to]} onDone=${() => act.switchRep(to)} onBack=${() => setTo(null)}/><//>`;
-  return html`<${FullPage} title="Switch account" onClose=${act.close}>
-    <h1 class="h1">Switch account</h1>
-    <div class="list">${Object.values(REPS).map(r => html`<button class="row opt" onClick=${() => r.id === S.rep ? act.close() : setTo(r.id)} aria-pressed=${r.id === S.rep}>
+  return html`<div class="fpage signin" role="dialog" aria-modal="true" aria-label="Sign in">
+    <div class="fpage-head">${to ? html`<button class="icon-btn" onClick=${() => setTo(null)} aria-label="Back"><${Icon} n="back"/></button>` : html`<span></span>`}</div>
+    <div class="fpage-body">${to ? html`<${PinPad} key=${to} rep=${REPS[to]} check=${pinCheck(S, to)} onDone=${() => act.switchRep(to)} onBack=${() => setTo(null)}/>` : html`
+      <div><div class="maison">Vega</div><h1 class="h1">Who’s selling?</h1></div>
+      <div class="list">${Object.values(REPS).map(r => html`<button class="row opt" onClick=${() => setTo(r.id)}>
         <span class="avatar sm">${r.ini}</span>
         <div class="row-main"><div class="row-title">${r.name}</div></div>
-        <div class="row-side">${r.id === S.rep && html`<${Icon} n="check" s=${20} w=${2.4}/>`}</div>
-      </button>`)}</div>
+        <${Icon} n="next" s=${18}/>
+      </button>`)}</div>`}</div>
+  </div>`;
+}
+
+// new code, then the same again to confirm
+function PasscodeSheet({S, act}) {
+  const rep = REPS[S.rep], [first, setFirst] = useState(null);
+  return html`<${FullPage} title="Set passcode" onClose=${act.close} onBack=${first ? () => setFirst(null) : null}>
+    <${PinPad} key=${first ? 'again' : 'new'} rep=${rep} title=${first ? 'Enter it again' : S.pins[S.rep] ? 'Enter a new code' : 'Choose a 4-digit code'}
+      check=${first ? pin => pin === first ? null : 'The codes don’t match. Try again.' : null}
+      onDone=${pin => first ? act.setPin(pin) : setFirst(pin)} onBack=${first ? () => setFirst(null) : act.close}/>
   <//>`;
 }
 
@@ -1667,7 +1718,7 @@ function OrderView({S, ui, act, order, asTab}) {
   const inVisit = ui.session === order.id;
   return html`<div class="ov">
     <div class="ov-nav">
-      ${asTab ? html`<span class="icon-btn" aria-hidden="true"></span>` : html`<button class="icon-btn" onClick=${act.back} aria-label="Back"><${Icon} n="back"/></button>`}
+      <button class="icon-btn" onClick=${asTab ? () => act.set({sub:null}) : act.back} aria-label=${asTab ? 'Back to profile' : 'Back'}><${Icon} n="back"/></button>
       <div class="ov-nav-t"><div class="ov-shop">${b.shop}</div><div class="ov-id">${orderNo(order)}</div></div>
       <span class="icon-btn" aria-hidden="true"></span>
     </div>
@@ -1845,15 +1896,16 @@ const GUIDE_STEPS = [
 
 function SessionBar({S, ui, act}) {
   const o = activeOrder(S, ui); if (!o) return null;
-  const b = BUYERS[o.buyerId], v = b.divs.reduce((a, d) => a + kpi(o, d).total, 0), n = b.divs.reduce((a, d) => a + kpi(o, d).units, 0);
-  return html`<div class="sbar" role="status">
-    <button class="sbar-main" onClick=${() => act.sheet({type:'appt', bid:b.id, pill:true})} aria-label=${`Ordering for ${b.shop}: ${o.lines.length} selected, ${n} units, ${fmt(v)}. Open visit to check out`}>
-      <span class="sbar-dot" aria-hidden="true"></span><span class="sbar-t"><b>${b.shop}</b></span></button>
-  </div>`;
+  const b = BUYERS[o.buyerId], n = o.lines.length, u = b.divs.reduce((a, d) => a + kpi(o, d).units, 0);
+  return html`<button class="sbar" onClick=${() => act.sheet({type:'appt', bid:b.id, pill:true})} aria-label=${`Ordering for ${b.shop}: ${n} ${n === 1 ? 'item' : 'items'}, ${u} units. Open the visit`}>
+    <span class="sbar-ph" aria-hidden="true">${n ? o.lines.slice(-2).map(l => html`<span class="sbar-c"><img src=${imgSrc(P[l.pid], l.colour)} alt="" draggable="false"/></span>`)
+      : html`<span class="sbar-none"><${Icon} n="orders" s=${20}/></span>`}<span class="sbar-dot"></span></span>
+    <span class="sbar-t"><b>${b.shop}</b><span>${n ? `View order · ${n} ${n === 1 ? 'item' : 'items'}` : 'View order · nothing yet'}</span></span>
+  </button>`;
 }
 
 function TabBar({tab, act}) {
-  const T = [['calendar', 'Home', 'home'], ['today', 'Looks', 'spark'], ['catalogue', 'Collection', 'grid'], ['orders', 'Orders', 'orders']];
+  const T = [['calendar', 'Home', 'home'], ['today', 'Looks', 'spark'], ['catalogue', 'Collection', 'grid'], ['profile', 'Profile', 'user']];
   return html`<nav class="tabbar">${T.map(([k, l, i]) => html`<button class=${'tab' + (tab === k ? ' on' : '')} onClick=${() => act.tab(k)} aria-current=${tab === k ? 'page' : null}><${Icon} n=${i}/>${l}</button>`)}</nav>`;
 }
 
@@ -1866,13 +1918,16 @@ function makeActs(setS, setUi, onReset) {
       setS(s => s.orders[id] ? s : {...s, orders:{...s.orders, [id]:newOrder(bid)}, savedAt:Date.now()});
       setUi(u => ({...u, view:id, div: u.view === id ? u.div : BUYERS[bid].divs[0], sheet:null, capture:false})); },
     back: () => setUi(u => ({...u, view:null, capture:false, sheet:null})),
-    tab: t => setUi(u => ({...u, tab:t, view:null})),
+    tab: t => setUi(u => ({...u, tab:t, view:null, sub:null})),
     sheet: sh => setUi(u => ({...u, sheet:sh, capture: sh && sh.type === 'picker' ? false : sh && sh.type === 'size' ? false : u.capture})),
     close: () => setUi(u => ({...u, sheet:null})),
     capture: on => setUi(u => ({...u, capture:on, sheet:null})),
     div: d => setUi(u => ({...u, div:d})),
     set: patch => setUi(u => ({...u, ...patch})),
-    switchRep: id => { setS(s => ({...s, rep:id})); setUi(u => ({...u, sheet:null, view:null, session:null})); a.toast(`Signed in as ${REPS[id].name}`); },
+    switchRep: id => { setS(s => ({...s, rep:id, signedOut:false})); setUi(u => ({...u, sheet:null, view:null, sub:null, session:null})); a.toast(`Signed in as ${REPS[id].name}`); },
+    // signing out leaves any visit as it is: it is still there when that seller signs back in
+    signOut: () => { setS(s => ({...s, signedOut:true})); setUi(u => ({...u, sheet:null, view:null, sub:null, session:null, tab:'calendar', capture:false, zoom:null})); },
+    setPin: pin => { setS(s => ({...s, pins:{...s.pins, [s.rep]:pin}, savedAt:Date.now()})); a.close(); a.toast('Passcode set'); },
     startSession: bid => { const id = 'o-' + bid;
       setS(s => s.orders[id] ? s : {...s, orders:{...s.orders, [id]:newOrder(bid)}, savedAt:Date.now()});
       setUi(u => ({...u, session:id, div: BUYERS[bid].divs[0]})); },
@@ -1952,7 +2007,7 @@ function App({onReset}) {
     : sh.type === 'look' ? html`<${LookSheet} id=${sh.id} S=${S} ui=${ui} act=${act}/>`
     : sh.type === 'product' ? html`<${ProductSheet} key=${sh.pid} pid=${sh.pid} colour=${sh.colour} orderId=${sh.orderId} S=${S} ui=${ui} act=${act}/>`
     : sh.type === 'filter' ? html`<${FilterSheet} ui=${ui} act=${act}/>`
-    : sh.type === 'account' ? html`<${AccountSheet} S=${S} act=${act}/>`
+    : sh.type === 'passcode' ? html`<${PasscodeSheet} S=${S} act=${act}/>`
     : sh.type === 'newbuyer' ? html`<${NewBuyerSheet} S=${S} sh=${sh} act=${act}/>`
     : sh.type === 'pick' ? html`<${PickBuyerSheet} S=${S} sh=${sh} act=${act}/>`
     : sh.type === 'appt' ? html`<${ApptSheet} key=${sh.bid} sh=${sh} S=${S} act=${act}/>` : null;
@@ -1963,15 +2018,16 @@ function App({onReset}) {
   const ongoing = ongoingBuyer(S), sessionOk = !!activeOrder(S, ui);
   useEffect(() => { if (ongoing && !sessionOk && !buyerView) act.startSession(ongoing.id); }, [ongoing && ongoing.id, sessionOk, !!buyerView]);
   // the client in session rides as a pill above the tab bar on every tab; the tab bar is always there
-  // with a client in session, the Orders tab opens that client's order straight away (the list would only hold that one)
-  const so = activeOrder(S, ui), shown = order || (ui.tab === 'orders' && so) || null, pill = !!(so && !shown), capDiv = so && (BUYERS[so.buyerId].divs.includes(ui.capDiv) ? ui.capDiv : BUYERS[so.buyerId].divs[0]);
+  // with a client in session, Profile → Orders opens that client's order straight away (the list would only hold that one)
+  const so = activeOrder(S, ui), shown = order || (ui.tab === 'profile' && ui.sub === 'orders' && so) || null, pill = !!(so && !shown), capDiv = so && (BUYERS[so.buyerId].divs.includes(ui.capDiv) ? ui.capDiv : BUYERS[so.buyerId].divs[0]);
   if (buyerView) return html`<div class="app"><${BuyerView} S=${S} ui=${ui} act=${act}/>${sheet}${toast}</div>`;
+  if (S.signedOut) return html`<div class="app"><${SignIn} S=${S} act=${act}/>${toast}</div>`;
   return html`<div class=${'app' + (pill ? ' with-pill' : '')}>
     ${shown ? html`<${OrderView} S=${S} ui=${ui} act=${act} order=${shown} asTab=${!order}/>` : html`
       <div class=${'screen tabbed' + (pill ? ' with-pill' : '')}>
         ${ui.tab === 'calendar' && html`<${CalendarTab} S=${S} act=${act}/>`}
         ${ui.tab === 'today' && html`<${Today} S=${S} ui=${ui} act=${act}/>`}
-        ${ui.tab === 'orders' && html`<${OrdersTab} S=${S} ui=${ui} act=${act}/>`}
+        ${ui.tab === 'profile' && html`<${Profile} S=${S} ui=${ui} act=${act}/>`}
         ${ui.tab === 'catalogue' && html`<${CatalogueTab} key=${so ? so.id : 'none'} S=${S} ui=${ui} act=${act}/>`}
       </div>`}
     <div class="dock">${pill && html`<${SessionBar} S=${S} ui=${ui} act=${act}/>`}<${TabBar} tab=${ui.tab} act=${act}/></div>
