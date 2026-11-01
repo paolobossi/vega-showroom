@@ -1793,7 +1793,7 @@ function OrderView({S, ui, act, order}) {
           <div class="ov-sum-foot"><span class=${open ? 'st-warn' : 'st-ok'}>${open ? `${open} outside the guidelines` : 'Within the guidelines'}</span><span class="ov-sum-go">Budgets & KPIs<${Icon} n="down" s=${15} w=${2.2}/></span></div>
         </button>
         ${locked && !allSent && html`<div class="callout info"><${Icon} n="lock" s=${18}/><div>The ${DIV_LABEL[div].toLowerCase()} order has been sent. You can see it here but no longer change it.</div></div>`}
-        ${lines.length === 0 && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div><div class="small">Tap + on any style in the Collection. Quantities can come later.</div></div>`}
+        ${lines.length === 0 && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div><div class="small">Tap Add on any style in the Collection. Quantities can come later.</div></div>`}
         ${groups.filter(g => g.lines.length).map(g => html`<div>
           <div class="grp-head"><span>${g.label}</span><span class="num">${fmt(g.lines.reduce((a, l) => a + lineValue(l), 0))}</span></div>
           <div class="list">${g.lines.map(l => html`<${SelLine} key=${l.id} l=${l} o=${order} act=${act} locked=${locked}/>`)}</div>
