@@ -506,6 +506,13 @@ input{font:inherit;color:inherit}
 .callout.info{background:var(--accent-soft);color:var(--accent)}
 .callout.good{background:var(--good-bg);color:var(--good)}
 .callout svg{flex:none;margin-top:1px}
+/* order page: where the order stands, once it has left the draft */
+.ov-state{display:flex;gap:12px;align-items:center;padding:14px 16px;border-radius:16px;box-shadow:none !important}
+.ov-state-ic{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:currentColor}
+.ov-state-ic svg{color:var(--surface)}
+.s-confirmed .ov-state-ic{background:var(--surface)} .s-confirmed .ov-state-ic svg{color:var(--good)}
+.ov-state b{display:block;font:650 19px/1.2 var(--f-display);letter-spacing:-.01em}
+.ov-state span{display:block;font-size:13px;line-height:1.4;margin-top:2px;opacity:.9}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px}
 
 /* size sheet */
@@ -1754,6 +1761,13 @@ function OrderView({S, ui, act, order}) {
   const locked = partLocked(order, div), allSent = b.divs.every(d => partLocked(order, d));
   // products are added during the visit: for another client, Check in switches the visit to them
   const inVisit = ui.session === order.id;
+  const st = order.status, when = t => new Date(t).toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
+  const signed = b.divs.filter(d => partLocked(order, d)).map(d => { const x = partOf(order, d);
+    return `${DIV_TAB[d]} signed${x.signer ? ' by ' + x.signer : ''}${x.at ? ' · ' + when(x.at) : ''}`; });
+  const stateSub = st === 'shared' ? `Review link sent · ${Math.max(0, 48 - Math.floor((Date.now() - order.sharedAt) / 36e5))}h left to sign`
+    : st === 'partial' ? [...signed, ...b.divs.filter(d => !partLocked(order, d)).map(d => `${DIV_TAB[d]} still a draft`)].join('. ')
+    : st === 'confirmed' ? 'Confirmed for production by the commercial team'
+    : signed.join('. ') + (signed.length ? '. ' : '') + 'The commercial team confirms it for production';
   return html`<div class="ov">
     <div class="ov-nav">
       <button class="icon-btn" onClick=${act.back} aria-label="Back"><${Icon} n="back"/></button>
@@ -1762,6 +1776,9 @@ function OrderView({S, ui, act, order}) {
     </div>
     <div class="ov-body">
       <div class="ov-lines">
+        ${!['draft', 'none'].includes(st) && html`<div class=${'ov-state s-' + st} role="status">
+          <span class="ov-state-ic"><${Icon} n=${st === 'shared' ? 'clock' : 'check'} s=${20} w=${2.6}/></span>
+          <div><b>${STATUS[st]}</b><span>${stateSub}</span></div></div>`}
         <div class="ov-meta">
           <div><span class="lbl">Status</span><${Pill} s=${order.status}/></div>
           <div><span class="lbl">City</span><span>${b.city}</span></div>
@@ -1773,7 +1790,7 @@ function OrderView({S, ui, act, order}) {
           <div class="bar"><div class=${'bar-fill ' + k.bst} style=${{width: Math.min(db ? k.total / db * 100 : 0, 100) + '%'}}></div></div>
           <div class="ov-sum-foot"><span class=${open ? 'st-warn' : 'st-ok'}>${open ? `${open} outside the guidelines` : 'Within the guidelines'}</span><span class="ov-sum-go">Budgets & KPIs<${Icon} n="down" s=${15} w=${2.2}/></span></div>
         </button>
-        ${locked && html`<div class="callout info"><${Icon} n="lock" s=${18}/><div>The ${DIV_LABEL[div].toLowerCase()} order has been sent. You can see it here but no longer change it.</div></div>`}
+        ${locked && !allSent && html`<div class="callout info"><${Icon} n="lock" s=${18}/><div>The ${DIV_LABEL[div].toLowerCase()} order has been sent. You can see it here but no longer change it.</div></div>`}
         ${lines.length === 0 && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div><div class="small">Tap + on any style in the Collection. Quantities can come later.</div></div>`}
         ${groups.filter(g => g.lines.length).map(g => html`<div>
           <div class="grp-head"><span>${g.label}</span><span class="num">${fmt(g.lines.reduce((a, l) => a + lineValue(l), 0))}</span></div>
@@ -1873,9 +1890,10 @@ function SignSheet({sh, S, act}) {
   const o = S.orders[sh.orderId], b = BUYERS[o.buyerId];
   const [name, setName] = useState(''), [signed, setSigned] = useState(false);
   const value = sh.divs.reduce((a, d) => a + kpi(o, d).total, 0), n = sh.divs.reduce((a, d) => a + kpi(o, d).units, 0);
-  const sent = `${sh.divs.map(d => DIV_TAB[d]).join(' + ')} sent`, all = b.divs.every(d => sh.divs.includes(d) || partLocked(o, d));
+  // once the client signs, the visit is over: check out and back to Home, ready for the next client
+  const sent = `${sh.divs.map(d => DIV_TAB[d]).join(' + ')} sent`;
   const send = () => { act.send(o.id, sh.divs, 'client', name.trim());
-    if (all && isOngoing(S.appts[b.id])) act.endVisit(b.id, `${sent} · ${b.shop} checked out`); else { act.close(); act.toast(sent); } };
+    if (isOngoing(S.appts[b.id])) act.endVisit(b.id, `${sent} · ${b.shop} checked out`); else { act.close(); act.toast(sent); } };
   return html`<${FullPage} title="Sign the order" onClose=${act.close}
     foot=${html`<button class="btn primary" disabled=${!name.trim() || !signed} onClick=${send}>Confirm and send · ${fmt(value)}</button>`}>
     <h1 class="h1">Sign the order</h1>
@@ -1983,7 +2001,7 @@ function makeActs(setS, setUi, onReset) {
         return {...s, appts, orders: s.orders[id] ? s.orders : {...s.orders, [id]:newOrder(bid)}, savedAt:now}; });
       setUi(u => ({...u, session:id, div:BUYERS[bid].divs[0], sheet:null, capture:false, ...(stay ? {} : {tab:'catalogue', view:null})}));
       a.toast(`Checked in · ${BUYERS[bid].shop}`); },
-    // the two ways a visit ends from the order: Save draft, or the client signs what is left to send. Both go back to Home
+    // the two ways a visit ends from the order: Save draft, or the client signs. Both go back to Home
     endVisit: (bid, msg) => { a.appt(bid, {out:Date.now()}); setUi(u => ({...u, session: u.session === 'o-' + bid ? null : u.session, view:null, sheet:null, sub:null, tab:'calendar'})); a.toast(msg); },
     checkOut: bid => { a.appt(bid, {out:Date.now()}); setUi(u => u.session === 'o-' + bid ? {...u, session:null} : u); a.toast(`Checked out · ${BUYERS[bid].shop}`); },
     note: (bid, text) => a.appt(bid, {notes:text}),

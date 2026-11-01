@@ -8,7 +8,7 @@ The states each object can be in, as the showroom app shows them today. The labe
 |---|---|
 | Scheduled (no tag) | The appointment is on the calendar and the client hasn't arrived yet. Only Check in is offered. |
 | Ongoing (`Ongoing`) | The seller checked the client in. That client is in session: the black pill (first two pieces added, client name, View order) sits above the nav, the Collection shows what they can buy and tapping the pill opens their order full screen, without the tab bar. Only one client per seller can be ongoing. |
-| Checked out (order status, e.g. `Sent`) | The visit ended: Save draft in the order (it stays a draft), the client signing what was left to send, or Check out on the client's row on Home. The row on Home shows where that client's order stands; the seller can view it or check the client in again. |
+| Checked out (order status, e.g. `Sent`) | The visit ended: Save draft in the order (it stays a draft), the client signing (all or part of the order), or Check out on the client's row on Home. The row on Home shows where that client's order stands; the seller can view it or check the client in again. |
 | Checked in again (`Ongoing`) | Same as Ongoing, but the visit keeps its first start time. |
 
 Checking in a new client automatically checks out the client the seller was with.
