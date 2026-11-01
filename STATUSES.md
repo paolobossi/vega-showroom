@@ -141,6 +141,8 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 6.5 Remove from order on the product page → the card goes back to Add.
 - [ ] 6.6 Add is black, Edit outlined; with two colours in the order (e.g. Small Amazona 180 in Mocha ×3 and Black ×2) Edit shows the total across colours: Edit · 5 units.
 - [ ] 6.7 Product page: size curves (Core, Full), "+1 each" and Clear work on sized styles; one-size styles have only − / +, with no preset numbers.
+- [ ] 6.7b Product page of a style already in the order: change a quantity → the white "In order · N units" message turns into a black **Update quantity** button; tap it → a spinner turns in the middle of the button, then the white message comes back with the new units, above Remove from order.
+- [ ] 6.7c Change a quantity and close the sheet without tapping Update quantity → the change is kept; toast "Quantity updated"; Edit on the card shows the new total.
 - [ ] 6.8 Product page, another colour not in the order: set quantities, then **Add to order · N units** → that colour joins the order; colours in the order carry a flag.
 - [ ] 6.9 Product page: Remove from order takes that colour out.
 - [ ] 6.10 Tap the photo or name of a card → the same product sheet opens without adding anything.

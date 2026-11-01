@@ -164,6 +164,10 @@ input{font:inherit;color:inherit}
 .pd-cta{display:flex;flex-direction:column;gap:10px;margin:10px 0 14px}
 .pd-cta .btn{width:100%;min-height:52px;border-radius:999px}
 .btn.black{background:var(--ink);color:var(--bg)}
+/* Update quantity: the button stays black while the spinner turns */
+.btn.busy:disabled{opacity:1}
+.spinner{width:22px;height:22px;border-radius:50%;border:2.5px solid currentColor;border-right-color:transparent;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 .btn.outline{border:1px solid var(--ink)}
 .btn.outline.danger{border-color:var(--bad)}
 .pd-qty{display:flex;flex-direction:column;gap:10px}
@@ -1517,24 +1521,31 @@ function FilterSheet({ui, act}) {
 }
 
 // Product page: with a client in session, sizes and quantities are set right here. A colour not in the order yet is a draft
-// until Add to order (with or without quantities); once it is in the order every tap saves straight away.
+// until Add to order (with or without quantities); once it is in the order, changes wait for Update quantity (or are saved on close).
 function ProductSheet({pid, colour, orderId, S, ui, act}) {
   const p = P[pid], o = orderId ? S.orders[orderId] : activeOrder(S, ui), b = o && BUYERS[o.buyerId], why = o && canTake(o, p);
   const [c, setC] = useState(() => { const l = o && o.lines.find(x => x.pid === pid); return colour || (l ? l.colour : p.colours[0]); });
-  const [pending, setPending] = useState({});
+  const [pending, setPending] = useState({}), [busy, setBusy] = useState(false);
   const looks = LOOKS.filter(l => l.items.some(([x]) => x === pid));
   const pick = () => act.sheet({type:'pick', item:{pid, colour:c, via:'search'}});
   const lineOf = x => o && o.lines.find(l => l.pid === pid && l.colour === x), line = lineOf(c);
-  const q = line ? line.qty : pending[c] || {}, u = units(q);
-  const setQ = next => { next = Object.fromEntries(Object.entries(next).filter(([, n]) => n > 0).map(([k, n]) => [k, Math.min(99, n)]));
-    if (line) act.setQty(o.id, line.id, next); else setPending(d => ({...d, [c]: next})); };
+  const q = pending[c] || (line ? line.qty : {}), u = units(q);
+  const clean = x => Object.fromEntries(Object.entries(x).filter(([, n]) => n > 0).map(([k, n]) => [k, Math.min(99, n)]));
+  const setQ = next => setPending(d => ({...d, [c]: clean(next)}));
+  const drop = x => setPending(d => { const n = {...d}; delete n[x]; return n; });
+  const changed = x => { const l = lineOf(x); return l && pending[x] && qkey(pending[x]) !== qkey(clean(l.qty)); };
+  // a short wait with a spinner in the button, so the seller sees the order being updated
+  const update = () => { const l = line, next = q, x = c; setBusy(true);
+    setTimeout(() => { act.setQty(o.id, l.id, next); drop(x); setBusy(false); }, 700); };
+  const close = () => { const todo = Object.keys(pending).filter(changed);
+    todo.forEach(x => act.setQty(o.id, lineOf(x).id, pending[x])); act.close(); if (todo.length) act.toast('Quantity updated'); };
   const setQty = (sz, n) => setQ({...q, [sz]: Math.max(0, n)});
   const setAll = arr => setQ(Object.fromEntries(p.sizes.map((sz, i) => [sz, arr[i] || 0])));
-  const add = () => { act.select(o.id, pid, c, 'search', q); setPending(d => ({...d, [c]: {}})); };
+  const add = () => { act.select(o.id, pid, c, 'search', q); drop(c); };
   const edit = o && !why;
   const curves = CURVES[p.sizes.length] || [];
   const val = n => `${n} ${n === 1 ? 'unit' : 'units'}`;
-  return html`<${Sheet} tall title=${p.name} onClose=${act.close}
+  return html`<${Sheet} tall title=${p.name} onClose=${close}
     media=${html`<div class="pd-media"><${Carousel} p=${p} colour=${c} at=${ui.photoAt} onOpen=${i => act.set({zoom:{pid, colour:c, i}})}/><${Tag} p=${p}/></div>`}>
     <div class="pd-head"><h1 class="pd-name">${p.name}</h1>
       <div class="pd-sub"><span class="code">${p.code}</span></div></div>
@@ -1560,7 +1571,9 @@ function ProductSheet({pid, colour, orderId, S, ui, act}) {
     </div>`}
     <div class="pd-cta">${!o ? html`<button class="btn black" onClick=${pick}>Add to order</button>`
       : why ? html`${line && html`<div class="pd-in">In order · ${u ? val(u) : 'no quantity'}</div>`}<button class="btn black" disabled>${b.shop} · ${why}</button>`
-      : line ? html`<div class="pd-in"><${Icon} n="check" s=${18} w=${2.4}/>In order · ${u ? val(u) : 'no quantity yet'}</div><button class="btn outline danger" onClick=${() => act.unselect(o.id, pid, c)}>Remove from order</button>`
+      : line ? html`${changed(c) || busy ? html`<button class=${'btn black' + (busy ? ' busy' : '')} disabled=${busy} onClick=${update}>${busy ? html`<span class="spinner" role="status" aria-label="Updating the quantity"></span>` : 'Update quantity'}</button>`
+          : html`<div class="pd-in"><${Icon} n="check" s=${18} w=${2.4}/>In order · ${u ? val(u) : 'no quantity yet'}</div>`}
+        <button class="btn outline danger" disabled=${busy} onClick=${() => { drop(c); act.unselect(o.id, pid, c); }}>Remove from order</button>`
       : html`<button class="btn black" onClick=${add}>Add to order${u ? ' · ' + val(u) : ''}</button>`}</div>
     <div class="panel facts">
       <div><span>Division</span><span>${p.div === 'W' ? 'Womenswear' : 'Menswear'}</span></div>
