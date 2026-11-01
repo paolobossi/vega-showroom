@@ -132,7 +132,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 5.2 Check in Linea Concept (Gold) → Mini Featherlight Puzzle and Small Puzzle Edge show; Medium Bilbao bucket and Small Whisker bag don't.
 - [ ] 5.3 Check in Maison Dubois (Platinum) → Medium Bilbao bucket and Small Whisker bag show.
 - [ ] 5.4 Check in Kanda Select (Diamond) → every style shows.
-- [ ] 5.5 New session (Profile → Orders → +) → the new client sees only the Silver styles.
+- [ ] 5.5 New session (with nobody checked in: Collection → Add → Add to an order → New session) → the new client sees only the Silver styles.
 
 ### 6. Adding a style and entering quantities
 - [ ] 6.1 Each card shows photo, name, code, wholesale and retail price, colour dots and a black **Add** button at the bottom.
@@ -193,9 +193,9 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 
 ### 12. Profile, orders, feedback
 - [ ] 12.1 Profile shows the seller's name, then Orders and Set passcode (Change passcode once set) with no grey line under them, App feedback with one line "Tell us what works and what doesn't", and Sign out in red.
-- [ ] 12.2 Orders → tiles (total value, sent, in draft), filters All / Draft / Sent, one row per order with status, value and units; With client rows show hours left.
+- [ ] 12.2 Orders → a small centred title with back on the left (like the order page), staying on top while scrolling; tiles (total value, sent, in draft), filters All / Draft / Sent, one row per order with status, value and units; With client rows show hours left.
 - [ ] 12.3 Tap an order → it opens full screen; back returns to the list.
-- [ ] 12.4 + in Orders → New session: Shop, City, Buying for, budgets; Start session is disabled until a shop name is typed; starting checks the new client in.
+- [ ] 12.4 Profile → Orders has no + button (orders start when a client is checked in). With nobody checked in, Collection → Add → Add to an order → New session: Shop, City, Buying for, budgets; Start session is disabled until a shop name is typed; starting checks the new client in.
 - [ ] 12.5 App feedback → type a note, attach a screenshot (thumbnail with ×), remove it, send → toast "Thanks · feedback sent".
 
 ### 13. General
