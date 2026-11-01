@@ -384,6 +384,7 @@ input{font:inherit;color:inherit}
 .pd-media .ptag{left:0;top:auto;bottom:14px;font-size:12px;padding:6px 12px}
 .pc-lock{background:var(--surface);color:var(--warn);border:1px solid var(--line)}
 .pc-info{display:flex;flex-direction:column;gap:7px;text-align:left;padding:2px 1px 6px;min-width:0}
+.row-sub.one-line{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pname{font-weight:620;font-size:13.5px;line-height:1.25}
 .pcard .prices{grid-template-columns:1fr;gap:4px}
 .pcard .prices span{flex-direction:row;justify-content:space-between;align-items:baseline;gap:4px}
@@ -1251,19 +1252,18 @@ const SENT = ['submitted', 'partial', 'confirmed'];
 function Profile({S, ui, act}) {
   if (ui.sub === 'orders') return html`<${OrdersTab} S=${S} ui=${ui} act=${act}/>`;
   const rep = REPS[S.rep];
-  const mine = Object.values(S.orders).filter(o => BUYERS[o.buyerId].rep === S.rep), sent = mine.filter(o => SENT.includes(o.status)).length;
   return html`
     <header class="top top-bar mid"><h1 class="h1">Profile</h1></header>
     <section class="sec">
       <div class="prof"><span class="avatar">${rep.ini}</span><div><div class="prof-n">${rep.name}</div><div class="small muted">Seller · showroom</div></div></div>
       <div class="list">
         <button class="row" onClick=${() => act.set({sub:'orders'})}><span class="row-ic"><${Icon} n="orders" s=${19}/></span>
-          <div class="row-main"><div class="row-title">Orders</div><div class="row-sub">${mine.length} ${mine.length === 1 ? 'order' : 'orders'} · ${sent} sent</div></div><${Icon} n="next" s=${18}/></button>
+          <div class="row-main"><div class="row-title">Orders</div></div><${Icon} n="next" s=${18}/></button>
         <button class="row" onClick=${() => act.sheet({type:'passcode'})}><span class="row-ic"><${Icon} n="lock" s=${19}/></span>
-          <div class="row-main"><div class="row-title">${S.pins[S.rep] ? 'Change passcode' : 'Set passcode'}</div><div class="row-sub">${S.pins[S.rep] ? '4-digit code to sign in' : 'Not set: any 4 digits sign you in'}</div></div><${Icon} n="next" s=${18}/></button>
+          <div class="row-main"><div class="row-title">${S.pins[S.rep] ? 'Change passcode' : 'Set passcode'}</div></div><${Icon} n="next" s=${18}/></button>
       </div>
       <div class="list"><button class="row" onClick=${() => act.sheet({type:'feedback'})}><span class="row-ic"><${Icon} n="msg" s=${19}/></span>
-          <div class="row-main"><div class="row-title">Leave feedback</div><div class="row-sub">About the app: what works, what doesn’t</div></div><${Icon} n="next" s=${18}/></button></div>
+          <div class="row-main"><div class="row-title">App feedback</div><div class="row-sub one-line">Tell us what works and what doesn’t</div></div><${Icon} n="next" s=${18}/></button></div>
       <div class="list"><button class="row out" onClick=${act.signOut}><span class="row-ic"><${Icon} n="out" s=${19}/></span><div class="row-main"><div class="row-title">Sign out</div></div></button></div>
     </section>`;
 }
@@ -1447,7 +1447,7 @@ function FeedbackSheet({act}) {
   const [text, setText] = useState(''), [shots, setShots] = useState([]);
   const pick = e => { [...e.target.files].forEach(f => { const r = new FileReader(); r.onload = () => setShots(x => [...x, {id:uid(), src:r.result}]); r.readAsDataURL(f); }); e.target.value = ''; };
   const ok = text.trim() || shots.length;
-  return html`<${Sheet} title="Leave feedback" sub="About the app: what works, what doesn’t, what’s missing" onClose=${act.close}
+  return html`<${Sheet} title="App feedback" sub="Tell us what works, what doesn’t and what’s missing" onClose=${act.close}
     foot=${html`<button class="btn primary" disabled=${!ok} onClick=${() => act.feedback(text.trim(), shots.length)}>Send feedback</button>`}>
     <label class="field"><span class="lbl">Your feedback on the app</span>
       <textarea class="inp area" rows="6" placeholder="e.g. On the product page I’d like to…" value=${text} onInput=${e => setText(e.target.value)}></textarea></label>

@@ -191,11 +191,11 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 11.5 As the client, Review and sign → the order is sent; the client sees the thank-you note; Back to salesperson returns to the seller app.
 
 ### 12. Profile, orders, feedback
-- [ ] 12.1 Profile shows the seller's name, Orders (count and how many sent), passcode, Leave feedback, Sign out in red.
+- [ ] 12.1 Profile shows the seller's name, then Orders and Set passcode (Change passcode once set) with no grey line under them, App feedback with one line "Tell us what works and what doesn't", and Sign out in red.
 - [ ] 12.2 Orders → tiles (total value, sent, in draft), filters All / Draft / Sent, one row per order with status, value and units; With client rows show hours left.
 - [ ] 12.3 Tap an order → it opens full screen; back returns to the list.
 - [ ] 12.4 + in Orders → New session: Shop, City, Buying for, budgets; Start session is disabled until a shop name is typed; starting checks the new client in.
-- [ ] 12.5 Leave feedback → type a note, attach a screenshot (thumbnail with ×), remove it, send → toast "Thanks · feedback sent".
+- [ ] 12.5 App feedback → type a note, attach a screenshot (thumbnail with ×), remove it, send → toast "Thanks · feedback sent".
 
 ### 13. General
 - [ ] 13.1 Close and reopen the app (home-screen icon): orders, notes, the client in session and the passcode are kept.
