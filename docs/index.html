@@ -388,8 +388,8 @@ input{font:inherit;color:inherit}
 .ov-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px}
 .ov-meta > div{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0;font-size:14.5px;font-weight:600}
 .ov-meta .saved{font-size:14.5px}
-.ov-body{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
-.ov-actions{position:absolute;z-index:19;left:50%;transform:translateX(-50%);bottom:calc(max(14px,calc(env(safe-area-inset-bottom,0px) - 6px)) + 70px);width:min(calc(100% - 28px),420px);display:flex;gap:10px}
+.ov-body{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+.ov-actions{position:absolute;z-index:19;left:50%;transform:translateX(-50%);bottom:max(16px,calc(env(safe-area-inset-bottom,0px) - 4px));width:min(calc(100% - 28px),420px);display:flex;gap:10px}
 .ov-actions .cap-btn{box-shadow:0 8px 24px rgba(0,0,0,.18)}
 .ov-actions .round{background:var(--surface);box-shadow:0 8px 24px rgba(0,0,0,.12)}
 .sel{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 4px;padding:12px 8px 12px 14px;border-top:1px solid var(--line)}
@@ -600,8 +600,8 @@ input{font:inherit;color:inherit}
   .tab{flex-direction:row;gap:6px;font-size:12.5px;padding:6px 16px}
   .screen.tabbed{padding-bottom:64px}
   .screen.tabbed.with-pill{padding-bottom:120px}
-  .ov-body{padding-bottom:116px}
-  .ov-actions{bottom:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 8px)) + 54px)}
+  .ov-body{padding-bottom:72px}
+  .ov-actions{bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 8px))}
 }
 @container app (orientation: landscape) and (min-width: 600px){
   .today-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start}
@@ -1167,12 +1167,9 @@ function CalendarTab({S, act}) {
 }
 
 // Before the check-in only Check in shows, at the bottom where the thumb is; checking in opens the Collection for that client.
-// From the client pill above the tab bar (sh.pill) the visit can be ended in one tap, or the order opened.
 function ApptSheet({sh, S, act}) {
   const b = BUYERS[sh.bid], o = S.orders['o-' + b.id], a = S.appts[b.id] || {}, isIn = isOngoing(a);
   const foot = !a.in ? html`<button class="btn go" onClick=${() => act.checkIn(b.id)}><${Icon} n="check" s=${18} w=${2.2}/>Check in</button>`
-    : isIn && sh.pill ? html`<button class="btn secondary" style="flex:0 0 auto" onClick=${() => act.openOrder(b.id)}>View order</button>
-        <button class="btn primary" onClick=${() => { act.checkOut(b.id); act.close(); }}>Check out</button>`
     : isIn ? html`<button class="btn secondary" style="flex:0 0 auto" onClick=${() => act.checkOut(b.id)}>Check out</button>
         <button class="btn primary" onClick=${() => act.addProducts(b.id)}>Add products</button>`
     : html`${o && html`<button class="btn secondary" style="flex:0 0 auto" onClick=${() => act.openOrder(b.id)}>View order</button>`}
@@ -1215,11 +1212,11 @@ function LookSheet({id, S, ui, act}) {
 /* =====================================================================
    Orders — the signed-in seller's orders, with submitter traceability
    ===================================================================== */
-// During a visit only the ongoing client's order shows; with no one ongoing, every order with filter chips
+// Profile → Orders: every order of the signed-in seller, with filter chips (the client in session is under the pill)
 const SENT = ['submitted', 'partial', 'confirmed'];
 function Profile({S, ui, act}) {
   if (ui.sub === 'orders') return html`<${OrdersTab} S=${S} ui=${ui} act=${act}/>`;
-  const rep = REPS[S.rep], so = activeOrder(S, ui);
+  const rep = REPS[S.rep];
   const mine = Object.values(S.orders).filter(o => BUYERS[o.buyerId].rep === S.rep), sent = mine.filter(o => SENT.includes(o.status)).length;
   return html`
     <header class="top top-bar mid"><h1 class="h1">Profile</h1></header>
@@ -1227,7 +1224,7 @@ function Profile({S, ui, act}) {
       <div class="prof"><span class="avatar">${rep.ini}</span><div><div class="prof-n">${rep.name}</div><div class="small muted">Seller · showroom</div></div></div>
       <div class="list">
         <button class="row" onClick=${() => act.set({sub:'orders'})}><span class="row-ic"><${Icon} n="orders" s=${19}/></span>
-          <div class="row-main"><div class="row-title">Orders</div><div class="row-sub">${so ? BUYERS[so.buyerId].shop + ' · in session' : `${mine.length} ${mine.length === 1 ? 'order' : 'orders'} · ${sent} sent`}</div></div><${Icon} n="next" s=${18}/></button>
+          <div class="row-main"><div class="row-title">Orders</div><div class="row-sub">${mine.length} ${mine.length === 1 ? 'order' : 'orders'} · ${sent} sent</div></div><${Icon} n="next" s=${18}/></button>
         <button class="row" onClick=${() => act.sheet({type:'passcode'})}><span class="row-ic"><${Icon} n="lock" s=${19}/></span>
           <div class="row-main"><div class="row-title">${S.pins[S.rep] ? 'Change passcode' : 'Set passcode'}</div><div class="row-sub">${S.pins[S.rep] ? '4-digit code to sign in' : 'Not set: any 4 digits sign you in'}</div></div><${Icon} n="next" s=${18}/></button>
       </div>
@@ -1243,18 +1240,18 @@ function OrdersTab({S, ui, act}) {
       hoursLeft:o.status === 'shared' ? Math.max(0, 48 - Math.floor((Date.now() - o.sharedAt) / 36e5)) : null}; });
   const sent = all.filter(r => SENT.includes(r.status)).length;
   const F = [['all', 'All', () => true], ['draft', 'Draft', r => !SENT.includes(r.status)], ['sent', 'Sent', r => SENT.includes(r.status)]];
-  const cur = F.find(x => x[0] === f) || F[0], rows = so ? all.filter(r => r.id === so.id) : all.filter(cur[2]);
+  const cur = F.find(x => x[0] === f) || F[0], rows = all.filter(cur[2]);
   return html`
     <div class="sub-nav"><button class="icon-btn" onClick=${() => act.set({sub:null})} aria-label="Back to profile"><${Icon} n="back"/></button></div>
     <header class="top top-bar mid"><h1 class="h1">Orders</h1>
-      ${!so && html`<button class="round-btn" onClick=${() => act.sheet({type:'newbuyer'})} aria-label="New session with a client"><${Icon} n="plus" s=${20} w=${2.2}/></button>`}</header>
+      <button class="round-btn" onClick=${() => act.sheet({type:'newbuyer'})} aria-label="New session with a client"><${Icon} n="plus" s=${20} w=${2.2}/></button></header>
     <section class="sec">
-      ${so ? html`<div class="lbl">Ongoing</div>` : html`<div class="live">
+      <div class="live">
         <div class="tile"><b>${fmt(all.reduce((a, r) => a + r.value, 0) / 1000)}k</b><span>${all.length} ${all.length === 1 ? 'order' : 'orders'}</span></div>
         <div class="tile"><b>${sent}</b><span>sent</span></div>
         <div class="tile"><b>${all.length - sent}</b><span>in draft</span></div>
       </div>
-      <div class="ftabs" role="tablist" aria-label="Show orders">${F.map(([k, l, test]) => html`<button role="tab" aria-selected=${cur[0] === k} class=${'ftab' + (cur[0] === k ? ' on' : '')} onClick=${() => setF(k)}>${l}<span class="num">${all.filter(test).length}</span></button>`)}</div>`}
+      <div class="ftabs" role="tablist" aria-label="Show orders">${F.map(([k, l, test]) => html`<button role="tab" aria-selected=${cur[0] === k} class=${'ftab' + (cur[0] === k ? ' on' : '')} onClick=${() => setF(k)}>${l}<span class="num">${all.filter(test).length}</span></button>`)}</div>
       ${!all.length ? html`<div class="empty">No orders yet. Check in a client from Home to start one.</div>`
         : !rows.length && html`<div class="empty">No ${cur[1].toLowerCase()} orders.</div>`}
       ${rows.length > 0 && html`<div class="list">
@@ -1703,7 +1700,7 @@ function SelLine({l, o, act, locked}) {
 }
 
 // One switch only (Women / Men); budgets and guideline checks open from the summary card at the top of the selection
-function OrderView({S, ui, act, order, asTab}) {
+function OrderView({S, ui, act, order}) {
   const b = BUYERS[order.buyerId], div = b.divs.includes(ui.div) ? ui.div : b.divs[0];
   const k = kpi(order, div), db = divBudget(b, div), open = issuesOf(order, [div]).length;
   const lines = order.lines.filter(l => P[l.pid].div === div);
@@ -1713,7 +1710,7 @@ function OrderView({S, ui, act, order, asTab}) {
   const inVisit = ui.session === order.id;
   return html`<div class="ov">
     <div class="ov-nav">
-      <button class="icon-btn" onClick=${asTab ? () => act.set({sub:null}) : act.back} aria-label=${asTab ? 'Back to profile' : 'Back'}><${Icon} n="back"/></button>
+      <button class="icon-btn" onClick=${act.back} aria-label="Back"><${Icon} n="back"/></button>
       <div class="ov-nav-t"><div class="ov-shop">${b.shop}</div><div class="ov-id">${orderNo(order)}</div></div>
       <span class="icon-btn" aria-hidden="true"></span>
     </div>
@@ -1892,7 +1889,7 @@ const GUIDE_STEPS = [
 function SessionBar({S, ui, act}) {
   const o = activeOrder(S, ui); if (!o) return null;
   const b = BUYERS[o.buyerId], n = o.lines.length, u = b.divs.reduce((a, d) => a + kpi(o, d).units, 0);
-  return html`<button class="sbar" onClick=${() => act.sheet({type:'appt', bid:b.id, pill:true})} aria-label=${`Ordering for ${b.shop}: ${n} ${n === 1 ? 'item' : 'items'}, ${u} units. Open the visit`}>
+  return html`<button class="sbar" onClick=${() => act.openOrder(b.id)} aria-label=${`Ordering for ${b.shop}: ${n} ${n === 1 ? 'item' : 'items'}, ${u} units. Open the order`}>
     <span class="sbar-ph" aria-hidden="true">${n ? o.lines.slice(-2).map(l => html`<span class="sbar-c"><img src=${imgSrc(P[l.pid], l.colour)} alt="" draggable="false"/></span>`)
       : html`<span class="sbar-none"><${Icon} n="orders" s=${20}/></span>`}</span>
     <span class="sbar-t"><b>${b.shop}</b><span>${n ? `View order · ${n} ${n === 1 ? 'item' : 'items'}` : 'View order · nothing yet'}</span></span>
@@ -2012,20 +2009,19 @@ function App({onReset}) {
   // a checked-in client is always the client in session (after a reload or an account switch too)
   const ongoing = ongoingBuyer(S), sessionOk = !!activeOrder(S, ui);
   useEffect(() => { if (ongoing && !sessionOk && !buyerView) act.startSession(ongoing.id); }, [ongoing && ongoing.id, sessionOk, !!buyerView]);
-  // the client in session rides as a pill above the tab bar on every tab; the tab bar is always there
-  // with a client in session, Profile → Orders opens that client's order straight away (the list would only hold that one)
-  const so = activeOrder(S, ui), shown = order || (ui.tab === 'profile' && ui.sub === 'orders' && so) || null, pill = !!(so && !shown), capDiv = so && (BUYERS[so.buyerId].divs.includes(ui.capDiv) ? ui.capDiv : BUYERS[so.buyerId].divs[0]);
+  // the client in session rides as a pill above the tab bar on every tab; an open order is full screen, without either
+  const so = activeOrder(S, ui), pill = !!(so && !order), capDiv = so && (BUYERS[so.buyerId].divs.includes(ui.capDiv) ? ui.capDiv : BUYERS[so.buyerId].divs[0]);
   if (buyerView) return html`<div class="app"><${BuyerView} S=${S} ui=${ui} act=${act}/>${sheet}${toast}</div>`;
   if (S.signedOut) return html`<div class="app"><${SignIn} S=${S} act=${act}/>${toast}</div>`;
   return html`<div class=${'app' + (pill ? ' with-pill' : '')}>
-    ${shown ? html`<${OrderView} S=${S} ui=${ui} act=${act} order=${shown} asTab=${!order}/>` : html`
+    ${order ? html`<${OrderView} S=${S} ui=${ui} act=${act} order=${order}/>` : html`
       <div class=${'screen tabbed' + (pill ? ' with-pill' : '')}>
         ${ui.tab === 'calendar' && html`<${CalendarTab} S=${S} act=${act}/>`}
         ${ui.tab === 'today' && html`<${Today} S=${S} ui=${ui} act=${act}/>`}
         ${ui.tab === 'profile' && html`<${Profile} S=${S} ui=${ui} act=${act}/>`}
         ${ui.tab === 'catalogue' && html`<${CatalogueTab} key=${so ? so.id : 'none'} S=${S} ui=${ui} act=${act}/>`}
       </div>`}
-    <div class="dock">${pill && html`<${SessionBar} S=${S} ui=${ui} act=${act}/>`}<${TabBar} tab=${ui.tab} act=${act}/></div>
+    ${!order && html`<div class="dock">${pill && html`<${SessionBar} S=${S} ui=${ui} act=${act}/>`}<${TabBar} tab=${ui.tab} act=${act}/></div>`}
     ${ui.capture && so && html`<${Capture} order=${so} div=${capDiv} act=${act}/>`}
     ${ui.zoom && html`<${Zoom} z=${ui.zoom} act=${act}/>`}
     ${sheet}${toast}
