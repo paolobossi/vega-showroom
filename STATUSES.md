@@ -171,7 +171,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 9.5 × on a line → the native iOS alert "Delete [style] in [colour] from the order?"; Cancel keeps it, OK removes it.
 - [ ] 9.6 A division with no products shows "No … products yet. Tap Add on any style in the Collection".
 - [ ] 9.7 During the visit the bottom buttons are **Save draft** and **Review and sign**; outside a visit, a round sign button and Check in to add products.
-- [ ] 9.8 Save draft → the client is checked out; back to Home; toast "Draft saved · … checked out"; the row shows Draft.
+- [ ] 9.8 Save draft → a native iOS dialog asks "Save draft and check out?" ("This ends the session with … The order stays saved as a draft."). Cancel → nothing changes, you stay in the order. OK → the client is checked out; back to Home; toast "Draft saved · … checked out"; the row shows Draft.
 
 ### 10. Review and sign
 - [ ] 10.1 Review and sign → the sheet lists Women's and Men's with status, units and value; parts with units are ticked; a part with no units can't be picked.

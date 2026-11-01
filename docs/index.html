@@ -1819,7 +1819,7 @@ function OrderView({S, ui, act, order}) {
       </div>
     </div>
     <div class="ov-actions">
-      ${inVisit ? html`<button class="cap-btn ghost" onClick=${() => act.endVisit(b.id, `Draft saved · ${b.shop} checked out`)}>Save draft</button>
+      ${inVisit ? html`<button class="cap-btn ghost" onClick=${() => confirm(`Save draft and check out?\n\nThis ends the session with ${b.shop}. The order stays saved as a draft.`) && act.endVisit(b.id, `Draft saved · ${b.shop} checked out`)}>Save draft</button>
         <button class="cap-btn" onClick=${() => act.sheet({type:'finish', orderId:order.id})}><${Icon} n="sign" w=${2.2}/>Review and sign</button>`
         : html`<button class="round" onClick=${() => act.sheet({type:'finish', orderId:order.id})} aria-label="Review and sign"><${Icon} n="sign"/></button>
         <button class="cap-btn" disabled=${allSent} onClick=${() => act.checkIn(b.id)}><${Icon} n="check" w=${2.4}/>Check in to add products</button>`}
