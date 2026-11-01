@@ -109,7 +109,8 @@ input{font:inherit;color:inherit}
 @keyframes rise{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
 .sbar-ph{position:relative;flex:none;display:flex}
 .sbar-c{width:42px;height:42px;border-radius:50%;border:2px solid var(--band);background:#fff;overflow:hidden}
-.sbar-c + .sbar-c{margin-left:-16px;border:3px solid var(--band)}
+/* the right photo always sits on top, cut out from the left one by a thick black ring */
+.sbar-c + .sbar-c{position:relative;z-index:1;margin-left:-18px;border:4px solid var(--band)}
 /* the photos are full-length shots: zoom in so the piece fills the circle */
 .sbar-c img{width:100%;height:100%;object-fit:cover;object-position:50% 62%;transform:scale(1.5)}
 .sbar-none{display:grid;width:42px;height:42px;border-radius:50%;border:2px solid var(--band);place-items:center;background:#2A2C30 !important;color:rgba(255,255,255,.7)}
