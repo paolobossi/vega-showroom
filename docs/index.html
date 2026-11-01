@@ -332,6 +332,7 @@ input{font:inherit;color:inherit}
 .sq-btn.on{background:var(--accent);color:var(--accent-ink);border-color:transparent}
 .fchip{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:5px 8px 5px 12px;border-radius:99px;background:var(--surface-2);border:1px solid var(--line);color:var(--ink)}
 .fchip svg{color:var(--muted)}
+.fchips{display:flex;gap:6px;flex-wrap:wrap}
 .opt .row-side{color:var(--accent)}
 .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 /* collection: category rail on the left, products grouped by category and family */
@@ -1352,7 +1353,7 @@ function CatalogueTab({S, ui, act}) {
   const [q, setQ] = useState(''), [div, setDiv] = useState(divs[0]), [cur, setCur] = useState(null);
   const season = SEASONS.find(x => x.id === ui.catSeason);
   const ql = q.trim().toLowerCase();
-  const items = PRODUCTS.filter(p => p.div === div && p.season === season.id && (!sb || available(sb, p)) && (!ui.catDrop || p.drop === ui.catDrop) && matches(p, ql));
+  const items = PRODUCTS.filter(p => p.div === div && p.season === season.id && (!sb || available(sb, p)) && (!ui.catDrop || p.drop === ui.catDrop) && hasTag(p, ui.catTag) && matches(p, ql));
   // category, then a sub-heading only where the family is a kind of product (Dresses, Hats); bags and shoes families are lines (Puzzle, Pebble), so they just sit together
   const groups = CATS.map(c => { const ps = items.filter(p => p.cat === c), sub = SUBTYPE[c];
     return {cat:c, n:ps.length, fams:sub ? [...new Set(ps.map(sub))].map(f => ({f, id:c + '-' + slug(f), ps:ps.filter(p => sub(p) === f)}))
@@ -1363,7 +1364,7 @@ function CatalogueTab({S, ui, act}) {
   useEffect(() => { const sc = ref.current && ref.current.closest('.screen'); if (!sc) return;
     const spy = () => { if (Date.now() < hold.current) return; const top = navBottom() + 12; let id = null;
       ref.current.querySelectorAll('[data-spy]').forEach(el => { if (el.getBoundingClientRect().top <= top) id = el.dataset.spy; }); setCur(id); };
-    spy(); sc.addEventListener('scroll', spy, {passive:true}); return () => sc.removeEventListener('scroll', spy); }, [div, ql, season.id, ui.catDrop, groups.length]);
+    spy(); sc.addEventListener('scroll', spy, {passive:true}); return () => sc.removeEventListener('scroll', spy); }, [div, ql, season.id, ui.catDrop, ui.catTag, groups.length]);
   // tap: glide to the target just below the tabs; the spy waits so the tabs don't flicker on the way
   const go = id => { const el = document.getElementById('c-' + id), sc = ref.current && ref.current.closest('.screen'); if (!el || !sc) return;
     hold.current = Date.now() + 700; setCur(id);
@@ -1381,9 +1382,12 @@ function CatalogueTab({S, ui, act}) {
       <div class="searchrow">
         <label class="search"><${Icon} n="search" s=${18}/><input id="cat-q" placeholder="Search" aria-label="Search style, code or family" value=${q} onInput=${e => setQ(e.target.value)}/></label>
         ${so && html`<button class="sq-btn" onClick=${() => { act.set({capDiv:div}); act.capture(true); }} aria-label="Photograph a sample"><${Icon} n="cam" s=${20} w=${2}/></button>`}
-        <button class=${'sq-btn' + (ui.catDrop || season.id !== SEASONS[0].id ? ' on' : '')} onClick=${() => act.sheet({type:'filter'})} aria-label=${`Filters: ${season.name}` + (ui.catDrop ? `, ${DROPS[ui.catDrop].split(' · ')[0]}` : '')}><${Icon} n="filter" s=${20} w=${2}/></button>
+        <button class=${'sq-btn' + (ui.catDrop || ui.catTag || season.id !== SEASONS[0].id ? ' on' : '')} onClick=${() => act.sheet({type:'filter'})} aria-label=${`Filters: ${season.name}` + (ui.catDrop ? `, ${DROPS[ui.catDrop].split(' · ')[0]}` : '') + (ui.catTag ? `, ${TAG_OPTS.find(x => x[0] === ui.catTag)[1]}` : '')}><${Icon} n="filter" s=${20} w=${2}/></button>
       </div>
-      ${ui.catDrop && html`<button class="fchip" onClick=${() => act.set({catDrop:null})} aria-label="Clear drop filter">${DROPS[ui.catDrop]}<${Icon} n="x" s=${14} w=${2.2}/></button>`}
+      ${(ui.catDrop || ui.catTag) && html`<div class="fchips">
+        ${ui.catDrop && html`<button class="fchip" onClick=${() => act.set({catDrop:null})} aria-label="Clear drop filter">${DROPS[ui.catDrop].split(' · ')[0]} · ${dropWhen(ui.catDrop).replace('Delivers ', '')}<${Icon} n="x" s=${14} w=${2.2}/></button>`}
+        ${ui.catTag && html`<button class="fchip" onClick=${() => act.set({catTag:null})} aria-label="Clear tag filter">${TAG_OPTS.find(x => x[0] === ui.catTag)[1]}<${Icon} n="x" s=${14} w=${2.2}/></button>`}
+      </div>`}
       ${!items.length ? html`<div class="empty">${ql ? `No styles match “${q}”. Try a style name or code.` : `No ${DIV_LABEL[div].toLowerCase()} styles in this collection.`}</div>`
       : html`<div ref=${ref}>
         <nav class="cat-nav" ref=${nav} aria-label="Categories">
@@ -1508,20 +1512,23 @@ function NewBuyerSheet({S, sh, act}) {
   <//>`;
 }
 
+// back-office tag filter: Must have, Essential, or the styles with no tag
+const TAG_OPTS = [[null, 'All styles'], ['must', TAGS.must], ['ess', TAGS.ess], ['none', 'Other styles']];
+const hasTag = (p, t) => !t || (t === 'none' ? !p.tag : p.tag === t);
+// "Delivers 15 January 2027": SS27 drops deliver in the new year
+const dropWhen = k => { const [d, m] = DROPS[k].split(' · delivers ')[1].split(' '); return `Delivers ${d} ${MONTHS[m] || m} 2027`; };
+
 function FilterSheet({ui, act}) {
-  const opts = [[null, 'All drops', 'Every delivery window'], ...Object.entries(DROPS).map(([k, v]) => [k, v.split(' · ')[0], v.split(' · ')[1]])];
-  // picking an option keeps the sheet open, so collection and drop can be set together
+  // picking an option keeps the sheet open, so collection, drop and tag can be set together
+  const group = (label, key, opts) => html`<div class="lbl">${label}</div>
+    <div class="list">${opts.map(([v, t, sub]) => html`<button class="row opt" onClick=${() => act.set({[key]:v})} aria-pressed=${v === ui[key]}>
+      <div class="row-main"><div class="row-title">${t}</div>${sub && html`<div class="row-sub">${sub}</div>`}</div>
+      <div class="row-side">${v === ui[key] && html`<${Icon} n="check" s=${20} w=${2.4}/>`}</div>
+    </button>`)}</div>`;
   return html`<${Sheet} title="Filters" onClose=${act.close}>
-    <div class="lbl">Collection</div>
-    <div class="list">${SEASONS.map(x => html`<button class="row opt" onClick=${() => act.set({catSeason:x.id})} aria-pressed=${x.id === ui.catSeason}>
-      <div class="row-main"><div class="row-title">${x.name}</div><div class="row-sub">${x.note}</div></div>
-      <div class="row-side">${x.id === ui.catSeason && html`<${Icon} n="check" s=${20} w=${2.4}/>`}</div>
-    </button>`)}</div>
-    <div class="lbl">Drop</div>
-    <div class="list">${opts.map(([v, t, sub]) => html`<button class="row opt" onClick=${() => act.set({catDrop:v})} aria-pressed=${v === ui.catDrop}>
-      <div class="row-main"><div class="row-title">${t}</div><div class="row-sub">${sub}</div></div>
-      <div class="row-side">${v === ui.catDrop && html`<${Icon} n="check" s=${20} w=${2.4}/>`}</div>
-    </button>`)}</div>
+    ${group('Collection', 'catSeason', SEASONS.map(x => [x.id, x.name]))}
+    ${group('Drop', 'catDrop', [[null, 'All drops'], ...Object.keys(DROPS).map(k => [k, DROPS[k].split(' · ')[0], dropWhen(k)])])}
+    ${group('Tag', 'catTag', TAG_OPTS)}
   <//>`;
 }
 
@@ -2064,7 +2071,7 @@ function makeActs(setS, setUi, onReset) {
 
 function App({onReset}) {
   const [S, setS] = useState(loadState);
-  const [ui, setUi] = useState({tab:'calendar', view:null, sheet:null, capture:false, div:'W', role:'sales', toast:null, session:loadSession(), catSeason:'SS27', catDrop:null});
+  const [ui, setUi] = useState({tab:'calendar', view:null, sheet:null, capture:false, div:'W', role:'sales', toast:null, session:loadSession(), catSeason:'SS27', catDrop:null, catTag:null});
   useEffect(() => { saveState(S); }, [S]);
   useEffect(() => { saveSession(ui.session); }, [ui.session]);
   const act = useMemo(() => makeActs(setS, setUi, onReset), []);

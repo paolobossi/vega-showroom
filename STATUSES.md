@@ -122,7 +122,8 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 4.1 With a client in session, the title shows only the divisions they buy (Linea: Women only; Harbour: Men only; Dubois: Women and Men).
 - [ ] 4.2 Category tabs (Ready-to-wear, Bags, Shoes, Accessories) stick to the top; tapping one scrolls to it; scrolling highlights the current one.
 - [ ] 4.3 Search by name, code or family (e.g. "Puzzle", "A510") → only matching styles; a search with no match shows "No styles match …".
-- [ ] 4.4 Filters → Collection (Spring Summer 2027, Pre-Spring 2027, Permanent collection) and Drop (All, Drop 1, Drop 2) → the grid updates; the filter button shows as on; a drop chip under the search clears the drop.
+- [ ] 4.4 Filters → Collection (Spring Summer 2027, Pre-Spring 2027, Permanent collection: titles only), Drop (All drops; Drop 1 "Delivers 15 January 2027"; Drop 2 "Delivers 20 February 2027") and Tag (All styles, Must have, Essential, Other styles) → the grid updates; the filter button shows as on; a chip under the search for the drop and one for the tag, each clears its filter.
+- [ ] 4.4b Tag filter with a client in session: Must have shows only black-tagged styles, Essential only white-tagged ones, Other styles only untagged ones; the three together add up to All styles.
 - [ ] 4.5 Product tags on the photos: Must have in black (e.g. Small Amazona 180), Essential in white (e.g. Medium Puzzle Fold tote), none on the others.
 - [ ] 4.6 With nobody in session, the Collection shows Women and Men and every style.
 
