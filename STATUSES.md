@@ -54,8 +54,8 @@ The whole order's status is worked out from its parts: all the same → that sta
 
 | Status | Meaning |
 |---|---|
-| Available (`+` button) | The client can buy it; tapping + adds it to the order with one unit (one per size on sized styles). |
-| In order (`− units +` on the photo) | Already in the client's selection. + and − change one unit (one per size on sized styles); at the last step − is a bin that takes it out; the number opens the product page for the sizes. |
+| Available (`Add` button) | The client can buy it. Add sits at the bottom of the card, under the prices; tapping it puts the style in the order with one unit (one per size on sized styles). |
+| In order (`− units +` at the bottom of the card) | Already in the client's selection. Add turns into this, in the same place and at the same height. + and − change one unit (one per size on sized styles); at the last step − is a bin that takes it out; the number opens the product page for the sizes. |
 | Not available (`Not available`) | Not open to this client's tier (see Client tier). Hidden from the Collection during a visit. |
 | Division not bought (`No men’s` / `No women’s`) | The client doesn't buy that division. |
 | Division sent (`Women sent` / `Men sent`) | That part of the order is sent, so nothing more can be added to it. |
