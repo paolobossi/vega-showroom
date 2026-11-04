@@ -385,7 +385,8 @@ input{font:inherit;color:inherit}
 /* under the card info: Add in black, or Edit outlined once the style is in the order (with its units across colours); both open the product page */
 .pc-act{margin-top:auto;display:flex;align-items:center;justify-content:center;width:100%;height:40px;border:1.5px solid color-mix(in srgb,var(--ink) 20%,transparent);border-radius:var(--r-m);background:var(--surface);color:var(--ink);font-size:var(--fs-body);font-weight:600}
 .pcard{text-align:left;color:inherit;font:inherit}
-.pc-in{position:absolute;z-index:2;right:6px;top:6px;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--band);color:var(--band-ink);box-shadow:0 0 0 2px var(--surface)}
+/* in-order badge: the same height as the Must have / Essential tag, green like the in-order mark on colours */
+.pc-in{position:absolute;z-index:2;right:6px;top:6px;--h:calc(var(--fs-caption) * var(--lh-body) + 8px);width:var(--h);height:var(--h);border-radius:50%;display:grid;place-items:center;background:var(--good);color:#fff}
 .pc-lock{position:absolute;left:5px;top:5px;display:inline-flex;align-items:center;gap:4px;font-size:var(--fs-caption);font-weight:700;padding:4px 8px 4px 6px;border-radius:999px;max-width:calc(100% - 44px);white-space:nowrap;overflow:hidden}
 /* back-office tag on the photo: Must have in black, Essential in white */
 .ptag{position:absolute;z-index:2;left:6px;top:6px;padding:4px 10px;border-radius:999px;font-size:var(--fs-caption);font-weight:700;letter-spacing:.02em;white-space:nowrap;pointer-events:none}
@@ -1385,7 +1386,7 @@ function PCard({p, o, act}) {
     <div class="pc-photo">
       <span class="pc-img"><${Thumb} pid=${p.id} colour=${c}/></span>
       ${lock ? html`<span class="pc-lock"><${Icon} n="lock" s=${11} w=${2.4}/>${lock}</span>` : html`<${Tag} p=${p}/>`}
-      ${has && html`<span class="pc-in" aria-hidden="true"><${Icon} n="check" s=${14} w=${3}/></span>`}
+      ${has && html`<span class="pc-in" aria-hidden="true"><${Icon} n="check" s=${13} w=${3}/></span>`}
     </div>
     <span class="pc-info">
       <span class="pname">${p.name}</span>
@@ -1613,7 +1614,7 @@ function ProductSheet({pid, colour, orderId, S, ui, act}) {
     media=${html`<div class="pd-media"><${Carousel} p=${p} colour=${c} at=${ui.photoAt} onOpen=${i => act.set({zoom:{pid, colour:c, i}})}/><${Tag} p=${p}/></div>`}>
     <div class="pd-head"><h1 class="pd-name">${p.name}</h1>
       <div class="pd-sub"><span class="code">${p.code}</span></div></div>
-    <div class="colours">${p.colours.map(x => html`<button class=${'colour' + (x === c ? ' on' : '')} onClick=${() => setC(x)}><span class="sw" style=${{background:COL[x][0]}}></span>${x}<span class="code">${COL[x][1]}</span>${lineOf(x) && html`<span class="flag-dot" title="In order"><${Icon} n="flag" s=${12} w=${2.4}/></span>`}</button>`)}</div>
+    <div class="colours">${p.colours.map(x => html`<button class=${'colour' + (x === c ? ' on' : '')} onClick=${() => setC(x)}><span class="sw" style=${{background:COL[x][0]}}></span>${x}<span class="code">${COL[x][1]}</span>${lineOf(x) && html`<span class="flag-dot" title="In order"><${Icon} n="check" s=${12} w=${3}/></span>`}</button>`)}</div>
     <${Prices} cls="lg" p=${p}/>
     ${edit && html`<div class="pd-qty">
       ${p.sizes.length > 1 ? html`

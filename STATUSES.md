@@ -55,7 +55,7 @@ The whole order's status is worked out from its parts: all the same → that sta
 | Status | Meaning |
 |---|---|
 | Available (no mark) | The client can buy it. Tapping anywhere on the card slides its product page up over the Collection, where colour and quantities are chosen and Add to order puts it in. |
-| In order (black ✓ in the photo's top-right corner) | Already in the client's selection, in at least one colour. The card has no buttons; tapping it opens the product page on the colour in the order. |
+| In order (green ✓ in the photo's top-right corner, as tall as the Must have / Essential tag) | Already in the client's selection, in at least one colour. The card has no buttons; tapping it opens the product page on the colour in the order. |
 | Not available (`Not available`) | Not open to this client's tier (see Client tier). Hidden from the Collection during a visit. |
 | Division not bought (no mark) | The client doesn't buy that division, but it is still shown. Adding a style from it asks "[Client] doesn't buy Men. Add Men to this order?"; on OK that division opens on the order with no budget. |
 | Division sent (`Women sent` / `Men sent`) | That part of the order is sent, so nothing more can be added to it. |
@@ -137,14 +137,14 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 ### 6. Adding a style and entering quantities
 - [ ] 6.1 Each card shows photo, name, code, wholesale and retail price and colour dots, with no button. Tapping anywhere on it slides the product page up over the Collection.
 - [ ] 6.2 Product page of a style not in the order: pick a colour, optionally set quantities, then **Add to order** (or **Add to order · N units**) → toast "Added to order"; the page says "In order · …" above Remove from order.
-- [ ] 6.3 Close the page → the card shows a black ✓ in the photo's top-right corner, away from the Must have / Essential tag.
+- [ ] 6.3 Close the page → the card shows a green round ✓ in the photo's top-right corner, the same height as the Must have / Essential tag on the left.
 - [ ] 6.4 Tap that card again → the product page opens on the colour in the order, with its quantities; another colour can be added from there.
 - [ ] 6.5 Remove from order on the product page (the last colour) → the ✓ disappears from the card.
 - [ ] 6.6 Quantities of a colour already in the order save at once: + / − or a typed number change "In order · N units" straight away; there is no Update button and no saving message. Close and reopen → the quantities are there.
 - [ ] 6.7 Tap a quantity → the number pad opens; type 100 → 100 is saved; the maximum is 999. One-size styles work the same on their big number.
 - [ ] 6.7b Sizes sit side by side in a row; when a style has more sizes than fit, the row scrolls sideways (like the colours).
 - [ ] 6.7c Apply last scale: enter a scale on a dress (e.g. 34 ×1, 36 ×2, 38 ×2, 40 ×1), close, open another dress → **Apply last scale** fills the same scale. It is kept per size range (dresses, women's shoes, men's shoes…), only shows when it would change something, and is forgotten when the client is checked out. **Clear** empties all sizes. There are no Core / Full / +1 each buttons.
-- [ ] 6.8 Product page, another colour not in the order: set quantities, then **Add to order · N units** → that colour joins the order; colours in the order carry a flag.
+- [ ] 6.8 Product page, another colour not in the order: set quantities, then **Add to order · N units** → that colour joins the order; colours in the order carry the same green ✓.
 - [ ] 6.9 Product page: Remove from order takes that colour out.
 - [ ] 6.10 Product page: the wholesale and retail prices sit on the page with no white box; the details table starts with **Material** (e.g. "100% cotton poplin").
 - [ ] 6.11 Photos: swipe the carousel; tap a photo → full-screen zoom; close it.

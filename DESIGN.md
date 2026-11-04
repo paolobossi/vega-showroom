@@ -20,7 +20,7 @@ Four sizes, each with one job. Hierarchy beyond these comes from weight, colour,
 - **Text greys:** `--ink` for text, `--muted` for secondary text that must be read (4.5:1 on the canvas), `--faint` only for large text, placeholders and non-text marks (3:1).
 - **Primary action:** black (`--ink` with `--bg` text). One per screen: Add to order, Finish order, Send to commercial team, Continue, Check in.
 - **Interactive (`--accent`, blue):** links, the active tab, the selected day, active filters, focus rings and selection checks. Never a filled primary button.
-- **Status:** green `--good`, amber `--warn`, red `--bad`, each with its `-bg` tint. Always with a word or icon too (Within, Over, ⚠), never colour alone.
+- **Status:** green `--good`, amber `--warn`, red `--bad`, each with its `-bg` tint. Always with a word or icon too (Within, Over, ⚠), never colour alone. "In the order" is always a green round ✓: on the Collection card (as tall as the priority tag) and on each colour chip.
 - **Client band:** `--band`, black in light and dark mode (pill, Must have tag, status bar strip).
 
 ## Shape and depth
