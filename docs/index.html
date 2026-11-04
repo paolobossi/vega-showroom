@@ -166,10 +166,6 @@ input{font:inherit;color:inherit}
 .pd-cta{display:flex;flex-direction:column;gap:10px;margin:10px 0 14px}
 .pd-cta .btn{width:100%;min-height:52px;border-radius:999px}
 .btn.black{background:var(--ink);color:var(--bg)}
-/* Update quantity: the button stays black while the spinner turns */
-.btn.busy:disabled{opacity:1}
-.spinner{width:22px;height:22px;border-radius:50%;border:2.5px solid currentColor;border-right-color:transparent;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
 .btn.outline{border:1px solid var(--ink)}
 .btn.outline.danger{border-color:var(--bad)}
 .pd-qty{display:flex;flex-direction:column;gap:10px}
@@ -250,7 +246,7 @@ input{font:inherit;color:inherit}
 .prices span{display:flex;flex-direction:column;min-width:0}
 .prices small{font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
 .prices b{font-size:14px;font-weight:650;color:var(--ink)}
-.prices.lg{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 14px}
+.prices.lg{padding:2px 0}
 .prices.lg b{font-size:19px}
 .stp{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden}
 .stp button{width:38px;height:36px;display:grid;place-items:center;color:var(--ink)}
@@ -380,7 +376,8 @@ input{font:inherit;color:inherit}
 .pcard.locked .pc-img{opacity:.5}
 /* under the card info: Add in black, or Edit outlined once the style is in the order (with its units across colours); both open the product page */
 .pc-act{margin-top:auto;display:flex;align-items:center;justify-content:center;width:100%;height:40px;border:1.5px solid color-mix(in srgb,var(--ink) 20%,transparent);border-radius:12px;background:var(--surface);color:var(--ink);font-size:14.5px;font-weight:650}
-.pc-act.on{background:var(--band);border-color:var(--band);color:var(--band-ink)}
+.pcard{text-align:left;color:inherit;font:inherit}
+.pc-in{position:absolute;z-index:2;right:6px;top:6px;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--band);color:var(--band-ink);box-shadow:0 0 0 2px var(--surface)}
 .pc-lock{position:absolute;left:5px;top:5px;display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;padding:3px 7px 3px 5px;border-radius:99px;max-width:calc(100% - 44px);white-space:nowrap;overflow:hidden}
 /* back-office tag on the photo: Must have in black, Essential in white */
 .ptag{position:absolute;z-index:2;left:6px;top:6px;padding:4px 9px;border-radius:99px;font-size:10.5px;font-weight:700;letter-spacing:.02em;white-space:nowrap;pointer-events:none}
@@ -554,6 +551,9 @@ input{font:inherit;color:inherit}
 .single{display:flex;align-items:center;justify-content:center;gap:22px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:8px}
 .step.lg{width:64px;height:64px;border-radius:32px;font-size:30px;background:var(--surface-2)}
 .qty.xl{font-size:44px;min-width:70px}
+input.qty{width:100%;min-width:0;border:0;background:transparent;color:inherit;font-family:inherit;outline:none;-webkit-appearance:none;border-radius:8px}
+input.qty:focus{background:var(--surface-2)}
+input.qty.xl{width:120px}
 .quick{display:flex;gap:6px;flex-wrap:wrap}
 .qbtn{height:34px;padding:0 12px;border-radius:17px;border:1px solid var(--line);background:var(--surface);font-size:13px;font-weight:600}
 .qbtn:active{background:var(--surface-2)}
@@ -754,6 +754,32 @@ const TAG_OF = {must:['w-amazona-s','w-puzzle-mini','w-flamenco','w-shirt-dress'
   ess:['w-puzzle-fold','w-pebble-lace','w-scarf','w-cord','m-tee','m-ballet','m-wallet','m-card','m-belt']};
 PRODUCTS.forEach(p => { p.tag = Object.keys(TAG_OF).find(k => TAG_OF[k].includes(p.id)) || null; });
 const Tag = ({p}) => p.tag && html`<span class=${'ptag ' + p.tag}>${TAGS[p.tag]}</span>`;
+// Composition shown on the product page, and keywords sellers search by (short sleeve, crossbody…); both come from the back office
+const MAT = {
+  'w-amazona-s':['Calfskin leather','top handle, structured'], 'w-amazona-mini':['Calfskin leather','top handle, mini'],
+  'w-puzzle-fold':['Shiny calfskin leather','tote, foldable'], 'w-puzzle-mini':['Calfskin leather','shoulder, crossbody, mini'],
+  'w-puzzle-edge':['Calfskin leather','shoulder, crossbody'], 'w-flamenco':['Nappa lambskin leather','clutch, knot, evening'],
+  'w-bilbao':['Calfskin leather','bucket, drawstring'], 'w-whisker':['Calfskin leather','shoulder, fringe'],
+  'w-shirt-dress':['100% cotton poplin','midi, long sleeve, collar, buttons'], 'w-viscose-dress':['70% viscose, 30% silk','midi, sleeveless, fluid'],
+  'w-puffer':['100% polyamide, down filling','padded, hooded, long sleeve'], 'w-short-coat':['90% wool, 10% cashmere','short, long sleeve, collar'],
+  'w-balloon':['100% cotton','midi, volume'], 'w-cord':['100% cotton corduroy','wide leg, high waist'],
+  'w-pebble-lace':['Calfskin leather, rubber sole','flat, lace-up'], 'w-oval-loafer':['Calfskin leather','flat, loafer'],
+  'w-toy':['Calfskin leather','heel, sandal, strap'], 'w-dive':['Calfskin leather','mule, flat, slide'],
+  'w-scarf':['70% wool, 30% cashmere','fringe, logo'], 'w-beanie':['100% cashmere','knit, ribbed'],
+  'w-sun':['Acetate','shield, wraparound'], 'w-strap':['Calfskin leather','bag strap, woven'],
+  'm-puzzle-l':['Calfskin leather','shoulder, crossbody'], 'm-puzzle-sling':['Calfskin leather','sling, crossbody'],
+  'm-squad':['Recycled nylon, calfskin leather trims','backpack'], 'm-pebble':['Calfskin leather','bucket, drawstring'],
+  'm-tee':['100% cotton jersey','short sleeve, crew neck, relaxed'], 'm-sweater':['100% wool','crew neck, long sleeve, knit'],
+  'm-shirt':['100% cotton twill and poplin','long sleeve, collar, buttons'], 'm-cord':['100% cotton corduroy','straight leg'],
+  'm-puffer':['100% polyamide, down filling','padded, long sleeve'], 'm-ballet':['Nylon, calfskin leather, rubber sole','sneaker, runner, lace-up'],
+  'm-pogo':['Suede calfskin leather, rubber sole','sneaker, lace-up'], 'm-grip':['Calfskin leather, rubber sole','sneaker, lace-up'],
+  'm-wallet':['Calfskin leather','bifold, wallet'], 'm-card':['Calfskin leather','cardholder'],
+  'm-belt':['Calfskin leather','belt, buckle'], 'm-cap':['100% cotton','cap, baseball, patch'],
+};
+PRODUCTS.forEach(p => { [p.material, p.keywords] = MAT[p.id] || ['', '']; });
+// Material filter: a style matches when its composition names the material (polyamide counts as nylon)
+const MATS = [[null, 'All materials'], ['leather', 'Leather'], ['cotton', 'Cotton'], ['wool', 'Wool'], ['cashmere', 'Cashmere'], ['silk', 'Silk & viscose'], ['nylon', 'Nylon']];
+const hasMat = (p, m) => !m || (m === 'nylon' ? /nylon|polyamide/i : m === 'silk' ? /silk|viscose/i : new RegExp(m, 'i')).test(p.material);
 const P = Object.fromEntries(PRODUCTS.map(p => [p.id, p]));
 // Simulated camera feed: a real shelf shot of one sample, and the style it should match
 const CAMERA_SCENE = {src:'img/scene-amazona-mini.jpg', pid:'w-amazona-mini', colour:'Sunrise Orange'};
@@ -1310,14 +1336,17 @@ function OrdersTab({S, ui, act}) {
 /* =====================================================================
    Catalogue — in a visit, only the styles that client can buy
    ===================================================================== */
-const matches = (p, ql) => !ql || (p.name + ' ' + p.code + ' ' + p.family + ' ' + CAT_LABEL[p.cat]).toLowerCase().includes(ql);
+// every word must match somewhere: name, code, family, category, material, colours or keywords ("black leather bag")
+const matches = (p, ql) => { if (!ql) return true;
+  const hay = [p.name, p.code, p.family, CAT_LABEL[p.cat], p.material, p.keywords, ...p.colours].join(' ').toLowerCase();
+  return ql.split(/\s+/).every(w => hay.includes(w.length > 3 ? w.replace(/s$/, '') : w)); };
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 const SUBTYPE = {rtw:p => p.family, acc:p => p.family === 'Puzzle' ? 'Small leather goods' : p.family};
 
 function ProductList({div, q, b, season, onPick}) {
   const ql = q.trim().toLowerCase();
   const items = PRODUCTS.filter(p => (!div || p.div === div) && (!season || p.season === season) && (!b || available(b, p)) && matches(p, ql));
-  if (!items.length) return html`<div class="empty">${ql ? `No styles match “${q}”. Try a style name or code.` : `No ${DIV_LABEL[div].toLowerCase()} styles in this collection.`}</div>`;
+  if (!items.length) return html`<div class="empty">${ql ? `No styles match “${q}”. Try a style, code, material or colour.` : `No ${DIV_LABEL[div].toLowerCase()} styles in this collection.`}</div>`;
   return html`<div class="list">${items.map(p => html`<button class="row" onClick=${() => onPick(p)}>
     <${Thumb} pid=${p.id} colour=${p.colours[0]}/>
     <div class="row-main"><div class="row-title">${p.name}</div><div class="row-sub"><span class="code">${p.code}</span> · ${CAT_LABEL[p.cat]}</div></div>
@@ -1327,26 +1356,22 @@ function ProductList({div, q, b, season, onPick}) {
 
 // Collection card: photo opens the product page; Add at the bottom puts the style in the client's order at zero units and opens its page.
 // Once it is in the order the button reads Edit with the units across all colours, and opens the page again: colours and quantities are set there, never on the card.
+// The whole card opens the product page, where colour and quantities are chosen; a check on the photo means the style is in the order
 function PCard({p, o, act}) {
-  const mine = o && o.lines.find(l => l.pid === p.id), has = !!mine, c = mine ? mine.colour : p.colours[0], why = o && canTake(o, p);
-  const lock = why, total = has ? o.lines.filter(l => l.pid === p.id).reduce((a, l) => a + units(l.qty), 0) : 0;
-  const open = () => act.sheet({type:'product', pid:p.id, colour:c});
-  // Add puts the style in the order at zero units and opens its page over the Collection to enter sizes
-  const add = () => { if (!o) return act.sheet({type:'pick', item:{pid:p.id, colour:c, via:'search'}}); act.select(o.id, p.id, c, 'search'); open(); };
-  return html`<div class=${'pcard' + (lock && !has ? ' locked' : '')}>
+  const mine = o && o.lines.find(l => l.pid === p.id), has = !!mine, c = mine ? mine.colour : p.colours[0], lock = o && canTake(o, p);
+  return html`<button class=${'pcard' + (lock && !has ? ' locked' : '')} onClick=${() => act.sheet({type:'product', pid:p.id, colour:c})} aria-label=${p.name + (has ? ', in the order' : '')}>
     <div class="pc-photo">
-      <button class="pc-img" onClick=${() => act.sheet({type:'product', pid:p.id})} aria-label=${'Open ' + p.name}><${Thumb} pid=${p.id} colour=${c}/></button>
+      <span class="pc-img"><${Thumb} pid=${p.id} colour=${c}/></span>
       ${lock ? html`<span class="pc-lock"><${Icon} n="lock" s=${11} w=${2.4}/>${lock}</span>` : html`<${Tag} p=${p}/>`}
+      ${has && html`<span class="pc-in" aria-hidden="true"><${Icon} n="check" s=${14} w=${3}/></span>`}
     </div>
-    <button class="pc-info" onClick=${() => act.sheet({type:'product', pid:p.id})}>
+    <span class="pc-info">
       <span class="pname">${p.name}</span>
       <span class="pc-code">${p.code}</span>
       <${Prices} p=${p}/>
       <span class="dots">${p.colours.map(x => html`<span class="sw" style=${{background:COL[x][0]}}></span>`)}</span>
-    </button>
-    ${has ? !why && html`<button class="pc-act" onClick=${open} aria-label=${'Edit ' + p.name + ' in the order: ' + total + ' units'}>Edit · ${total} ${total === 1 ? 'unit' : 'units'}</button>`
-      : !(o && why) && html`<button class="pc-act on" onClick=${add} aria-label=${'Add ' + p.name + (o ? ' to ' + BUYERS[o.buyerId].shop : ' to an order')}>Add</button>`}
-  </div>`;
+    </span>
+  </button>`;
 }
 
 // Three levels, two controls: Women / Men is the page title, categories are one sticky row, and families are headings in the grid
@@ -1355,7 +1380,7 @@ function CatalogueTab({S, ui, act}) {
   const [q, setQ] = useState(''), [div, setDiv] = useState(divs[0]), [cur, setCur] = useState(null);
   const season = SEASONS.find(x => x.id === ui.catSeason);
   const ql = q.trim().toLowerCase();
-  const items = PRODUCTS.filter(p => p.div === div && p.season === season.id && (!sb || available(sb, p)) && (!ui.catDrop || p.drop === ui.catDrop) && hasTag(p, ui.catTag) && matches(p, ql));
+  const items = PRODUCTS.filter(p => p.div === div && p.season === season.id && (!sb || available(sb, p)) && (!ui.catDrop || p.drop === ui.catDrop) && hasTag(p, ui.catTag) && hasMat(p, ui.catMat) && matches(p, ql));
   // category, then a sub-heading only where the family is a kind of product (Dresses, Hats); bags and shoes families are lines (Puzzle, Pebble), so they just sit together
   const groups = CATS.map(c => { const ps = items.filter(p => p.cat === c), sub = SUBTYPE[c];
     return {cat:c, n:ps.length, fams:sub ? [...new Set(ps.map(sub))].map(f => ({f, id:c + '-' + slug(f), ps:ps.filter(p => sub(p) === f)}))
@@ -1366,7 +1391,7 @@ function CatalogueTab({S, ui, act}) {
   useEffect(() => { const sc = ref.current && ref.current.closest('.screen'); if (!sc) return;
     const spy = () => { if (Date.now() < hold.current) return; const top = navBottom() + 12; let id = null;
       ref.current.querySelectorAll('[data-spy]').forEach(el => { if (el.getBoundingClientRect().top <= top) id = el.dataset.spy; }); setCur(id); };
-    spy(); sc.addEventListener('scroll', spy, {passive:true}); return () => sc.removeEventListener('scroll', spy); }, [div, ql, season.id, ui.catDrop, ui.catTag, groups.length]);
+    spy(); sc.addEventListener('scroll', spy, {passive:true}); return () => sc.removeEventListener('scroll', spy); }, [div, ql, season.id, ui.catDrop, ui.catTag, ui.catMat, groups.length]);
   // tap: glide to the target just below the tabs; the spy waits so the tabs don't flicker on the way
   const go = id => { const el = document.getElementById('c-' + id), sc = ref.current && ref.current.closest('.screen'); if (!el || !sc) return;
     hold.current = Date.now() + 700; setCur(id);
@@ -1382,15 +1407,16 @@ function CatalogueTab({S, ui, act}) {
     <header class="top top-bar mid"><h1 class="h1 div-title" role="tablist" aria-label="Collection">${divs.map(d => html`<button role="tab" aria-selected=${d === div} class=${d === div ? 'on' : ''} onClick=${() => pickDiv(d)}>${DIV_TAB[d]}</button>`)}</h1></header>
     <section class="sec">
       <div class="searchrow">
-        <label class="search"><${Icon} n="search" s=${18}/><input id="cat-q" placeholder="Search" aria-label="Search style, code or family" value=${q} onInput=${e => setQ(e.target.value)}/></label>
+        <label class="search"><${Icon} n="search" s=${18}/><input id="cat-q" placeholder="Search" aria-label="Search by style, code, material, colour or keyword" value=${q} onInput=${e => setQ(e.target.value)}/></label>
         ${so && html`<button class="sq-btn" onClick=${() => { act.set({capDiv:div}); act.capture(true); }} aria-label="Photograph a sample"><${Icon} n="cam" s=${20} w=${2}/></button>`}
-        <button class=${'sq-btn' + (ui.catDrop || ui.catTag || season.id !== SEASONS[0].id ? ' on' : '')} onClick=${() => act.sheet({type:'filter'})} aria-label=${`Filters: ${season.name}` + (ui.catDrop ? `, ${DROPS[ui.catDrop].split(' · ')[0]}` : '') + (ui.catTag ? `, ${TAG_OPTS.find(x => x[0] === ui.catTag)[1]}` : '')}><${Icon} n="filter" s=${20} w=${2}/></button>
+        <button class=${'sq-btn' + (ui.catDrop || ui.catTag || ui.catMat || season.id !== SEASONS[0].id ? ' on' : '')} onClick=${() => act.sheet({type:'filter'})} aria-label=${`Filters: ${season.name}` + (ui.catDrop ? `, ${DROPS[ui.catDrop].split(' · ')[0]}` : '') + (ui.catTag ? `, ${TAG_OPTS.find(x => x[0] === ui.catTag)[1]}` : '') + (ui.catMat ? `, ${MATS.find(x => x[0] === ui.catMat)[1]}` : '')}><${Icon} n="filter" s=${20} w=${2}/></button>
       </div>
-      ${(ui.catDrop || ui.catTag) && html`<div class="fchips">
+      ${(ui.catDrop || ui.catTag || ui.catMat) && html`<div class="fchips">
         ${ui.catDrop && html`<button class="fchip" onClick=${() => act.set({catDrop:null})} aria-label="Clear drop filter">${DROPS[ui.catDrop].split(' · ')[0]} · ${dropWhen(ui.catDrop).replace('Delivers ', '')}<${Icon} n="x" s=${14} w=${2.2}/></button>`}
-        ${ui.catTag && html`<button class="fchip" onClick=${() => act.set({catTag:null})} aria-label="Clear tag filter">${TAG_OPTS.find(x => x[0] === ui.catTag)[1]}<${Icon} n="x" s=${14} w=${2.2}/></button>`}
+        ${ui.catTag && html`<button class="fchip" onClick=${() => act.set({catTag:null})} aria-label="Clear priority filter">${TAG_OPTS.find(x => x[0] === ui.catTag)[1]}<${Icon} n="x" s=${14} w=${2.2}/></button>`}
+        ${ui.catMat && html`<button class="fchip" onClick=${() => act.set({catMat:null})} aria-label="Clear material filter">${MATS.find(x => x[0] === ui.catMat)[1]}<${Icon} n="x" s=${14} w=${2.2}/></button>`}
       </div>`}
-      ${!items.length ? html`<div class="empty">${ql ? `No styles match “${q}”. Try a style name or code.` : `No ${DIV_LABEL[div].toLowerCase()} styles in this collection.`}</div>`
+      ${!items.length ? html`<div class="empty">${ql ? `No styles match “${q}”. Try a style, code, material or colour.` : `No ${DIV_LABEL[div].toLowerCase()} styles in this collection.`}</div>`
       : html`<div ref=${ref}>
         <nav class="cat-nav" ref=${nav} aria-label="Categories">
           <div class="cn-row" role="tablist">${groups.map(g => html`<button role="tab" aria-selected=${curCat === g.cat} class=${'cn-cat' + (curCat === g.cat ? ' on' : '')} onClick=${() => go(g.cat)}>${CAT_LABEL[g.cat]}</button>`)}</div>
@@ -1514,8 +1540,8 @@ function NewBuyerSheet({S, sh, act}) {
   <//>`;
 }
 
-// back-office tag filter: Must have, Essential, or the styles with no tag
-const TAG_OPTS = [[null, 'All styles'], ['must', TAGS.must], ['ess', TAGS.ess], ['none', 'Other styles']];
+// back-office priority filter: Must have, Essential, or the styles with no tag
+const TAG_OPTS = [[null, 'All'], ['must', TAGS.must], ['ess', TAGS.ess], ['none', 'Standard']];
 const hasTag = (p, t) => !t || (t === 'none' ? !p.tag : p.tag === t);
 // "Delivers 15 January 2027": SS27 drops deliver in the new year
 const dropWhen = k => { const [d, m] = DROPS[k].split(' · delivers ')[1].split(' '); return `Delivers ${d} ${MONTHS[m] || m} 2027`; };
@@ -1530,35 +1556,36 @@ function FilterSheet({ui, act}) {
   return html`<${Sheet} title="Filters" onClose=${act.close}>
     ${group('Collection', 'catSeason', SEASONS.map(x => [x.id, x.name]))}
     ${group('Drop', 'catDrop', [[null, 'All drops'], ...Object.keys(DROPS).map(k => [k, DROPS[k].split(' · ')[0], dropWhen(k)])])}
-    ${group('Tag', 'catTag', TAG_OPTS)}
+    ${group('Priority', 'catTag', TAG_OPTS)}
+    ${group('Material', 'catMat', MATS)}
   <//>`;
 }
 
 // Product page: with a client in session, sizes and quantities are set right here. A colour not in the order yet is a draft
-// until Add to order (with or without quantities); once it is in the order, changes wait for Update quantity (or are saved on close).
+// until Add to order (with or without quantities); once it is in the order, every change saves at once.
+// The last size scale entered is remembered per size range until check-out, so the next style fills with Apply last scale.
 function ProductSheet({pid, colour, orderId, S, ui, act}) {
   const p = P[pid], o = orderId ? S.orders[orderId] : activeOrder(S, ui), b = o && BUYERS[o.buyerId], why = o && canTake(o, p);
   const [c, setC] = useState(() => { const l = o && o.lines.find(x => x.pid === pid); return colour || (l ? l.colour : p.colours[0]); });
-  const [pending, setPending] = useState({}), [busy, setBusy] = useState(false);
+  const [draft, setDraft] = useState({}), touched = useRef(null);
   const looks = LOOKS.filter(l => l.items.some(([x]) => x === pid));
   const pick = () => act.sheet({type:'pick', item:{pid, colour:c, via:'search'}});
   const lineOf = x => o && o.lines.find(l => l.pid === pid && l.colour === x), line = lineOf(c);
-  const q = pending[c] || (line ? line.qty : {}), u = units(q);
-  const clean = x => Object.fromEntries(Object.entries(x).filter(([, n]) => n > 0).map(([k, n]) => [k, Math.min(99, n)]));
-  const setQ = next => setPending(d => ({...d, [c]: clean(next)}));
-  const drop = x => setPending(d => { const n = {...d}; delete n[x]; return n; });
-  const changed = x => { const l = lineOf(x); return l && pending[x] && qkey(pending[x]) !== qkey(clean(l.qty)); };
-  // a short wait with a spinner in the button, so the seller sees the order being updated
-  const update = () => { const l = line, next = q, x = c; setBusy(true);
-    setTimeout(() => { act.setQty(o.id, l.id, next); drop(x); setBusy(false); }, 700); };
-  const close = () => { const todo = Object.keys(pending).filter(changed);
-    todo.forEach(x => act.setQty(o.id, lineOf(x).id, pending[x])); act.close(); if (todo.length) act.toast('Quantity updated'); };
+  const q = line ? line.qty : draft[c] || {}, u = units(q), sized = p.sizes.length > 1, skey = p.sizes.join(' ');
+  const clean = x => Object.fromEntries(Object.entries(x).filter(([, n]) => n > 0).map(([k, n]) => [k, Math.min(999, n)]));
+  const setQ = next => { const n = clean(next); if (sized) touched.current = n;
+    if (line) act.setQty(o.id, line.id, n); else setDraft(d => ({...d, [c]: n})); };
+  const drop = x => setDraft(d => { const n = {...d}; delete n[x]; return n; });
+  const close = () => { const t = touched.current; if (t && units(t)) act.set({lastScale: {...ui.lastScale, [skey]: t}}); act.close(); };
   const setQty = (sz, n) => setQ({...q, [sz]: Math.max(0, n)});
-  const setAll = arr => setQ(Object.fromEntries(p.sizes.map((sz, i) => [sz, arr[i] || 0])));
+  const last = sized && ui.lastScale && ui.lastScale[skey], showLast = last && qkey(last) !== qkey(clean(q));
   const add = () => { act.select(o.id, pid, c, 'search', q); drop(c); };
   const edit = o && !why;
-  const curves = CURVES[p.sizes.length] || [];
   const val = n => `${n} ${n === 1 ? 'unit' : 'units'}`;
+  // tap the number to type it on the number pad (up to 999); + and − still step by one
+  const num = (sz, cls = '') => html`<input class=${'qty num ' + cls} inputmode="numeric" pattern="[0-9]*" enterkeyhint="done" value=${q[sz] || 0}
+    aria-label=${sz === 'U' ? 'Quantity' : 'Quantity, size ' + sz} onFocus=${e => e.target.select()} onKeyDown=${e => e.key === 'Enter' && e.target.blur()}
+    onInput=${e => setQty(sz, Math.min(999, parseInt(e.target.value.replace(/\D/g, ''), 10) || 0))}/>`;
   return html`<${Sheet} tall title=${p.name} onClose=${close}
     media=${html`<div class="pd-media"><${Carousel} p=${p} colour=${c} at=${ui.photoAt} onOpen=${i => act.set({zoom:{pid, colour:c, i}})}/><${Tag} p=${p}/></div>`}>
     <div class="pd-head"><h1 class="pd-name">${p.name}</h1>
@@ -1570,26 +1597,25 @@ function ProductSheet({pid, colour, orderId, S, ui, act}) {
         <div class="sizes">${p.sizes.map(sz => html`<div class=${'size-cell' + (q[sz] ? ' has' : '')}>
           <div class="sz">${sz}</div>
           <button class="step" aria-label=${'Add one size ' + sz} onClick=${() => setQty(sz, (q[sz] || 0) + 1)}>+</button>
-          <div class="qty num">${q[sz] || 0}</div>
+          ${num(sz)}
           <button class="step" aria-label=${'Remove one size ' + sz} onClick=${() => setQty(sz, (q[sz] || 0) - 1)}>−</button>
         </div>`)}</div>
-        <div class="quick">${curves.map(([l, arr]) => html`<button class="qbtn" onClick=${() => setAll(arr)}>${l}</button>`)}
-          <button class="qbtn" onClick=${() => setAll(p.sizes.map(sz => (q[sz] || 0) + 1))}>+1 each</button>
-          ${u > 0 && html`<button class="qbtn" onClick=${() => setAll([])}>Clear</button>`}</div>` : html`
+        ${(showLast || u > 0) && html`<div class="quick">${showLast && html`<button class="qbtn" onClick=${() => setQ(last)}>Apply last scale</button>`}
+          ${u > 0 && html`<button class="qbtn" onClick=${() => setQ({})}>Clear</button>`}</div>`}` : html`
         <div class="single">
           <button class="step lg" aria-label="Remove one" onClick=${() => setQty('U', (q.U || 0) - 1)}>−</button>
-          <div class="qty xl num">${q.U || 0}</div>
+          ${num('U', 'xl')}
           <button class="step lg" aria-label="Add one" onClick=${() => setQty('U', (q.U || 0) + 1)}>+</button>
         </div>
 `}
     </div>`}
     <div class="pd-cta">${!o ? html`<button class="btn black" onClick=${pick}>Add to order</button>`
       : why ? html`${line && html`<div class="pd-in">In order · ${u ? val(u) : 'no quantity'}</div>`}<button class="btn black" disabled>${b.shop} · ${why}</button>`
-      : line ? html`${changed(c) || busy ? html`<button class=${'btn black' + (busy ? ' busy' : '')} disabled=${busy} onClick=${update}>${busy ? html`<span class="spinner" role="status" aria-label="Updating the quantity"></span>` : 'Update quantity'}</button>`
-          : html`<div class="pd-in"><${Icon} n="check" s=${18} w=${2.4}/>In order · ${u ? val(u) : 'no quantity yet'}</div>`}
-        <button class="btn outline danger" disabled=${busy} onClick=${() => { drop(c); act.unselect(o.id, pid, c); }}>Remove from order</button>`
+      : line ? html`<div class="pd-in"><${Icon} n="check" s=${18} w=${2.4}/>In order · ${u ? val(u) : 'no quantity yet'}</div>
+        <button class="btn outline danger" onClick=${() => act.unselect(o.id, pid, c)}>Remove from order</button>`
       : html`<button class="btn black" onClick=${add}>Add to order${u ? ' · ' + val(u) : ''}</button>`}</div>
     <div class="panel facts">
+      ${p.material && html`<div><span>Material</span><span>${p.material}</span></div>`}
       <div><span>Division</span><span>${p.div === 'W' ? 'Womenswear' : 'Menswear'}</span></div>
       <div><span>Category</span><span>${CAT_LABEL[p.cat]}</span></div>
       ${looks.length > 0 && html`<div><span>Appears in</span><span>${looks.map((l, i) => html`${i ? ', ' : ''}<button class="plain" onClick=${() => act.sheet({type:'look', id:l.id})}>${lookNo(l)}</button>`)}</span></div>`}
@@ -1603,7 +1629,6 @@ function ProductSheet({pid, colour, orderId, S, ui, act}) {
 /* =====================================================================
    Size & quantity entry — the step a photo can't do
    ===================================================================== */
-const CURVES = {5:[['Core 1·2·2·1', [0,1,2,2,1]], ['Full 1·2·3·2·1', [1,2,3,2,1]]], 6:[['Core 1·2·2·1', [0,1,2,2,1,0]], ['Full 1·2·3·3·2·1', [1,2,3,3,2,1]]]};
 
 function SizeSheet({sh, S, act}) {
   const order = S.orders[sh.orderId], p = P[sh.pid], b = BUYERS[order.buyerId];
@@ -1633,8 +1658,6 @@ function SizeSheet({sh, S, act}) {
   const sug = (pid, colour) => { const xp = P[pid], has = order.lines.some(l => l.pid === pid);
     return html`<button class="sug" onClick=${() => go(pid, colour)}><${Thumb} pid=${pid} colour=${colour}/><div class="sug-n">${xp.name}</div>
       <div class="small muted">${has ? 'Added' : fmt(xp.price)}</div></button>`; };
-  const curves = CURVES[p.sizes.length] || [];
-
   return html`<${Sheet} tall title=${p.name} sub=${`${p.code} · ${prices(p)}`} onClose=${close}
     foot=${readOnly ? html`<button class="btn secondary" onClick=${act.close}>Close</button>` : html`
       ${existing && html`<button class="btn danger" style="flex:0 0 auto" onClick=${() => act.unselect(order.id, p.id, null, actor)}>Remove</button>`}
@@ -1659,9 +1682,7 @@ function SizeSheet({sh, S, act}) {
           <div class="qty num">${q[s] || 0}</div>
           <button class="step" aria-label=${'Remove one size ' + s} onClick=${() => setQty(s, (q[s] || 0) - 1)}>−</button>
         </div>`)}</div>
-        <div class="quick">${curves.map(([l, arr]) => html`<button class="qbtn" onClick=${() => setAll(arr)}>${l}</button>`)}
-          <button class="qbtn" onClick=${() => setAll(p.sizes.map(s => (q[s] || 0) + 1))}>+1 each</button>
-          <button class="qbtn" onClick=${() => setAll([])}>Clear</button></div>` : html`
+        ${units(q) > 0 && html`<div class="quick"><button class="qbtn" onClick=${() => setAll([])}>Clear</button></div>`}` : html`
         <div class="single">
           <button class="step lg" aria-label="Remove one" onClick=${() => setQty('U', (q.U || 0) - 1)}>−</button>
           <div class="qty xl num">${q.U || 0}</div>
@@ -2019,11 +2040,11 @@ function makeActs(setS, setUi, onReset) {
       setS(s => { const appts = oneOngoing({...s.appts}, bid);
         const x = appts[bid] || {}; appts[bid] = x.in ? {...x, out:null, back:now} : {...x, in:now, out:null};
         return {...s, appts, orders: s.orders[id] ? s.orders : {...s.orders, [id]:newOrder(bid)}, savedAt:now}; });
-      setUi(u => ({...u, session:id, div:BUYERS[bid].divs[0], sheet:null, capture:false, ...(stay ? {} : {tab:'catalogue', view:null})}));
+      setUi(u => ({...u, session:id, div:BUYERS[bid].divs[0], sheet:null, capture:false, lastScale:null, ...(stay ? {} : {tab:'catalogue', view:null})}));
       a.toast(`Checked in · ${BUYERS[bid].shop}`); },
     // the two ways a visit ends from the order: Save draft, or the client signs. Both go back to Home
-    endVisit: (bid, msg) => { a.appt(bid, {out:Date.now()}); setUi(u => ({...u, session: u.session === 'o-' + bid ? null : u.session, view:null, sheet:null, sub:null, tab:'calendar'})); a.toast(msg); },
-    checkOut: bid => { a.appt(bid, {out:Date.now()}); setUi(u => u.session === 'o-' + bid ? {...u, session:null} : u); a.toast(`Checked out · ${BUYERS[bid].shop}`); },
+    endVisit: (bid, msg) => { a.appt(bid, {out:Date.now()}); setUi(u => ({...u, session: u.session === 'o-' + bid ? null : u.session, lastScale:null, view:null, sheet:null, sub:null, tab:'calendar'})); a.toast(msg); },
+    checkOut: bid => { a.appt(bid, {out:Date.now()}); setUi(u => u.session === 'o-' + bid ? {...u, session:null, lastScale:null} : u); a.toast(`Checked out · ${BUYERS[bid].shop}`); },
     note: (bid, text) => a.appt(bid, {notes:text}),
     // the client in session: land in the Collection to add products
     addProducts: () => setUi(u => ({...u, tab:'catalogue', view:null, sheet:null})),
@@ -2073,7 +2094,7 @@ function makeActs(setS, setUi, onReset) {
 
 function App({onReset}) {
   const [S, setS] = useState(loadState);
-  const [ui, setUi] = useState({tab:'calendar', view:null, sheet:null, capture:false, div:'W', role:'sales', toast:null, session:loadSession(), catSeason:'SS27', catDrop:null, catTag:null});
+  const [ui, setUi] = useState({tab:'calendar', view:null, sheet:null, capture:false, div:'W', role:'sales', toast:null, session:loadSession(), catSeason:'SS27', catDrop:null, catTag:null, catMat:null});
   useEffect(() => { saveState(S); }, [S]);
   useEffect(() => { saveSession(ui.session); }, [ui.session]);
   const act = useMemo(() => makeActs(setS, setUi, onReset), []);
