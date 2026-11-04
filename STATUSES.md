@@ -103,7 +103,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 2.1 Home opens on today, with one past day visible to the left of today in the day strip.
 - [ ] 2.2 Tap other days → each shows its appointments, or "No appointments on this day."
 - [ ] 2.3 After checking a client in, the ongoing client sits under **Now** with a green Ongoing tag; the others under **Today** (both headings in sentence case, black, slightly larger than the text), each with time, city and what they buy per division.
-- [ ] 2.4 Tap a client not yet checked in → sheet with Budget and Notes, and only **Check in** at the bottom.
+- [ ] 2.4 Tap a client not yet checked in → sheet with Budget and Notes, and only **Check in** at the bottom: a green full pill (round at both ends) on the sheet's grey, with no white bar behind it. Every sheet's bottom buttons are pills the same way.
 - [ ] 2.4b Budget in that sheet (Kanda Select): per division, Ready-to-wear, Bags, Shoes, Accessories, then a bold **Total** under a line (Women's €120,000, Men's €65,000) that adds up the four; every amount lines up on the same right edge. A category the client doesn't buy is left out of this sheet (it still reads "Not buying" in the order's Budgets & KPIs).
 - [ ] 2.5 Type in Notes, close and reopen → the note is kept ("Saved automatically").
 - [ ] 2.6 Tap the ongoing client (check one in first) → "Ongoing since …", with Check out and Add products.
@@ -139,7 +139,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 
 ### 6. Adding a style and entering quantities
 - [ ] 6.1 Each card shows photo, name, code, wholesale and retail price and colour dots, with no button. Tapping anywhere on it slides the product page up over the Collection.
-- [ ] 6.2 Product page of a style not in the order: the photo is short (the name, prices and sizes show without scrolling) and, instead of an Add button, a dashed line "Enter quantities to add [colour]" (one-size styles: "Tap + to add [colour]"). Tap + on a size → that colour is in the order: top toast "Added to order · 1 unit", the colour chip gets the green ✓ and the dashed line becomes **Remove from order** (no "In order" box: the ✓ and the toast already say it).
+- [ ] 6.2 Product page of a style not in the order: the photo is short (the name, prices and sizes show without scrolling) and there is no Add button and no hint line under the sizes. Tap + on a size → that colour is in the order: top toast "Added to order · 1 unit", the colour chip gets the green ✓ and **Remove from order** appears (no "In order" box: the ✓ and the toast already say it).
 - [ ] 6.3 Close the page → the card shows a green round ✓ in the photo's top-right corner, the same height as the Must have / Essential tag on the left.
 - [ ] 6.4 Tap that card again → the product page opens on the colour in the order, with its quantities; another colour can be added from there.
 - [ ] 6.5 Remove from order on the product page (the last colour) → the ✓ disappears from the card.
