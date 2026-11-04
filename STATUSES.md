@@ -207,6 +207,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 13.5 Nothing sits under the notch or the home indicator; the last card in the Collection scrolls clear of the pill and tab bar.
 - [ ] 13.6 Every message (toast) slides up from the bottom edge of the screen and sits just above it, the same on every screen: over the tab bar and the client pill, over a product page and over the order buttons.
 - [ ] 13.7 Close buttons are easy to hit: the × on the product page (a 44px circle, and a near miss just outside it still closes), on the full-screen photos and on the full-screen pages (Set passcode, Sign the order, sign-in).
+- [ ] 13.8 UI system (see DESIGN.md): text comes in four sizes only (12 labels and meta, 15 body, 17 headings, 28 titles); every filled primary button is black (Add to order, Finish order, Send to commercial team, Continue, Check in to add products); blue only marks links, the active tab, the selected day and active filters; + and − are the same icons in every stepper; no text is cut off on a 375px-wide screen (e.g. "2 outside the guidelines" on the order page).
 
 ## To define with the engineer and the back office
 
