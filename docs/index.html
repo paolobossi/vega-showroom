@@ -466,8 +466,6 @@ input{font:inherit;color:inherit}
 .ov-sum-foot{padding-top:10px;margin-top:12px;border-top:1px solid var(--line)}
 .ov-sum-st{display:inline-flex;align-items:center;gap:6px;min-width:0;overflow:hidden;text-overflow:ellipsis}
 .ov-sum-st svg{flex:none}
-.guide-row{display:flex;justify-content:space-between;align-items:center;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:14px 14px 14px 16px;font-size:var(--fs-body);font-weight:600;color:var(--ink);text-align:left}
-.guide-row svg{transform:rotate(-90deg);color:var(--muted)}
 .ov-lines{padding:14px 16px 20px;display:flex;flex-direction:column;gap:14px}
 .lines-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:8px}
 .grp-head{display:flex;justify-content:space-between;align-items:baseline;font-size:var(--fs-heading);font-weight:600;letter-spacing:-.01em;color:var(--ink);padding:0 2px 8px}
@@ -1193,36 +1191,37 @@ function MixChecks({o, d, title=`${DIV_LABEL[d]} guidelines`}) {
 }
 
 /* =====================================================================
-   Looks: lookbooks and VM intent
+   Looks: lookbooks
    ===================================================================== */
 function LookTile({look}) {
   return html`<div class="look-tile"><img src=${lookSrc(look)[0]} alt=${`${lookNo(look)}, ${SHOW}`} loading="lazy" decoding="async" draggable="false"/></div>`;
 }
 
-// The house's buying guidelines for the season, the same for every client; a client's own budget and checks live on their order
-function GuideBanner({act}) {
-  return html`<button class="guide-row" onClick=${() => act.sheet({type:'guide'})}>Buying guidelines<${Icon} n="down" s=${18} w=${2.2}/></button>`;
-}
-
-function GuideSheet({act}) {
+// A client's buying guidelines: they depend on the client's cluster (Silver to Diamond) and budget, so they open from the
+// client's appointment on Home. The page is filled from the maison's PDF in the back office (AI reads the rules into this
+// table); the PDF itself shows at the top and opens full screen inside the app, so there is always a Close.
+function GuideSheet({bid, act}) {
+  const b = BUYERS[bid], back = () => act.sheet({type:'appt', bid});
   const rule = (r, d) => `${r.max != null ? 'No more than' : 'At least'} ${r.max != null ? r.max : r.min}% of the ${DIV_LABEL[d].toLowerCase()} order`;
-  // the page is filled from the maison's PDF in the back office (AI reads the rules into this table); the PDF itself shows at the top
-  // and opens full screen inside the app, so there is always a Close
-  return html`<${Sheet} tall title="Buying guidelines" sub="Spring Summer 2027" onClose=${act.close}>
+  const looks = LOOKS.filter(l => l.req && b.divs.includes(l.div) && l.items.every(([pid]) => available(b, P[pid])));
+  return html`<${Sheet} tall title="Buying guidelines" sub=${`${b.shop} · ${b.cluster} · Spring Summer 2027`} onClose=${back}>
     <button class="pdf-prev" onClick=${() => act.set({pdf:true})} aria-label="Open the guidelines PDF full screen">
       <img src="guidelines-sample.png" alt="Buying guidelines PDF, page 1" draggable="false"/>
       <span class="pdf-tag"><${Icon} n="expand" s=${14} w=${2.2}/>PDF · Sample</span></button>
-    ${['W', 'M'].map(d => html`<div class="lbl">${DIV_LABEL[d]} mix</div>
-      <div class="list">${RULES[d].map(r => html`<div class="row"><div class="row-main"><div class="row-title">${r.label}</div><div class="row-sub">${rule(r, d)}</div></div></div>`)}</div>`)}
-    <div class="lbl">Required looks</div>
-    <div class="list">${LOOKS.filter(l => l.req).map(l => html`<button class="row" onClick=${() => act.sheet({type:'look', id:l.id})}>
+    ${b.divs.map(d => { const db = divBudget(b, d);
+      return html`<div class="lbl">${DIV_LABEL[d]} budget split</div>
+      <div class="list">${CATS.filter(c => catBudget(b, d, c)).map(c => html`<div class="row"><div class="row-main"><div class="row-title">${CAT_LABEL[c]}</div><div class="row-sub">${Math.round(catBudget(b, d, c) / db * 100)}% of the ${DIV_LABEL[d].toLowerCase()} budget</div></div><span class="row-val num">${fmt(catBudget(b, d, c))}</span></div>`)}</div>
+      <div class="lbl">${DIV_LABEL[d]} mix</div>
+      <div class="list">${RULES[d].map(r => html`<div class="row"><div class="row-main"><div class="row-title">${r.label}</div><div class="row-sub">${rule(r, d)}</div></div></div>`)}</div>`; })}
+    ${looks.length > 0 && html`<div class="lbl">Required looks</div>
+    <div class="list">${looks.map(l => html`<button class="row" onClick=${() => act.sheet({type:'look', id:l.id})}>
       <div class="row-main"><div class="row-title">${lookNo(l)} · ${DIV_LABEL[l.div]}</div><div class="row-sub">Every piece in the order · ${l.items.length} pieces</div></div>
-      <span class="ov-sum-go"><${Icon} n="down" s=${16} w=${2.2}/></span></button>`)}</div>
+      <${Icon} n="next" s=${18}/></button>`)}</div>`}
     <div class="lbl">Drops</div>
     <div class="list">
-      ${Object.entries(DROPS).map(([k, v]) => html`<div class="row"><div class="row-main"><div class="row-title">${v.split(' · ')[0]}</div><div class="row-sub">${v.split(' · ')[1]}</div></div><span class="chip">${PRODUCTS.filter(p => p.drop === k).length} styles</span></div>`)}
+      ${Object.entries(DROPS).map(([k, v]) => html`<div class="row"><div class="row-main"><div class="row-title">${v.split(' · ')[0]}</div><div class="row-sub">${v.split(' · ')[1]}</div></div><span class="chip">${PRODUCTS.filter(p => p.drop === k && b.divs.includes(p.div) && available(b, p)).length} styles</span></div>`)}
     </div>
-    <div class="small muted">Each client’s budget, and how their order stands against these guidelines, is on their order under Budgets & KPIs.</div>
+    <div class="small muted">Set for ${b.cluster} clients and ${b.shop}’s budget. How the order stands against them is on the order, under Budgets & KPIs.</div>
   <//>`;
 }
 
@@ -1240,10 +1239,9 @@ function Today({S, ui, act}) {
   const so = activeOrder(S, ui), sb = so && BUYERS[so.buyerId];
   return html`
     <header class="top top-bar mid"><h1 class="h1">Looks</h1></header>
-    <section class="sec"><${GuideBanner} act=${act}/></section>
     <div class="today-grid">
       ${(sb ? [...sb.divs, ...['W', 'M'].filter(d => !sb.divs.includes(d))] : ['W', 'M']).map(d => html`<section class="sec">
-        <div class="sec-head"><h2>${DIV_LABEL[d]} lookbook & VM intent</h2></div>
+        <div class="sec-head"><h2>${DIV_LABEL[d]} lookbook</h2></div>
         <div class="look-list">
           ${LOOKS.filter(l => l.div === d).map(l => html`<button class="look" onClick=${() => act.sheet({type:'look', id:l.id})}>
             <${LookTile} look=${l}/>
@@ -1316,6 +1314,9 @@ function ApptSheet({sh, S, act}) {
     ${o && html`<${ApptOrder} o=${o} b=${b} act=${act}/>`}
     <div class="lbl">Budget</div>
     <${Budgets} b=${b}/>
+    <div class="list"><button class="row" onClick=${() => act.sheet({type:'guide', bid:b.id})}>
+      <div class="row-main"><div class="row-title">Buying guidelines</div><div class="row-sub">${b.cluster} client · budget split, mix, required looks, drops</div></div>
+      <${Icon} n="next" s=${18}/></button></div>
     <label class="field"><span class="lbl">Notes</span>
       <textarea class="inp area" placeholder="Preferences, follow-ups, what the client liked…" value=${a.notes || ''} onInput=${e => act.note(b.id, e.target.value)}></textarea>
       <span class="small muted">Saved automatically</span></label>
@@ -1340,7 +1341,6 @@ function LookSheet({id, S, ui, act}) {
     media=${html`<${Carousel} cover src=${lookSrc(l)} alt=${lookNo(l)} at=${ui.photoAt} onOpen=${i => act.set({zoom:{look:l.id, i}})}/>`}
     foot=${o && html`<button class="btn primary" disabled=${!missing.length} onClick=${() => act.selectLook(o.id, l)}>${missing.length ? `Add the whole look · ${missing.length} ${missing.length === 1 ? 'piece' : 'pieces'}` : why || 'Whole look is in the order'}</button>`}>
     <div class="pd-head"><span class="pc-fam">${DIV_LABEL[l.div]} · ${SHOW}${l.req ? ' · required look' : ''}</span><h1 class="pd-name">${lookNo(l)}</h1></div>
-    <div class="callout info"><${Icon} n="spark" s=${18}/><div><b>VM intent.</b> ${l.vm}</div></div>
     <div class="lbl">In this look</div>
     <div class="list">${l.items.map(([pid, c]) => { const p = P[pid], why = o && canTake(o, p), item = {pid, colour:c, via:'look'};
       const has = o && o.lines.some(x => x.pid === pid && x.colour === c);
@@ -2160,7 +2160,7 @@ function App({onReset}) {
     : sh.type === 'picker' ? html`<${PickerSheet} sh=${sh} act=${act}/>`
     : sh.type === 'finish' ? html`<${FinishSheet} sh=${sh} S=${S} act=${act}/>`
     : sh.type === 'kpis' ? html`<${KpiSheet} sh=${sh} S=${S} act=${act}/>`
-    : sh.type === 'guide' ? html`<${GuideSheet} act=${act}/>`
+    : sh.type === 'guide' ? html`<${GuideSheet} bid=${sh.bid} act=${act}/>`
     : sh.type === 'sign' ? html`<${SignSheet} sh=${sh} S=${S} act=${act}/>`
     : sh.type === 'look' ? html`<${LookSheet} id=${sh.id} S=${S} ui=${ui} act=${act}/>`
     : sh.type === 'product' ? html`<${ProductSheet} key=${sh.pid} pid=${sh.pid} colour=${sh.colour} orderId=${sh.orderId} S=${S} ui=${ui} act=${act}/>`
