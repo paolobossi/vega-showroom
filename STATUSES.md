@@ -28,7 +28,7 @@ Every client gets one tier. It is back-office logic only: the seller never sees 
 
 Checking in a new client automatically checks out the client the seller was with.
 
-## Order (whole order, as listed in Orders)
+## Order (whole order, shown on its appointment on Home)
 
 | Status | Meaning |
 |---|---|
@@ -90,14 +90,14 @@ Guideline issues never block sending (styles without a quantity do block Send to
 Run on an iPhone in portrait unless a step says otherwise. Start each run from fresh demo data: **Reset demo** in the side panel (desktop view), or clear the site data on the phone. Demo data: the seller is Roberto D.; Maison Dubois (Paris, Platinum, Women + Men) is ongoing; Linea Concept (Gold, Women only), Harbour & Co. (Silver, Men only) and Kanda Select (Diamond, Women + Men) are later today. Each line is: what to do → what should happen.
 
 ### 1. Sign in, sign out, passcode
-- [ ] 1.1 Profile → Sign out → the full-screen "Who's selling?" list of sellers shows.
+- [ ] 1.1 Home → the round avatar with your initials (top right) → Profile sheet → Sign out → the full-screen "Who's selling?" list of sellers shows.
 - [ ] 1.2 Pick Roberto D. with no passcode set → any 4 digits sign in; toast "Signed in as Roberto D.".
-- [ ] 1.3 Profile → Set passcode → enter 4 digits, then the same 4 again → toast "Passcode set"; the row now reads Change passcode.
+- [ ] 1.3 Avatar → Set passcode → enter 4 digits, then the same 4 again → toast "Passcode set"; the row now reads Change passcode.
 - [ ] 1.4 Set passcode with a different second entry → "The codes don't match. Try again."; nothing is saved until both match.
 - [ ] 1.5 Sign out, pick Roberto D., enter a wrong code → "Wrong code. Try again." and the dots clear; the right code signs in.
 - [ ] 1.6 Cancel on the PIN pad → back to the list of sellers.
 - [ ] 1.7 Sign out while Maison Dubois is ongoing, sign back in as Roberto D. → the visit and its pill are still there.
-- [ ] 1.8 Sign in as Sofia L. → Home shows only Sofia's clients (Atelier Nove, Casa Prisma…); Profile → Orders shows only hers.
+- [ ] 1.8 Sign in as Sofia L. → Home shows only Sofia's clients (Atelier Nove, Casa Prisma…) and her initials in the avatar.
 
 ### 2. Home and appointments
 - [ ] 2.1 Home opens on today, with one past day visible to the left of today in the day strip.
@@ -106,6 +106,8 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 2.4 Tap a client not yet checked in → sheet with Budget and Notes, and only **Check in** at the bottom.
 - [ ] 2.5 Type in Notes, close and reopen → the note is kept ("Saved automatically").
 - [ ] 2.6 Tap the ongoing client → "Ongoing since …", with Check out and Add products.
+- [ ] 2.6b Every appointment whose client has an order shows the order's status on its row (Draft, With client, Sent, Confirmed…), past days included; the ongoing one shows Ongoing.
+- [ ] 2.6c Tap an appointment with an order → **Order**: styles · units, the status and the value; tap it → the order opens full screen. Under it **History**: what happened to the order, newest first, with time, day and who (Client / Salesperson); the five latest, then "Show all N". The status is not repeated at the top of the sheet.
 - [ ] 2.7 Tap the Home title → the app reloads; data and the visit are kept.
 
 ### 3. Check in, client pill, check out
@@ -192,11 +194,11 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 11.4 As the client, change a quantity or add a style → the change shows on the seller's order; in the client view the line is marked as the client's.
 - [ ] 11.5 As the client, Review and sign → the order is sent; the client sees the thank-you note; Back to salesperson returns to the seller app.
 
-### 12. Profile, orders, feedback
-- [ ] 12.1 Profile shows the seller's name, then Orders and Set passcode (Change passcode once set) with no grey line under them, App feedback with one line "Tell us what works and what doesn't", and Sign out in red.
-- [ ] 12.2 Orders → a small centred title with back on the left (like the order page), staying on top while scrolling; tiles (total value, sent, in draft), filters All / Draft / Sent, one row per order with status, value and units; With client rows show hours left.
-- [ ] 12.3 Tap an order → it opens full screen; back returns to the list.
-- [ ] 12.4 Profile → Orders has no + button (orders start when a client is checked in). With nobody checked in, Collection → tap a card → Add to order → Add to an order → New session: Shop, City, Buying for, budgets; Start session is disabled until a shop name is typed; starting checks the new client in.
+### 12. Profile and feedback
+- [ ] 12.1 The tab bar has three tabs: Home, Looks, Collection. Profile is the round black avatar with the seller's initials at the top right of Home; tapping it opens a sheet with the seller's name, Set passcode (Change passcode once set), App feedback with one line "Tell us what works and what doesn't", and Sign out in red. There is no Orders list: orders are reached from their appointments on Home (2.6c) or the client pill.
+- [ ] 12.2 The client pill (above the tab bar while a client is checked in) opens that client's current order.
+- [ ] 12.3 Open an order from its appointment → back returns to Home.
+- [ ] 12.4 Orders start when a client is checked in. With nobody checked in, Collection → tap a card → Add to order → Add to an order → New session: Shop, City, Buying for, budgets; Start session is disabled until a shop name is typed; starting checks the new client in.
 - [ ] 12.5 App feedback → type a note, attach a screenshot (thumbnail with ×), remove it, send → toast "Thanks · feedback sent".
 
 ### 13. General
@@ -205,7 +207,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 13.3 Landscape (iPad or the side panel's Landscape switch): layouts hold, nothing overlaps the pill or the floating buttons.
 - [ ] 13.4 Dark mode on the phone: text stays readable; the pill and the Must have tag stay black.
 - [ ] 13.5 Nothing sits under the notch or the home indicator; the last card in the Collection scrolls clear of the pill and tab bar.
-- [ ] 13.6 Every message (toast) slides up from the bottom edge of the screen and sits just above it, the same on every screen: over the tab bar and the client pill, over a product page and over the order buttons.
+- [ ] 13.6 Messages (toasts) slide up from the bottom edge and sit just above it, the same on every screen: over the tab bar and the client pill, over a product page and over the order buttons. The one exception is a quantity change ("Saved · N units", "Added to order · N units"), which drops in at the top so it is seen while the thumb is on the sizes.
 - [ ] 13.7 Close buttons are easy to hit: the × on the product page (a 44px circle, and a near miss just outside it still closes), on the full-screen photos and on the full-screen pages (Set passcode, Sign the order, sign-in).
 - [ ] 13.8 UI system (see DESIGN.md): text comes in four sizes only (12 labels and meta, 15 body, 17 headings, 28 titles); every filled primary button is black (Add to order, Finish order, Send to commercial team, Continue, Check in to add products); blue only marks links, the active tab, the selected day and active filters; + and − are the same icons in every stepper; no text is cut off on a 375px-wide screen (e.g. "2 outside the guidelines" on the order page).
 
@@ -217,3 +219,4 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - Mix rules by units as well as by value (some brands set limits as a share of units).
 - The emails sent from Finish order: the copy of the order to the client when it goes to the commercial team, and the link to finish the order.
 - Copy scale: how the partner wants to use saved scales (one per size range for now, kept across clients until replaced; maybe named scales per client or per store size).
+- Home layout: whether the calendar also gets a timeline view (all days in one scrolling list) instead of, or as a switch next to, the day-by-day view.
