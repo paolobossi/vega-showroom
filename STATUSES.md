@@ -112,7 +112,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 2.7 Tap the Home title → the app reloads; data and the visit are kept.
 
 ### 3. Check in, client pill, check out
-- [ ] 3.1 Check in Maison Dubois, then Linea Concept → toast "Checked in · Linea Concept"; the Collection opens; Maison Dubois is checked out automatically (only one client ongoing at a time).
+- [ ] 3.1 Check in Maison Dubois, then Linea Concept → no toast; the Collection opens with the Linea Concept pill; Maison Dubois is checked out automatically (only one client ongoing at a time).
 - [ ] 3.2 The black pill sits above the tab bar on every tab: client name in bold, "View order" underneath.
 - [ ] 3.3 With no products yet the pill shows the orders icon; after the first and second pieces it shows their photos; adding more pieces does not change the two photos.
 - [ ] 3.4 The right photo is on top, with a black ring cutting into the left one.
