@@ -107,7 +107,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 2.5 Type in Notes, close and reopen → the note is kept ("Saved automatically").
 - [ ] 2.6 Tap the ongoing client → "Ongoing since …", with Check out and Add products.
 - [ ] 2.6b Every appointment whose client has an order shows the order's status on its row (Draft, With client, Sent, Confirmed…), past days included; the ongoing one shows Ongoing.
-- [ ] 2.6c Tap an appointment with an order → **Order**: styles · units, the status and the value; tap it → the order opens full screen. Under it **History**: what happened to the order, newest first, with time, day and who (Client / Salesperson); the five latest, then "Show all N". The status is not repeated at the top of the sheet.
+- [ ] 2.6c Tap an appointment with an order → **Order**: styles · units, the status and the value; tap it → the order opens full screen. There is no order history in the sheet. The status is not repeated at the top of the sheet.
 - [ ] 2.7 Tap the Home title → the app reloads; data and the visit are kept.
 
 ### 3. Check in, client pill, check out

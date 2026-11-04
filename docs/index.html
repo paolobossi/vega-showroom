@@ -618,9 +618,7 @@ input.qty.xl{width:120px}
 .log{display:flex;flex-direction:column}
 .log-row{display:grid;grid-template-columns:44px minmax(0,1fr);gap:10px;padding:10px 0;border-top:1px solid var(--line);font-size:var(--fs-caption)}
 .log-row:first-child{border-top:0}
-.log-list{padding:2px 14px}
 .log-row .log-t{line-height:var(--lh-body)}
-.log-more{padding:10px 0 12px;font-size:var(--fs-caption)}
 .log-t{font-size:var(--fs-caption);font-variant-numeric:tabular-nums;color:var(--muted);padding-top:2px}
 .log-who{margin-top:4px}
 .linkbox{display:flex;gap:8px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);padding:6px 6px 6px 12px}
@@ -1319,19 +1317,13 @@ function ApptSheet({sh, S, act}) {
   <//>`;
 }
 
-// the order behind an appointment: where it stands (tap to open it) and what happened to it, newest first
+// the order behind an appointment: where it stands; tap to open it
 function ApptOrder({o, b, act}) {
-  const [all, setAll] = useState(false), u = b.divs.reduce((x, d) => x + kpi(o, d).units, 0), v = b.divs.reduce((x, d) => x + kpi(o, d).total, 0);
-  const h = [...(o.log || [])].reverse(), shown = all ? h : h.slice(0, 5);
-  const day = t => { const d = new Date(t); return d.toDateString() === new Date().toDateString() ? 'Today' : d.toLocaleDateString('en-GB', {day:'numeric', month:'short'}); };
+  const u = b.divs.reduce((x, d) => x + kpi(o, d).units, 0), v = b.divs.reduce((x, d) => x + kpi(o, d).total, 0);
   return html`<div class="lbl">Order</div>
     <div class="list"><button class="row" onClick=${() => act.openOrder(b.id)}>
       <div class="row-main"><div class="row-title">${o.lines.length} ${o.lines.length === 1 ? 'style' : 'styles'} · ${u} units</div><div class="row-sub"><${Pill} s=${o.status}/></div></div>
-      <div class="row-side"><span class="row-val">${fmt(v)}</span></div><${Icon} n="next" s=${18}/></button></div>
-    ${h.length > 0 && html`<div class="lbl">History</div>
-      <div class="list log-list"><div class="log">${shown.map(e => html`<div class="log-row"><span class="log-t">${hhmm(e.at)}<br/>${day(e.at)}</span>
-        <div><div>${e.text}</div><div class="log-who"><${By} by=${e.by}/></div></div></div>`)}</div>
-      ${h.length > 5 && html`<button class="linkbtn log-more" onClick=${() => setAll(!all)}>${all ? 'Show less' : `Show all ${h.length}`}</button>`}</div>`}`;
+      <div class="row-side"><span class="row-val">${fmt(v)}</span></div><${Icon} n="next" s=${18}/></button></div>`;
 }
 
 function LookSheet({id, S, ui, act}) {
