@@ -936,7 +936,8 @@ const units = q => Object.values(q || {}).reduce((a, b) => a + b, 0);
 // A line is just selected (no quantity yet) or has a quantity per size (U for one-size styles)
 const RULE_WORD = {ok:'Within', bad:'Over', warn:'Under', none:'—'};
 const ruleLimit = r => (r.max != null ? 'max ' : 'min ') + (r.limit ? fmt(r.limit) : '—');
-const usedSt = (v, bud) => !v ? 'none' : !bud ? 'bad' : v / bud > 1.1 ? 'bad' : v / bud > 1 ? 'warn' : 'ok';
+// budget: red while spend is below it, green once it is reached or passed; nothing spent yet stays neutral
+const usedSt = (v, bud) => !v ? 'none' : v >= bud ? 'ok' : 'bad';
 const lineValue = l => units(l.qty) * P[l.pid].price;
 const qkey = q => Object.keys(q).sort().map(k => k + ':' + q[k]).join(',');
 const uid = () => Math.random().toString(36).slice(2, 9);
@@ -970,7 +971,7 @@ function kpi(order, div) {
     return {l, have, n:l.items.length, done: have === l.items.length}; });
   const drops = Object.keys(DROPS).map(k => { const ls = mine.filter(l => P[l.pid].drop === k);
     return {k, units: ls.reduce((a, l) => a + units(l.qty), 0), value: ls.reduce((a, l) => a + lineValue(l), 0)}; });
-  return {total, units:u, open, budget, used, bst: usedSt(total, budget) === 'none' ? 'ok' : usedSt(total, budget), mix, rules, looks, drops};
+  return {total, units:u, open, budget, used, bst: usedSt(total, budget), mix, rules, looks, drops};
 }
 
 function applyDraft(o, pid, draft, via, by) {
@@ -1162,13 +1163,13 @@ function Budgets({b, order, divs}) {
 function BudDiv({b, d, k}) {
   const db = divBudget(b, d);
   return html`<div class="bud-div">
-        <div class="bud-head"><span>${DIV_LABEL[d]}</span>${k && html`<span class="num"><b class=${k.bst === 'ok' ? '' : 'st-' + k.bst}>${fmt(k.total)}</b> <span class="muted">of ${fmt(db)}</span></span>`}</div>
+        <div class="bud-head"><span>${DIV_LABEL[d]}</span>${k && html`<span class="num"><b class=${k.bst === 'none' ? '' : 'st-' + k.bst}>${fmt(k.total)}</b> <span class="muted">of ${fmt(db)}</span></span>`}</div>
         ${CATS.map(c => { const cb = catBudget(b, d, c), m = k && k.mix.find(x => x.cat === c);
           // the appointment sheet (no order) leaves out categories the client doesn't buy; the order's KPIs still say "Not buying"
           if (!cb && !(m && m.value)) return k ? html`<div class="bud-row off"><span>${CAT_LABEL[c]}</span><span>Not buying</span></div>` : null;
           return html`<div class="bud-row cat">
             <span>${CAT_LABEL[c]}</span>
-            <span class="num">${m ? html`<b class=${m.st === 'ok' ? '' : 'st-' + m.st}>${fmt(m.value)}</b> <span class="muted">${cb ? 'of ' + fmt(cb) : 'no budget'}</span>` : fmt(cb)}</span>
+            <span class="num">${m ? html`<b class=${m.st === 'none' ? '' : 'st-' + m.st}>${fmt(m.value)}</b> <span class="muted">${cb ? 'of ' + fmt(cb) : 'no budget'}</span>` : fmt(cb)}</span>
             ${m && html`<div class="mix-track"><div class=${'mix-fill ' + m.st} style=${{width: Math.min(m.used, 100) + '%'}}></div></div>`}
           </div>`; })}
         ${!k && html`<div class="bud-row cat bud-tot"><span>Total</span><span class="num">${fmt(db)}</span></div>`}
@@ -1865,10 +1866,10 @@ function OrderView({S, ui, act, order}) {
         </div>
         ${b.divs.length > 1 && html`<div class="ov-divs" role="tablist">${b.divs.map(d => html`<button role="tab" aria-selected=${d === div} class=${'cn-cat' + (d === div ? ' on' : '')} onClick=${() => act.div(d)}>${DIV_TAB[d]}</button>`)}</div>`}
         <button class="ov-sum" onClick=${() => act.sheet({type:'kpis', orderId:order.id})} aria-label=${`Budgets and KPIs. ${DIV_TAB[div]} ${fmt(k.total)} of ${fmt(k.budget)}. ${open ? `${open} outside the guidelines` : 'Within the guidelines'}`}>
-          <span class="ov-sum-top"><b>${DIV_TAB[div]} budget</b><span class="num"><b class=${k.bst === 'ok' ? '' : 'st-' + k.bst}>${fmt(k.total)}</b> <span class="muted">of ${fmt(k.budget)}</span></span></span>
+          <span class="ov-sum-top"><b>${DIV_TAB[div]} budget</b><span class="num"><b class=${k.bst === 'none' ? '' : 'st-' + k.bst}>${fmt(k.total)}</b> <span class="muted">of ${fmt(k.budget)}</span></span></span>
           <span class="cat-grid">${k.mix.map(m => !m.budget && !m.value ? html`<span class="cat-t off"><span class="cat-n">${CAT_LABEL[m.cat]}</span><span class="cat-v">Not buying</span></span>`
             : html`<span class="cat-t"><span class="cat-n">${CAT_LABEL[m.cat]}</span>
-              <span class="cat-v num"><b class=${['ok', 'none'].includes(m.st) ? '' : 'st-' + m.st}>${fmt(m.value)}</b> <span class="muted">of ${fmt(m.budget)}</span></span>
+              <span class="cat-v num"><b class=${m.st === 'none' ? '' : 'st-' + m.st}>${fmt(m.value)}</b> <span class="muted">of ${fmt(m.budget)}</span></span>
               <span class="mix-track"><span class=${'mix-fill ' + m.st} style=${{width: Math.min(m.used, 100) + '%'}}></span></span></span>`)}</span>
           <span class="ov-sum-foot"><span class=${'ov-sum-st ' + (open ? 'st-warn' : 'st-ok')}><${Icon} n=${open ? 'alert' : 'check'} s=${16} w=${2.4}/>${open ? `${open} outside the guidelines` : 'Within the guidelines'}</span>
             <span class="ov-sum-go">Budgets & KPIs<${Icon} n="down" s=${15} w=${2.2}/></span></span>
@@ -1902,8 +1903,7 @@ function KpiSheet({sh, S, act}) {
 function issuesOf(o, divs) {
   const out = [];
   divs.forEach(d => { const k = kpi(o, d); if (!k.total) return;
-    k.mix.filter(m => m.st === 'warn' || m.st === 'bad').forEach(m => out.push({label:`${DIV_LABEL[d]} ${CAT_LABEL[m.cat].toLowerCase()}`, text: m.budget ? `${fmt(m.value)} of ${fmt(m.budget)}` : 'No budget', st:m.st}));
-    if (k.bst !== 'ok') out.push({label:`${DIV_LABEL[d]} budget`, text:`${fmt(k.total)} of ${fmt(k.budget)}`, st:k.bst});
+    // budget is not a guideline: spend against it shows in red (not reached) or green (reached) on the budget card
     k.rules.filter(r => r.st === 'bad' || r.st === 'warn').forEach(r => out.push({label:`${DIV_TAB[d]} · ${r.label}`, text:`${fmt(r.value)}, ${ruleLimit(r)}`, st:r.st}));
     k.looks.filter(x => !x.done).forEach(x => out.push({label:`${DIV_TAB[d]} · ${lookNo(x.l)}`, text:`${x.have} of ${x.n} pieces`, st:'warn'})); });
   return out;

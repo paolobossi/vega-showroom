@@ -74,9 +74,9 @@ A style that can't be bought shows why instead of its tag.
 
 | Status | Meaning |
 |---|---|
-| Within budget (green) | Spend is at or under the budget set in the back office. |
-| Slightly over (amber) | Up to 10% over budget. |
-| Over (red) | More than 10% over, or spending where no budget is set. |
+| Budget not reached (red) | Spend is below the budget set in the back office: amount and bar in red. |
+| Budget reached (green) | Spend is at or above the budget (going over is fine): amount and bar in green. |
+| Nothing spent (grey) | No quantity in that category yet: amount in black, empty bar. |
 | Mix rule within (`Within`, green) | A family is inside its limit. Each rule shows its share of the order, the limit and the gap, e.g. "Puzzle · 6% of the order · max 30% · €1,520 · €5,569 left"; a minimum that is reached says "met". |
 | Mix rule over a max (`Over`, red) | A family is above its maximum share; the gap reads "€6,150 over". |
 | Mix rule under a min (`Under`, amber) | A family is below its minimum share; the gap reads "€2,400 to go". |
@@ -170,7 +170,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 ### 9. Order page
 - [ ] 9.1 The header shows only the client name (no order code) and a back button.
 - [ ] 9.2 Status, City and Saved time; Women / Men switch for clients who buy both.
-- [ ] 9.3 Under the Women / Men switch, a card: "Women budget · €23,630 of €60,000", then the four categories in a 2 × 2 grid, each with spend, "of" its budget and a bar ("Not buying" when it has no budget); at the bottom "✓ Within the guidelines" or "⚠ N outside the guidelines" and Budgets & KPIs. Tapping the card opens Budgets & KPIs: one card for Women (budget per category, then Guidelines: mix rules with share, limit and gap, required looks, drops), then one for Men. No Total budget anywhere.
+- [ ] 9.3 Under the Women / Men switch, a card: "Women budget · €23,630 of €60,000", then the four categories in a 2 × 2 grid, each with spend, "of" its budget and a bar ("Not buying" when it has no budget). Amount and bar are red while spend is below the budget and turn green once it is reached or passed (Maison Dubois: Ready-to-wear goes green from €18,000). At the bottom "✓ Within the guidelines" or "⚠ N outside the guidelines", which counts only mix rules and required looks, never the budget and Budgets & KPIs. Tapping the card opens Budgets & KPIs: one card for Women (budget per category, then Guidelines: mix rules with share, limit and gap, required looks, drops), then one for Men. No Total budget anywhere.
 - [ ] 9.4 Lines grouped by category; the category headings (Ready-to-wear, Bags…) show only the name, no total, in sentence case and black, like Now / Today on Home. Each line: name, item code in regular black with a white Drop 1 / Drop 2 tag next to it, then the colour; no wholesale or retail price; on the right "12 units" with the line value under it. One-size lines have a − / + stepper; sized lines show the sizes as "36 x1" and a full-width Enter sizes / Edit sizes button (like Edit on the Collection cards); lines without quantity say "No quantity yet".
 - [ ] 9.5 × on a line → the native iOS alert "Delete [style] in [colour] from the order?"; Cancel keeps it, OK removes it.
 - [ ] 9.6 A division with no products shows "No … products yet. Tap any style in the Collection and add it from its page".
