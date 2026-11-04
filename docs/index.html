@@ -1164,7 +1164,8 @@ function BudDiv({b, d, k}) {
   return html`<div class="bud-div">
         <div class="bud-head"><span>${DIV_LABEL[d]}</span>${k && html`<span class="num"><b class=${k.bst === 'ok' ? '' : 'st-' + k.bst}>${fmt(k.total)}</b> <span class="muted">of ${fmt(db)}</span></span>`}</div>
         ${CATS.map(c => { const cb = catBudget(b, d, c), m = k && k.mix.find(x => x.cat === c);
-          if (!cb && !(m && m.value)) return html`<div class="bud-row off"><span>${CAT_LABEL[c]}</span><span>Not buying</span></div>`;
+          // the appointment sheet (no order) leaves out categories the client doesn't buy; the order's KPIs still say "Not buying"
+          if (!cb && !(m && m.value)) return k ? html`<div class="bud-row off"><span>${CAT_LABEL[c]}</span><span>Not buying</span></div>` : null;
           return html`<div class="bud-row cat">
             <span>${CAT_LABEL[c]}</span>
             <span class="num">${m ? html`<b class=${m.st === 'ok' ? '' : 'st-' + m.st}>${fmt(m.value)}</b> <span class="muted">${cb ? 'of ' + fmt(cb) : 'no budget'}</span>` : fmt(cb)}</span>

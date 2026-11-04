@@ -104,7 +104,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 2.2 Tap other days → each shows its appointments, or "No appointments on this day."
 - [ ] 2.3 After checking a client in, the ongoing client sits under **Now** with a green Ongoing tag; the others under **Today** (both headings in sentence case, black, slightly larger than the text), each with time, city and what they buy per division.
 - [ ] 2.4 Tap a client not yet checked in → sheet with Budget and Notes, and only **Check in** at the bottom.
-- [ ] 2.4b Budget in that sheet (Kanda Select): per division, Ready-to-wear, Bags, Shoes, Accessories, then a bold **Total** under a line (Women's €120,000, Men's €65,000) that adds up the four; every amount, and "Not buying", lines up on the same right edge.
+- [ ] 2.4b Budget in that sheet (Kanda Select): per division, Ready-to-wear, Bags, Shoes, Accessories, then a bold **Total** under a line (Women's €120,000, Men's €65,000) that adds up the four; every amount lines up on the same right edge. A category the client doesn't buy is left out of this sheet (it still reads "Not buying" in the order's Budgets & KPIs).
 - [ ] 2.5 Type in Notes, close and reopen → the note is kept ("Saved automatically").
 - [ ] 2.6 Tap the ongoing client (check one in first) → "Ongoing since …", with Check out and Add products.
 - [ ] 2.6b Every appointment whose client has an order shows the order's status on its row (Draft, With client, Sent, Confirmed…), past days included; the ongoing one shows Ongoing.
