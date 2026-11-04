@@ -502,6 +502,9 @@ input{font:inherit;color:inherit}
 .bud-head .num{font-weight:400;font-size:var(--fs-body)}.bud-head .num b{font-weight:700}
 .bud-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:2px 10px;align-items:baseline;font-size:var(--fs-body);padding:6px 0}
 .bud-row b{min-width:42px;text-align:right}
+.bud-row.cat{grid-template-columns:minmax(0,1fr) auto}
+.bud-row .num{text-align:right;font-variant-numeric:tabular-nums}
+.bud-tot{font-weight:600;border-top:1px solid var(--line);margin-top:4px;padding-top:10px}
 .bud-row.rule{align-items:start}
 .bud-row.rule .small{display:block;margin-top:2px}
 .bud-row.rule .num{display:flex;flex-direction:column;align-items:flex-end;white-space:nowrap}
@@ -1159,14 +1162,15 @@ function Budgets({b, order, divs}) {
 function BudDiv({b, d, k}) {
   const db = divBudget(b, d);
   return html`<div class="bud-div">
-        <div class="bud-head"><span>${DIV_LABEL[d]}</span><span class="num">${k ? html`<b class=${k.bst === 'ok' ? '' : 'st-' + k.bst}>${fmt(k.total)}</b> <span class="muted">of ${fmt(db)}</span>` : fmt(db)}</span></div>
+        <div class="bud-head"><span>${DIV_LABEL[d]}</span>${k && html`<span class="num"><b class=${k.bst === 'ok' ? '' : 'st-' + k.bst}>${fmt(k.total)}</b> <span class="muted">of ${fmt(db)}</span></span>`}</div>
         ${CATS.map(c => { const cb = catBudget(b, d, c), m = k && k.mix.find(x => x.cat === c);
           if (!cb && !(m && m.value)) return html`<div class="bud-row off"><span>${CAT_LABEL[c]}</span><span>Not buying</span></div>`;
-          return html`<div class="bud-row">
+          return html`<div class="bud-row cat">
             <span>${CAT_LABEL[c]}</span>
             <span class="num">${m ? html`<b class=${m.st === 'ok' ? '' : 'st-' + m.st}>${fmt(m.value)}</b> <span class="muted">${cb ? 'of ' + fmt(cb) : 'no budget'}</span>` : fmt(cb)}</span>
             ${m && html`<div class="mix-track"><div class=${'mix-fill ' + m.st} style=${{width: Math.min(m.used, 100) + '%'}}></div></div>`}
           </div>`; })}
+        ${!k && html`<div class="bud-row cat bud-tot"><span>Total</span><span class="num">${fmt(db)}</span></div>`}
       </div>`;
 }
 
