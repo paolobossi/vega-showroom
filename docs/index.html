@@ -180,6 +180,7 @@ input{font:inherit;color:inherit}
 .pd-qty .qbtn{flex:none}
 .pd-in{display:flex;align-items:center;justify-content:center;gap:6px;min-height:52px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-weight:600;font-size:var(--fs-body)}
 .pd-in svg{color:var(--good)}
+.pd-hint{display:flex;align-items:center;justify-content:center;min-height:52px;padding:0 16px;border-radius:999px;border:1px dashed var(--line);color:var(--muted);font-size:var(--fs-body);font-weight:600;text-align:center}
 .pin{display:flex;flex-direction:column;align-items:center;gap:14px;padding:4px 0 6px}
 .pin-t{font-size:var(--fs-heading);font-weight:600}
 .pin-dots{display:flex;gap:16px;margin:2px 0 6px}
@@ -281,6 +282,12 @@ input{font:inherit;color:inherit}
 .zoom .car{flex:1;min-height:0}
 .zoom .car-track{flex:1;min-height:0;border-radius:0}
 .zoom .car-slide{aspect-ratio:auto;max-height:none;height:100%}
+.pdf-prev{position:relative;display:block;width:100%;padding:0;border:1px solid var(--line);border-radius:var(--r-s);overflow:hidden;background:#fff}
+.pdf-prev img{display:block;width:100%;height:auto}
+.pdf-tag{position:absolute;right:8px;bottom:8px;display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;background:var(--band);color:var(--band-ink);font-size:var(--fs-caption);font-weight:600}
+.pdf-scroll{flex:1;min-height:0;overflow:auto;background:var(--surface-2);padding:12px}
+.pdf-page{display:block;width:100%;height:auto;background:#fff;box-shadow:var(--shadow-raised)}
+.pdf-page.big{width:220%;max-width:none}
 .zoom-foot{flex:none;display:flex;flex-direction:column;gap:8px;padding:10px 18px max(14px,env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--surface)}
 
 /* ---------- today ---------- */
@@ -446,6 +453,15 @@ input{font:inherit;color:inherit}
 .ov-sum-go{flex:none;display:inline-flex;align-items:center;gap:2px;color:var(--accent);font-size:var(--fs-caption)}
 .ov-sum-go svg{transform:rotate(-90deg)}
 .ov-sum.slim{flex-direction:row;justify-content:space-between;align-items:center;gap:8px;padding:12px 14px;font-size:var(--fs-body);font-weight:600;white-space:nowrap}
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px;margin-top:10px}
+.cat-t{display:flex;flex-direction:column;gap:2px;min-width:0}
+.cat-n{font-size:var(--fs-caption);font-weight:600;color:var(--muted)}
+.cat-v{font-size:var(--fs-body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cat-v .muted{font-size:var(--fs-caption)}
+.cat-t .mix-track{display:block;margin-top:4px}
+.cat-t .mix-fill{display:block}
+.cat-t.off .cat-v{font-size:var(--fs-caption);color:var(--muted)}
+.ov-sum-foot{padding-top:10px;margin-top:12px;border-top:1px solid var(--line)}
 .ov-sum-st{display:inline-flex;align-items:center;gap:6px;min-width:0;overflow:hidden;text-overflow:ellipsis}
 .ov-sum-st svg{flex:none}
 .guide-row{display:flex;justify-content:space-between;align-items:center;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:14px 14px 14px 16px;font-size:var(--fs-body);font-weight:600;color:var(--ink);text-align:left}
@@ -524,9 +540,9 @@ input{font:inherit;color:inherit}
 .sheet.media .sheet-body{padding-top:0}
 .sheet.media .car{margin:0 -18px}
 .sheet.media .car-track{border-radius:0}
-/* in a sheet the photos take the full width at 3:4; product shots are cropped a little below the middle (bags sit low, clothes hang from the top) */
-.sheet.media .car-slide{aspect-ratio:3/4;max-height:none}
-.sheet.media .car:not(.cover) .car-slide img{object-fit:cover;object-position:50% 65%}
+/* in a sheet the photo is kept short (5:4, the whole product shown) so the name, prices and sizes are on screen without scrolling */
+.sheet.media .car-slide{aspect-ratio:5/4;max-height:none}
+.sheet.media .car:not(.cover) .car-slide img{object-fit:contain}
 /* page: the product detail fills the screen like a page, over the tab bar, and slides in from the right */
 .sheet.media.page{top:0;bottom:0;height:auto;max-height:none;max-width:none;border-radius:0;box-shadow:none;animation:push .26s cubic-bezier(.2,.8,.2,1)}
 .sheet.page .sheet-x{top:max(12px,env(safe-area-inset-top,0px))}
@@ -580,7 +596,8 @@ input.qty{width:100%;min-width:0;border:0;background:transparent;color:inherit;f
 input.qty:focus{background:var(--surface-2)}
 input.qty.xl{width:120px}
 .quick{display:flex;gap:6px;flex-wrap:wrap}
-.qbtn{height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:var(--fs-caption);font-weight:600}
+.qbtn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:var(--fs-caption);font-weight:600}
+.qbtn:disabled{color:var(--faint)}
 .qbtn:active{background:var(--surface-2)}
 .impact{display:flex;flex-direction:column;gap:6px;font-size:var(--fs-body)}
 /* product facts: grey label on the left, value on the right, one size throughout */
@@ -648,6 +665,9 @@ input.qty.xl{width:120px}
 /* every message slides up from the bottom edge of the screen, over the tab bar and the floating buttons */
 .toast{position:absolute;left:50%;bottom:max(16px,calc(env(safe-area-inset-bottom,0px) - 4px));transform:translateX(-50%);z-index:60;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:var(--fs-body);font-weight:600;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis;animation:toast .32s cubic-bezier(.2,.8,.2,1);display:flex;gap:6px;align-items:center}
 @keyframes toast{from{transform:translate(-50%,calc(100% + 40px))}}
+/* quantity saved: drops in from the top so it is seen while the thumb is on the sizes */
+.toast.top{bottom:auto;top:max(10px,calc(env(safe-area-inset-top,0px) + 6px));animation-name:toast-top}
+@keyframes toast-top{from{transform:translate(-50%,calc(-100% - 40px))}}
 
 /* ---------- landscape: horizontal working layout ---------- */
 @container app (orientation: landscape){
@@ -1128,10 +1148,15 @@ function copyText(text, act) {
 // Each division and category against its own budget; women's and men's budgets are separate and never added up.
 // Without an order it shows the assigned split only.
 function Budgets({b, order, divs}) {
-  const ds = divs || b.divs, ks = order && Object.fromEntries(ds.map(d => [d, kpi(order, d)]));
+  const ds = divs || b.divs;
   return html`<div class="kpi">
-    ${ds.map(d => { const db = divBudget(b, d), k = ks && ks[d];
-      return html`<div class="bud-div">
+    ${ds.map(d => html`<${BudDiv} b=${b} d=${d} k=${order && kpi(order, d)}/>`)}
+    ${order && html`<div class="kpi-foot">Each bar is spend against that category’s own budget. Styles without a quantity don’t count yet.</div>`}
+  </div>`;
+}
+function BudDiv({b, d, k}) {
+  const db = divBudget(b, d);
+  return html`<div class="bud-div">
         <div class="bud-head"><span>${DIV_LABEL[d]}</span><span class="num">${k ? html`<b class=${k.bst === 'ok' ? '' : 'st-' + k.bst}>${fmt(k.total)}</b> <span class="muted">of ${fmt(db)}</span>` : fmt(db)}</span></div>
         ${CATS.map(c => { const cb = catBudget(b, d, c), m = k && k.mix.find(x => x.cat === c);
           if (!cb && !(m && m.value)) return html`<div class="bud-row off"><span>${CAT_LABEL[c]}</span><span>Not buying</span></div>`;
@@ -1140,16 +1165,14 @@ function Budgets({b, order, divs}) {
             <span class="num">${m ? html`<b class=${m.st === 'ok' ? '' : 'st-' + m.st}>${fmt(m.value)}</b> <span class="muted">${cb ? 'of ' + fmt(cb) : 'no budget'}</span>` : fmt(cb)}</span>
             ${m && html`<div class="mix-track"><div class=${'mix-fill ' + m.st} style=${{width: Math.min(m.used, 100) + '%'}}></div></div>`}
           </div>`; })}
-      </div>`; })}
-    ${ks && html`<div class="kpi-foot">Each bar is spend against that category’s own budget. Styles without a quantity don’t count yet.</div>`}
-  </div>`;
+      </div>`;
 }
 
 // The client's guidelines for one division: mix rules per family, required looks, and how the order splits across the drops
-function MixChecks({o, d}) {
+function MixChecks({o, d, title=`${DIV_LABEL[d]} guidelines`}) {
   const k = kpi(o, d);
   return html`<div class="bud-div">
-    <div class="bud-head"><span>${DIV_LABEL[d]} guidelines</span></div>
+    <div class="bud-head"><span>${title}</span></div>
     ${k.rules.map(r => { const cap = r.max != null ? r.max : r.min, word = r.max != null ? 'max' : 'min', gap = r.max != null ? r.value - r.limit : r.limit - r.value;
       return html`<div class="bud-row rule"><span>${r.label}<span class="small muted">${r.st === 'none' ? `${word} ${cap}% of the order` : `${Math.round(r.share)}% of the order · ${word} ${cap}%`}</span></span>
         <span class="num">${fmt(r.value)}${r.st !== 'none' && html`<small class=${gap > 0 ? 'st-' + r.st : 'muted'}>${gap > 0 ? fmt(gap) + (r.max != null ? ' over' : ' to go') : r.max != null ? fmt(-gap) + ' left' : 'met'}</small>`}</span>
@@ -1175,9 +1198,12 @@ function GuideBanner({act}) {
 
 function GuideSheet({act}) {
   const rule = (r, d) => `${r.max != null ? 'No more than' : 'At least'} ${r.max != null ? r.max : r.min}% of the ${DIV_LABEL[d].toLowerCase()} order`;
-  // the page is filled from the maison's PDF in the back office (AI reads the rules into this table); the PDF itself opens here too
+  // the page is filled from the maison's PDF in the back office (AI reads the rules into this table); the PDF itself shows at the top
+  // and opens full screen inside the app, so there is always a Close
   return html`<${Sheet} tall title="Buying guidelines" sub="Spring Summer 2027" onClose=${act.close}>
-    <a class="btn white block" href="guidelines-sample.pdf" target="_blank" rel="noopener"><${Icon} n="export" s=${18}/>Open PDF</a>
+    <button class="pdf-prev" onClick=${() => act.set({pdf:true})} aria-label="Open the guidelines PDF full screen">
+      <img src="guidelines-sample.png" alt="Buying guidelines PDF, page 1" draggable="false"/>
+      <span class="pdf-tag"><${Icon} n="expand" s=${14} w=${2.2}/>PDF · Sample</span></button>
     ${['W', 'M'].map(d => html`<div class="lbl">${DIV_LABEL[d]} mix</div>
       <div class="list">${RULES[d].map(r => html`<div class="row"><div class="row-main"><div class="row-title">${r.label}</div><div class="row-sub">${rule(r, d)}</div></div></div>`)}</div>`)}
     <div class="lbl">Required looks</div>
@@ -1190,6 +1216,16 @@ function GuideSheet({act}) {
     </div>
     <div class="small muted">Each client’s budget, and how their order stands against these guidelines, is on their order under Budgets & KPIs.</div>
   <//>`;
+}
+
+// the maison's PDF full screen: tap the page to zoom in, Close returns to the guidelines
+function PdfView({act}) {
+  const [big, setBig] = useState(false);
+  return html`<div class="zoom" role="dialog" aria-label="Buying guidelines PDF">
+    <div class="zoom-top"><div style="min-width:0"><div class="zoom-t">Buying guidelines</div><div class="small muted">PDF · tap the page to ${big ? 'fit it' : 'zoom in'}</div></div>
+      <button class="icon-btn" onClick=${() => act.set({pdf:null})} aria-label="Close"><${Icon} n="x"/></button></div>
+    <div class="pdf-scroll"><img class=${'pdf-page' + (big ? ' big' : '')} src="guidelines-sample.png" alt="Buying guidelines PDF, page 1" onClick=${() => setBig(!big)}/></div>
+  </div>`;
 }
 
 function Today({S, ui, act}) {
@@ -1585,25 +1621,23 @@ function FilterSheet({ui, act}) {
   <//>`;
 }
 
-// Product page: with a client in session, sizes and quantities are set right here. A colour not in the order yet is a draft
-// until Add to order (with or without quantities); once it is in the order, every change saves at once.
-// The last size scale entered is remembered per size range until check-out, so the next style fills with Apply last scale.
+// Product page: with a client in session, sizes and quantities are set right here and save at once. Entering the first
+// quantity on a colour puts that colour in the order; there is no Add button.
+// Copy scale keeps this style's size scale (per size range, until another one is copied); Paste scale fills it on the next style.
 function ProductSheet({pid, colour, orderId, S, ui, act}) {
   const p = P[pid], o = orderId ? S.orders[orderId] : activeOrder(S, ui), b = o && BUYERS[o.buyerId], why = o && canTake(o, p);
   const [c, setC] = useState(() => { const l = o && o.lines.find(x => x.pid === pid); return colour || (l ? l.colour : p.colours[0]); });
-  const [draft, setDraft] = useState({}), touched = useRef(null);
   const looks = LOOKS.filter(l => l.items.some(([x]) => x === pid));
   const pick = () => act.sheet({type:'pick', item:{pid, colour:c, via:'search'}});
   const lineOf = x => o && o.lines.find(l => l.pid === pid && l.colour === x), line = lineOf(c);
-  const q = line ? line.qty : draft[c] || {}, u = units(q), sized = p.sizes.length > 1, skey = p.sizes.join(' ');
+  const q = line ? line.qty : {}, u = units(q), sized = p.sizes.length > 1, skey = p.sizes.join(' ');
   const clean = x => Object.fromEntries(Object.entries(x).filter(([, n]) => n > 0).map(([k, n]) => [k, Math.min(999, n)]));
-  const setQ = next => { const n = clean(next); if (sized) touched.current = n;
-    if (line) act.setQty(o.id, line.id, n); else setDraft(d => ({...d, [c]: n})); };
-  const drop = x => setDraft(d => { const n = {...d}; delete n[x]; return n; });
-  const close = () => { const t = touched.current; if (t && units(t)) act.set({lastScale: {...ui.lastScale, [skey]: t}}); act.close(); };
+  const setQ = next => { const n = clean(next);
+    if (line) act.setQty(o.id, line.id, n); else if (units(n)) act.select(o.id, pid, c, 'search', n); };
+  const close = act.close;
   const setQty = (sz, n) => setQ({...q, [sz]: Math.max(0, n)});
-  const last = sized && ui.lastScale && ui.lastScale[skey], showLast = last && qkey(last) !== qkey(clean(q));
-  const add = () => { if (act.select(o.id, pid, c, 'search', q) !== false) drop(c); };
+  const last = sized && ui.lastScale && ui.lastScale[skey], same = last && qkey(last) === qkey(clean(q));
+  const copy = () => { act.set({lastScale: {...ui.lastScale, [skey]: clean(q)}}); act.toast('Scale copied'); };
   const edit = o && !why;
   const val = n => `${n} ${n === 1 ? 'unit' : 'units'}`;
   // tap the number to type it on the number pad (up to 999); + and − still step by one
@@ -1624,7 +1658,9 @@ function ProductSheet({pid, colour, orderId, S, ui, act}) {
           ${num(sz)}
           <button class="step" aria-label=${'Remove one size ' + sz} onClick=${() => setQty(sz, (q[sz] || 0) - 1)}><${Icon} n="minus" s=${20} w=${2}/></button>
         </div>`)}</div>
-        ${(showLast || u > 0) && html`<div class="quick">${showLast && html`<button class="qbtn" onClick=${() => setQ(last)}>Apply last scale</button>`}
+        ${(last || u > 0) && html`<div class="quick">
+          ${u > 0 && html`<button class="qbtn" disabled=${same} onClick=${copy}><${Icon} n="copy" s=${15} w=${2}/>Copy scale</button>`}
+          ${last && html`<button class="qbtn" disabled=${same} onClick=${() => setQ(last)}>Paste scale</button>`}
           ${u > 0 && html`<button class="qbtn" onClick=${() => setQ({})}>Clear</button>`}</div>`}` : html`
         <div class="single">
           <button class="step lg" aria-label="Remove one" onClick=${() => setQty('U', (q.U || 0) - 1)}><${Icon} n="minus" s=${26} w=${2}/></button>
@@ -1637,7 +1673,7 @@ function ProductSheet({pid, colour, orderId, S, ui, act}) {
       : why ? html`${line && html`<div class="pd-in">In order · ${u ? val(u) : 'no quantity'}</div>`}<button class="btn black" disabled>${b.shop} · ${why}</button>`
       : line ? html`<div class="pd-in"><${Icon} n="check" s=${18} w=${2.4}/>In order · ${u ? val(u) : 'no quantity yet'}</div>
         <button class="btn outline danger" onClick=${() => act.unselect(o.id, pid, c)}>Remove from order</button>`
-      : html`<button class="btn black" onClick=${add}>Add to order${u ? ' · ' + val(u) : ''}</button>`}</div>
+      : html`<div class="pd-hint">${sized ? 'Enter quantities' : 'Tap +'} to add ${c}</div>`}</div>
     <div class="panel facts">
       ${p.material && html`<div><span>Material</span><span>${p.material}</span></div>`}
       <div><span>Division</span><span>${p.div === 'W' ? 'Womenswear' : 'Menswear'}</span></div>
@@ -1817,10 +1853,10 @@ function SelLine({l, o, act, locked}) {
   </div>`;
 }
 
-// One switch only (Women / Men); budgets and guideline checks open from the summary card at the top of the selection
+// One switch only (Women / Men); the card at the top shows that division's budget per category, and opens Budgets & KPIs
 function OrderView({S, ui, act, order}) {
   const b = BUYERS[order.buyerId], div = b.divs.includes(ui.div) ? ui.div : b.divs[0];
-  const open = issuesOf(order, [div]).length;
+  const open = issuesOf(order, [div]).length, k = kpi(order, div);
   const lines = order.lines.filter(l => P[l.pid].div === div);
   const groups = CATS.map(c => ({key:c, label:CAT_LABEL[c], lines:lines.filter(l => P[l.pid].cat === c)}));
   const locked = partLocked(order, div), allSent = b.divs.every(d => partLocked(order, d));
@@ -1850,12 +1886,17 @@ function OrderView({S, ui, act, order}) {
           <div><span class="lbl">Saved</span>${S.savedAt ? html`<span class="saved" key=${S.savedAt}><${Icon} n="check" s=${13} w=${2.4}/>${hhmm(S.savedAt)}</span>` : html`<span class="muted">—</span>`}</div>
         </div>
         ${b.divs.length > 1 && html`<div class="ov-divs" role="tablist">${b.divs.map(d => html`<button role="tab" aria-selected=${d === div} class=${'cn-cat' + (d === div ? ' on' : '')} onClick=${() => act.div(d)}>${DIV_TAB[d]}</button>`)}</div>`}
-        <button class="ov-sum slim" onClick=${() => act.sheet({type:'kpis', orderId:order.id})} aria-label=${`Budgets and KPIs. ${open ? `${open} outside the guidelines` : 'Within the guidelines'}`}>
-          <span class=${'ov-sum-st ' + (open ? 'st-warn' : 'st-ok')}><${Icon} n=${open ? 'alert' : 'check'} s=${16} w=${2.4}/>${open ? `${open} outside the guidelines` : 'Within the guidelines'}</span>
-          <span class="ov-sum-go">Budgets & KPIs<${Icon} n="down" s=${15} w=${2.2}/></span>
+        <button class="ov-sum" onClick=${() => act.sheet({type:'kpis', orderId:order.id})} aria-label=${`Budgets and KPIs. ${DIV_TAB[div]} ${fmt(k.total)} of ${fmt(k.budget)}. ${open ? `${open} outside the guidelines` : 'Within the guidelines'}`}>
+          <span class="ov-sum-top"><b>${DIV_TAB[div]} budget</b><span class="num"><b class=${k.bst === 'ok' ? '' : 'st-' + k.bst}>${fmt(k.total)}</b> <span class="muted">of ${fmt(k.budget)}</span></span></span>
+          <span class="cat-grid">${k.mix.map(m => !m.budget && !m.value ? html`<span class="cat-t off"><span class="cat-n">${CAT_LABEL[m.cat]}</span><span class="cat-v">Not buying</span></span>`
+            : html`<span class="cat-t"><span class="cat-n">${CAT_LABEL[m.cat]}</span>
+              <span class="cat-v num"><b class=${['ok', 'none'].includes(m.st) ? '' : 'st-' + m.st}>${fmt(m.value)}</b> <span class="muted">of ${fmt(m.budget)}</span></span>
+              <span class="mix-track"><span class=${'mix-fill ' + m.st} style=${{width: Math.min(m.used, 100) + '%'}}></span></span></span>`)}</span>
+          <span class="ov-sum-foot"><span class=${'ov-sum-st ' + (open ? 'st-warn' : 'st-ok')}><${Icon} n=${open ? 'alert' : 'check'} s=${16} w=${2.4}/>${open ? `${open} outside the guidelines` : 'Within the guidelines'}</span>
+            <span class="ov-sum-go">Budgets & KPIs<${Icon} n="down" s=${15} w=${2.2}/></span></span>
         </button>
         ${locked && !allSent && html`<div class="callout info"><${Icon} n="lock" s=${18}/><div>The ${DIV_LABEL[div].toLowerCase()} order has been sent. You can see it here but no longer change it.</div></div>`}
-        ${lines.length === 0 && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div><div class="small">Tap any style in the Collection and add it from its page. Quantities can come later.</div></div>`}
+        ${lines.length === 0 && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div><div class="small">Tap any style in the Collection and enter its quantities.</div></div>`}
         ${groups.filter(g => g.lines.length).map(g => html`<div>
           <div class="grp-head"><span>${g.label}</span></div>
           <div class="list">${g.lines.map(l => html`<${SelLine} key=${l.id} l=${l} o=${order} act=${act} locked=${locked}/>`)}</div>
@@ -1871,12 +1912,12 @@ function OrderView({S, ui, act, order}) {
   </div>`;
 }
 
-// What the seller sees before sending: budgets, mix rules and required looks that are off. Sending is still allowed.
+// Budgets & KPIs: each division in one card, its budget per category and then its guidelines; Women first, then Men
 function KpiSheet({sh, S, act}) {
   const o = S.orders[sh.orderId], b = BUYERS[o.buyerId];
   return html`<${Sheet} tall title="Budgets & KPIs" sub=${b.shop} onClose=${act.close}>
-    <${Budgets} b=${b} order=${o}/>
-    <div class="kpi">${b.divs.map(d => html`<${MixChecks} o=${o} d=${d}/>`)}</div>
+    ${['W', 'M'].filter(d => b.divs.includes(d)).map(d => html`<div class="kpi"><${BudDiv} b=${b} d=${d} k=${kpi(o, d)}/><${MixChecks} o=${o} d=${d} title="Guidelines"/></div>`)}
+    <div class="kpi-foot">Each bar is spend against that category’s own budget. Styles without a quantity don’t count yet. Women’s and men’s budgets are never added up.</div>
   <//>`;
 }
 
@@ -1891,7 +1932,7 @@ function issuesOf(o, divs) {
 }
 
 // Finishing the visit: the client always signs, then the seller sends the order to the commercial team (closed, waiting for
-// confirmation) or back to the client to finish from an email link (still a draft). Women's and men's can go together or one at a time.
+// confirmation, with a copy to the client; not while a style has no quantity) or back to the client to finish from an email link (still a draft). Women's and men's can go together or one at a time.
 function FinishSheet({sh, S, act}) {
   const o = S.orders[sh.orderId], b = BUYERS[o.buyerId];
   const open = b.divs.filter(d => !partLocked(o, d)), filled = d => kpi(o, d).units > 0;
@@ -1903,8 +1944,8 @@ function FinishSheet({sh, S, act}) {
   const [signed, setSigned] = useState(false), [done, setDone] = useState(null);
   const ok = sel.length > 0 && name.trim() && /^\S+@\S+\.\S+$/.test(email.trim()) && signed;
   const visit = isOngoing(S.appts[b.id]), shared = open.some(d => partOf(o, d).status === 'shared');
-  const toTeam = () => { act.send(o.id, sel, 'client', name.trim());
-    setDone({title:'Sent to the commercial team', line: visit ? `${b.shop} is checked out.` : 'They confirm it for production.'}); };
+  const toTeam = () => { act.send(o.id, sel, 'client', name.trim(), email.trim());
+    setDone({title:'Sent to the commercial team', line:`${visit ? b.shop + ' is checked out. ' : ''}A copy is on its way to ${email.trim()}.`}); };
   const toClient = () => { act.share(o.id, sel, name.trim(), email.trim());
     setDone({title:`Sent to ${b.shop}`, line:`The link is on its way to ${email.trim()}.`, client:true}); };
   // Continue ends the visit and goes back to Home, ready for the next client
@@ -1917,8 +1958,8 @@ function FinishSheet({sh, S, act}) {
   <//>`;
   return html`<${FullPage} title="Finish order" onClose=${act.close}
     foot=${open.length > 0 && html`<div class="finish-btns">
-      <button class="btn black" disabled=${!ok} onClick=${toTeam}>Send to commercial team</button>
-      <div class="small muted">The order is closed. The commercial team confirms it for production.</div>
+      <button class="btn black" disabled=${!ok || noQty > 0} onClick=${toTeam}>Send to commercial team</button>
+      <div class="small muted">The order is closed. The commercial team confirms it for production; the client gets a copy by email.</div>
       <button class="btn white" disabled=${!ok} onClick=${toClient}>Send to client to finish</button>
       <div class="small muted">It stays a draft. The client gets an email link to add or change quantities.</div>
     </div>`}>
@@ -1932,7 +1973,7 @@ function FinishSheet({sh, S, act}) {
             <div class="row-side">${sel.includes(d) && html`<${Icon} n="check" s=${20} w=${2.4}/>`}</div>
           </button>`; })}</div></div>`}
       ${!sel.length && html`<div class="callout warn"><${Icon} n="alert" s=${18}/><div>Add quantities before sending the order.</div></div>`}
-      ${noQty > 0 && html`<div class="callout warn"><${Icon} n="alert" s=${18}/><div>${noQty} ${noQty === 1 ? 'style has' : 'styles have'} no quantity and won’t be produced.</div></div>`}
+      ${noQty > 0 && html`<div class="callout warn"><${Icon} n="alert" s=${18}/><div><b>${noQty} ${noQty === 1 ? 'style has' : 'styles have'} no quantity.</b> Add quantities or remove ${noQty === 1 ? 'it' : 'them'} from the order to send it to the commercial team. You can still send it to the client to finish.</div></div>`}
       <label class="field"><span class="lbl">Client name</span><input class="inp" value=${name} onInput=${e => setName(e.target.value)} autocomplete="off" placeholder="Name of the person signing"/></label>
       <label class="field"><span class="lbl">Email</span><input class="inp" type="email" inputmode="email" autocapitalize="off" value=${email} onInput=${e => setEmail(e.target.value)}/></label>
       <div class="field"><span class="lbl">Signature</span><${SignPad} onSigned=${setSigned}/></div>`}
@@ -2042,7 +2083,7 @@ function TabBar({tab, act}) {
 function makeActs(setS, setUi, onReset) {
   let toastT = 0;
   const a = {
-    toast: msg => { setUi(u => ({...u, toast:msg, toastId:Date.now()})); clearTimeout(toastT); toastT = setTimeout(() => setUi(u => ({...u, toast:null})), 2200); },
+    toast: (msg, top) => { setUi(u => ({...u, toast:msg, toastTop:!!top, toastId: top && u.toast && u.toastTop ? u.toastId : Date.now()})); clearTimeout(toastT); toastT = setTimeout(() => setUi(u => ({...u, toast:null})), 2200); },
     // opening an order only shows it; the client in session changes only with a check-in
     openOrder: bid => { const id = 'o-' + bid;
       setS(s => s.orders[id] ? s : {...s, orders:{...s.orders, [id]:newOrder(bid)}, savedAt:Date.now()});
@@ -2070,11 +2111,11 @@ function makeActs(setS, setUi, onReset) {
       setS(s => { const appts = oneOngoing({...s.appts}, bid);
         const x = appts[bid] || {}; appts[bid] = x.in ? {...x, out:null, back:now} : {...x, in:now, out:null};
         return {...s, appts, orders: s.orders[id] ? s.orders : {...s.orders, [id]:newOrder(bid)}, savedAt:now}; });
-      setUi(u => ({...u, session:id, div:BUYERS[bid].divs[0], sheet:null, capture:false, lastScale:null, ...(stay ? {} : {tab:'catalogue', view:null})}));
+      setUi(u => ({...u, session:id, div:BUYERS[bid].divs[0], sheet:null, capture:false, ...(stay ? {} : {tab:'catalogue', view:null})}));
       a.toast(`Checked in · ${BUYERS[bid].shop}`); },
     // a visit ends from the order (Finish order: sent to the commercial team or to the client) and goes back to Home
-    endVisit: (bid, msg) => { a.appt(bid, {out:Date.now()}); setUi(u => ({...u, session: u.session === 'o-' + bid ? null : u.session, lastScale:null, view:null, sheet:null, sub:null, tab:'calendar'})); a.toast(msg); },
-    checkOut: bid => { a.appt(bid, {out:Date.now()}); setUi(u => u.session === 'o-' + bid ? {...u, session:null, lastScale:null} : u); a.toast(`Checked out · ${BUYERS[bid].shop}`); },
+    endVisit: (bid, msg) => { a.appt(bid, {out:Date.now()}); setUi(u => ({...u, session: u.session === 'o-' + bid ? null : u.session, view:null, sheet:null, sub:null, tab:'calendar'})); a.toast(msg); },
+    checkOut: bid => { a.appt(bid, {out:Date.now()}); setUi(u => u.session === 'o-' + bid ? {...u, session:null} : u); a.toast(`Checked out · ${BUYERS[bid].shop}`); },
     note: (bid, text) => a.appt(bid, {notes:text}),
     // the client in session: land in the Collection to add products
     addProducts: () => setUi(u => ({...u, tab:'catalogue', view:null, sheet:null})),
@@ -2097,7 +2138,7 @@ function makeActs(setS, setUi, onReset) {
     a.mut(id, o => { if (o.lines.some(l => l.pid === pid && l.colour === colour)) return;
       o.lines.push({id:uid(), pid, colour, qty:{...qty}, via, by:'salesperson', at:Date.now()});
       log(o, 'salesperson', `${u ? 'Added' : 'Selected'} ${p.name} · ${cname(colour)}${u ? ' ×' + u : ''}${via === 'photo' ? ' (photo match)' : ''}`); });
-    a.toast('Added to order'); };
+    a.toast(u ? `Added to order · ${u} ${u === 1 ? 'unit' : 'units'}` : 'Added to order', u > 0); };
   // the whole runway look in one go: every piece the client can buy that isn't in the order yet
   a.selectLook = (id, look) => { let k = 0; if (!a.divOk(id, look.div)) return;
     a.mut(id, o => { look.items.forEach(([pid, colour]) => { if (canTake(o, P[pid]) || o.lines.some(l => l.pid === pid && l.colour === colour)) return;
@@ -2108,22 +2149,23 @@ function makeActs(setS, setUi, onReset) {
     a.mut(id, o => { o.lines = o.lines.filter(l => !(l.pid === pid && (!colour || l.colour === colour))); log(o, by, `Removed ${p.name}${colour ? ' · ' + cname(colour) : ''}`); });
     setUi(u => u.sheet && u.sheet.type === 'size' ? {...u, sheet:null} : u); a.toast('Removed from order'); };
   // stepper on one-size styles; repeated taps update one log entry
-  a.setUnits = (id, lineId, n) => a.mut(id, o => { const l = o.lines.find(x => x.id === lineId); if (!l) return; const p = P[l.pid];
-    n = Math.max(0, Math.min(999, n)); l.qty = n ? {U: n} : {}; l.at = Date.now();
+  a.setUnits = (id, lineId, n) => { n = Math.max(0, Math.min(999, n)); a.mut(id, o => { const l = o.lines.find(x => x.id === lineId); if (!l) return; const p = P[l.pid]; l.qty = n ? {U: n} : {}; l.at = Date.now();
     const key = 'u:' + lineId, last = o.log[o.log.length - 1], text = `Set ${p.name} · ${cname(l.colour)} to ×${n}`;
     if (last && last.key === key) { last.text = text; last.at = Date.now(); } else o.log.push({at:Date.now(), by:'salesperson', text, key}); });
+    a.toast(`Saved · ${n} ${n === 1 ? 'unit' : 'units'}`, true); };
   // sizes on a line from the product page; repeated taps update one log entry
-  a.setQty = (id, lineId, qty) => a.mut(id, o => { const l = o.lines.find(x => x.id === lineId); if (!l) return; const p = P[l.pid];
+  a.setQty = (id, lineId, qty) => { a.mut(id, o => { const l = o.lines.find(x => x.id === lineId); if (!l) return; const p = P[l.pid];
     l.qty = qty; l.at = Date.now();
     const key = 'u:' + lineId, last = o.log[o.log.length - 1], text = `Set ${p.name} · ${cname(l.colour)} to ×${units(qty)}`;
     if (last && last.key === key) { last.text = text; last.at = Date.now(); } else o.log.push({at:Date.now(), by:'salesperson', text, key}); });
+    const n = units(qty); a.toast(`Saved · ${n} ${n === 1 ? 'unit' : 'units'}`, true); };
   // each division is sent on its own; the order's overall status follows from its parts
   a.share = (id, divs, signer, email) => a.mut(id, o => { const now = Date.now(); o.parts = o.parts || {};
     divs.forEach(d => { o.parts[d] = {status:'shared', at:now, signer, email}; }); o.sharedAt = now;
     log(o, 'salesperson', `${divs.map(d => DIV_LABEL[d]).join(' and ')} signed by ${signer} and sent to ${email} to finish · closes in 48h`); });
-  a.send = (id, divs, by, signer) => a.mut(id, o => { const now = Date.now(); o.parts = o.parts || {};
+  a.send = (id, divs, by, signer, email) => a.mut(id, o => { const now = Date.now(); o.parts = o.parts || {};
     divs.forEach(d => { o.parts[d] = {status:'submitted', at:now, by, signer}; }); o.submittedBy = by; o.submittedAt = now;
-    log(o, by, `${divs.map(d => DIV_LABEL[d]).join(' and ')} signed by ${signer} and sent`); });
+    log(o, by, `${divs.map(d => DIV_LABEL[d]).join(' and ')} signed by ${signer} and sent${email ? ' · copy to ' + email : ''}`); });
   return a;
 }
 
@@ -2150,7 +2192,7 @@ function App({onReset}) {
     : sh.type === 'newbuyer' ? html`<${NewBuyerSheet} S=${S} sh=${sh} act=${act}/>`
     : sh.type === 'pick' ? html`<${PickBuyerSheet} S=${S} sh=${sh} act=${act}/>`
     : sh.type === 'appt' ? html`<${ApptSheet} key=${sh.bid} sh=${sh} S=${S} act=${act}/>` : null;
-  const toast = ui.toast && html`<div class="toast" key=${ui.toastId} role="status"><${Icon} n="check" s=${16} w=${2.4}/>${ui.toast}</div>`;
+  const toast = ui.toast && html`<div class=${'toast' + (ui.toastTop ? ' top' : '')} key=${ui.toastId} role="status"><${Icon} n="check" s=${16} w=${2.4}/>${ui.toast}</div>`;
 
   const buyerView = ui.role === 'buyer' && S.orders[ui.buyerOrder];
   // a checked-in client is always the client in session (after a reload or an account switch too)
@@ -2171,6 +2213,7 @@ function App({onReset}) {
     ${!order && html`<div class="dock">${pill && html`<${SessionBar} S=${S} ui=${ui} act=${act}/>`}<${TabBar} tab=${ui.tab} act=${act}/></div>`}
     ${ui.capture && so && html`<${Capture} order=${so} div=${capDiv} act=${act}/>`}
     ${ui.zoom && html`<${Zoom} z=${ui.zoom} act=${act}/>`}
+    ${ui.pdf && html`<${PdfView} act=${act}/>`}
     ${sheet}${toast}
   </div>`;
 }
