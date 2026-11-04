@@ -87,7 +87,7 @@ Guideline issues never block sending (styles without a quantity do block Send to
 
 ## QA scenarios
 
-Run on an iPhone in portrait unless a step says otherwise. Start each run from fresh demo data: **Reset demo** in the side panel (desktop view), or clear the site data on the phone. Demo data: the seller is Roberto D.; Maison Dubois (Paris, Platinum, Women + Men) is ongoing; Linea Concept (Gold, Women only), Harbour & Co. (Silver, Men only) and Kanda Select (Diamond, Women + Men) are later today. Each line is: what to do → what should happen.
+Run on an iPhone in portrait unless a step says otherwise. Start each run from fresh demo data: **Reset demo** in the side panel (desktop view), or clear the site data on the phone. Demo data: the seller is Roberto D.; Maison Dubois (Paris, Platinum, Women + Men) has a draft order from this morning but is not checked in; Linea Concept (Gold, Women only), Harbour & Co. (Silver, Men only) and Kanda Select (Diamond, Women + Men) are later today. Each line is: what to do → what should happen.
 
 ### 1. Sign in, sign out, passcode
 - [ ] 1.1 Home → the round avatar with your initials (top right) → Profile sheet → Sign out → the full-screen "Who's selling?" list of sellers shows.
@@ -96,22 +96,22 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 1.4 Set passcode with a different second entry → "The codes don't match. Try again."; nothing is saved until both match.
 - [ ] 1.5 Sign out, pick Roberto D., enter a wrong code → "Wrong code. Try again." and the dots clear; the right code signs in.
 - [ ] 1.6 Cancel on the PIN pad → back to the list of sellers.
-- [ ] 1.7 Sign out while Maison Dubois is ongoing, sign back in as Roberto D. → the visit and its pill are still there.
+- [ ] 1.7 Open the app (or reload it) → nobody is checked in: no client pill, nothing under Now, even if a client was checked in when the app was closed. That visit shows as checked out; its order is kept.
 - [ ] 1.8 Sign in as Sofia L. → Home shows only Sofia's clients (Atelier Nove, Casa Prisma…) and her initials in the avatar.
 
 ### 2. Home and appointments
 - [ ] 2.1 Home opens on today, with one past day visible to the left of today in the day strip.
 - [ ] 2.2 Tap other days → each shows its appointments, or "No appointments on this day."
-- [ ] 2.3 The ongoing client sits under **Now** with a green Ongoing tag; the others under **Today** (both headings in sentence case, black, slightly larger than the text), each with time, city and what they buy per division.
+- [ ] 2.3 After checking a client in, the ongoing client sits under **Now** with a green Ongoing tag; the others under **Today** (both headings in sentence case, black, slightly larger than the text), each with time, city and what they buy per division.
 - [ ] 2.4 Tap a client not yet checked in → sheet with Budget and Notes, and only **Check in** at the bottom.
 - [ ] 2.5 Type in Notes, close and reopen → the note is kept ("Saved automatically").
-- [ ] 2.6 Tap the ongoing client → "Ongoing since …", with Check out and Add products.
+- [ ] 2.6 Tap the ongoing client (check one in first) → "Ongoing since …", with Check out and Add products.
 - [ ] 2.6b Every appointment whose client has an order shows the order's status on its row (Draft, With client, Sent, Confirmed…), past days included; the ongoing one shows Ongoing.
 - [ ] 2.6c Tap an appointment with an order → **Order**: styles · units, the status and the value; tap it → the order opens full screen. There is no order history in the sheet. The status is not repeated at the top of the sheet.
 - [ ] 2.7 Tap the Home title → the app reloads; data and the visit are kept.
 
 ### 3. Check in, client pill, check out
-- [ ] 3.1 Check in Linea Concept → toast "Checked in · Linea Concept"; the Collection opens; Maison Dubois is checked out automatically (only one client ongoing at a time).
+- [ ] 3.1 Check in Maison Dubois, then Linea Concept → toast "Checked in · Linea Concept"; the Collection opens; Maison Dubois is checked out automatically (only one client ongoing at a time).
 - [ ] 3.2 The black pill sits above the tab bar on every tab: client name in bold, "View order" underneath.
 - [ ] 3.3 With no products yet the pill shows the orders icon; after the first and second pieces it shows their photos; adding more pieces does not change the two photos.
 - [ ] 3.4 The right photo is on top, with a black ring cutting into the left one.

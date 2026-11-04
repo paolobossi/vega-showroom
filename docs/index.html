@@ -1027,19 +1027,19 @@ function seedState() {
   const o = {id:'o-dubois', buyerId:'dubois', status:'draft', submittedBy:null, lines,
     log:[{at:todayAt(10,2), by:'salesperson', text:'Session started in the showroom'},
       ...lines.map(l => ({at:l.at, by:'salesperson', text: units(l.qty) ? `Added ${P[l.pid].name} · ${cname(l.colour)} ×${units(l.qty)}${l.via === 'photo' ? ' (photo match)' : l.via === 'suggestion' ? ' (suggestion)' : ''}` : `Selected ${P[l.pid].name} · ${cname(l.colour)}`}))]};
-  return {orders:{...pastOrders(), 'o-dubois':o}, rep:'roberto', buyers:{}, appts:{...pastAppts(), dubois:{in:todayAt(10, 2)}}, pins:{}, savedAt:null};
+  return {orders:{...pastOrders(), 'o-dubois':o}, rep:'roberto', buyers:{}, appts:pastAppts(), pins:{}, savedAt:null};
 }
 const KEY = 'vega-poc-v2';
 function loadState() {
   try { const s = JSON.parse(localStorage.getItem(KEY));
     if (s && s.orders) { s.rep = REPS[s.rep] ? s.rep : 'roberto'; s.buyers = s.buyers || {}; s.appts = s.appts || {}; s.pins = s.pins || {}; delete s.budgets;
-      Object.assign(BUYERS, s.buyers); s.appts = {...pastAppts(), ...s.appts}; s.orders = {...pastOrders(), ...s.orders}; oneOngoing(s.appts);
+      Object.assign(BUYERS, s.buyers); s.appts = {...pastAppts(), ...s.appts}; s.orders = {...pastOrders(), ...s.orders}; oneOngoing(s.appts, '-');
       // older saves: bulk totals not split by size go back to "no quantity yet"
       Object.values(s.orders).forEach(o => o.lines.forEach(l => { if (l.qty && l.qty.ALL) delete l.qty.ALL; }));
       return s; } } catch (e) {}
   return seedState();
 }
-// one client visit at a time on this device: older saves may hold several, so only the latest check-in stays ongoing
+// one client visit at a time on this device: only the latest check-in stays ongoing; on launch ('-') every visit is ended, so the app always opens with nobody checked in
 function oneOngoing(appts, keep) {
   const on = Object.keys(appts).filter(k => appts[k] && appts[k].in && !appts[k].out);
   keep = keep || on.sort((x, y) => (appts[y].back || appts[y].in) - (appts[x].back || appts[x].in))[0];
@@ -1048,7 +1048,6 @@ function oneOngoing(appts, keep) {
 }
 function saveState(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
 const SKEY = 'vega-session';
-const loadSession = () => { try { return localStorage.getItem(SKEY) || null; } catch (e) { return null; } };
 const saveSession = id => { try { id ? localStorage.setItem(SKEY, id) : localStorage.removeItem(SKEY); } catch (e) {} };
 function clearState() { saveSession(null); Object.keys(BUYERS).forEach(k => { if (BUYERS[k].added) delete BUYERS[k]; else BUYERS[k].cat = BUYER_CAT0[k]; }); try { localStorage.removeItem(KEY); } catch (e) {} }
 
@@ -2032,7 +2031,7 @@ function BuyerView({S, ui, act}) {
    App shell
    ===================================================================== */
 const GUIDE_STEPS = [
-  'In Home, Maison Dubois is ongoing. Open another client and tap Check in at the bottom: the visit switches and the Collection opens.',
+  'The app opens with nobody checked in. In Home, open a client and tap Check in at the bottom: the Collection opens for that client.',
   'In the Collection, tap a style to open its page, pick the colour, enter sizes and add it. A check on the photo means it is in the order; Filters choose the collection, drop, priority and material.',
   'Tap the client bar at the top to open the order: enter sizes line by line, then see Budgets & KPIs for mix rules, required looks and drops.',
   'Tap the send button: the client signs on the phone, or gets a link to review within 48 hours. Women’s and men’s can be sent separately.',
@@ -2145,7 +2144,7 @@ function makeActs(setS, setUi, onReset) {
 
 function App({onReset}) {
   const [S, setS] = useState(loadState);
-  const [ui, setUi] = useState({tab:'calendar', view:null, sheet:null, capture:false, div:'W', role:'sales', toast:null, session:loadSession(), catSeason:'SS27', catDrop:null, catTag:null, catMat:null});
+  const [ui, setUi] = useState({tab:'calendar', view:null, sheet:null, capture:false, div:'W', role:'sales', toast:null, session:null, catSeason:'SS27', catDrop:null, catTag:null, catMat:null});
   useEffect(() => { saveState(S); }, [S]);
   useEffect(() => { saveSession(ui.session); }, [ui.session]);
   const act = useMemo(() => makeActs(setS, setUi, onReset), []);
