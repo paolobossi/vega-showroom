@@ -23,7 +23,7 @@ Every client gets one tier. It is back-office logic only: the seller never sees 
 |---|---|
 | Scheduled (no tag) | The appointment is on the calendar and the client hasn't arrived yet. Only Check in is offered. |
 | Ongoing (`Ongoing`) | The seller checked the client in. That client is in session: the black pill (first two pieces added, client name, View order) sits above the nav, the Collection shows what they can buy and tapping the pill opens their order full screen, without the tab bar. Only one client per seller can be ongoing. |
-| Checked out (order status, e.g. `Sent`) | The visit ended: Save draft in the order (it stays a draft), the client signing (all or part of the order), or Check out on the client's row on Home. The row on Home shows where that client's order stands; the seller can view it or check the client in again. |
+| Checked out (order status, e.g. `Sent`) | The visit ended: Finish order in the order (sent to the commercial team or to the client to finish), or Check out on the client's row on Home. The row on Home shows where that client's order stands; the seller can view it or check the client in again. |
 | Checked in again (`Ongoing`) | Same as Ongoing, but the visit keeps its first start time. |
 
 Checking in a new client automatically checks out the client the seller was with.
@@ -34,9 +34,9 @@ Checking in a new client automatically checks out the client the seller was with
 |---|---|
 | Not started (`Not started`) | The client has an appointment but no products have been selected yet. |
 | Draft (`Draft`, grey) | Products are being selected and quantities entered. Everything can still change. |
-| With client (`With client`, amber) | A review link was sent; the client has 48 hours to check and sign it. |
+| With client (`With client`, amber) | The client signed in the showroom and the order was sent back to them to finish: they got an email link and have 48 hours to add or change quantities and send it. |
 | Partly sent (`Partly sent`, blue) | One division (Women or Men) is sent, the other is still open. |
-| Sent (`Sent`, blue) | Every division has been sent, signed by the client on the phone or through the link. Read-only for the seller. |
+| Sent (`Sent`, blue) | Every division has been signed and sent to the commercial team (from the showroom or by the client through the link). Read-only for the seller. |
 | Confirmed (`Confirmed`, solid green) | The commercial team confirmed it for production in the back office. |
 
 ## Order part (Women / Men, each on its own)
@@ -44,7 +44,7 @@ Checking in a new client automatically checks out the client the seller was with
 | Status | Meaning |
 |---|---|
 | Draft | This division can still be edited. |
-| With client | The link for this division is with the client, waiting for their signature. |
+| With client | The client has the link for this division, to finish it. |
 | Sent | Signed and sent. Its lines are locked; the other division can still be edited. |
 | Confirmed | Confirmed for production by the back office. |
 
@@ -54,19 +54,19 @@ The whole order's status is worked out from its parts: all the same → that sta
 
 | Status | Meaning |
 |---|---|
-| Available (`Add`, black) | The client can buy it. Add sits at the bottom of the card, under the prices; tapping it puts the style in the order at zero units and slides its product page up over the Collection to enter sizes. |
-| In order (`Edit · N units`, outlined, at the bottom of the card) | Already in the client's selection. Add turns into Edit, in the same place and at the same height, with the units of that style across all its colours (0 until quantities are set). Edit opens the product page again, where colours and quantities are set. |
+| Available (no mark) | The client can buy it. Tapping anywhere on the card slides its product page up over the Collection, where colour and quantities are chosen and Add to order puts it in. |
+| In order (black ✓ in the photo's top-right corner) | Already in the client's selection, in at least one colour. The card has no buttons; tapping it opens the product page on the colour in the order. |
 | Not available (`Not available`) | Not open to this client's tier (see Client tier). Hidden from the Collection during a visit. |
-| Division not bought (`No men’s` / `No women’s`) | The client doesn't buy that division. |
+| Division not bought (no mark) | The client doesn't buy that division, but it is still shown. Adding a style from it asks "[Client] doesn't buy Men. Add Men to this order?"; on OK that division opens on the order with no budget. |
 | Division sent (`Women sent` / `Men sent`) | That part of the order is sent, so nothing more can be added to it. |
 
-## Product tag (set in the back office, shown on the photo)
+## Product priority (set in the back office, shown on the photo; the Priority filter)
 
 | Tag | Meaning |
 |---|---|
 | Must have (`Must have`, black) | One of the season's hero pieces. |
 | Essential (`Essential`, white) | A core style. |
-| None | No tag on the photo. |
+| Standard (no tag) | No tag on the photo. |
 
 A style that can't be bought shows why instead of its tag.
 
@@ -77,13 +77,13 @@ A style that can't be bought shows why instead of its tag.
 | Within budget (green) | Spend is at or under the budget set in the back office. |
 | Slightly over (amber) | Up to 10% over budget. |
 | Over (red) | More than 10% over, or spending where no budget is set. |
-| Mix rule within (`Within`, green) | A family is inside its limit, shown in euros (e.g. Puzzle max €7,089, from the 30% rule set in the back office). |
-| Mix rule over a max (`Over`, red) | A family is above its maximum share. |
-| Mix rule under a min (`Under`, amber) | A family is below its minimum share. |
+| Mix rule within (`Within`, green) | A family is inside its limit. Each rule shows its share of the order, the limit and the gap, e.g. "Puzzle · 6% of the order · max 30% · €1,520 · €5,569 left"; a minimum that is reached says "met". |
+| Mix rule over a max (`Over`, red) | A family is above its maximum share; the gap reads "€6,150 over". |
+| Mix rule under a min (`Under`, amber) | A family is below its minimum share; the gap reads "€2,400 to go". |
 | Required look done (`Done`) | Every piece of a required look is in the order with quantities. |
 | Required look open (`Open`) | Some pieces of a required look are still missing. |
 
-Guideline issues never block sending: they are listed under "Outside the guidelines" before the order goes out.
+Guideline issues never block sending. The order page shows only the guideline status ("Within the guidelines" or "N outside the guidelines"); the details are under Budgets & KPIs. Women's and men's budgets are always separate and never added into a total.
 
 ## QA scenarios
 
@@ -119,11 +119,11 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 3.8 Check in from a sent order (Check in to add products) → the button is disabled when every part is sent.
 
 ### 4. Collection
-- [ ] 4.1 With a client in session, the title shows only the divisions they buy (Linea: Women only; Harbour: Men only; Dubois: Women and Men).
+- [ ] 4.1 The title always shows Women and Men. With a client in session it opens on the division they buy (Linea: Women; Harbour: Men).
 - [ ] 4.2 Category tabs (Ready-to-wear, Bags, Shoes, Accessories) stick to the top; tapping one scrolls to it; scrolling highlights the current one.
-- [ ] 4.3 Search by name, code or family (e.g. "Puzzle", "A510") → only matching styles; a search with no match shows "No styles match …".
-- [ ] 4.4 Filters → Collection (Spring Summer 2027, Pre-Spring 2027, Permanent collection: titles only), Drop (All drops; Drop 1 "Delivers 15 January 2027"; Drop 2 "Delivers 20 February 2027") and Tag (All styles, Must have, Essential, Other styles) → the grid updates; the filter button shows as on; a chip under the search for the drop and one for the tag, each clears its filter.
-- [ ] 4.4b Tag filter with a client in session: Must have shows only black-tagged styles, Essential only white-tagged ones, Other styles only untagged ones; the three together add up to All styles.
+- [ ] 4.3 Search matches every word on its own across name, code, family, category, material, colours and keywords: "black leather bag" → the leather bags that come in black; "leather" → every leather style; "short sleeve" (Men) → Relaxed fit T-shirt; a code → that style. No match → "No styles match …".
+- [ ] 4.4 Filters → Collection (titles only), Drop (All drops; Drop 1 "Delivers 15 January 2027"; Drop 2 "Delivers 20 February 2027"), Priority (All, Must have, Essential, Standard) and Material (All materials, Leather, Cotton, Wool, Cashmere, Silk & viscose, Nylon) → the grid updates; the filter button shows as on; a chip under the search for each filter, each clears its own.
+- [ ] 4.4b Priority: Must have shows only black-tagged styles, Essential only white-tagged ones, Standard only untagged ones; the three together add up to All. Material: Leather shows bags, shoes and leather goods; Cashmere (Pre-Spring) shows the beanie, scarf and short coat.
 - [ ] 4.5 Product tags on the photos: Must have in black (e.g. Small Amazona 180), Essential in white (e.g. Medium Puzzle Fold tote), none on the others.
 - [ ] 4.6 With nobody in session, the Collection shows Women and Men and every style.
 
@@ -132,27 +132,28 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 5.2 Check in Linea Concept (Gold) → Mini Featherlight Puzzle and Small Puzzle Edge show; Medium Bilbao bucket and Small Whisker bag don't.
 - [ ] 5.3 Check in Maison Dubois (Platinum) → Medium Bilbao bucket and Small Whisker bag show.
 - [ ] 5.4 Check in Kanda Select (Diamond) → every style shows.
-- [ ] 5.5 New session (with nobody checked in: Collection → Add → Add to an order → New session) → the new client sees only the Silver styles.
+- [ ] 5.5 New session (with nobody checked in: Collection → tap a card → Add to order → New session) → the new client sees only the Silver styles.
 
 ### 6. Adding a style and entering quantities
-- [ ] 6.1 Each card shows photo, name, code, wholesale and retail price, colour dots and a black **Add** button at the bottom.
-- [ ] 6.2 Tap Add → the product page slides up as a bottom sheet over the Collection; it says "In order · no quantity yet"; toast "Added to order".
-- [ ] 6.3 Tap Add, set quantities (or nothing) in the sheet and close it → the card shows **Edit · N units** outlined, in the same place and at the same height as Add (Edit · 0 units if nothing was set).
-- [ ] 6.4 Tap Edit → the product page opens again on the colour in the order, with the quantities entered; another colour can be added from there.
-- [ ] 6.5 Remove from order on the product page → the card goes back to Add.
-- [ ] 6.6 Add is black, Edit outlined; with two colours in the order (e.g. Small Amazona 180 in Mocha ×3 and Black ×2) Edit shows the total across colours: Edit · 5 units.
-- [ ] 6.7 Product page: size curves (Core, Full), "+1 each" and Clear work on sized styles; one-size styles have only − / +, with no preset numbers.
-- [ ] 6.7b Product page of a style already in the order: change a quantity → the white "In order · N units" message turns into a black **Update quantity** button; tap it → a spinner turns in the middle of the button, then the white message comes back with the new units, above Remove from order.
-- [ ] 6.7c Change a quantity and close the sheet without tapping Update quantity → the change is kept; toast "Quantity updated"; Edit on the card shows the new total.
+- [ ] 6.1 Each card shows photo, name, code, wholesale and retail price and colour dots, with no button. Tapping anywhere on it slides the product page up over the Collection.
+- [ ] 6.2 Product page of a style not in the order: pick a colour, optionally set quantities, then **Add to order** (or **Add to order · N units**) → toast "Added to order"; the page says "In order · …" above Remove from order.
+- [ ] 6.3 Close the page → the card shows a black ✓ in the photo's top-right corner, away from the Must have / Essential tag.
+- [ ] 6.4 Tap that card again → the product page opens on the colour in the order, with its quantities; another colour can be added from there.
+- [ ] 6.5 Remove from order on the product page (the last colour) → the ✓ disappears from the card.
+- [ ] 6.6 Quantities of a colour already in the order save at once: + / − or a typed number change "In order · N units" straight away; there is no Update button and no saving message. Close and reopen → the quantities are there.
+- [ ] 6.7 Tap a quantity → the number pad opens; type 100 → 100 is saved; the maximum is 999. One-size styles work the same on their big number.
+- [ ] 6.7b Sizes sit side by side in a row; when a style has more sizes than fit, the row scrolls sideways (like the colours).
+- [ ] 6.7c Apply last scale: enter a scale on a dress (e.g. 34 ×1, 36 ×2, 38 ×2, 40 ×1), close, open another dress → **Apply last scale** fills the same scale. It is kept per size range (dresses, women's shoes, men's shoes…), only shows when it would change something, and is forgotten when the client is checked out. **Clear** empties all sizes. There are no Core / Full / +1 each buttons.
 - [ ] 6.8 Product page, another colour not in the order: set quantities, then **Add to order · N units** → that colour joins the order; colours in the order carry a flag.
 - [ ] 6.9 Product page: Remove from order takes that colour out.
-- [ ] 6.10 Tap the photo or name of a card → the same product sheet opens without adding anything.
+- [ ] 6.10 Product page: the wholesale and retail prices sit on the page with no white box; the details table starts with **Material** (e.g. "100% cotton poplin").
 - [ ] 6.11 Photos: swipe the carousel; tap a photo → full-screen zoom; close it.
-- [ ] 6.12 With nobody in session, tap Add → "Add to an order" lists your appointments; pick one → that client is checked in and the style is added.
+- [ ] 6.13 Linea Concept (Women only) checked in → Men → open a men's style → Add to order → native alert "Linea Concept doesn't buy Men. Add Men to this order?"; Cancel adds nothing; OK adds it and the order gets a Men tab with no budget.
+- [ ] 6.12 With nobody in session, tap a card → Add to order → "Add to an order" lists your appointments; pick one → that client is checked in and the style is added.
 
 ### 7. Looks
-- [ ] 7.1 Looks tab → the lookbook per division (only the divisions of the client in session) and the Buying guidelines row.
-- [ ] 7.2 Buying guidelines → mix rules per division, required looks, drops with their style counts.
+- [ ] 7.1 Looks tab → the lookbook for Women and Men (the client's division first) and the Buying guidelines row.
+- [ ] 7.2 Buying guidelines → **Open PDF** at the top opens the sample guidelines PDF (marked Sample) in a new tab; below it the mix rules per division, required looks and drops.
 - [ ] 7.3 Open a look → photos, VM intent, its pieces with prices; pieces in the order show "Added"; pieces the client can't buy show why.
 - [ ] 7.4 Tap one piece → it is added to the order of the client in session.
 - [ ] 7.5 **Add the whole look · N pieces** → every missing piece the client can buy is added; the button then reads "Whole look is in the order".
@@ -166,27 +167,27 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 ### 9. Order page
 - [ ] 9.1 The header shows only the client name (no order code) and a back button.
 - [ ] 9.2 Status, City and Saved time; Women / Men switch for clients who buy both.
-- [ ] 9.3 Budget card: spend of budget, bar coloured green / amber / red, and "Within the guidelines" or "N outside the guidelines"; tap → Budgets & KPIs (budget per category, mix rules, required looks).
-- [ ] 9.4 Lines grouped by category; the category headings (Ready-to-wear, Bags…) show only the name, no total, in sentence case and black, like Now / Today on Home. Each line: name, item code in regular black with a white Drop 1 / Drop 2 tag next to it, then the colour; no wholesale or retail price, only the line total and units. One-size lines have a − / + stepper; sized lines show the sizes as "36 x1" and a full-width Enter sizes / Edit sizes button (like Edit on the Collection cards); lines without quantity say "No quantity yet".
+- [ ] 9.3 Under the Women / Men switch, one slim row: "✓ Within the guidelines" or "⚠ N outside the guidelines", and Budgets & KPIs → the sheet with each category against its own budget, then the mix rules with share, limit and gap, required looks and drops. There is no Total budget anywhere (Women and Men are never added up).
+- [ ] 9.4 Lines grouped by category; the category headings (Ready-to-wear, Bags…) show only the name, no total, in sentence case and black, like Now / Today on Home. Each line: name, item code in regular black with a white Drop 1 / Drop 2 tag next to it, then the colour; no wholesale or retail price; on the right "12 units" with the line value under it. One-size lines have a − / + stepper; sized lines show the sizes as "36 x1" and a full-width Enter sizes / Edit sizes button (like Edit on the Collection cards); lines without quantity say "No quantity yet".
 - [ ] 9.5 × on a line → the native iOS alert "Delete [style] in [colour] from the order?"; Cancel keeps it, OK removes it.
-- [ ] 9.6 A division with no products shows "No … products yet. Tap Add on any style in the Collection".
-- [ ] 9.7 During the visit the bottom buttons are **Save draft** and **Review and sign**; outside a visit, a round sign button and Check in to add products.
-- [ ] 9.8 Save draft → a native iOS dialog asks "Save draft and check out?" ("This ends the session with … The order stays saved as a draft."). Cancel → nothing changes, you stay in the order. OK → the client is checked out; back to Home; toast "Draft saved · … checked out"; the row shows Draft.
+- [ ] 9.6 A division with no products shows "No … products yet. Tap any style in the Collection and add it from its page".
+- [ ] 9.7 During the visit the bottom has one button, **Finish order**, with the line "Get the client's signature, then send the order on". There is no Save draft. Outside a visit: a round sign button and Check in to add products.
+- [ ] 9.8 Lines that say 12 units read the same in the client view (units first, value under).
 
-### 10. Review and sign
-- [ ] 10.1 Review and sign → the sheet lists Women's and Men's with status, units and value; parts with units are ticked; a part with no units can't be picked.
-- [ ] 10.2 Styles without quantity → warning "N selected styles have no quantity and won't be produced".
-- [ ] 10.3 Over budget or outside a mix rule → "Outside the guidelines" lists each issue; sending is still allowed.
-- [ ] 10.4 Sign and send → full-screen "Sign the order": client, parts, units and value; Confirm stays disabled until a name is typed and a signature drawn.
-- [ ] 10.5 Confirm and send (all parts) → checked out, back to Home; toast "Women + Men sent · … checked out"; the row shows Sent.
-- [ ] 10.6 Sign only Women for a Women + Men client → also checked out and back to Home; the row shows Partly sent.
+### 10. Finish order
+- [ ] 10.1 Finish order → full-screen "Finish order" with the client's shop. For a Women + Men client: What to send, with each part's status, units and value; parts with units are ticked; a part with no units can't be picked.
+- [ ] 10.2 Fields: Client name, Email (filled in with the client's office email, editable) and Signature. There is no budget recap. Styles without quantity → warning "N styles have no quantity and won't be produced".
+- [ ] 10.3 At the bottom: **Send to commercial team** (black) with "The order is closed. The commercial team confirms it for production.", and **Send to client to finish** (white) with "It stays a draft. The client gets an email link to add or change quantities." Both stay disabled until a name, a valid email and a signature are in.
+- [ ] 10.4 Send to commercial team → a screen with a big green check, "Sent to the commercial team", "[Client] is checked out." and **Continue**.
+- [ ] 10.5 Continue → checked out, back to Home, no toast; the row shows Sent.
+- [ ] 10.6 Send only Women for a Women + Men client to the commercial team → also checked out and back to Home; the row shows Partly sent.
 - [ ] 10.7 Open that order → banner "Partly sent" with one line "Women signed · Men still a draft"; the tick is centred in its circle; Women lines are read-only, with the note that the women's order has been sent.
 - [ ] 10.8 Check the client in again → in the Collection, women's styles show "Women sent" and can't be added; Men can still be completed and signed.
 - [ ] 10.9 Fully sent order → banner "Sent" with one line "Signed by [name] · [date, time]". A confirmed order → "Confirmed" with "Ready for production". The line under a banner title never repeats the title and never wraps.
 
-### 11. Review link (client signs later)
-- [ ] 11.1 Review and sign → **Send the link to the client** → toast "Link sent · closes in 48h"; the link box with Copy appears; the order shows With client and the banner line "Link sent · 48h left to sign".
-- [ ] 11.2 Copy → toast "Copied".
+### 11. Sent to the client to finish
+- [ ] 11.1 Finish order → sign → **Send to client to finish** → green check, "Sent to [client]", "The link is on its way to [email].", Continue and Open as the client (demo). Continue → checked out, back to Home; the row shows With client; the order's banner says "Link sent · 48h left to finish".
+- [ ] 11.2 Open that order → Finish order → Open as the client (demo) is at the top.
 - [ ] 11.3 Open as the client (demo) → "Your SS27 order" with "Closes in 48h", budgets and mix checks, the lines, Add a style, and Review and sign.
 - [ ] 11.4 As the client, change a quantity or add a style → the change shows on the seller's order; in the client view the line is marked as the client's.
 - [ ] 11.5 As the client, Review and sign → the order is sent; the client sees the thank-you note; Back to salesperson returns to the seller app.
@@ -195,7 +196,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 12.1 Profile shows the seller's name, then Orders and Set passcode (Change passcode once set) with no grey line under them, App feedback with one line "Tell us what works and what doesn't", and Sign out in red.
 - [ ] 12.2 Orders → a small centred title with back on the left (like the order page), staying on top while scrolling; tiles (total value, sent, in draft), filters All / Draft / Sent, one row per order with status, value and units; With client rows show hours left.
 - [ ] 12.3 Tap an order → it opens full screen; back returns to the list.
-- [ ] 12.4 Profile → Orders has no + button (orders start when a client is checked in). With nobody checked in, Collection → Add → Add to an order → New session: Shop, City, Buying for, budgets; Start session is disabled until a shop name is typed; starting checks the new client in.
+- [ ] 12.4 Profile → Orders has no + button (orders start when a client is checked in). With nobody checked in, Collection → tap a card → Add to order → Add to an order → New session: Shop, City, Buying for, budgets; Start session is disabled until a shop name is typed; starting checks the new client in.
 - [ ] 12.5 App feedback → type a note, attach a screenshot (thumbnail with ×), remove it, send → toast "Thanks · feedback sent".
 
 ### 13. General
@@ -206,3 +207,11 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 13.5 Nothing sits under the notch or the home indicator; the last card in the Collection scrolls clear of the pill and tab bar.
 - [ ] 13.6 Every message (toast) slides up from the bottom edge of the screen and sits just above it, the same on every screen: over the tab bar and the client pill, over a product page and over the order buttons.
 - [ ] 13.7 Close buttons are easy to hit: the × on the product page (a 44px circle, and a near miss just outside it still closes), on the full-screen photos and on the full-screen pages (Set passcode, Sign the order, sign-in).
+
+## To define with the engineer and the back office
+
+- Quantities save on every change. The real app needs a save queue that survives a weak showroom connection: if a save fails, the quantity shows **Not saved** with a tap to retry; if it takes more than about a second, a small **Saving…**. When everything works, nothing extra shows.
+- Search: how styles are indexed (name, code, material, colours, keywords), typo tolerance, and who enters the keywords.
+- Buying guidelines: the manager uploads the maison's PDF in the back office and AI fills in the rules table (mix rules, required looks, drops, budget split per tier). That table drives the guidelines page and every check in Budgets & KPIs; the seller can also open the PDF itself.
+- Mix rules by units as well as by value (some brands set limits as a share of units).
+- The emails sent from Finish order: the confirmation to the client, and the link to finish the order.

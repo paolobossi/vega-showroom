@@ -223,11 +223,12 @@ input{font:inherit;color:inherit}
 .seg.full{display:flex}.seg.full button{flex:1}
 
 /* ---------- buttons ---------- */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 18px;border-radius:14px;font-weight:650;font-size:15.5px}
+.btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 18px;border-radius:14px;font-weight:650;font-size:15.5px}
 .btn.primary{background:var(--accent);color:var(--accent-ink)}
 .btn.secondary{background:var(--surface-2);border:1px solid var(--line)}
 .btn.go{background:var(--good);color:var(--surface)}
 .btn.ghost{color:var(--accent)}
+.btn.white{background:var(--surface);border:1px solid var(--line);color:var(--ink)}
 .btn.danger{color:var(--bad)}
 .btn.block{width:100%}
 .btn:active:not(:disabled){transform:scale(.985)}
@@ -436,6 +437,9 @@ input{font:inherit;color:inherit}
 .ov-sum-foot > span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .ov-sum-go{flex:none;display:inline-flex;align-items:center;gap:2px;color:var(--accent)}
 .ov-sum-go svg{transform:rotate(-90deg)}
+.ov-sum.slim{flex-direction:row;justify-content:space-between;align-items:center;gap:8px;padding:12px 14px;font-size:13.5px;font-weight:600;white-space:nowrap}
+.ov-sum-st{display:inline-flex;align-items:center;gap:6px;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.ov-sum-st svg{flex:none}
 .guide-row{display:flex;justify-content:space-between;align-items:center;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 14px 14px 16px;font-size:15px;font-weight:600;color:var(--ink);text-align:left}
 .guide-row svg{transform:rotate(-90deg);color:var(--muted)}
 .ov-lines{padding:14px 16px 20px;display:flex;flex-direction:column;gap:14px}
@@ -444,6 +448,16 @@ input{font:inherit;color:inherit}
 .empty{background:var(--surface);border:1px dashed var(--line);border-radius:16px;padding:22px 18px;text-align:center;color:var(--muted);display:flex;flex-direction:column;gap:8px;align-items:center}
 .ov-bar{flex:none;display:flex;gap:10px;align-items:center;padding:10px 14px max(12px,env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--surface)}
 .cap-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;height:54px;border-radius:27px;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:16px;white-space:nowrap;min-width:0}
+.cap-btn.two{flex-direction:column;gap:1px;height:64px;border-radius:32px}
+.cap-btn.two > span{display:flex;align-items:center;gap:8px}
+.cap-btn.two small{font-size:12.5px;font-weight:500;opacity:.85;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.finish-btns{flex:1;display:flex;flex-direction:column;gap:6px}
+.finish-btns .small{text-align:center;margin:0 6px 6px}
+.done{margin:auto 0;padding:32px 0;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px}
+.done .h1{margin-top:8px}
+.done p{margin:0;font-size:15px}
+.done-ic{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;background:var(--good);color:#fff;animation:pop .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes pop{from{transform:scale(.5);opacity:0}}
 .round{width:54px;height:54px;border-radius:27px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line);flex:none}
 
 /* ---------- KPI ---------- */
@@ -462,9 +476,12 @@ input{font:inherit;color:inherit}
 .bud-head .num{font-weight:500;font-size:14px}.bud-head .num b{font-weight:700}
 .bud-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:2px 10px;align-items:baseline;font-size:14px;padding:6px 0}
 .bud-row b{min-width:42px;text-align:right}
+.bud-row.rule{align-items:start}
+.bud-row.rule .small{display:block;margin-top:2px}
+.bud-row.rule .num{display:flex;flex-direction:column;align-items:flex-end;white-space:nowrap}
+.bud-row.rule .num small{font-size:12px;font-weight:600;margin-top:2px}
 .bud-row .mix-track{grid-column:1 / -1;margin-top:4px}
 .kpi > .bud-div:first-child{border-top:0;padding-top:0}
-.bud-total{display:flex;flex-direction:column;gap:6px;padding-top:12px;border-top:1px solid var(--line)}
 .sign{position:relative}
 .sign-pad{display:block;width:100%;height:170px;border-radius:14px;border:1.5px dashed var(--line);background:var(--surface);color:var(--ink);touch-action:none;cursor:crosshair}
 .sign-hint{position:absolute;left:14px;bottom:10px;font-size:12px;color:var(--faint);pointer-events:none}
@@ -849,8 +866,9 @@ const isSent = st => st === 'submitted' || st === 'confirmed';
 const partLocked = (o, d) => isSent(partOf(o, d).status);
 function syncStatus(o) { const sts = [...new Set(BUYERS[o.buyerId].divs.map(d => partOf(o, d).status))];
   o.status = sts.length === 1 ? sts[0] : sts.some(isSent) ? 'partial' : sts.includes('shared') ? 'shared' : 'draft'; }
+// a division the client doesn't buy is not a reason: adding to it asks first (see a.select)
 const canTake = (o, p) => { const b = BUYERS[o.buyerId];
-  return !b.divs.includes(p.div) ? `No ${DIV_TAB[p.div].toLowerCase()}’s` : !available(b, p) ? 'Not available' : partLocked(o, p.div) ? `${DIV_TAB[p.div]} sent` : null; };
+  return !available(b, p) ? 'Not available' : partLocked(o, p.div) ? `${DIV_TAB[p.div]} sent` : null; };
 
 // Runway looks; n is the show number and names the photos, the app labels them 01, 02… per division. Required looks are part of the buying guidelines (the client buys every piece).
 // Photos are the real looks from the LOEWE Spring Summer 2027 show on loewe.com: docs/img/looks/<look>_<view>.jpg
@@ -1099,11 +1117,10 @@ function copyText(text, act) {
 /* =====================================================================
    KPI recap — live guideline check per division
    ===================================================================== */
-// Total budget, then each division and category against its own budget. Without an order it shows the assigned split only.
+// Each division and category against its own budget; women's and men's budgets are separate and never added up.
+// Without an order it shows the assigned split only.
 function Budgets({b, order, divs}) {
   const ds = divs || b.divs, ks = order && Object.fromEntries(ds.map(d => [d, kpi(order, d)]));
-  const total = ds.reduce((a, d) => a + divBudget(b, d), 0), spent = ks ? ds.reduce((a, d) => a + ks[d].total, 0) : 0;
-  const pctOf = (v, of) => of ? Math.round(v / of * 100) : 0;
   return html`<div class="kpi">
     ${ds.map(d => { const db = divBudget(b, d), k = ks && ks[d];
       return html`<div class="bud-div">
@@ -1116,12 +1133,6 @@ function Budgets({b, order, divs}) {
             ${m && html`<div class="mix-track"><div class=${'mix-fill ' + m.st} style=${{width: Math.min(m.used, 100) + '%'}}></div></div>`}
           </div>`; })}
       </div>`; })}
-    ${!divs && html`<div class="bud-total">
-      <div class="kpi-label">Total budget</div>
-      <div class="kpi-big"><span class="num">${fmt(ks ? spent : total)}</span>${ks && html`<span class="muted"> of ${fmt(total)}</span>`}</div>
-      ${ks && html`<div class="bar"><div class=${'bar-fill ' + (usedSt(spent, total) === 'none' ? 'ok' : usedSt(spent, total))} style=${{width: Math.min(pctOf(spent, total), 100) + '%'}}></div></div>
-        <div class="kpi-meta"><span class="num">${spent > total ? fmt(spent - total) + ' over' : fmt(total - spent) + ' left'}</span></div>`}
-    </div>`}
     ${ks && html`<div class="kpi-foot">Each bar is spend against that category’s own budget. Styles without a quantity don’t count yet.</div>`}
   </div>`;
 }
@@ -1131,8 +1142,10 @@ function MixChecks({o, d}) {
   const k = kpi(o, d);
   return html`<div class="bud-div">
     <div class="bud-head"><span>${DIV_LABEL[d]} guidelines</span></div>
-    ${k.rules.map(r => html`<div class="bud-row"><span>${r.label} <span class="small muted">${ruleLimit(r)}</span></span>
-      <span class="num muted">${fmt(r.value)}</span><b class=${'st-' + r.st}>${RULE_WORD[r.st]}</b></div>`)}
+    ${k.rules.map(r => { const cap = r.max != null ? r.max : r.min, word = r.max != null ? 'max' : 'min', gap = r.max != null ? r.value - r.limit : r.limit - r.value;
+      return html`<div class="bud-row rule"><span>${r.label}<span class="small muted">${r.st === 'none' ? `${word} ${cap}% of the order` : `${Math.round(r.share)}% of the order · ${word} ${cap}%`}</span></span>
+        <span class="num">${fmt(r.value)}${r.st !== 'none' && html`<small class=${gap > 0 ? 'st-' + r.st : 'muted'}>${gap > 0 ? fmt(gap) + (r.max != null ? ' over' : ' to go') : r.max != null ? fmt(-gap) + ' left' : 'met'}</small>`}</span>
+        <b class=${'st-' + r.st}>${RULE_WORD[r.st]}</b></div>`; })}
     ${k.looks.map(x => html`<div class="bud-row"><span>${lookNo(x.l)} <span class="small muted">required</span></span>
       <span class="num muted">${x.have} of ${x.n} pieces</span><b class=${'num st-' + (x.done ? 'ok' : 'warn')}>${x.done ? 'Done' : 'Open'}</b></div>`)}
     ${k.drops.map(x => html`<div class="bud-row"><span>${DROPS[x.k].split(' · ')[0]} <span class="small muted">${DROPS[x.k].split(' · ')[1]}</span></span>
@@ -1154,7 +1167,9 @@ function GuideBanner({act}) {
 
 function GuideSheet({act}) {
   const rule = (r, d) => `${r.max != null ? 'No more than' : 'At least'} ${r.max != null ? r.max : r.min}% of the ${DIV_LABEL[d].toLowerCase()} order`;
+  // the page is filled from the maison's PDF in the back office (AI reads the rules into this table); the PDF itself opens here too
   return html`<${Sheet} tall title="Buying guidelines" sub="Spring Summer 2027" onClose=${act.close}>
+    <a class="btn white block" href="guidelines-sample.pdf" target="_blank" rel="noopener"><${Icon} n="export" s=${18}/>Open PDF</a>
     ${['W', 'M'].map(d => html`<div class="lbl">${DIV_LABEL[d]} mix</div>
       <div class="list">${RULES[d].map(r => html`<div class="row"><div class="row-main"><div class="row-title">${r.label}</div><div class="row-sub">${rule(r, d)}</div></div></div>`)}</div>`)}
     <div class="lbl">Required looks</div>
@@ -1175,7 +1190,7 @@ function Today({S, ui, act}) {
     <header class="top top-bar mid"><h1 class="h1">Looks</h1></header>
     <section class="sec"><${GuideBanner} act=${act}/></section>
     <div class="today-grid">
-      ${(sb ? sb.divs : ['W', 'M']).map(d => html`<section class="sec">
+      ${(sb ? [...sb.divs, ...['W', 'M'].filter(d => !sb.divs.includes(d))] : ['W', 'M']).map(d => html`<section class="sec">
         <div class="sec-head"><h2>${DIV_LABEL[d]} lookbook & VM intent</h2></div>
         <div class="look-list">
           ${LOOKS.filter(l => l.div === d).map(l => html`<button class="look" onClick=${() => act.sheet({type:'look', id:l.id})}>
@@ -1376,8 +1391,9 @@ function PCard({p, o, act}) {
 
 // Three levels, two controls: Women / Men is the page title, categories are one sticky row, and families are headings in the grid
 function CatalogueTab({S, ui, act}) {
-  const so = activeOrder(S, ui), sb = so && BUYERS[so.buyerId], divs = sb ? sb.divs : ['W', 'M'];
-  const [q, setQ] = useState(''), [div, setDiv] = useState(divs[0]), [cur, setCur] = useState(null);
+  // both divisions are always there; with a client checked in it opens on what they buy
+  const so = activeOrder(S, ui), sb = so && BUYERS[so.buyerId], divs = ['W', 'M'];
+  const [q, setQ] = useState(''), [div, setDiv] = useState(sb ? sb.divs[0] : 'W'), [cur, setCur] = useState(null);
   const season = SEASONS.find(x => x.id === ui.catSeason);
   const ql = q.trim().toLowerCase();
   const items = PRODUCTS.filter(p => p.div === div && p.season === season.id && (!sb || available(sb, p)) && (!ui.catDrop || p.drop === ui.catDrop) && hasTag(p, ui.catTag) && hasMat(p, ui.catMat) && matches(p, ql));
@@ -1579,7 +1595,7 @@ function ProductSheet({pid, colour, orderId, S, ui, act}) {
   const close = () => { const t = touched.current; if (t && units(t)) act.set({lastScale: {...ui.lastScale, [skey]: t}}); act.close(); };
   const setQty = (sz, n) => setQ({...q, [sz]: Math.max(0, n)});
   const last = sized && ui.lastScale && ui.lastScale[skey], showLast = last && qkey(last) !== qkey(clean(q));
-  const add = () => { act.select(o.id, pid, c, 'search', q); drop(c); };
+  const add = () => { if (act.select(o.id, pid, c, 'search', q) !== false) drop(c); };
   const edit = o && !why;
   const val = n => `${n} ${n === 1 ? 'unit' : 'units'}`;
   // tap the number to type it on the number pad (up to 999); + and − still step by one
@@ -1762,8 +1778,8 @@ function LineRow({l, onClick}) {
       ${p.sizes.length > 1 && html`<div class="szs">${p.sizes.filter(s => l.qty[s]).map(s => html`<span class="sz-chip">${s} x${l.qty[s]}</span>`)}</div>`}
     </div>
     <div class="row-side">
-      <span class="row-val">${units(l.qty) ? fmt(lineValue(l)) : '—'}</span>
-      <span class="small muted num">×${units(l.qty)}</span>
+      <span class="row-val">${units(l.qty) ? `${units(l.qty)} ${units(l.qty) === 1 ? 'unit' : 'units'}` : '—'}</span>
+      ${units(l.qty) > 0 && html`<span class="small muted num">${fmt(lineValue(l))}</span>`}
       ${l.by === 'client' ? html`<${By} by="client"/>` : l.via === 'photo' && html`<span class="by" title="Captured from photo"><${Icon} n="cam" s=${13} w=${2}/>Photo</span>`}
     </div>
   </button>`;
@@ -1787,7 +1803,7 @@ function SelLine({l, o, act, locked}) {
       ${sized ? u > 0 && html`<span class="szs">${p.sizes.filter(s => l.qty[s]).map(s => html`<span class="sz-chip">${s} x${l.qty[s]}</span>`)}</span>`
         : locked ? html`<span class="small muted num">×${u}</span>`
         : html`<${Stepper} n=${u} label=${p.name} on=${n => act.setUnits(o.id, l.id, n)}/>`}
-      <span class="sel-val num">${u ? html`<b>${fmt(lineValue(l))}</b><small>×${u}</small>` : html`<small>No quantity yet</small>`}</span>
+      <span class="sel-val num">${u ? html`<b>${u} ${u === 1 ? 'unit' : 'units'}</b><small>${fmt(lineValue(l))}</small>` : html`<small>No quantity yet</small>`}</span>
     </div>
     ${sized && !locked && html`<button class="pc-act sel-edit" onClick=${edit}>${u ? 'Edit sizes' : 'Enter sizes'}</button>`}
   </div>`;
@@ -1796,7 +1812,7 @@ function SelLine({l, o, act, locked}) {
 // One switch only (Women / Men); budgets and guideline checks open from the summary card at the top of the selection
 function OrderView({S, ui, act, order}) {
   const b = BUYERS[order.buyerId], div = b.divs.includes(ui.div) ? ui.div : b.divs[0];
-  const k = kpi(order, div), db = divBudget(b, div), open = issuesOf(order, [div]).length;
+  const open = issuesOf(order, [div]).length;
   const lines = order.lines.filter(l => P[l.pid].div === div);
   const groups = CATS.map(c => ({key:c, label:CAT_LABEL[c], lines:lines.filter(l => P[l.pid].cat === c)}));
   const locked = partLocked(order, div), allSent = b.divs.every(d => partLocked(order, d));
@@ -1805,7 +1821,7 @@ function OrderView({S, ui, act, order}) {
   const st = order.status, when = t => new Date(t).toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
   // the line under the banner title: one short line that never repeats the title
   const last = b.divs.map(d => partOf(order, d)).filter(x => x.at).sort((x, y) => y.at - x.at)[0];
-  const stateSub = st === 'shared' ? `Link sent · ${Math.max(0, 48 - Math.floor((Date.now() - order.sharedAt) / 36e5))}h left to sign`
+  const stateSub = st === 'shared' ? `Link sent · ${Math.max(0, 48 - Math.floor((Date.now() - order.sharedAt) / 36e5))}h left to finish`
     : st === 'partial' ? b.divs.map(d => `${DIV_TAB[d]} ${partLocked(order, d) ? 'signed' : 'still a draft'}`).join(' · ')
     : st === 'confirmed' ? 'Ready for production'
     : last ? `Signed${last.signer ? ' by ' + last.signer : ''} · ${when(last.at)}` : 'Signed by the client';
@@ -1826,13 +1842,12 @@ function OrderView({S, ui, act, order}) {
           <div><span class="lbl">Saved</span>${S.savedAt ? html`<span class="saved" key=${S.savedAt}><${Icon} n="check" s=${13} w=${2.4}/>${hhmm(S.savedAt)}</span>` : html`<span class="muted">—</span>`}</div>
         </div>
         ${b.divs.length > 1 && html`<div class="ov-divs" role="tablist">${b.divs.map(d => html`<button role="tab" aria-selected=${d === div} class=${'cn-cat' + (d === div ? ' on' : '')} onClick=${() => act.div(d)}>${DIV_TAB[d]}</button>`)}</div>`}
-        <button class="ov-sum" onClick=${() => act.sheet({type:'kpis', orderId:order.id})} aria-label=${`Budgets and KPIs. ${DIV_LABEL[div]}: ${fmt(k.total)} of ${fmt(db)}`}>
-          <div class="ov-sum-top"><span class="kpi-label">${DIV_LABEL[div]} budget</span><span class="num"><b>${fmt(k.total)}</b> <span class="muted">of ${fmt(db)}</span></span></div>
-          <div class="bar"><div class=${'bar-fill ' + k.bst} style=${{width: Math.min(db ? k.total / db * 100 : 0, 100) + '%'}}></div></div>
-          <div class="ov-sum-foot"><span class=${open ? 'st-warn' : 'st-ok'}>${open ? `${open} outside the guidelines` : 'Within the guidelines'}</span><span class="ov-sum-go">Budgets & KPIs<${Icon} n="down" s=${15} w=${2.2}/></span></div>
+        <button class="ov-sum slim" onClick=${() => act.sheet({type:'kpis', orderId:order.id})} aria-label=${`Budgets and KPIs. ${open ? `${open} outside the guidelines` : 'Within the guidelines'}`}>
+          <span class=${'ov-sum-st ' + (open ? 'st-warn' : 'st-ok')}><${Icon} n=${open ? 'alert' : 'check'} s=${16} w=${2.4}/>${open ? `${open} outside the guidelines` : 'Within the guidelines'}</span>
+          <span class="ov-sum-go">Budgets & KPIs<${Icon} n="down" s=${15} w=${2.2}/></span>
         </button>
         ${locked && !allSent && html`<div class="callout info"><${Icon} n="lock" s=${18}/><div>The ${DIV_LABEL[div].toLowerCase()} order has been sent. You can see it here but no longer change it.</div></div>`}
-        ${lines.length === 0 && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div><div class="small">Tap Add on any style in the Collection. Quantities can come later.</div></div>`}
+        ${lines.length === 0 && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div><div class="small">Tap any style in the Collection and add it from its page. Quantities can come later.</div></div>`}
         ${groups.filter(g => g.lines.length).map(g => html`<div>
           <div class="grp-head"><span>${g.label}</span></div>
           <div class="list">${g.lines.map(l => html`<${SelLine} key=${l.id} l=${l} o=${order} act=${act} locked=${locked}/>`)}</div>
@@ -1840,9 +1855,9 @@ function OrderView({S, ui, act, order}) {
       </div>
     </div>
     <div class="ov-actions">
-      ${inVisit ? html`<button class="cap-btn ghost" onClick=${() => confirm(`Save draft and check out?\n\nThis ends the session with ${b.shop}. The order stays saved as a draft.`) && act.endVisit(b.id, `Draft saved · ${b.shop} checked out`)}>Save draft</button>
-        <button class="cap-btn" onClick=${() => act.sheet({type:'finish', orderId:order.id})}><${Icon} n="sign" w=${2.2}/>Review and sign</button>`
-        : html`<button class="round" onClick=${() => act.sheet({type:'finish', orderId:order.id})} aria-label="Review and sign"><${Icon} n="sign"/></button>
+      ${inVisit ? html`<button class="cap-btn two" onClick=${() => act.sheet({type:'finish', orderId:order.id})}>
+          <span><${Icon} n="sign" w=${2.2}/>Finish order</span><small>Get the client’s signature, then send the order on</small></button>`
+        : html`<button class="round" onClick=${() => act.sheet({type:'finish', orderId:order.id})} aria-label="Finish order"><${Icon} n="sign"/></button>
         <button class="cap-btn" disabled=${allSent} onClick=${() => act.checkIn(b.id)}><${Icon} n="check" w=${2.4}/>Check in to add products</button>`}
     </div>
   </div>`;
@@ -1867,45 +1882,52 @@ function issuesOf(o, divs) {
   return out;
 }
 
-// Closing the visit: send women's and men's together or one at a time. The client signs here, or reviews from a link within 48 hours.
-// Confirming for production happens in the back office, never here.
+// Finishing the visit: the client always signs, then the seller sends the order to the commercial team (closed, waiting for
+// confirmation) or back to the client to finish from an email link (still a draft). Women's and men's can go together or one at a time.
 function FinishSheet({sh, S, act}) {
   const o = S.orders[sh.orderId], b = BUYERS[o.buyerId];
   const open = b.divs.filter(d => !partLocked(o, d)), filled = d => kpi(o, d).units > 0;
   const [pick, setPick] = useState(() => open.filter(filled));
   const sel = pick.filter(d => open.includes(d));
   const toggle = d => setPick(p => p.includes(d) ? p.filter(x => x !== d) : [...p, d]);
-  const issues = issuesOf(o, sel), noQty = o.lines.filter(l => sel.includes(P[l.pid].div) && !units(l.qty)).length;
-  const value = sel.reduce((a, d) => a + kpi(o, d).total, 0);
-  const shared = sel.length > 0 && sel.every(d => partOf(o, d).status === 'shared');
-  const link = `loewe.vega.app/o/${b.code}-${sel.join('')}${String(o.lines.length).padStart(2, '0')}`;
-  return html`<${Sheet} title="Review and sign" sub=${b.shop} onClose=${act.close}>
+  const noQty = o.lines.filter(l => sel.includes(P[l.pid].div) && !units(l.qty)).length;
+  const [name, setName] = useState(''), [email, setEmail] = useState(b.email || `buying@${b.shop.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`);
+  const [signed, setSigned] = useState(false), [done, setDone] = useState(null);
+  const ok = sel.length > 0 && name.trim() && /^\S+@\S+\.\S+$/.test(email.trim()) && signed;
+  const visit = isOngoing(S.appts[b.id]), shared = open.some(d => partOf(o, d).status === 'shared');
+  const toTeam = () => { act.send(o.id, sel, 'client', name.trim());
+    setDone({title:'Sent to the commercial team', line: visit ? `${b.shop} is checked out.` : 'They confirm it for production.'}); };
+  const toClient = () => { act.share(o.id, sel, name.trim(), email.trim());
+    setDone({title:`Sent to ${b.shop}`, line:`The link is on its way to ${email.trim()}.`, client:true}); };
+  // Continue ends the visit and goes back to Home, ready for the next client
+  const next = () => visit ? act.endVisit(b.id, null) : act.close();
+  if (done) return html`<${FullPage} title=${done.title} onClose=${next}
+    foot=${html`<div class="finish-btns"><button class="btn black" onClick=${next}>Continue</button>
+      ${done.client && html`<button class="btn ghost" onClick=${() => act.role('buyer', o.id)}>Open as the client (demo)</button>`}</div>`}>
+    <div class="done" role="status"><span class="done-ic"><${Icon} n="check" s=${46} w=${3}/></span>
+      <h1 class="h1">${done.title}</h1><p class="muted">${done.line}</p></div>
+  <//>`;
+  return html`<${FullPage} title="Finish order" onClose=${act.close}
+    foot=${open.length > 0 && html`<div class="finish-btns">
+      <button class="btn black" disabled=${!ok} onClick=${toTeam}>Send to commercial team</button>
+      <div class="small muted">The order is closed. The commercial team confirms it for production.</div>
+      <button class="btn white" disabled=${!ok} onClick=${toClient}>Send to client to finish</button>
+      <div class="small muted">It stays a draft. The client gets an email link to add or change quantities.</div>
+    </div>`}>
+    <div><h1 class="h1">Finish order</h1><div class="small muted">${b.shop}</div></div>
     ${!open.length ? html`<div class="callout good"><${Icon} n="check" s=${18}/><div>Everything is sent. The commercial team reviews the order and confirms it for production.</div></div>` : html`
-      <div class="lbl">What to send</div>
-      <div class="list">${b.divs.map(d => { const k = kpi(o, d), st = partOf(o, d).status, can = open.includes(d) && filled(d);
-        return html`<button class="row opt" disabled=${!can} aria-pressed=${sel.includes(d)} onClick=${() => toggle(d)}>
-          <div class="row-main"><div class="row-title">${DIV_LABEL[d]}</div><div class="row-sub"><${Pill} s=${st}/><span class="num">${k.units} units · ${fmt(k.total)}</span></div></div>
-          <div class="row-side">${sel.includes(d) && html`<${Icon} n="check" s=${20} w=${2.4}/>`}</div>
-        </button>`; })}</div>
-      ${noQty > 0 && html`<div class="callout warn"><${Icon} n="alert" s=${18}/><div>${noQty} selected ${noQty === 1 ? 'style has' : 'styles have'} no quantity and won’t be produced.</div></div>`}
-      ${issues.length > 0 && html`<div class="panel">
-        <div style="font-weight:650">Outside the guidelines</div>
-        <div>${issues.map(x => html`<div class="issue"><span>${x.label}</span><span class=${'chip ' + x.st}>${x.text}</span></div>`)}</div>
-        <div class="small muted">You can still send. The commercial team sees the same check.</div>
-      </div>`}
-      <div class="panel">
-        <div style="font-weight:650">The client confirms now</div>
-        <div class="small muted">The client signs on this phone and the order is sent. After that it can’t be changed here.</div>
-        <button class="btn primary block" disabled=${!sel.length} onClick=${() => act.sheet({type:'sign', orderId:o.id, divs:sel})}>Sign and send · ${fmt(value)}</button>
-      </div>
-      <div class="panel">
-        <div style="font-weight:650">The client reviews later</div>
-        <div class="small muted">The client gets a link to review and sign within 48 hours. Until then it stays a draft you can change.</div>
-        ${shared ? html`<div class="linkbox"><code>${link}</code><button class="btn secondary" onClick=${() => copyText('https://' + link, act)}><${Icon} n="copy" s=${16}/>Copy</button></div>
-            <button class="btn secondary block" onClick=${() => act.role('buyer', o.id)}>Open as the client (demo)</button>`
-          : html`<button class="btn secondary block" disabled=${!sel.length} onClick=${() => { act.share(o.id, sel); act.toast('Link sent · closes in 48h'); }}><${Icon} n="share" s=${18}/>Send the link to the client</button>`}
-      </div>
-      <div class="small muted">Close this to keep working. Whatever isn’t sent stays a draft.</div>`}
+      ${shared && html`<button class="btn secondary block" onClick=${() => act.role('buyer', o.id)}>Open as the client (demo)</button>`}
+      ${b.divs.length > 1 && html`<div class="field"><span class="lbl">What to send</span>
+        <div class="list">${b.divs.map(d => { const k = kpi(o, d), st = partOf(o, d).status, can = open.includes(d) && filled(d);
+          return html`<button class="row opt" disabled=${!can} aria-pressed=${sel.includes(d)} onClick=${() => toggle(d)}>
+            <div class="row-main"><div class="row-title">${DIV_LABEL[d]}</div><div class="row-sub"><${Pill} s=${st}/><span class="num">${k.units} units · ${fmt(k.total)}</span></div></div>
+            <div class="row-side">${sel.includes(d) && html`<${Icon} n="check" s=${20} w=${2.4}/>`}</div>
+          </button>`; })}</div></div>`}
+      ${!sel.length && html`<div class="callout warn"><${Icon} n="alert" s=${18}/><div>Add quantities before sending the order.</div></div>`}
+      ${noQty > 0 && html`<div class="callout warn"><${Icon} n="alert" s=${18}/><div>${noQty} ${noQty === 1 ? 'style has' : 'styles have'} no quantity and won’t be produced.</div></div>`}
+      <label class="field"><span class="lbl">Client name</span><input class="inp" value=${name} onInput=${e => setName(e.target.value)} autocomplete="off" placeholder="Name of the person signing"/></label>
+      <label class="field"><span class="lbl">Email</span><input class="inp" type="email" inputmode="email" autocapitalize="off" value=${email} onInput=${e => setEmail(e.target.value)}/></label>
+      <div class="field"><span class="lbl">Signature</span><${SignPad} onSigned=${setSigned}/></div>`}
   <//>`;
 }
 
@@ -1988,7 +2010,7 @@ function BuyerView({S, ui, act}) {
    ===================================================================== */
 const GUIDE_STEPS = [
   'In Home, Maison Dubois is ongoing. Open another client and tap Check in at the bottom: the visit switches and the Collection opens.',
-  'In the Collection, tap Add under a style to put it in the order and enter its sizes. Only styles the client can buy show; Filters choose the collection and the drop.',
+  'In the Collection, tap a style to open its page, pick the colour, enter sizes and add it. A check on the photo means it is in the order; Filters choose the collection, drop, priority and material.',
   'Tap the client bar at the top to open the order: enter sizes line by line, then see Budgets & KPIs for mix rules, required looks and drops.',
   'Tap the send button: the client signs on the phone, or gets a link to review within 48 hours. Women’s and men’s can be sent separately.',
   'A sent part is read-only here. The commercial team confirms it for production in the back office.',
@@ -2042,7 +2064,7 @@ function makeActs(setS, setUi, onReset) {
         return {...s, appts, orders: s.orders[id] ? s.orders : {...s.orders, [id]:newOrder(bid)}, savedAt:now}; });
       setUi(u => ({...u, session:id, div:BUYERS[bid].divs[0], sheet:null, capture:false, lastScale:null, ...(stay ? {} : {tab:'catalogue', view:null})}));
       a.toast(`Checked in · ${BUYERS[bid].shop}`); },
-    // the two ways a visit ends from the order: Save draft, or the client signs. Both go back to Home
+    // a visit ends from the order (Finish order: sent to the commercial team or to the client) and goes back to Home
     endVisit: (bid, msg) => { a.appt(bid, {out:Date.now()}); setUi(u => ({...u, session: u.session === 'o-' + bid ? null : u.session, lastScale:null, view:null, sheet:null, sub:null, tab:'calendar'})); a.toast(msg); },
     checkOut: bid => { a.appt(bid, {out:Date.now()}); setUi(u => u.session === 'o-' + bid ? {...u, session:null, lastScale:null} : u); a.toast(`Checked out · ${BUYERS[bid].shop}`); },
     note: (bid, text) => a.appt(bid, {notes:text}),
@@ -2058,13 +2080,18 @@ function makeActs(setS, setUi, onReset) {
   };
   a.saveDraft = (id, pid, draft, via, by) => a.mut(id, o => applyDraft(o, pid, draft, via, by));
   // selection without quantity: the style-colour joins the order at zero units
-  a.select = (id, pid, colour, via, qty={}) => { const p = P[pid], u = units(qty);
+  // adding a style from a division the client doesn't buy asks first, then opens that division on the order with no budget
+  a.divOk = (id, d) => { const b = BUYERS[id.slice(2)]; if (b.divs.includes(d)) return true;
+    if (!confirm(`${b.shop} doesn’t buy ${DIV_TAB[d]}. Add ${DIV_TAB[d]} to this order?`)) return false;
+    const nb = {...b, divs:['W', 'M'].filter(x => x === d || b.divs.includes(x)), budget:{...b.budget, [d]:0}};
+    BUYERS[b.id] = nb; setS(s => ({...s, buyers:{...s.buyers, [b.id]:nb}})); return true; };
+  a.select = (id, pid, colour, via, qty={}) => { const p = P[pid], u = units(qty); if (!a.divOk(id, p.div)) return false;
     a.mut(id, o => { if (o.lines.some(l => l.pid === pid && l.colour === colour)) return;
       o.lines.push({id:uid(), pid, colour, qty:{...qty}, via, by:'salesperson', at:Date.now()});
       log(o, 'salesperson', `${u ? 'Added' : 'Selected'} ${p.name} · ${cname(colour)}${u ? ' ×' + u : ''}${via === 'photo' ? ' (photo match)' : ''}`); });
     a.toast('Added to order'); };
   // the whole runway look in one go: every piece the client can buy that isn't in the order yet
-  a.selectLook = (id, look) => { let k = 0;
+  a.selectLook = (id, look) => { let k = 0; if (!a.divOk(id, look.div)) return;
     a.mut(id, o => { look.items.forEach(([pid, colour]) => { if (canTake(o, P[pid]) || o.lines.some(l => l.pid === pid && l.colour === colour)) return;
       o.lines.push({id:uid(), pid, colour, qty:{}, via:'look', by:'salesperson', at:Date.now()}); k++; });
       log(o, 'salesperson', `Added ${lookNo(look)} · ${k} pieces`); });
@@ -2083,9 +2110,9 @@ function makeActs(setS, setUi, onReset) {
     const key = 'u:' + lineId, last = o.log[o.log.length - 1], text = `Set ${p.name} · ${cname(l.colour)} to ×${units(qty)}`;
     if (last && last.key === key) { last.text = text; last.at = Date.now(); } else o.log.push({at:Date.now(), by:'salesperson', text, key}); });
   // each division is sent on its own; the order's overall status follows from its parts
-  a.share = (id, divs) => a.mut(id, o => { const now = Date.now(); o.parts = o.parts || {};
-    divs.forEach(d => { o.parts[d] = {status:'shared', at:now}; }); o.sharedAt = now;
-    log(o, 'salesperson', `${divs.map(d => DIV_LABEL[d]).join(' and ')} shared with ${BUYERS[o.buyerId].shop} · closes in 48h`); });
+  a.share = (id, divs, signer, email) => a.mut(id, o => { const now = Date.now(); o.parts = o.parts || {};
+    divs.forEach(d => { o.parts[d] = {status:'shared', at:now, signer, email}; }); o.sharedAt = now;
+    log(o, 'salesperson', `${divs.map(d => DIV_LABEL[d]).join(' and ')} signed by ${signer} and sent to ${email} to finish · closes in 48h`); });
   a.send = (id, divs, by, signer) => a.mut(id, o => { const now = Date.now(); o.parts = o.parts || {};
     divs.forEach(d => { o.parts[d] = {status:'submitted', at:now, by, signer}; }); o.submittedBy = by; o.submittedAt = now;
     log(o, by, `${divs.map(d => DIV_LABEL[d]).join(' and ')} signed by ${signer} and sent`); });
