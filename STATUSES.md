@@ -136,7 +136,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 
 ### 6. Adding a style and entering quantities
 - [ ] 6.1 Each card shows photo, name, code, wholesale and retail price and colour dots, with no button. Tapping anywhere on it slides the product page up over the Collection.
-- [ ] 6.2 Product page of a style not in the order: the photo is short (the name, prices and sizes show without scrolling) and, instead of an Add button, a dashed line "Enter quantities to add [colour]" (one-size styles: "Tap + to add [colour]"). Tap + on a size → that colour is in the order: top toast "Added to order · 1 unit", the colour chip gets the green ✓, the page says "In order · 1 unit" above Remove from order.
+- [ ] 6.2 Product page of a style not in the order: the photo is short (the name, prices and sizes show without scrolling) and, instead of an Add button, a dashed line "Enter quantities to add [colour]" (one-size styles: "Tap + to add [colour]"). Tap + on a size → that colour is in the order: top toast "Added to order · 1 unit", the colour chip gets the green ✓ and the dashed line becomes **Remove from order** (no "In order" box: the ✓ and the toast already say it).
 - [ ] 6.3 Close the page → the card shows a green round ✓ in the photo's top-right corner, the same height as the Must have / Essential tag on the left.
 - [ ] 6.4 Tap that card again → the product page opens on the colour in the order, with its quantities; another colour can be added from there.
 - [ ] 6.5 Remove from order on the product page (the last colour) → the ✓ disappears from the card.

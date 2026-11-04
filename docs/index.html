@@ -1671,8 +1671,7 @@ function ProductSheet({pid, colour, orderId, S, ui, act}) {
     </div>`}
     <div class="pd-cta">${!o ? html`<button class="btn black" onClick=${pick}>Add to order</button>`
       : why ? html`${line && html`<div class="pd-in">In order · ${u ? val(u) : 'no quantity'}</div>`}<button class="btn black" disabled>${b.shop} · ${why}</button>`
-      : line ? html`<div class="pd-in"><${Icon} n="check" s=${18} w=${2.4}/>In order · ${u ? val(u) : 'no quantity yet'}</div>
-        <button class="btn outline danger" onClick=${() => act.unselect(o.id, pid, c)}>Remove from order</button>`
+      : line ? html`<button class="btn outline danger" onClick=${() => act.unselect(o.id, pid, c)}>Remove from order</button>`
       : html`<div class="pd-hint">${sized ? 'Enter quantities' : 'Tap +'} to add ${c}</div>`}</div>
     <div class="panel facts">
       ${p.material && html`<div><span>Material</span><span>${p.material}</span></div>`}
