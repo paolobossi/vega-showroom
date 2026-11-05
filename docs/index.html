@@ -1506,8 +1506,9 @@ function CatalogueTab({S, ui, act}) {
   // both divisions are always there; with a client checked in it opens on what they buy
   const so = activeOrder(S, ui), sb = so && BUYERS[so.buyerId], divs = ['W', 'M'];
   const [div, setDiv] = useState(sb ? sb.divs[0] : 'W'), [cat, setCat] = useState(null), [busy, setBusy] = useState(false);
-  const season = SEASONS.find(x => x.id === ui.catSeason), filtered = !!(ui.catDrop || ui.catTag || ui.catMat || season.id !== SEASONS[0].id);
-  const items = PRODUCTS.filter(p => p.div === div && p.season === season.id && (!sb || available(sb, p)) && (!ui.catDrop || p.drop === ui.catDrop) && hasTag(p, ui.catTag) && hasMat(p, ui.catMat));
+  // no collection picked (All collections) shows every collection the client can buy
+  const season = SEASONS.find(x => x.id === ui.catSeason) || {id:null, name:'All collections'}, filtered = !!(ui.catDrop || ui.catTag || ui.catMat || season.id !== SEASONS[0].id);
+  const items = PRODUCTS.filter(p => p.div === div && (!season.id || p.season === season.id) && (!sb || available(sb, p)) && (!ui.catDrop || p.drop === ui.catDrop) && hasTag(p, ui.catTag) && hasMat(p, ui.catMat));
   // category, then a sub-heading only where the family is a kind of product (Dresses, Hats); bags and shoes families are lines (Puzzle, Pebble), so they just sit together
   const all = CATS.map(c => { const ps = items.filter(p => p.cat === c), sub = SUBTYPE[c];
     return {cat:c, n:ps.length, fams:sub ? [...new Set(ps.map(sub))].map(f => ({f, id:c + '-' + slug(f), ps:ps.filter(p => sub(p) === f)}))
@@ -1568,7 +1569,7 @@ function SearchPage({S, ui, act}) {
   const so = activeOrder(S, ui), sb = so && BUYERS[so.buyerId], season = ui.catSeason;
   const [q, setQ] = useState(''), [kb, setKb] = useState(0), inp = useRef(null), page = useRef(null);
   const recents = ui.recents || [], ql = q.trim().toLowerCase();
-  const pool = PRODUCTS.filter(p => p.season === season && (!sb || available(sb, p)));
+  const pool = PRODUCTS.filter(p => (!season || p.season === season) && (!sb || available(sb, p)));
   const n = ql ? pool.filter(p => matches(p, ql)).length : 0;
   const remember = t => { t = t.trim(); if (t) act.set({recents:[t, ...recents.filter(r => r.toLowerCase() !== t.toLowerCase())].slice(0, 6)}); };
   const use = t => { setQ(t); inp.current && inp.current.focus(); };
@@ -1724,7 +1725,7 @@ function FilterSheet({ui, act}) {
       <div class="row-side">${v === ui[key] && html`<${Icon} n="check" s=${20} w=${2.4}/>`}</div>
     </button>`)}</div>`;
   return html`<${Sheet} title="Filters" onClose=${act.close}>
-    ${group('Collection', 'catSeason', SEASONS.map(x => [x.id, x.name]))}
+    ${group('Collection', 'catSeason', [[null, 'All collections'], ...SEASONS.map(x => [x.id, x.name])])}
     ${group('Drop', 'catDrop', [[null, 'All drops'], ...Object.keys(DROPS).map(k => [k, DROPS[k].split(' · ')[0], dropWhen(k)])])}
     ${group('Priority', 'catTag', TAG_OPTS)}
     ${group('Material', 'catMat', MATS)}
