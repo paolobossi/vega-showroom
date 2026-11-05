@@ -113,7 +113,8 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 
 ### 3. Check in, client band, check out
 - [ ] 3.1 Check in Maison Dubois, then Linea Concept → no toast; the Collection opens with the Linea Concept band at the top; Maison Dubois is checked out automatically (only one client ongoing at a time).
-- [ ] 3.2 A black band runs edge to edge at the top of every tab, under the (black) status bar: client name in bold, then "View order ›" in grey, centred; the page below rounds its top corners into it. There is no pill above the tab bar.
+- [ ] 3.2 A black band runs edge to edge at the top of every tab: a pulsing green dot, the client name in bold, a white badge with the number of items in the order (none while it is empty), then "View order ›" in grey, centred; the page below rounds its top corners into it. There is no pill above the tab bar.
+- [ ] 3.2b While the band shows, the area above it turns black too: the status bar strip on the home-screen app and the browser bar colour in Safari. It goes back to the page colour after check out, on the Search page and with the order open.
 - [ ] 3.5 Tap the band → the order opens full screen; the band and the tab bar are hidden; only the floating buttons show at the bottom.
 - [ ] 3.6 On Home, tap the ongoing client → Check out → toast "Checked out · …"; the band disappears; the row shows the order status (e.g. Draft).
 - [ ] 3.7 Check the same client in again → Ongoing again; the sheet said "Checking in again keeps this start time".

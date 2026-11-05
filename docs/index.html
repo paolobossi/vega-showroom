@@ -117,12 +117,19 @@ input{font:inherit;color:inherit}
   border:1px solid color-mix(in srgb,var(--line) 70%,transparent);box-shadow:var(--shadow-float)}
 .scan:active{background:var(--surface-2)}
 /* client in session: an edge-to-edge black band under the status bar, on every tab; the page below rounds its top corners into it. Tapping it opens the order */
+/* on the phone only: the desktop keeps its device frame */
+@media (max-width:899px){html.in-session,html.in-session body{background:var(--band)}}
 .app.banded{background:var(--band)}
 .app.banded > .screen{border-radius:20px 20px 0 0;background:var(--bg)}
 .sbar{flex:none;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:40px;padding:4px 18px 6px;background:var(--band);color:var(--band-ink);animation:drop .3s cubic-bezier(.2,.8,.2,1)}
 @keyframes drop{from{transform:translateY(-100%)}}
 .sbar b{min-width:0;font-size:var(--fs-body);font-weight:700;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sbar span{flex:none;display:inline-flex;align-items:center;gap:2px;font-size:var(--fs-caption);opacity:.7}
+/* green live dot before the name, pulsing, and the number of items in the order as a white badge after it */
+.sbar-dot{position:relative;flex:none;width:8px;height:8px;border-radius:50%;background:#3CCB7F}
+.sbar-dot::after{content:"";position:absolute;inset:0;border-radius:50%;background:#3CCB7F;animation:beat 1.8s ease-out infinite}
+.sbar .sbar-n{flex:none;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--band-ink);color:var(--band);font-size:var(--fs-caption);font-weight:700;font-variant-numeric:tabular-nums;display:inline-grid;place-items:center;opacity:1}
+@keyframes beat{from{transform:scale(1);opacity:.7}to{transform:scale(2.6);opacity:0}}
 .top{padding:14px 18px 6px}
 /* Profile: the seller, their orders, passcode and sign out */
 .prof{display:flex;align-items:center;gap:14px;padding:4px 2px 6px}
@@ -2113,7 +2120,7 @@ function SessionBar({S, ui, act}) {
   const o = activeOrder(S, ui); if (!o) return null;
   const b = BUYERS[o.buyerId], n = o.lines.length, u = b.divs.reduce((a, d) => a + kpi(o, d).units, 0);
   return html`<button class="sbar" onClick=${() => act.openOrder(b.id)} aria-label=${`Ordering for ${b.shop}: ${n} ${n === 1 ? 'item' : 'items'}, ${u} units. Open the order`}>
-    <b>${b.shop}</b><span>View order<${Icon} n="next" s=${14} w=${2.2}/></span>
+    <i class="sbar-dot" aria-hidden="true"></i><b>${b.shop}</b>${n > 0 && html`<span class="sbar-n" aria-hidden="true">${n}</span>`}<span>View order<${Icon} n="next" s=${14} w=${2.2}/></span>
   </button>`;
 }
 
@@ -2243,6 +2250,11 @@ function App({onReset}) {
   useEffect(() => { if (ongoing && !sessionOk && !buyerView) act.startSession(ongoing.id); }, [ongoing && ongoing.id, sessionOk, !!buyerView]);
   // the client in session sits in a black band at the top of every tab; an open order is full screen, without it or the tab bar
   const so = activeOrder(S, ui), band = !!(so && !order), capDiv = so && (BUYERS[so.buyerId].divs.includes(ui.capDiv) ? ui.capDiv : BUYERS[so.buyerId].divs[0]);
+  // while the band shows, the status bar area above it goes black too: the page background and the browser's theme colour
+  const black = band && !buyerView && !S.signedOut && !ui.search;
+  useEffect(() => { const root = document.documentElement; root.classList.toggle('in-session', black);
+    const ink = getComputedStyle(root).getPropertyValue('--band').trim() || '#000000';
+    document.querySelectorAll('meta[name="theme-color"]').forEach(m => { m.dataset.base = m.dataset.base || m.content; m.content = black ? ink : m.dataset.base; }); }, [black]);
   if (buyerView) return html`<div class="app"><${BuyerView} S=${S} ui=${ui} act=${act}/>${sheet}${toast}</div>`;
   if (S.signedOut) return html`<div class="app"><${SignIn} S=${S} act=${act}/>${toast}</div>`;
   return html`<div class=${'app' + (band ? ' banded' : '')}>
