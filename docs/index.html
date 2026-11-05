@@ -1260,32 +1260,18 @@ function LookTile({look}) {
   return html`<div class="look-tile"><img src=${lookSrc(look)[0]} alt=${`${lookNo(look)}, ${SHOW}`} loading="lazy" decoding="async" draggable="false"/></div>`;
 }
 
-// A client's buying guidelines: they depend on the client's cluster (Silver to Diamond) and budget, so they open from the
-// client's appointment on Home. The page is filled from the maison's PDF in the back office (AI reads the rules into this
+// A client's buying guidelines: the budget per main category for each division, set by the client's cluster (Silver to Diamond)
+// and budget, so they open from the client's appointment on Home. The page is filled from the maison's PDF in the back office (AI reads the rules into this
 // table); the PDF itself shows at the top and opens full screen inside the app, so there is always a Close.
 function GuideSheet({bid, act}) {
   const b = BUYERS[bid], back = () => act.sheet({type:'appt', bid});
-  const rule = (r, d) => `${r.max != null ? 'No more than' : 'At least'} ${r.max != null ? r.max : r.min}% of the ${DIV_LABEL[d].toLowerCase()} order`;
-  const looks = LOOKS.filter(l => l.req && b.divs.includes(l.div) && l.items.every(([pid]) => available(b, P[pid])));
   return html`<${Sheet} tall title="Buying guidelines" sub=${`${b.shop} · ${b.cluster} · Spring Summer 2027`} onClose=${back}>
     <button class="pdf-card" onClick=${() => act.set({pdf:true})} aria-label="Open the guidelines PDF">
       <span class="pdf-doc" aria-hidden="true"><i></i><i></i><i></i><i></i><b>PDF</b></span>
       <span class="row-main"><span class="row-title">Buying guidelines SS27</span><span class="row-sub">Maison PDF · Sample</span></span>
       <span class="pdf-open">Open</span></button>
-    ${b.divs.map(d => { const db = divBudget(b, d);
-      return html`<div class="lbl">${DIV_LABEL[d]} budget split</div>
-      <div class="list">${CATS.filter(c => catBudget(b, d, c)).map(c => html`<div class="row"><div class="row-main"><div class="row-title">${CAT_LABEL[c]}</div><div class="row-sub">${Math.round(catBudget(b, d, c) / db * 100)}% of the ${DIV_LABEL[d].toLowerCase()} budget</div></div><span class="row-val num">${fmt(catBudget(b, d, c))}</span></div>`)}</div>
-      <div class="lbl">${DIV_LABEL[d]} mix</div>
-      <div class="list">${RULES[d].map(r => html`<div class="row"><div class="row-main"><div class="row-title">${r.label}</div><div class="row-sub">${rule(r, d)}</div></div></div>`)}</div>`; })}
-    ${looks.length > 0 && html`<div class="lbl">Required looks</div>
-    <div class="list">${looks.map(l => html`<button class="row" onClick=${() => act.sheet({type:'look', id:l.id})}>
-      <div class="row-main"><div class="row-title">${lookNo(l)} · ${DIV_LABEL[l.div]}</div><div class="row-sub">Every piece in the order · ${l.items.length} pieces</div></div>
-      <${Icon} n="next" s=${18}/></button>`)}</div>`}
-    <div class="lbl">Drops</div>
-    <div class="list">
-      ${Object.entries(DROPS).map(([k, v]) => html`<div class="row"><div class="row-main"><div class="row-title">${v.split(' · ')[0]}</div><div class="row-sub">${v.split(' · ')[1]}</div></div><span class="chip">${PRODUCTS.filter(p => p.drop === k && b.divs.includes(p.div) && available(b, p)).length} styles</span></div>`)}
-    </div>
-    <div class="small muted">Set for ${b.cluster} clients and ${b.shop}’s budget. How the order stands against them is on the order, under Budgets & KPIs.</div>
+    ${b.divs.map(d => html`<div class="lbl">${DIV_LABEL[d]} budget</div>
+      <div class="list">${CATS.filter(c => catBudget(b, d, c)).map(c => html`<div class="row"><div class="row-main"><div class="row-title">${CAT_LABEL[c]}</div></div><span class="row-val num">${fmt(catBudget(b, d, c))}</span></div>`)}</div>`)}
   <//>`;
 }
 
@@ -1377,7 +1363,7 @@ function ApptSheet({sh, S, act}) {
     ${a.in && a.out && html`<div class="small muted" style="margin-top:-6px">Started ${hhmm(a.in)}. Checking in again keeps this start time.</div>`}
     ${o && html`<${ApptOrder} o=${o} b=${b} act=${act}/>`}
     <div class="list"><button class="row" onClick=${() => act.sheet({type:'guide', bid:b.id})}>
-      <div class="row-main"><div class="row-title">Buying guidelines</div><div class="row-sub">${b.cluster} client · budget split, mix, required looks, drops</div></div>
+      <div class="row-main"><div class="row-title">Buying guidelines</div><div class="row-sub">${b.cluster} client · budget per category</div></div>
       <${Icon} n="next" s=${18}/></button></div>
     <div class="lbl">Budget</div>
     <${Budgets} b=${b}/>
