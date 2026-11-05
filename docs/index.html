@@ -405,6 +405,13 @@ input{font:inherit;color:inherit}
 
 .cat-main{display:flex;flex-direction:column;gap:24px;min-width:0;padding-top:16px}
 .cat-sec{display:flex;flex-direction:column;gap:8px}
+/* loading skeleton: card-shaped grey blocks with a soft sheen, the size of the real cards */
+.sk-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:6px 6px 12px;display:flex;flex-direction:column;gap:8px}
+.sk-img,.sk-l,.sk-h{border-radius:var(--r-s);--sk:color-mix(in srgb,var(--ink) 8%,var(--surface));background:linear-gradient(90deg,var(--sk) 30%,color-mix(in srgb,var(--ink) 3%,var(--surface)) 50%,var(--sk) 70%);background-size:300% 100%;animation:sheen 1.1s linear infinite}
+.sk-img{aspect-ratio:1}
+.sk-l{height:14px;width:80%;margin-left:4px}.sk-l.s{width:50%;height:12px}
+.sk-h{height:20px;width:40%;margin-bottom:8px}
+@keyframes sheen{from{background-position:100% 0}to{background-position:-50% 0}}
 .cat-h{margin:0;display:flex;align-items:baseline;gap:8px;font:700 var(--fs-heading)/var(--lh-tight) var(--f-display);letter-spacing:-.02em}
 .cat-h span{font-size:var(--fs-caption);font-weight:600;color:var(--muted)}
 .pc-fam{font-size:var(--fs-caption);font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
@@ -1442,31 +1449,22 @@ function PCard({p, o, act}) {
 function CatalogueTab({S, ui, act}) {
   // both divisions are always there; with a client checked in it opens on what they buy
   const so = activeOrder(S, ui), sb = so && BUYERS[so.buyerId], divs = ['W', 'M'];
-  const [div, setDiv] = useState(sb ? sb.divs[0] : 'W'), [cur, setCur] = useState(null);
+  const [div, setDiv] = useState(sb ? sb.divs[0] : 'W'), [cat, setCat] = useState(null), [busy, setBusy] = useState(false);
   const season = SEASONS.find(x => x.id === ui.catSeason);
   const items = PRODUCTS.filter(p => p.div === div && p.season === season.id && (!sb || available(sb, p)) && (!ui.catDrop || p.drop === ui.catDrop) && hasTag(p, ui.catTag) && hasMat(p, ui.catMat));
   // category, then a sub-heading only where the family is a kind of product (Dresses, Hats); bags and shoes families are lines (Puzzle, Pebble), so they just sit together
-  const groups = CATS.map(c => { const ps = items.filter(p => p.cat === c), sub = SUBTYPE[c];
+  const all = CATS.map(c => { const ps = items.filter(p => p.cat === c), sub = SUBTYPE[c];
     return {cat:c, n:ps.length, fams:sub ? [...new Set(ps.map(sub))].map(f => ({f, id:c + '-' + slug(f), ps:ps.filter(p => sub(p) === f)}))
       : [...new Set(ps.map(p => p.family))].map(f => ({f:null, id:c + '-' + slug(f), ps:ps.filter(p => p.family === f)}))}; }).filter(g => g.n);
-  const ref = useRef(null), nav = useRef(null), hold = useRef(0);
-  const navBottom = () => nav.current ? nav.current.getBoundingClientRect().bottom : 0;
-  // scroll-spy: the last category heading that has passed under the sticky tabs is the current one
-  useEffect(() => { const sc = ref.current && ref.current.closest('.screen'); if (!sc) return;
-    const spy = () => { if (Date.now() < hold.current) return; const top = navBottom() + 12; let id = null;
-      ref.current.querySelectorAll('[data-spy]').forEach(el => { if (el.getBoundingClientRect().top <= top) id = el.dataset.spy; }); setCur(id); };
-    spy(); sc.addEventListener('scroll', spy, {passive:true}); return () => sc.removeEventListener('scroll', spy); }, [div, season.id, ui.catDrop, ui.catTag, ui.catMat, groups.length]);
-  // tap: glide to the target just below the tabs; the spy waits so the tabs don't flicker on the way
-  const go = id => { const el = document.getElementById('c-' + id), sc = ref.current && ref.current.closest('.screen'); if (!el || !sc) return;
-    hold.current = Date.now() + 700; setCur(id);
-    // aim for where the tabs end once they are stuck to the top, not where they sit before the page scrolls
-    const stuck = sc.getBoundingClientRect().top + nav.current.offsetHeight;
-    sc.scrollTo({top: sc.scrollTop + el.getBoundingClientRect().top - stuck - 10, behavior:'smooth'}); };
-  const curCat = groups.some(g => g.cat === cur) ? cur : groups[0] && groups[0].cat;
-  // keep the active tab in view inside its scrolling row
-  useEffect(() => { if (!nav.current) return; nav.current.querySelectorAll('.cn-cat.on').forEach(el => { const row = el.parentElement;
-    row.scrollLeft = el.offsetLeft - row.clientWidth / 2 + el.offsetWidth / 2; }); }, [curCat]); // instant: a second smooth scroll would cancel the vertical glide in Chrome
-  const pickDiv = d => { setDiv(d); setCur(null); const sc = ref.current && ref.current.closest('.screen'); if (sc) sc.scrollTop = 0; };
+  // a pill filters the page to one category (All shows every one); a category the division doesn't have falls back to All
+  const on = all.some(g => g.cat === cat) ? cat : null, groups = on ? all.filter(g => g.cat === on) : all;
+  const ref = useRef(null), t = useRef(0);
+  useEffect(() => () => clearTimeout(t.current), []);
+  const top = () => { const sc = ref.current && ref.current.closest('.screen'); if (sc) sc.scrollTop = 0; };
+  // a short skeleton while the page swaps, so the change reads as a new list
+  const load = () => { clearTimeout(t.current); setBusy(true); top(); t.current = setTimeout(() => setBusy(false), 450); };
+  const pickCat = c => { if (c === on) return; setCat(c); load(); };
+  const pickDiv = d => { if (d === div) return; setDiv(d); load(); };
   return html`
     <header class="top top-bar mid"><h1 class="h1 div-title" role="tablist" aria-label="Collection">${divs.map(d => html`<button role="tab" aria-selected=${d === div} class=${d === div ? 'on' : ''} onClick=${() => pickDiv(d)}>${DIV_TAB[d]}</button>`)}</h1>
       <div class="hd-btns">
@@ -1481,13 +1479,14 @@ function CatalogueTab({S, ui, act}) {
       </div>`}
       ${!items.length ? html`<div class="empty">No ${DIV_LABEL[div].toLowerCase()} styles in this collection.</div>`
       : html`<div ref=${ref}>
-        <nav class="cat-nav" ref=${nav} aria-label="Categories">
-          <div class="cn-row" role="tablist">${groups.map(g => html`<button role="tab" aria-selected=${curCat === g.cat} class=${'cn-cat' + (curCat === g.cat ? ' on' : '')} onClick=${() => go(g.cat)}>${CAT_LABEL[g.cat]}</button>`)}</div>
+        <nav class="cat-nav" aria-label="Categories">
+          <div class="cn-row" role="tablist">${[null, ...all.map(g => g.cat)].map(c => html`<button role="tab" aria-selected=${on === c} class=${'cn-cat' + (on === c ? ' on' : '')} onClick=${() => pickCat(c)}>${c ? CAT_LABEL[c] : 'All'}</button>`)}</div>
         </nav>
-        <div class="cat-main">${groups.map(g => html`<div class="cat-sec">
-          <h2 class="cat-h" id=${'c-' + g.cat} data-spy=${g.cat}>${CAT_LABEL[g.cat]}</h2>
+        ${busy ? html`<div class="cat-main" aria-busy="true" aria-label="Loading"><div class="sk-h"></div><div class="pgrid">${[0, 1, 2, 3, 4, 5].map(i => html`<div class="sk-card" key=${i}><div class="sk-img"></div><div class="sk-l"></div><div class="sk-l s"></div><div class="sk-l s"></div></div>`)}</div></div>`
+        : html`<div class="cat-main">${groups.map(g => html`<div class="cat-sec">
+          <h2 class="cat-h">${CAT_LABEL[g.cat]}</h2>
           <div class="pgrid">${g.fams.map(f => html`${f.f && html`<div class="fam-h" key=${f.id}>${f.f}</div>`}${f.ps.map(p => html`<${PCard} key=${p.id} p=${p} o=${so} act=${act}/>`)}`)}</div>
-        </div>`)}</div>
+        </div>`)}</div>`}
       </div>`}
     </section>`;
 }
