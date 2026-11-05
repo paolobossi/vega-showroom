@@ -428,6 +428,12 @@ input{font:inherit;color:inherit}
 
 .cat-main{display:flex;flex-direction:column;gap:24px;min-width:0;padding-top:16px}
 .cat-sec{display:flex;flex-direction:column;gap:8px}
+/* collection tabs (SS27, Pre-SS27, Permanent, All) above the category pills: text with an underline on the current one */
+.coll-tabs{display:flex;gap:22px;overflow-x:auto;scrollbar-width:none;padding:0 18px;margin-bottom:10px;box-shadow:inset 0 -1px var(--line)}
+.coll-tabs::-webkit-scrollbar{display:none}
+.coll-t{flex:none;position:relative;padding:8px 0 10px;font-size:var(--fs-body);font-weight:600;color:var(--muted);white-space:nowrap;transition:color .2s}
+.coll-t.on{color:var(--ink)}
+.coll-t.on::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;border-radius:2px;background:var(--ink)}
 /* scrolled down: tucked away above the top edge until you scroll back up */
 .cat-nav.hid{transform:translateY(-100%)}
 /* loading skeleton: card-shaped grey blocks with a soft sheen, the size of the real cards */
@@ -860,9 +866,9 @@ const PRODUCTS = [
 ].map(([id,code,name,family,div,cat,price,shape,sz,colours,min,drop,x]) => ({id,code,name,family,div,cat,price,shape,sizes:SZ[sz],colours,min,drop,...(x||{})}));
 // Collections a rep can browse in the showroom; ordering itself is not restricted by collection
 const SEASONS = [
-  {id:'SS27', name:'Spring Summer 2027', note:'Main collection · ordering now'},
-  {id:'PRE27', name:'Pre-Spring 2027', note:'Delivers in November · orders close Friday'},
-  {id:'PERM', name:'Permanent collection', note:'Icons and leather goods · reorder any time'},
+  {id:'SS27', short:'SS27', name:'Spring Summer 2027', note:'Main collection · ordering now'},
+  {id:'PRE27', short:'Pre-SS27', name:'Pre-Spring 2027', note:'Delivers in November · orders close Friday'},
+  {id:'PERM', short:'Permanent', name:'Permanent collection', note:'Icons and leather goods · reorder any time'},
 ];
 const SEASON_OF = {PRE27:['w-puffer','w-short-coat','w-dive','w-beanie','w-scarf','m-puffer','m-sweater','m-cap'], PERM:['w-strap','w-sun','m-wallet','m-card','m-belt']};
 PRODUCTS.forEach(p => { p.season = Object.keys(SEASON_OF).find(k => SEASON_OF[k].includes(p.id)) || 'SS27'; });
@@ -1506,8 +1512,8 @@ function CatalogueTab({S, ui, act}) {
   // both divisions are always there; with a client checked in it opens on what they buy
   const so = activeOrder(S, ui), sb = so && BUYERS[so.buyerId], divs = ['W', 'M'];
   const [div, setDiv] = useState(sb ? sb.divs[0] : 'W'), [cat, setCat] = useState(null), [busy, setBusy] = useState(false);
-  // no collection picked (All collections) shows every collection the client can buy
-  const season = SEASONS.find(x => x.id === ui.catSeason) || {id:null, name:'All collections'}, filtered = !!(ui.catDrop || ui.catTag || ui.catMat || season.id !== SEASONS[0].id);
+  // collection tabs sit above the category pills; All shows every collection the client can buy
+  const season = SEASONS.find(x => x.id === ui.catSeason) || {id:null, name:'All collections'}, filtered = !!(ui.catDrop || ui.catTag || ui.catMat);
   const items = PRODUCTS.filter(p => p.div === div && (!season.id || p.season === season.id) && (!sb || available(sb, p)) && (!ui.catDrop || p.drop === ui.catDrop) && hasTag(p, ui.catTag) && hasMat(p, ui.catMat));
   // category, then a sub-heading only where the family is a kind of product (Dresses, Hats); bags and shoes families are lines (Puzzle, Pebble), so they just sit together
   const all = CATS.map(c => { const ps = items.filter(p => p.cat === c), sub = SUBTYPE[c];
@@ -1532,9 +1538,10 @@ function CatalogueTab({S, ui, act}) {
   const load = () => { clearTimeout(t.current); setBusy(true); top(); t.current = setTimeout(() => setBusy(false), 450); };
   const pickCat = c => { if (c === on) return; setCat(c); load(); };
   const pickDiv = d => { if (d === div) return; setDiv(d); load(); };
+  const pickSeason = id => { if (id === season.id) return; act.set({catSeason:id}); load(); };
   return html`
     <header class="top top-bar mid"><h1 class="h1 div-title" role="tablist" aria-label="Collection">${divs.map(d => html`<button role="tab" aria-selected=${d === div} class=${d === div ? 'on' : ''} onClick=${() => pickDiv(d)}>${DIV_TAB[d]}</button>`)}</h1>
-      <div class="hd-acts"><button class=${'icon-btn hd-ic hd-filter' + (filtered ? ' on' : '')} onClick=${() => act.sheet({type:'filter'})} aria-label=${`Filters: ${season.name}` + (ui.catDrop ? `, ${DROPS[ui.catDrop].split(' · ')[0]}` : '') + (ui.catTag ? `, ${TAG_OPTS.find(x => x[0] === ui.catTag)[1]}` : '') + (ui.catMat ? `, ${MATS.find(x => x[0] === ui.catMat)[1]}` : '')}><span class="hd-dot"><${Icon} n="filter" s=${22} w=${2}/></span></button>
+      <div class="hd-acts"><button class=${'icon-btn hd-ic hd-filter' + (filtered ? ' on' : '')} onClick=${() => act.sheet({type:'filter'})} aria-label=${['Filters', [ui.catDrop && DROPS[ui.catDrop].split(' · ')[0], ui.catTag && TAG_OPTS.find(x => x[0] === ui.catTag)[1], ui.catMat && MATS.find(x => x[0] === ui.catMat)[1]].filter(Boolean).join(', ')].filter(Boolean).join(': ')}><span class="hd-dot"><${Icon} n="filter" s=${22} w=${2}/></span></button>
         <button class="icon-btn hd-ic" onClick=${() => { primeKeyboard(); act.set({search:true}); }} aria-label="Search the collection"><${Icon} n="search" s=${24} w=${2}/></button></div></header>
     <section class="sec">
       ${(ui.catDrop || ui.catTag || ui.catMat) && html`<div class="fchips">
@@ -1543,7 +1550,8 @@ function CatalogueTab({S, ui, act}) {
         ${ui.catMat && html`<button class="fchip" onClick=${() => act.set({catMat:null})} aria-label="Clear material filter">${MATS.find(x => x[0] === ui.catMat)[1]}<${Icon} n="x" s=${14} w=${2.2}/></button>`}
       </div>`}
       <div ref=${ref}>
-        <nav class="cat-nav" ref=${nav} aria-label="Categories">
+        <nav class="cat-nav" ref=${nav} aria-label="Collections and categories">
+          <div class="coll-tabs" role="tablist" aria-label="Collections">${[...SEASONS.map(x => [x.id, x.short, x.name]), [null, 'All', 'All collections']].map(([id, t, full]) => html`<button role="tab" aria-selected=${season.id === id} aria-label=${full} class=${'coll-t' + (season.id === id ? ' on' : '')} onClick=${() => pickSeason(id)}>${t}</button>`)}</div>
           <div class="cn-row">
             ${[null, ...all.map(g => g.cat)].map(c => html`<button role="tab" aria-selected=${on === c} class=${'cn-cat' + (on === c ? ' on' : '')} onClick=${() => pickCat(c)}>${c ? CAT_LABEL[c] : 'All'}</button>`)}</div>
         </nav>
@@ -1725,7 +1733,6 @@ function FilterSheet({ui, act}) {
       <div class="row-side">${v === ui[key] && html`<${Icon} n="check" s=${20} w=${2.4}/>`}</div>
     </button>`)}</div>`;
   return html`<${Sheet} title="Filters" onClose=${act.close}>
-    ${group('Collection', 'catSeason', [[null, 'All collections'], ...SEASONS.map(x => [x.id, x.name])])}
     ${group('Drop', 'catDrop', [[null, 'All drops'], ...Object.keys(DROPS).map(k => [k, DROPS[k].split(' · ')[0], dropWhen(k)])])}
     ${group('Priority', 'catTag', TAG_OPTS)}
     ${group('Material', 'catMat', MATS)}
