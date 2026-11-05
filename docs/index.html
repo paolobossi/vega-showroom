@@ -384,7 +384,7 @@ input{font:inherit;color:inherit}
 .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 /* collection: category rail on the left, products grouped by category and family */
 /* category tabs stick under the top while the grid scrolls; sub-categories of the current one sit beneath */
-.cat-nav{position:sticky;top:0;z-index:5;margin:0 -18px;padding:6px 0 8px;background:color-mix(in srgb,var(--bg) 88%,transparent);-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%)}
+.cat-nav{position:sticky;top:0;z-index:5;margin:0 -18px;padding:6px 0 8px;transition:transform .28s cubic-bezier(.2,.8,.2,1);background:color-mix(in srgb,var(--bg) 88%,transparent);-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%)}
 .cn-row{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:0 18px;scroll-padding:0 18px}
 .cn-row::-webkit-scrollbar{display:none}
 .cn-cat{flex:none;position:relative;display:flex;align-items:baseline;gap:6px;font-size:var(--fs-body);font-weight:600;color:var(--muted);padding:10px 6px 10px;margin-right:8px;white-space:nowrap}
@@ -412,6 +412,8 @@ input{font:inherit;color:inherit}
 
 .cat-main{display:flex;flex-direction:column;gap:24px;min-width:0;padding-top:16px}
 .cat-sec{display:flex;flex-direction:column;gap:8px}
+/* scrolled down: tucked away above the top edge until you scroll back up */
+.cat-nav.hid{transform:translateY(-100%)}
 /* loading skeleton: card-shaped grey blocks with a soft sheen, the size of the real cards */
 .sk-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:6px 6px 12px;display:flex;flex-direction:column;gap:8px}
 .sk-img,.sk-l,.sk-h{border-radius:var(--r-s);--sk:color-mix(in srgb,var(--ink) 8%,var(--surface));background:linear-gradient(90deg,var(--sk) 30%,color-mix(in srgb,var(--ink) 3%,var(--surface)) 50%,var(--sk) 70%);background-size:300% 100%;animation:sheen 1.1s linear infinite}
@@ -1465,7 +1467,17 @@ function CatalogueTab({S, ui, act}) {
       : [...new Set(ps.map(p => p.family))].map(f => ({f:null, id:c + '-' + slug(f), ps:ps.filter(p => p.family === f)}))}; }).filter(g => g.n);
   // a pill filters the page to one category (All shows every one); a category the division doesn't have falls back to All
   const on = all.some(g => g.cat === cat) ? cat : null, groups = on ? all.filter(g => g.cat === on) : all;
-  const ref = useRef(null), t = useRef(0);
+  const ref = useRef(null), t = useRef(0), nav = useRef(null);
+  // the category bar slides away while scrolling down and slides back in from the top as soon as you scroll up
+  useEffect(() => { const sc = ref.current && ref.current.closest('.screen'); if (!sc) return; let last = sc.scrollTop;
+    const on = () => { const el = nav.current; if (!el) return; const y = sc.scrollTop, d = y - last;
+      // in its own place (not yet stuck) it always shows; once stuck, down hides it, up brings it back
+      const home = el.parentElement.getBoundingClientRect().top - sc.getBoundingClientRect().top + y, stuck = y > home + 4;
+      // the bounce past the bottom edge (iOS) is not a scroll up
+      if (y >= sc.scrollHeight - sc.clientHeight - 2 && d < 0) { last = y; return; }
+      if (!stuck || d < -4) el.classList.remove('hid'); else if (d > 4) el.classList.add('hid');
+      if (Math.abs(d) > 4) last = y; };
+    sc.addEventListener('scroll', on, {passive:true}); return () => sc.removeEventListener('scroll', on); }, [items.length > 0]);
   useEffect(() => () => clearTimeout(t.current), []);
   const top = () => { const sc = ref.current && ref.current.closest('.screen'); if (sc) sc.scrollTop = 0; };
   // a short skeleton while the page swaps, so the change reads as a new list
@@ -1486,7 +1498,7 @@ function CatalogueTab({S, ui, act}) {
       </div>`}
       ${!items.length ? html`<div class="empty">No ${DIV_LABEL[div].toLowerCase()} styles in this collection.</div>`
       : html`<div ref=${ref}>
-        <nav class="cat-nav" aria-label="Categories">
+        <nav class="cat-nav" ref=${nav} aria-label="Categories">
           <div class="cn-row" role="tablist">${[null, ...all.map(g => g.cat)].map(c => html`<button role="tab" aria-selected=${on === c} class=${'cn-cat' + (on === c ? ' on' : '')} onClick=${() => pickCat(c)}>${c ? CAT_LABEL[c] : 'All'}</button>`)}</div>
         </nav>
         ${busy ? html`<div class="cat-main" aria-busy="true" aria-label="Loading"><div class="sk-h"></div><div class="pgrid">${[0, 1, 2, 3, 4, 5].map(i => html`<div class="sk-card" key=${i}><div class="sk-img"></div><div class="sk-l"></div><div class="sk-l s"></div><div class="sk-l s"></div></div>`)}</div></div>`
