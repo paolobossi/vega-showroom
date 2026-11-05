@@ -1419,20 +1419,53 @@ function LookSheet({id, S, ui, act}) {
 }
 
 /* =====================================================================
-   Profile — the round avatar top right on Home: the seller, passcode, feedback, sign out.
-   There is no orders list: every order is reached from its appointment on Home (status and history there).
+   Profile — the round avatar top right on Home: the seller, order history, passcode, feedback, sign out.
    ===================================================================== */
 function ProfileSheet({S, act}) {
   const rep = REPS[S.rep];
   return html`<${Sheet} title="Profile" onClose=${act.close}>
     <div class="prof"><span class="avatar">${rep.ini}</span><div><div class="prof-n">${rep.name}</div><div class="small muted">Seller · showroom</div></div></div>
     <div class="list">
+      <button class="row" onClick=${() => act.sheet({type:'history'})}><span class="row-ic"><${Icon} n="orders" s=${19}/></span>
+        <div class="row-main"><div class="row-title">Order history</div></div><${Icon} n="next" s=${18}/></button>
       <button class="row" onClick=${() => act.sheet({type:'passcode'})}><span class="row-ic"><${Icon} n="lock" s=${19}/></span>
         <div class="row-main"><div class="row-title">${S.pins[S.rep] ? 'Change passcode' : 'Set passcode'}</div></div><${Icon} n="next" s=${18}/></button>
       <button class="row" onClick=${() => act.sheet({type:'feedback'})}><span class="row-ic"><${Icon} n="msg" s=${19}/></span>
         <div class="row-main"><div class="row-title">App feedback</div><div class="row-sub one-line">Tell us what works and what doesn’t</div></div><${Icon} n="next" s=${18}/></button>
     </div>
     <div class="list"><button class="row out" onClick=${act.signOut}><span class="row-ic"><${Icon} n="out" s=${19}/></span><div class="row-main"><div class="row-title">Sign out</div></div></button></div>
+  <//>`;
+}
+
+// Profile → Order history: every order of the signed-in seller, newest status first, filtered All / Draft / Sent; a row opens the order
+const SENT = ['submitted', 'partial', 'confirmed'];
+function HistorySheet({S, ui, act}) {
+  const so = activeOrder(S, ui), [f, setF] = useState('all');
+  const all = Object.values(S.orders).filter(o => BUYERS[o.buyerId].rep === S.rep || (so && o.id === so.id)).map(o => { const b = BUYERS[o.buyerId];
+    return {id:o.id, buyerId:o.buyerId, shop:b.shop, city:b.city, status:o.status,
+      value:b.divs.reduce((a, d) => a + kpi(o, d).total, 0), units:b.divs.reduce((a, d) => a + kpi(o, d).units, 0),
+      hoursLeft:o.status === 'shared' ? Math.max(0, 48 - Math.floor((Date.now() - o.sharedAt) / 36e5)) : null}; });
+  const sent = all.filter(r => SENT.includes(r.status)).length;
+  const F = [['all', 'All', () => true], ['draft', 'Draft', r => !SENT.includes(r.status)], ['sent', 'Sent', r => SENT.includes(r.status)]];
+  const cur = F.find(x => x[0] === f) || F[0], rows = all.filter(cur[2]);
+  return html`<${Sheet} title="Order history" tall onClose=${act.close}>
+    <div class="live">
+      <div class="tile"><b>${fmt(all.reduce((a, r) => a + r.value, 0) / 1000)}k</b><span>${all.length} ${all.length === 1 ? 'order' : 'orders'}</span></div>
+      <div class="tile"><b>${sent}</b><span>sent</span></div>
+      <div class="tile"><b>${all.length - sent}</b><span>in draft</span></div>
+    </div>
+    <div class="ftabs" role="tablist" aria-label="Show orders">${F.map(([k, l, test]) => html`<button role="tab" aria-selected=${cur[0] === k} class=${'ftab' + (cur[0] === k ? ' on' : '')} onClick=${() => setF(k)}>${l}<span class="num">${all.filter(test).length}</span></button>`)}</div>
+    ${!all.length ? html`<div class="empty">No orders yet. Check in a client from Home to start one.</div>`
+      : !rows.length && html`<div class="empty">No ${cur[1].toLowerCase()} orders.</div>`}
+    ${rows.length > 0 && html`<div class="list">
+      ${rows.map(r => html`<button class="row" onClick=${() => act.openOrder(r.buyerId)}>
+        <div class="row-main">
+          <div class="row-title">${r.shop} <span class="muted" style="font-weight:400">· ${r.city}</span></div>
+          <div class="row-sub"><${Pill} s=${r.status}/>${r.hoursLeft != null && html`<span class="by"><${Icon} n="clock" s=${13} w=${2}/>${r.hoursLeft}h left</span>`}</div>
+        </div>
+        <div class="row-side"><span class="row-val">${fmt(r.value)}</span><span class="small muted num">${r.units} units</span></div>
+      </button>`)}
+    </div>`}
   <//>`;
 }
 
@@ -2285,6 +2318,7 @@ function App({onReset}) {
     : sh.type === 'product' ? html`<${ProductSheet} key=${sh.pid} pid=${sh.pid} colour=${sh.colour} orderId=${sh.orderId} back=${sh.back} S=${S} ui=${ui} act=${act}/>`
     : sh.type === 'filter' ? html`<${FilterSheet} ui=${ui} act=${act}/>`
     : sh.type === 'profile' ? html`<${ProfileSheet} S=${S} act=${act}/>`
+    : sh.type === 'history' ? html`<${HistorySheet} S=${S} ui=${ui} act=${act}/>`
     : sh.type === 'passcode' ? html`<${PasscodeSheet} S=${S} act=${act}/>`
     : sh.type === 'feedback' ? html`<${FeedbackSheet} act=${act}/>`
     : sh.type === 'newbuyer' ? html`<${NewBuyerSheet} S=${S} sh=${sh} act=${act}/>`
