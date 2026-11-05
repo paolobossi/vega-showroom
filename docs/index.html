@@ -288,6 +288,16 @@ input{font:inherit;color:inherit}
 .zoom .car{flex:1;min-height:0}
 .zoom .car-track{flex:1;min-height:0;border-radius:0}
 .zoom .car-slide{aspect-ratio:auto;max-height:none;height:100%}
+/* the guidelines PDF as a small card: a drawn page (folded corner, text lines, red PDF label), its name and Open */
+.pdf-card{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l)}
+.pdf-card .row-main{display:flex;flex-direction:column;gap:2px}
+.pdf-doc{position:relative;flex:none;width:44px;height:56px;border-radius:4px;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-raised);padding:14px 7px 0;display:flex;flex-direction:column;gap:4px;
+  clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%)}
+.pdf-doc::after{content:"";position:absolute;right:0;top:0;width:12px;height:12px;background:linear-gradient(225deg,transparent 50%,#E3E4E0 50%)}
+.pdf-doc i{display:block;height:3px;border-radius:2px;background:#D9DAD6}
+.pdf-doc i:nth-child(2){width:80%}.pdf-doc i:nth-child(4){width:60%}
+.pdf-doc b{position:absolute;left:4px;bottom:5px;padding:1px 4px;border-radius:2px;background:#C8372D;color:#fff;font-size:9px;font-weight:700;letter-spacing:.04em;line-height:1.3}
+.pdf-open{flex:none;font-weight:600;color:var(--accent);padding:8px 14px;border-radius:999px;background:color-mix(in srgb,var(--accent) 10%,transparent)}
 .pdf-prev{position:relative;display:block;width:100%;padding:0;border:1px solid var(--line);border-radius:var(--r-s);overflow:hidden;background:#fff}
 .pdf-prev img{display:block;width:100%;height:auto}
 .pdf-tag{position:absolute;right:8px;bottom:8px;display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;background:var(--band);color:var(--band-ink);font-size:var(--fs-caption);font-weight:600}
@@ -395,6 +405,10 @@ input{font:inherit;color:inherit}
 .cat-nav .cn-row{gap:6px}
 .cat-nav .cn-cat{align-items:center;height:34px;padding:0 14px;margin-right:0;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:var(--fs-body);font-weight:600;color:var(--ink);transition:background .2s,color .2s}
 .cat-nav .cn-cat::after{display:none}
+/* filters: just the icon before All; a black circle while any filter is on */
+.cn-filter{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--ink);transition:background .2s,color .2s}
+.cn-filter.on{background:var(--ink);color:var(--bg)}
+.hd-ic{width:44px;height:44px;margin-right:-8px}
 .cat-nav .cn-cat.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
 /* Women / Men as the page title: the current one in ink, the other faded beside it */
 .div-title{display:flex;gap:16px}
@@ -477,7 +491,8 @@ input{font:inherit;color:inherit}
 /* sized lines: Enter sizes / Edit sizes as a full-width button, like Edit on the Collection cards */
 .sel-edit{grid-column:1 / -1;margin:2px 6px 0 0}
 .sel-val{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;line-height:var(--lh-tight)}
-.sel-val small{font-size:var(--fs-caption);color:var(--muted)}
+.sel-val small{font-size:var(--fs-body);color:var(--muted)}
+.sel-val b{font-weight:600}
 .sel-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:var(--fs-caption)}
 .sel-code{color:var(--ink);font-weight:400;letter-spacing:.02em}
 /* the delivery drop: white tag with a grey outline next to the item code */
@@ -542,6 +557,18 @@ input{font:inherit;color:inherit}
 .bud-row.cat{grid-template-columns:minmax(0,1fr) auto}
 .bud-row .num{text-align:right;font-variant-numeric:tabular-nums}
 .bud-tot{font-weight:600;border-top:1px solid var(--line);margin-top:4px;padding-top:10px}
+.bud-v{font-weight:600}
+.bud-tot .muted{font-weight:400}
+.bud-row.g{grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:2px 12px}
+.g-main{display:flex;flex-direction:column;gap:2px;min-width:0}
+.g-name{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.g-sub{font-size:var(--fs-caption);color:var(--muted)}
+.gtag{display:inline-flex;align-items:center;font-size:var(--fs-caption);font-weight:600;line-height:1.3;padding:2px 8px;border-radius:999px;background:var(--surface-2);color:var(--muted);white-space:nowrap}
+.gtag.ok{background:var(--good-bg);color:var(--good)}.gtag.warn{background:var(--warn-bg);color:var(--warn)}.gtag.bad{background:var(--bad-bg);color:var(--bad)}
+.ov-sum .bud-div{border-top:0;padding-top:4px}
+.miss-note{margin:-4px 2px 8px}
+.miss-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+.row-add{flex:none;font-weight:600;color:var(--accent);padding:0 4px}
 .bud-row.rule{align-items:start}
 .bud-row.rule .small{display:block;margin-top:2px}
 .bud-row.rule .num{display:flex;flex-direction:column;align-items:flex-end;white-space:nowrap}
@@ -1000,7 +1027,7 @@ function kpi(order, div) {
   const used = budget ? total / budget * 100 : 0;
   const mine = order.lines.filter(l => P[l.pid].div === div);
   const valueOf = has => mine.filter(l => has(P[l.pid])).reduce((a, l) => a + lineValue(l), 0);
-  const rules = (RULES[div] || []).map(r => { const v = valueOf(r.has), share = total ? v / total * 100 : 0;
+  const rules = (RULES[div] || []).filter(r => PRODUCTS.some(p => p.div === div && r.has(p) && catBudget(b, div, p.cat) > 0)).map(r => { const v = valueOf(r.has), share = total ? v / total * 100 : 0;
     return {...r, value:v, share, limit: total * (r.max != null ? r.max : r.min) / 100, st: !total ? 'none' : r.max != null ? (share > r.max ? 'bad' : 'ok') : (share < r.min ? 'warn' : 'ok')}; });
   // required looks the client can buy: done when every piece is in the order with a quantity
   const looks = LOOKS.filter(l => l.div === div && l.req && l.items.every(([pid]) => available(b, P[pid]))).map(l => {
@@ -1197,35 +1224,32 @@ function Budgets({b, order, divs}) {
     ${order && html`<div class="kpi-foot">Each bar is spend against that category’s own budget. Styles without a quantity don’t count yet.</div>`}
   </div>`;
 }
-function BudDiv({b, d, k}) {
-  const db = divBudget(b, d);
+// One division's budget as a bill: a row per category the client buys (spend of budget, with a bar on the order), then Total.
+// Every number is the same size; categories the client doesn't buy are left out rather than shown as zero.
+function BudDiv({b, d, k, head=true}) {
+  const db = divBudget(b, d), cats = CATS.filter(c => catBudget(b, d, c) > 0 || (k && k.mix.find(x => x.cat === c).value));
+  const val = (v, bud, st) => html`<span class=${'bud-v' + (st && st !== 'none' ? ' st-' + st : '')}>${fmt(v)}</span> <span class="muted">${bud ? 'of ' + fmt(bud) : 'no budget'}</span>`;
   return html`<div class="bud-div">
-        <div class="bud-head"><span>${DIV_LABEL[d]}</span>${k && html`<span class="num"><b class=${k.bst === 'none' ? '' : 'st-' + k.bst}>${fmt(k.total)}</b> <span class="muted">of ${fmt(db)}</span></span>`}</div>
-        ${CATS.map(c => { const cb = catBudget(b, d, c), m = k && k.mix.find(x => x.cat === c);
-          // the appointment sheet (no order) leaves out categories the client doesn't buy; the order's KPIs still say "Not buying"
-          if (!cb && !(m && m.value)) return k ? html`<div class="bud-row off"><span>${CAT_LABEL[c]}</span><span>Not buying</span></div>` : null;
-          return html`<div class="bud-row cat">
-            <span>${CAT_LABEL[c]}</span>
-            <span class="num">${m ? html`<b class=${m.st === 'none' ? '' : 'st-' + m.st}>${fmt(m.value)}</b> <span class="muted">${cb ? 'of ' + fmt(cb) : 'no budget'}</span>` : fmt(cb)}</span>
-            ${m && html`<div class="mix-track"><div class=${'mix-fill ' + m.st} style=${{width: Math.min(m.used, 100) + '%'}}></div></div>`}
-          </div>`; })}
-        ${!k && html`<div class="bud-row cat bud-tot"><span>Total</span><span class="num">${fmt(db)}</span></div>`}
-      </div>`;
+    ${head && html`<div class="bud-head"><span>${DIV_LABEL[d]}</span></div>`}
+    ${cats.map(c => { const cb = catBudget(b, d, c), m = k && k.mix.find(x => x.cat === c);
+      return html`<div class="bud-row cat"><span>${CAT_LABEL[c]}</span><span class="num">${m ? val(m.value, cb, m.st) : fmt(cb)}</span>
+        ${m && html`<div class="mix-track"><div class=${'mix-fill ' + m.st} style=${{width: Math.min(m.used, 100) + '%'}}></div></div>`}</div>`; })}
+    <div class="bud-row cat bud-tot"><span>Total</span><span class="num">${k ? val(k.total, db, k.bst) : fmt(db)}</span></div>
+  </div>`;
 }
 
 // The client's guidelines for one division: mix rules per family, required looks, and how the order splits across the drops
 function MixChecks({o, d, title=`${DIV_LABEL[d]} guidelines`}) {
-  const k = kpi(o, d);
+  const k = kpi(o, d), drops = k.drops.filter(x => x.units > 0);
+  const tag = (st, word) => html`<span class=${'gtag ' + st}>${word}</span>`;
+  const row = (name, st, word, sub, num) => html`<div class="bud-row g"><span class="g-main"><span class="g-name">${name}${st && tag(st, word)}</span><span class="g-sub">${sub}</span></span><span class="num">${num}</span></div>`;
   return html`<div class="bud-div">
     <div class="bud-head"><span>${title}</span></div>
     ${k.rules.map(r => { const cap = r.max != null ? r.max : r.min, word = r.max != null ? 'max' : 'min', gap = r.max != null ? r.value - r.limit : r.limit - r.value;
-      return html`<div class="bud-row rule"><span>${r.label}<span class="small muted">${r.st === 'none' ? `${word} ${cap}% of the order` : `${Math.round(r.share)}% of the order · ${word} ${cap}%`}</span></span>
-        <span class="num">${fmt(r.value)}${r.st !== 'none' && html`<small class=${gap > 0 ? 'st-' + r.st : 'muted'}>${gap > 0 ? fmt(gap) + (r.max != null ? ' over' : ' to go') : r.max != null ? fmt(-gap) + ' left' : 'met'}</small>`}</span>
-        <b class=${'st-' + r.st}>${RULE_WORD[r.st]}</b></div>`; })}
-    ${k.looks.map(x => html`<div class="bud-row"><span>${lookNo(x.l)} <span class="small muted">required</span></span>
-      <span class="num muted">${x.have} of ${x.n} pieces</span><b class=${'num st-' + (x.done ? 'ok' : 'warn')}>${x.done ? 'Done' : 'Open'}</b></div>`)}
-    ${k.drops.map(x => html`<div class="bud-row"><span>${DROPS[x.k].split(' · ')[0]} <span class="small muted">${DROPS[x.k].split(' · ')[1]}</span></span>
-      <span class="num muted">${x.units} units</span><b class="num">${fmt(x.value)}</b></div>`)}
+      const sub = r.st === 'none' ? `${word} ${cap}% of the order` : `${Math.round(r.share)}% of the order · ${word} ${cap}%${gap > 0 ? ` · ${fmt(gap)} ${r.max != null ? 'over' : 'to go'}` : ''}`;
+      return row(r.label, r.st !== 'none' && r.st, RULE_WORD[r.st], sub, fmt(r.value)); })}
+    ${k.looks.map(x => row(lookNo(x.l), x.done ? 'ok' : 'warn', x.done ? 'Done' : 'Open', 'Required look · every piece', `${x.have} of ${x.n}`))}
+    ${drops.map(x => row(DROPS[x.k].split(' · ')[0], null, null, `${DROPS[x.k].split(' · ')[1]} · ${x.units} ${x.units === 1 ? 'unit' : 'units'}`, fmt(x.value)))}
   </div>`;
 }
 
@@ -1244,9 +1268,10 @@ function GuideSheet({bid, act}) {
   const rule = (r, d) => `${r.max != null ? 'No more than' : 'At least'} ${r.max != null ? r.max : r.min}% of the ${DIV_LABEL[d].toLowerCase()} order`;
   const looks = LOOKS.filter(l => l.req && b.divs.includes(l.div) && l.items.every(([pid]) => available(b, P[pid])));
   return html`<${Sheet} tall title="Buying guidelines" sub=${`${b.shop} · ${b.cluster} · Spring Summer 2027`} onClose=${back}>
-    <button class="pdf-prev" onClick=${() => act.set({pdf:true})} aria-label="Open the guidelines PDF full screen">
-      <img src="guidelines-sample.png" alt="Buying guidelines PDF, page 1" draggable="false"/>
-      <span class="pdf-tag"><${Icon} n="expand" s=${14} w=${2.2}/>PDF · Sample</span></button>
+    <button class="pdf-card" onClick=${() => act.set({pdf:true})} aria-label="Open the guidelines PDF">
+      <span class="pdf-doc" aria-hidden="true"><i></i><i></i><i></i><i></i><b>PDF</b></span>
+      <span class="row-main"><span class="row-title">Buying guidelines SS27</span><span class="row-sub">Maison PDF · Sample</span></span>
+      <span class="pdf-open">Open</span></button>
     ${b.divs.map(d => { const db = divBudget(b, d);
       return html`<div class="lbl">${DIV_LABEL[d]} budget split</div>
       <div class="list">${CATS.filter(c => catBudget(b, d, c)).map(c => html`<div class="row"><div class="row-main"><div class="row-title">${CAT_LABEL[c]}</div><div class="row-sub">${Math.round(catBudget(b, d, c) / db * 100)}% of the ${DIV_LABEL[d].toLowerCase()} budget</div></div><span class="row-val num">${fmt(catBudget(b, d, c))}</span></div>`)}</div>
@@ -1351,11 +1376,11 @@ function ApptSheet({sh, S, act}) {
       : html`<span class="pill s-out">Checked out ${hhmm(a.out)}</span>`}</div>`}
     ${a.in && a.out && html`<div class="small muted" style="margin-top:-6px">Started ${hhmm(a.in)}. Checking in again keeps this start time.</div>`}
     ${o && html`<${ApptOrder} o=${o} b=${b} act=${act}/>`}
-    <div class="lbl">Budget</div>
-    <${Budgets} b=${b}/>
     <div class="list"><button class="row" onClick=${() => act.sheet({type:'guide', bid:b.id})}>
       <div class="row-main"><div class="row-title">Buying guidelines</div><div class="row-sub">${b.cluster} client · budget split, mix, required looks, drops</div></div>
       <${Icon} n="next" s=${18}/></button></div>
+    <div class="lbl">Budget</div>
+    <${Budgets} b=${b}/>
     <label class="field"><span class="lbl">Notes</span>
       <textarea class="inp area" placeholder="Preferences, follow-ups, what the client liked…" value=${a.notes || ''} onInput=${e => act.note(b.id, e.target.value)}></textarea>
       <span class="small muted">Saved automatically</span></label>
@@ -1371,25 +1396,25 @@ function ApptOrder({o, b, act}) {
       <div class="row-side"><span class="row-val">${fmt(v)}</span></div><${Icon} n="next" s=${18}/></button></div>`;
 }
 
+// Each piece opens its product page (closing it comes back to the look); the button adds every piece not in the order yet
 function LookSheet({id, S, ui, act}) {
   const l = LOOKS.find(x => x.id === id);
-  const o = activeOrder(S, ui), b = o && BUYERS[o.buyerId];
+  const o = activeOrder(S, ui);
   const out = o ? l.items.filter(([pid, c]) => !o.lines.some(x => x.pid === pid && x.colour === c)) : [];
-  const missing = out.filter(([pid]) => !canTake(o, P[pid])), why = o && out.length && !missing.length && canTake(o, P[out[0][0]]);
+  const can = out.filter(([pid]) => !canTake(o, P[pid]));
   return html`<${Sheet} tall title=${lookNo(l)} onClose=${act.close}
     media=${html`<${Carousel} cover src=${lookSrc(l)} alt=${lookNo(l)} at=${ui.photoAt} onOpen=${i => act.set({zoom:{look:l.id, i}})}/>`}
-    foot=${o && html`<button class="btn primary" disabled=${!missing.length} onClick=${() => act.selectLook(o.id, l)}>${missing.length ? `Add the whole look · ${missing.length} ${missing.length === 1 ? 'piece' : 'pieces'}` : why || 'Whole look is in the order'}</button>`}>
+    foot=${o && html`<button class="btn primary" disabled=${!can.length} onClick=${() => act.selectLook(o.id, l)}>${can.length ? 'Add look to basket' : out.length ? canTake(o, P[out[0][0]]) : 'Look is in the basket'}</button>`}>
     <div class="pd-head"><span class="pc-fam">${DIV_LABEL[l.div]} · ${SHOW}${l.req ? ' · required look' : ''}</span><h1 class="pd-name">${lookNo(l)}</h1></div>
     <div class="lbl">In this look</div>
-    <div class="list">${l.items.map(([pid, c]) => { const p = P[pid], why = o && canTake(o, p), item = {pid, colour:c, via:'look'};
-      const has = o && o.lines.some(x => x.pid === pid && x.colour === c);
-      return html`<button class="row" disabled=${!!why || has} onClick=${() => o ? act.select(o.id, pid, c, 'look') : act.sheet({type:'pick', item})}>
+    <div class="list">${l.items.map(([pid, c]) => { const p = P[pid], why = o && canTake(o, p), has = o && o.lines.some(x => x.pid === pid && x.colour === c);
+      return html`<button class="row" onClick=${() => act.sheet({type:'product', pid, colour:c, orderId:o && o.id, back:{type:'look', id:l.id}})}>
         <${Thumb} pid=${pid} colour=${c}/>
         <div class="row-main"><div class="row-title">${p.name}</div><div class="row-sub"><${Colour} c=${c}/></div><div class="row-sub"><span class="pc-code">${p.code}</span></div></div>
         <div class="row-side"><span class="row-val">${fmt(p.price)}</span><span class="small muted num">${fmt(p.rrp)} retail</span>
-          ${why ? html`<span class="lock">${why}</span>` : has ? html`<span class="flag-txt"><${Icon} n="flag" s=${13} w=${2.2}/>Added</span>` : html`<span class="small" style="color:var(--accent);font-weight:600">Add</span>`}</div>
+          ${why ? html`<span class="lock">${why}</span>` : has && html`<span class="flag-txt"><${Icon} n="flag" s=${13} w=${2.2}/>Added</span>`}</div>
+        <${Icon} n="next" s=${18}/>
       </button>`; })}</div>
-    <div class="small muted">${o ? `Tap a piece to add it to ${b.shop}’s selection.` : 'Tap a piece, then choose which client it’s for.'}</div>
   <//>`;
 }
 
@@ -1459,7 +1484,7 @@ function CatalogueTab({S, ui, act}) {
   // both divisions are always there; with a client checked in it opens on what they buy
   const so = activeOrder(S, ui), sb = so && BUYERS[so.buyerId], divs = ['W', 'M'];
   const [div, setDiv] = useState(sb ? sb.divs[0] : 'W'), [cat, setCat] = useState(null), [busy, setBusy] = useState(false);
-  const season = SEASONS.find(x => x.id === ui.catSeason);
+  const season = SEASONS.find(x => x.id === ui.catSeason), filtered = !!(ui.catDrop || ui.catTag || ui.catMat || season.id !== SEASONS[0].id);
   const items = PRODUCTS.filter(p => p.div === div && p.season === season.id && (!sb || available(sb, p)) && (!ui.catDrop || p.drop === ui.catDrop) && hasTag(p, ui.catTag) && hasMat(p, ui.catMat));
   // category, then a sub-heading only where the family is a kind of product (Dresses, Hats); bags and shoes families are lines (Puzzle, Pebble), so they just sit together
   const all = CATS.map(c => { const ps = items.filter(p => p.cat === c), sub = SUBTYPE[c];
@@ -1477,7 +1502,7 @@ function CatalogueTab({S, ui, act}) {
       if (y >= sc.scrollHeight - sc.clientHeight - 2 && d < 0) { last = y; return; }
       if (!stuck || d < -4) el.classList.remove('hid'); else if (d > 4) el.classList.add('hid');
       if (Math.abs(d) > 4) last = y; };
-    sc.addEventListener('scroll', on, {passive:true}); return () => sc.removeEventListener('scroll', on); }, [items.length > 0]);
+    sc.addEventListener('scroll', on, {passive:true}); return () => sc.removeEventListener('scroll', on); }, []);
   useEffect(() => () => clearTimeout(t.current), []);
   const top = () => { const sc = ref.current && ref.current.closest('.screen'); if (sc) sc.scrollTop = 0; };
   // a short skeleton while the page swaps, so the change reads as a new list
@@ -1486,27 +1511,26 @@ function CatalogueTab({S, ui, act}) {
   const pickDiv = d => { if (d === div) return; setDiv(d); load(); };
   return html`
     <header class="top top-bar mid"><h1 class="h1 div-title" role="tablist" aria-label="Collection">${divs.map(d => html`<button role="tab" aria-selected=${d === div} class=${d === div ? 'on' : ''} onClick=${() => pickDiv(d)}>${DIV_TAB[d]}</button>`)}</h1>
-      <div class="hd-btns">
-        <button class=${'sq-btn' + (ui.catDrop || ui.catTag || ui.catMat || season.id !== SEASONS[0].id ? ' on' : '')} onClick=${() => act.sheet({type:'filter'})} aria-label=${`Filters: ${season.name}` + (ui.catDrop ? `, ${DROPS[ui.catDrop].split(' · ')[0]}` : '') + (ui.catTag ? `, ${TAG_OPTS.find(x => x[0] === ui.catTag)[1]}` : '') + (ui.catMat ? `, ${MATS.find(x => x[0] === ui.catMat)[1]}` : '')}><${Icon} n="filter" s=${20} w=${2}/></button>
-        <button class="sq-btn" onClick=${() => { primeKeyboard(); act.set({search:true}); }} aria-label="Search the collection"><${Icon} n="search" s=${20} w=${2}/></button>
-      </div></header>
+      <button class="icon-btn hd-ic" onClick=${() => { primeKeyboard(); act.set({search:true}); }} aria-label="Search the collection"><${Icon} n="search" s=${24} w=${2}/></button></header>
     <section class="sec">
       ${(ui.catDrop || ui.catTag || ui.catMat) && html`<div class="fchips">
         ${ui.catDrop && html`<button class="fchip" onClick=${() => act.set({catDrop:null})} aria-label="Clear drop filter">${DROPS[ui.catDrop].split(' · ')[0]} · ${dropWhen(ui.catDrop).replace('Delivers ', '')}<${Icon} n="x" s=${14} w=${2.2}/></button>`}
         ${ui.catTag && html`<button class="fchip" onClick=${() => act.set({catTag:null})} aria-label="Clear priority filter">${TAG_OPTS.find(x => x[0] === ui.catTag)[1]}<${Icon} n="x" s=${14} w=${2.2}/></button>`}
         ${ui.catMat && html`<button class="fchip" onClick=${() => act.set({catMat:null})} aria-label="Clear material filter">${MATS.find(x => x[0] === ui.catMat)[1]}<${Icon} n="x" s=${14} w=${2.2}/></button>`}
       </div>`}
-      ${!items.length ? html`<div class="empty">No ${DIV_LABEL[div].toLowerCase()} styles in this collection.</div>`
-      : html`<div ref=${ref}>
+      <div ref=${ref}>
         <nav class="cat-nav" ref=${nav} aria-label="Categories">
-          <div class="cn-row" role="tablist">${[null, ...all.map(g => g.cat)].map(c => html`<button role="tab" aria-selected=${on === c} class=${'cn-cat' + (on === c ? ' on' : '')} onClick=${() => pickCat(c)}>${c ? CAT_LABEL[c] : 'All'}</button>`)}</div>
+          <div class="cn-row">
+            <button class=${'cn-filter' + (filtered ? ' on' : '')} onClick=${() => act.sheet({type:'filter'})} aria-label=${`Filters: ${season.name}` + (ui.catDrop ? `, ${DROPS[ui.catDrop].split(' · ')[0]}` : '') + (ui.catTag ? `, ${TAG_OPTS.find(x => x[0] === ui.catTag)[1]}` : '') + (ui.catMat ? `, ${MATS.find(x => x[0] === ui.catMat)[1]}` : '')}><${Icon} n="filter" s=${20} w=${2}/></button>
+            ${[null, ...all.map(g => g.cat)].map(c => html`<button role="tab" aria-selected=${on === c} class=${'cn-cat' + (on === c ? ' on' : '')} onClick=${() => pickCat(c)}>${c ? CAT_LABEL[c] : 'All'}</button>`)}</div>
         </nav>
-        ${busy ? html`<div class="cat-main" aria-busy="true" aria-label="Loading"><div class="sk-h"></div><div class="pgrid">${[0, 1, 2, 3, 4, 5].map(i => html`<div class="sk-card" key=${i}><div class="sk-img"></div><div class="sk-l"></div><div class="sk-l s"></div><div class="sk-l s"></div></div>`)}</div></div>`
+        ${!items.length ? html`<div class="empty">No ${DIV_LABEL[div].toLowerCase()} styles in this collection${filtered ? ' with these filters' : ''}.</div>`
+        : busy ? html`<div class="cat-main" aria-busy="true" aria-label="Loading"><div class="sk-h"></div><div class="pgrid">${[0, 1, 2, 3, 4, 5].map(i => html`<div class="sk-card" key=${i}><div class="sk-img"></div><div class="sk-l"></div><div class="sk-l s"></div><div class="sk-l s"></div></div>`)}</div></div>`
         : html`<div class="cat-main">${groups.map(g => html`<div class="cat-sec">
           <h2 class="cat-h">${CAT_LABEL[g.cat]}</h2>
           <div class="pgrid">${g.fams.map(f => html`${f.f && html`<div class="fam-h" key=${f.id}>${f.f}</div>`}${f.ps.map(p => html`<${PCard} key=${p.id} p=${p} o=${so} act=${act}/>`)}`)}</div>
         </div>`)}</div>`}
-      </div>`}
+      </div>
     </section>`;
 }
 
@@ -1688,7 +1712,7 @@ function FilterSheet({ui, act}) {
 // Product page: with a client in session, sizes and quantities are set right here and save at once. Entering the first
 // quantity on a colour puts that colour in the order; there is no Add button.
 // Copy scale keeps this style's size scale (per size range, until another one is copied); Paste scale fills it on the next style.
-function ProductSheet({pid, colour, orderId, S, ui, act}) {
+function ProductSheet({pid, colour, orderId, back, S, ui, act}) {
   const p = P[pid], o = orderId ? S.orders[orderId] : activeOrder(S, ui), b = o && BUYERS[o.buyerId], why = o && canTake(o, p);
   const [c, setC] = useState(() => { const l = o && o.lines.find(x => x.pid === pid); return colour || (l ? l.colour : p.colours[0]); });
   const looks = LOOKS.filter(l => l.items.some(([x]) => x === pid));
@@ -1698,7 +1722,7 @@ function ProductSheet({pid, colour, orderId, S, ui, act}) {
   const clean = x => Object.fromEntries(Object.entries(x).filter(([, n]) => n > 0).map(([k, n]) => [k, Math.min(999, n)]));
   const setQ = next => { const n = clean(next);
     if (line) act.setQty(o.id, line.id, n); else if (units(n)) act.select(o.id, pid, c, 'search', n); };
-  const close = act.close;
+  const close = back ? () => act.sheet(back) : act.close;
   const setQty = (sz, n) => setQ({...q, [sz]: Math.max(0, n)});
   const last = sized && ui.lastScale && ui.lastScale[skey], same = last && qkey(last) === qkey(clean(q));
   const copy = () => { act.set({lastScale: {...ui.lastScale, [skey]: clean(q)}}); act.toast('Scale copied'); };
@@ -1926,6 +1950,13 @@ function OrderView({S, ui, act, order}) {
   const locked = partLocked(order, div), allSent = b.divs.every(d => partLocked(order, d));
   // products are added during the visit: for another client, Check in switches the visit to them
   const inVisit = ui.session === order.id;
+  // what the guidelines still ask for: must-haves the client can buy and pieces of required looks that are not in the order at all
+  const has = (pid, c) => order.lines.some(x => x.pid === pid && (!c || x.colour === c)), miss = [];
+  const need = (pid, colour, why) => { const m = miss.find(x => x.pid === pid); if (m) m.why.push(why); else miss.push({pid, colour, why:[why]}); };
+  if (!locked) {
+    PRODUCTS.filter(p => p.div === div && p.season === 'SS27' && p.tag === 'must' && available(b, p) && catBudget(b, div, p.cat) > 0 && !has(p.id)).forEach(p => need(p.id, p.colours[0], TAGS.must));
+    k.looks.filter(x => !x.done).forEach(x => x.l.items.forEach(([pid, c]) => { if (!has(pid, c)) need(pid, c, lookNo(x.l)); }));
+  }
   const st = order.status, when = t => new Date(t).toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
   // the line under the banner title: one short line that never repeats the title
   const last = b.divs.map(d => partOf(order, d)).filter(x => x.at).sort((x, y) => y.at - x.at)[0];
@@ -1951,11 +1982,8 @@ function OrderView({S, ui, act, order}) {
         </div>
         ${b.divs.length > 1 && html`<div class="ov-divs" role="tablist">${b.divs.map(d => html`<button role="tab" aria-selected=${d === div} class=${'cn-cat' + (d === div ? ' on' : '')} onClick=${() => act.div(d)}>${DIV_TAB[d]}</button>`)}</div>`}
         <button class="ov-sum" onClick=${() => act.sheet({type:'kpis', orderId:order.id})} aria-label=${`Budgets and KPIs. ${DIV_TAB[div]} ${fmt(k.total)} of ${fmt(k.budget)}. ${open ? `${open} outside the guidelines` : 'Within the guidelines'}`}>
-          <span class="ov-sum-top"><b>${DIV_TAB[div]} budget</b><span class="num"><b class=${k.bst === 'none' ? '' : 'st-' + k.bst}>${fmt(k.total)}</b> <span class="muted">of ${fmt(k.budget)}</span></span></span>
-          <span class="cat-grid">${k.mix.map(m => !m.budget && !m.value ? html`<span class="cat-t off"><span class="cat-n">${CAT_LABEL[m.cat]}</span><span class="cat-v">Not buying</span></span>`
-            : html`<span class="cat-t"><span class="cat-n">${CAT_LABEL[m.cat]}</span>
-              <span class="cat-v num"><b class=${m.st === 'none' ? '' : 'st-' + m.st}>${fmt(m.value)}</b> <span class="muted">of ${fmt(m.budget)}</span></span>
-              <span class="mix-track"><span class=${'mix-fill ' + m.st} style=${{width: Math.min(m.used, 100) + '%'}}></span></span></span>`)}</span>
+          <span class="ov-sum-top"><b>${DIV_LABEL[div]} budget</b></span>
+          <${BudDiv} b=${b} d=${div} k=${k} head=${false}/>
           <span class="ov-sum-foot"><span class=${'ov-sum-st ' + (open ? 'st-warn' : 'st-ok')}><${Icon} n=${open ? 'alert' : 'check'} s=${16} w=${2.4}/>${open ? `${open} outside the guidelines` : 'Within the guidelines'}</span>
             <span class="ov-sum-go">Budgets & KPIs<${Icon} n="down" s=${15} w=${2.2}/></span></span>
         </button>
@@ -1965,11 +1993,19 @@ function OrderView({S, ui, act, order}) {
           <div class="grp-head"><span>${g.label}</span></div>
           <div class="list">${g.lines.map(l => html`<${SelLine} key=${l.id} l=${l} o=${order} act=${act} locked=${locked}/>`)}</div>
         </div>`)}
+        ${miss.length > 0 && html`<div>
+          <div class="grp-head"><span>Currently missing</span></div>
+          <div class="small muted miss-note">To meet the guidelines: must-haves and required look pieces not in the order yet.</div>
+          <div class="list">${miss.map(m => html`<button class="row" onClick=${() => act.sheet({type:'product', orderId:order.id, pid:m.pid, colour:m.colour})}>
+            <${Thumb} pid=${m.pid} colour=${m.colour}/>
+            <div class="row-main"><div class="row-title">${P[m.pid].name}</div><div class="row-sub"><${Colour} c=${m.colour}/></div><div class="row-sub miss-tags">${m.why.map(w => html`<span class="gtag warn">${w}</span>`)}</div></div>
+            <span class="row-add">Add</span></button>`)}</div>
+        </div>`}
       </div>
     </div>
     <div class="ov-actions">
-      ${inVisit ? html`<button class="cap-btn two" onClick=${() => act.sheet({type:'finish', orderId:order.id})}>
-          <span><${Icon} n="sign" w=${2.2}/>Finish order</span><small>Get the client’s signature, then send the order on</small></button>`
+      ${inVisit ? html`<button class="cap-btn ghost" onClick=${() => act.endVisit(b.id, `Checked out · ${b.shop}`)}>Check out</button>
+        <button class="cap-btn" onClick=${() => act.sheet({type:'finish', orderId:order.id})}><${Icon} n="sign" w=${2.2}/>Finish order</button>`
         : html`<button class="round" onClick=${() => act.sheet({type:'finish', orderId:order.id})} aria-label="Finish order"><${Icon} n="sign"/></button>
         <button class="cap-btn" disabled=${allSent} onClick=${() => act.checkIn(b.id)}><${Icon} n="check" w=${2.4}/>Check in to add products</button>`}
     </div>
@@ -2246,7 +2282,7 @@ function App({onReset}) {
     : sh.type === 'guide' ? html`<${GuideSheet} bid=${sh.bid} act=${act}/>`
     : sh.type === 'sign' ? html`<${SignSheet} sh=${sh} S=${S} act=${act}/>`
     : sh.type === 'look' ? html`<${LookSheet} id=${sh.id} S=${S} ui=${ui} act=${act}/>`
-    : sh.type === 'product' ? html`<${ProductSheet} key=${sh.pid} pid=${sh.pid} colour=${sh.colour} orderId=${sh.orderId} S=${S} ui=${ui} act=${act}/>`
+    : sh.type === 'product' ? html`<${ProductSheet} key=${sh.pid} pid=${sh.pid} colour=${sh.colour} orderId=${sh.orderId} back=${sh.back} S=${S} ui=${ui} act=${act}/>`
     : sh.type === 'filter' ? html`<${FilterSheet} ui=${ui} act=${act}/>`
     : sh.type === 'profile' ? html`<${ProfileSheet} S=${S} act=${act}/>`
     : sh.type === 'passcode' ? html`<${PasscodeSheet} S=${S} act=${act}/>`
