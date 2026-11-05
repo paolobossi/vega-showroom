@@ -1551,7 +1551,7 @@ function CatalogueTab({S, ui, act}) {
       </div>`}
       <div ref=${ref}>
         <nav class="cat-nav" ref=${nav} aria-label="Collections and categories">
-          <div class="coll-tabs" role="tablist" aria-label="Collections">${[...SEASONS.map(x => [x.id, x.short, x.name]), [null, 'All', 'All collections']].map(([id, t, full]) => html`<button role="tab" aria-selected=${season.id === id} aria-label=${full} class=${'coll-t' + (season.id === id ? ' on' : '')} onClick=${() => pickSeason(id)}>${t}</button>`)}</div>
+          <div class="coll-tabs" role="tablist" aria-label="Collections">${SEASONS.map(x => [x.id, x.short, x.name]).map(([id, t, full]) => html`<button role="tab" aria-selected=${season.id === id} aria-label=${full} class=${'coll-t' + (season.id === id ? ' on' : '')} onClick=${() => pickSeason(id)}>${t}</button>`)}</div>
           <div class="cn-row">
             ${[null, ...all.map(g => g.cat)].map(c => html`<button role="tab" aria-selected=${on === c} class=${'cn-cat' + (on === c ? ' on' : '')} onClick=${() => pickCat(c)}>${c ? CAT_LABEL[c] : 'All'}</button>`)}</div>
         </nav>
