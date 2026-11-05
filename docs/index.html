@@ -309,8 +309,11 @@ input{font:inherit;color:inherit}
 /* on the Looks page the name sits on the photo, bottom left, white over a soft dark fade */
 .look > .look-h{position:absolute;left:8px;right:8px;bottom:8px;padding:48px 16px 14px;border-radius:0 0 var(--r-m) var(--r-m);background:linear-gradient(to bottom,rgba(0,0,0,0),rgba(0,0,0,.55));color:#fff;pointer-events:none}
 .look > .look-h .look-t{font-size:var(--fs-heading);text-shadow:0 1px 2px rgba(0,0,0,.25)}
-.look-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
-.look-list .look{width:auto}
+/* each lookbook is one horizontal row, edge to edge; cards are narrow enough that the next one peeks in */
+.look-list{display:flex;gap:10px;overflow-x:auto;margin:0 -18px;padding:2px 18px 6px;scroll-snap-type:x mandatory;scroll-padding:0 18px;scrollbar-width:none;overscroll-behavior-x:contain}
+.look-list::-webkit-scrollbar{display:none}
+.look-list .look{width:clamp(136px,40%,210px);padding:6px;gap:0}
+.look-list .look > .look-h{left:6px;right:6px;bottom:6px;padding:32px 10px 10px}
 .appts{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);overflow:hidden}
 .appt{display:flex;gap:14px;align-items:stretch;text-align:left;width:100%;padding:14px;border-top:1px solid var(--line)}
 .appt:first-child{border-top:0}
