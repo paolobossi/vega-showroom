@@ -161,10 +161,11 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 7.4 Tap one piece → it is added to the order of the client in session.
 - [ ] 7.5 **Add the whole look · N pieces** → every missing piece the client can buy is added; the button then reads "Whole look is in the order".
 
-### 8. Camera (photo match)
-- [ ] 8.1 Collection, camera button (only with a client in session) → viewfinder with "Frame the sample".
-- [ ] 8.2 Shutter → "Finding the style…" → the match (Mini Amazona 180, Sunrise Orange) with Add to order and alternatives.
-- [ ] 8.3 Add to order, or pick an alternative → the camera closes and the style is in the order.
+### 8. Scan (photo match)
+- [ ] 8.1 A round **Scan** button (camera icon, "Scan" under it) sits right of the tab bar on every tab, as tall as it and in the same glass; in landscape it is a pill with the icon and "Scan" side by side. The Collection search row has only the filter button (no camera).
+- [ ] 8.2 Scan → viewfinder with "Frame the sample"; the title is the client and division when one is checked in, "Scan a sample" when nobody is. Shutter → "Finding the style…" → the match (Mini Amazona 180, Sunrise Orange) and alternatives.
+- [ ] 8.3 With a client checked in: Add to order, or pick an alternative → the camera closes and the style is in the order (its photo shows in the client pill).
+- [ ] 8.3b With nobody checked in: the button reads **View style**; it, or an alternative, closes the camera and opens that style's product page on the matched colour.
 - [ ] 8.4 Retake photo → back to the viewfinder; × closes the camera.
 
 ### 9. Order page
@@ -196,7 +197,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 11.5 As the client, Review and sign → the order is sent; the client sees the thank-you note; Back to salesperson returns to the seller app.
 
 ### 12. Profile and feedback
-- [ ] 12.1 The tab bar has three tabs: Home, Looks, Collection. Profile is the round black avatar with the seller's initials at the top right of Home; tapping it opens a sheet with the seller's name, Set passcode (Change passcode once set), App feedback with one line "Tell us what works and what doesn't", and Sign out in red. There is no Orders list: orders are reached from their appointments on Home (2.6c) or the client pill.
+- [ ] 12.1 The tab bar has three tabs: Home, Looks, Collection, with the round Scan button beside it (8.1). Profile is the round black avatar with the seller's initials at the top right of Home; tapping it opens a sheet with the seller's name, Set passcode (Change passcode once set), App feedback with one line "Tell us what works and what doesn't", and Sign out in red. There is no Orders list: orders are reached from their appointments on Home (2.6c) or the client pill.
 - [ ] 12.2 The client pill (above the tab bar while a client is checked in) opens that client's current order.
 - [ ] 12.3 Open an order from its appointment → back returns to Home.
 - [ ] 12.4 Orders start when a client is checked in. With nobody checked in, Collection → tap a card → Add to order → Add to an order → New session: Shop, City, Buying for, budgets; Start session is disabled until a shop name is typed; starting checks the new client in.

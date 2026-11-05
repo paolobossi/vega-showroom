@@ -111,6 +111,12 @@ input{font:inherit;color:inherit}
   border:1px solid color-mix(in srgb,var(--line) 70%,transparent);box-shadow:var(--shadow-float)}
 .tab{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:var(--fs-caption);font-weight:600;color:var(--muted);min-width:74px;padding:8px 10px 6px;border-radius:999px;transition:background .2s,color .2s}
 .tab.on{color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
+/* Scan: a round button beside the tab bar, as tall as it, same glass */
+.dock-row{display:flex;align-items:center;gap:8px}
+.scan{flex:none;width:var(--scan-d,68px);height:var(--scan-d,68px);border-radius:999px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:var(--fs-caption);font-weight:600;color:var(--ink);
+  background:color-mix(in srgb,var(--surface) 78%,transparent);-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);
+  border:1px solid color-mix(in srgb,var(--line) 70%,transparent);box-shadow:var(--shadow-float)}
+.scan:active{background:var(--surface-2)}
 /* client in session: a black pill above the tab bar, on every tab, with the first two pieces added as photos (they stay put as more are added); tapping it opens the order */
 .sbar{align-self:center;display:flex;align-items:center;gap:12px;max-width:100%;min-width:0;padding:4px 22px 4px 4px;border-radius:999px;background:var(--band);color:var(--band-ink);text-align:left;border:1px solid rgba(255,255,255,.1);box-shadow:var(--shadow-float);animation:rise .3s cubic-bezier(.2,.8,.2,1)}
 @keyframes rise{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
@@ -682,6 +688,7 @@ input.qty.xl{width:120px}
   .dock{bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 8px))}
   .tabbar{padding:4px}
   .tab{flex-direction:row;gap:6px;font-size:var(--fs-caption);padding:6px 16px}
+  .scan{width:auto;height:auto;align-self:stretch;flex-direction:row;gap:6px;padding:0 18px}
   .screen.tabbed{padding-bottom:64px}
   .screen.tabbed.with-pill{padding-bottom:114px}
   .ov-body{padding-bottom:72px}
@@ -1448,7 +1455,6 @@ function CatalogueTab({S, ui, act}) {
     <section class="sec">
       <div class="searchrow">
         <label class="search"><${Icon} n="search" s=${18}/><input id="cat-q" placeholder="Search" aria-label="Search by style, code, material, colour or keyword" value=${q} onInput=${e => setQ(e.target.value)}/></label>
-        ${so && html`<button class="sq-btn" onClick=${() => { act.set({capDiv:div}); act.capture(true); }} aria-label="Photograph a sample"><${Icon} n="cam" s=${20} w=${2}/></button>`}
         <button class=${'sq-btn' + (ui.catDrop || ui.catTag || ui.catMat || season.id !== SEASONS[0].id ? ' on' : '')} onClick=${() => act.sheet({type:'filter'})} aria-label=${`Filters: ${season.name}` + (ui.catDrop ? `, ${DROPS[ui.catDrop].split(' · ')[0]}` : '') + (ui.catTag ? `, ${TAG_OPTS.find(x => x[0] === ui.catTag)[1]}` : '') + (ui.catMat ? `, ${MATS.find(x => x[0] === ui.catMat)[1]}` : '')}><${Icon} n="filter" s=${20} w=${2}/></button>
       </div>
       ${(ui.catDrop || ui.catTag || ui.catMat) && html`<div class="fchips">
@@ -1740,20 +1746,21 @@ function SizeSheet({sh, S, act}) {
 /* =====================================================================
    Capture — photograph a sample, AI matches it to the catalogue
    ===================================================================== */
+// with a client checked in a match goes on their order; without one it opens the style's page
 function Capture({order, div, act}) {
-  const b = BUYERS[order.buyerId];
+  const b = order && BUYERS[order.buyerId];
   const [stage, setStage] = useState('aim');
   const t = useRef(0);
   useEffect(() => () => clearTimeout(t.current), []);
   const s = CAMERA_SCENE, p = P[s.pid];
   const shoot = () => { setStage('scan'); t.current = setTimeout(() => setStage('match'), 1250); };
   const alts = alternatives(p);
-  const why = canTake(order, p);
-  const pick = (pid, colour) => { act.select(order.id, pid, colour, 'photo'); act.capture(false); };
+  const why = order && canTake(order, p);
+  const pick = (pid, colour) => { act.capture(false); if (order) act.select(order.id, pid, colour, 'photo'); else act.sheet({type:'product', pid, colour}); };
   return html`<div class="capture">
     <div class="vf-top">
       <button class="vf-btn" onClick=${() => act.capture(false)} aria-label="Close camera"><${Icon} n="x"/></button>
-      <div class="vf-title">${b.shop} · ${DIV_LABEL[div]}</div>
+      <div class="vf-title">${b ? `${b.shop} · ${DIV_LABEL[div]}` : 'Scan a sample'}</div>
       <span style="width:42px" aria-hidden="true"></span>
     </div>
     <div class="vf-scene">
@@ -1769,7 +1776,7 @@ function Capture({order, div, act}) {
       <div class="match-main"><${Thumb} cls="lg" pid=${p.id} colour=${s.colour}/>
         <div style="min-width:0;display:flex;flex-direction:column;gap:4px"><div class="m-name">${p.name}</div><span class="pc-code">${p.code}</span><span class="small muted"><${Colour} c=${s.colour}/></span><${Prices} p=${p}/></div></div>
       ${why && html`<div class="callout bad"><${Icon} n="lock" s=${18}/><div>${b.shop} · ${why}, so this style can’t go on the order.</div></div>`}
-      <button class="btn primary block" disabled=${!!why} onClick=${() => pick(p.id, s.colour)}>Add to order</button>
+      <button class="btn primary block" disabled=${!!why} onClick=${() => pick(p.id, s.colour)}>${order ? 'Add to order' : 'View style'}</button>
       <div class="lbl" style="margin-top:2px">Not this one?</div>
       <div class="alts">${alts.map((a, i) => html`<button class="row" onClick=${() => pick(a.id, a.colours.includes(s.colour) ? s.colour : a.colours[0])}>
         <${Thumb} cls="sm" pid=${a.id} colour=${a.colours.includes(s.colour) ? s.colour : a.colours[0]}/>
@@ -2188,8 +2195,8 @@ function App({onReset}) {
         ${ui.tab === 'today' && html`<${Today} S=${S} ui=${ui} act=${act}/>`}
         ${ui.tab === 'catalogue' && html`<${CatalogueTab} key=${so ? so.id : 'none'} S=${S} ui=${ui} act=${act}/>`}
       </div>`}
-    ${!order && html`<div class="dock">${pill && html`<${SessionBar} S=${S} ui=${ui} act=${act}/>`}<${TabBar} tab=${ui.tab} act=${act}/></div>`}
-    ${ui.capture && so && html`<${Capture} order=${so} div=${capDiv} act=${act}/>`}
+    ${!order && html`<div class="dock">${pill && html`<${SessionBar} S=${S} ui=${ui} act=${act}/>`}<div class="dock-row"><${TabBar} tab=${ui.tab} act=${act}/><button class="scan" onClick=${() => act.capture(true)}><${Icon} n="cam"/>Scan</button></div></div>`}
+    ${ui.capture && html`<${Capture} order=${so} div=${capDiv || 'W'} act=${act}/>`}
     ${ui.zoom && html`<${Zoom} z=${ui.zoom} act=${act}/>`}
     ${ui.pdf && html`<${PdfView} act=${act}/>`}
     ${sheet}${toast}
