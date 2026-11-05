@@ -1286,11 +1286,11 @@ function PdfView({act}) {
 }
 
 function Today({S, ui, act}) {
-  const so = activeOrder(S, ui), sb = so && BUYERS[so.buyerId];
+  // Women always first, then Men, whoever is checked in
   return html`
     <header class="top top-bar mid"><h1 class="h1">Looks</h1></header>
     <div class="today-grid">
-      ${(sb ? [...sb.divs, ...['W', 'M'].filter(d => !sb.divs.includes(d))] : ['W', 'M']).map(d => html`<section class="sec">
+      ${['W', 'M'].map(d => html`<section class="sec">
         <div class="sec-head"><h2>${DIV_LABEL[d]} lookbook</h2></div>
         <div class="look-list">
           ${LOOKS.filter(l => l.div === d).map(l => html`<button class="look" onClick=${() => act.sheet({type:'look', id:l.id})}>
