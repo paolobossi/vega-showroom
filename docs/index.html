@@ -353,6 +353,29 @@ input{font:inherit;color:inherit}
 .searchrow{display:flex;gap:8px}.searchrow .search{flex:1;min-width:0}
 .sq-btn{position:relative;flex:none;width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--line);background:var(--surface);border-radius:50%;color:var(--ink)}
 .sq-btn.on{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+/* Collection header: filters and search as round buttons on the right of Women / Men */
+.hd-btns{display:flex;gap:8px;flex:none}
+/* Search: a full page that slides up over the tab; the field sits at the bottom, above the keyboard */
+.srch{position:absolute;inset:0;z-index:30;background:var(--bg);display:flex;flex-direction:column;animation:srch-in .28s cubic-bezier(.2,.8,.2,1)}
+@keyframes srch-in{from{transform:translateY(32px);opacity:0}}
+.srch-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:18px 18px 16px;display:flex;flex-direction:column;gap:16px}
+.srch-body > *{flex-shrink:0}
+.srch-h{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:6px}
+.srch-h h2{font:700 var(--fs-heading)/var(--lh-tight) var(--f-display);margin:0;letter-spacing:-.01em}
+.srch-clear{font-size:var(--fs-body);font-weight:600;color:var(--accent);padding:8px 16px;border-radius:999px;background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.rec-row{display:flex;gap:10px;overflow-x:auto;margin:0 -18px;padding:2px 18px 8px;scroll-snap-type:x mandatory;scrollbar-width:none}
+.rec-row::-webkit-scrollbar{display:none}
+.rec{position:relative;flex:none;width:calc((100% - 20px) / 3);aspect-ratio:1;border-radius:var(--r-l);overflow:hidden;background:var(--surface);border:1px solid var(--line);scroll-snap-align:start;text-align:left}
+.rec img{width:100%;height:100%;object-fit:cover;display:block}
+.rec::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 45%,rgba(0,0,0,.55))}
+.rec span{position:absolute;z-index:1;left:10px;right:8px;bottom:10px;color:#fff;font-weight:600;line-height:var(--lh-tight);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sugg{display:flex;flex-direction:column;align-items:flex-start;gap:10px;margin-top:8px}
+.sugg button{padding:12px 20px;border-radius:999px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow-raised);font-weight:400;text-align:left}
+.srch-n{font-size:var(--fs-caption);color:var(--muted);margin-top:-6px}
+.srch-bar{flex:none;display:flex;align-items:center;gap:10px;padding:8px 14px max(12px,env(safe-area-inset-bottom,0px))}
+.srch-bar .search{flex:1;min-width:0;height:52px;box-shadow:var(--shadow-float)}
+.srch-bar .search input{font-size:var(--fs-heading)}
+.srch-x{flex:none;width:52px;height:52px;border-radius:999px;display:grid;place-items:center;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow-float)}
 .fchip{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-caption);font-weight:600;padding:6px 8px 6px 12px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);color:var(--ink)}
 .fchip svg{color:var(--muted)}
 .fchips{display:flex;gap:6px;flex-wrap:wrap}
@@ -1386,6 +1409,8 @@ function ProfileSheet({S, act}) {
 const matches = (p, ql) => { if (!ql) return true;
   const hay = [p.name, p.code, p.family, CAT_LABEL[p.cat], p.material, p.keywords, ...p.colours].join(' ').toLowerCase();
   return ql.split(/\s+/).every(w => hay.includes(w.length > 3 ? w.replace(/s$/, '') : w)); };
+// the colour a search names ("orange" → Sunrise Orange), so results show that colour
+const hitColour = (p, ql) => { const ws = (ql || '').split(/\s+/).filter(w => w.length > 2); return p.colours.find(c => ws.some(w => c.toLowerCase().includes(w))); };
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 const SUBTYPE = {rtw:p => p.family, acc:p => p.family === 'Puzzle' ? 'Small leather goods' : p.family};
 
@@ -1394,8 +1419,8 @@ function ProductList({div, q, b, season, onPick}) {
   const items = PRODUCTS.filter(p => (!div || p.div === div) && (!season || p.season === season) && (!b || available(b, p)) && matches(p, ql));
   if (!items.length) return html`<div class="empty">${ql ? `No styles match “${q}”. Try a style, code, material or colour.` : `No ${DIV_LABEL[div].toLowerCase()} styles in this collection.`}</div>`;
   return html`<div class="list">${items.map(p => html`<button class="row" onClick=${() => onPick(p)}>
-    <${Thumb} pid=${p.id} colour=${p.colours[0]}/>
-    <div class="row-main"><div class="row-title">${p.name}</div><div class="row-sub"><span class="code">${p.code}</span> · ${CAT_LABEL[p.cat]}</div></div>
+    <${Thumb} pid=${p.id} colour=${hitColour(p, ql) || p.colours[0]}/>
+    <div class="row-main"><div class="row-title">${p.name}</div><div class="row-sub"><span class="code">${p.code}</span> · ${div ? CAT_LABEL[p.cat] : DIV_TAB[p.div] + ' · ' + CAT_SHORT[p.cat]}</div></div>
     <div class="row-side"><span class="row-val">${fmt(p.price)}</span></div>
   </button>`)}</div>`;
 }
@@ -1424,10 +1449,9 @@ function PCard({p, o, act}) {
 function CatalogueTab({S, ui, act}) {
   // both divisions are always there; with a client checked in it opens on what they buy
   const so = activeOrder(S, ui), sb = so && BUYERS[so.buyerId], divs = ['W', 'M'];
-  const [q, setQ] = useState(''), [div, setDiv] = useState(sb ? sb.divs[0] : 'W'), [cur, setCur] = useState(null);
+  const [div, setDiv] = useState(sb ? sb.divs[0] : 'W'), [cur, setCur] = useState(null);
   const season = SEASONS.find(x => x.id === ui.catSeason);
-  const ql = q.trim().toLowerCase();
-  const items = PRODUCTS.filter(p => p.div === div && p.season === season.id && (!sb || available(sb, p)) && (!ui.catDrop || p.drop === ui.catDrop) && hasTag(p, ui.catTag) && hasMat(p, ui.catMat) && matches(p, ql));
+  const items = PRODUCTS.filter(p => p.div === div && p.season === season.id && (!sb || available(sb, p)) && (!ui.catDrop || p.drop === ui.catDrop) && hasTag(p, ui.catTag) && hasMat(p, ui.catMat));
   // category, then a sub-heading only where the family is a kind of product (Dresses, Hats); bags and shoes families are lines (Puzzle, Pebble), so they just sit together
   const groups = CATS.map(c => { const ps = items.filter(p => p.cat === c), sub = SUBTYPE[c];
     return {cat:c, n:ps.length, fams:sub ? [...new Set(ps.map(sub))].map(f => ({f, id:c + '-' + slug(f), ps:ps.filter(p => sub(p) === f)}))
@@ -1438,7 +1462,7 @@ function CatalogueTab({S, ui, act}) {
   useEffect(() => { const sc = ref.current && ref.current.closest('.screen'); if (!sc) return;
     const spy = () => { if (Date.now() < hold.current) return; const top = navBottom() + 12; let id = null;
       ref.current.querySelectorAll('[data-spy]').forEach(el => { if (el.getBoundingClientRect().top <= top) id = el.dataset.spy; }); setCur(id); };
-    spy(); sc.addEventListener('scroll', spy, {passive:true}); return () => sc.removeEventListener('scroll', spy); }, [div, ql, season.id, ui.catDrop, ui.catTag, ui.catMat, groups.length]);
+    spy(); sc.addEventListener('scroll', spy, {passive:true}); return () => sc.removeEventListener('scroll', spy); }, [div, season.id, ui.catDrop, ui.catTag, ui.catMat, groups.length]);
   // tap: glide to the target just below the tabs; the spy waits so the tabs don't flicker on the way
   const go = id => { const el = document.getElementById('c-' + id), sc = ref.current && ref.current.closest('.screen'); if (!el || !sc) return;
     hold.current = Date.now() + 700; setCur(id);
@@ -1451,18 +1475,18 @@ function CatalogueTab({S, ui, act}) {
     row.scrollLeft = el.offsetLeft - row.clientWidth / 2 + el.offsetWidth / 2; }); }, [curCat]); // instant: a second smooth scroll would cancel the vertical glide in Chrome
   const pickDiv = d => { setDiv(d); setCur(null); const sc = ref.current && ref.current.closest('.screen'); if (sc) sc.scrollTop = 0; };
   return html`
-    <header class="top top-bar mid"><h1 class="h1 div-title" role="tablist" aria-label="Collection">${divs.map(d => html`<button role="tab" aria-selected=${d === div} class=${d === div ? 'on' : ''} onClick=${() => pickDiv(d)}>${DIV_TAB[d]}</button>`)}</h1></header>
-    <section class="sec">
-      <div class="searchrow">
-        <label class="search"><${Icon} n="search" s=${18}/><input id="cat-q" placeholder="Search" aria-label="Search by style, code, material, colour or keyword" value=${q} onInput=${e => setQ(e.target.value)}/></label>
+    <header class="top top-bar mid"><h1 class="h1 div-title" role="tablist" aria-label="Collection">${divs.map(d => html`<button role="tab" aria-selected=${d === div} class=${d === div ? 'on' : ''} onClick=${() => pickDiv(d)}>${DIV_TAB[d]}</button>`)}</h1>
+      <div class="hd-btns">
         <button class=${'sq-btn' + (ui.catDrop || ui.catTag || ui.catMat || season.id !== SEASONS[0].id ? ' on' : '')} onClick=${() => act.sheet({type:'filter'})} aria-label=${`Filters: ${season.name}` + (ui.catDrop ? `, ${DROPS[ui.catDrop].split(' · ')[0]}` : '') + (ui.catTag ? `, ${TAG_OPTS.find(x => x[0] === ui.catTag)[1]}` : '') + (ui.catMat ? `, ${MATS.find(x => x[0] === ui.catMat)[1]}` : '')}><${Icon} n="filter" s=${20} w=${2}/></button>
-      </div>
+        <button class="sq-btn" onClick=${() => { primeKeyboard(); act.set({search:true}); }} aria-label="Search the collection"><${Icon} n="search" s=${20} w=${2}/></button>
+      </div></header>
+    <section class="sec">
       ${(ui.catDrop || ui.catTag || ui.catMat) && html`<div class="fchips">
         ${ui.catDrop && html`<button class="fchip" onClick=${() => act.set({catDrop:null})} aria-label="Clear drop filter">${DROPS[ui.catDrop].split(' · ')[0]} · ${dropWhen(ui.catDrop).replace('Delivers ', '')}<${Icon} n="x" s=${14} w=${2.2}/></button>`}
         ${ui.catTag && html`<button class="fchip" onClick=${() => act.set({catTag:null})} aria-label="Clear priority filter">${TAG_OPTS.find(x => x[0] === ui.catTag)[1]}<${Icon} n="x" s=${14} w=${2.2}/></button>`}
         ${ui.catMat && html`<button class="fchip" onClick=${() => act.set({catMat:null})} aria-label="Clear material filter">${MATS.find(x => x[0] === ui.catMat)[1]}<${Icon} n="x" s=${14} w=${2.2}/></button>`}
       </div>`}
-      ${!items.length ? html`<div class="empty">${ql ? `No styles match “${q}”. Try a style, code, material or colour.` : `No ${DIV_LABEL[div].toLowerCase()} styles in this collection.`}</div>`
+      ${!items.length ? html`<div class="empty">No ${DIV_LABEL[div].toLowerCase()} styles in this collection.</div>`
       : html`<div ref=${ref}>
         <nav class="cat-nav" ref=${nav} aria-label="Categories">
           <div class="cn-row" role="tablist">${groups.map(g => html`<button role="tab" aria-selected=${curCat === g.cat} class=${'cn-cat' + (curCat === g.cat ? ' on' : '')} onClick=${() => go(g.cat)}>${CAT_LABEL[g.cat]}</button>`)}</div>
@@ -1473,6 +1497,49 @@ function CatalogueTab({S, ui, act}) {
         </div>`)}</div>
       </div>`}
     </section>`;
+}
+
+// iOS raises the keyboard only for a focus inside the tap itself: focus a stand-in field now, the search field takes over once it renders
+function primeKeyboard() {
+  const t = document.createElement('input');
+  t.setAttribute('aria-hidden', 'true'); t.style.cssText = 'position:fixed;left:0;top:50%;width:1px;height:1px;opacity:0;font-size:17px;border:0;padding:0';
+  document.body.appendChild(t); t.focus(); setTimeout(() => t.remove(), 1000);
+}
+const SEARCH_SUGG = ['Sunrise Orange', 'Leather bags', 'Sneakers', 'Cashmere'];
+// Search: recents (a photo of the first match), suggestions, and results as you type; the field sits above the keyboard
+function SearchPage({S, ui, act}) {
+  const so = activeOrder(S, ui), sb = so && BUYERS[so.buyerId], season = ui.catSeason;
+  const [q, setQ] = useState(''), [kb, setKb] = useState(0), inp = useRef(null), page = useRef(null);
+  const recents = ui.recents || [], ql = q.trim().toLowerCase();
+  const pool = PRODUCTS.filter(p => p.season === season && (!sb || available(sb, p)));
+  const n = ql ? pool.filter(p => matches(p, ql)).length : 0;
+  const remember = t => { t = t.trim(); if (t) act.set({recents:[t, ...recents.filter(r => r.toLowerCase() !== t.toLowerCase())].slice(0, 6)}); };
+  const use = t => { setQ(t); inp.current && inp.current.focus(); };
+  useEffect(() => { inp.current && inp.current.focus(); }, []);
+  // keep the field just above the keyboard: lift the page by however much of it the keyboard covers
+  useEffect(() => { const vv = window.visualViewport; if (!vv) return;
+    const fit = () => { const el = page.current && page.current.parentElement; if (!el) return;
+      const r = el.getBoundingClientRect(); setKb(Math.max(0, Math.round(r.bottom - vv.offsetTop - vv.height))); };
+    fit(); vv.addEventListener('resize', fit); vv.addEventListener('scroll', fit);
+    return () => { vv.removeEventListener('resize', fit); vv.removeEventListener('scroll', fit); }; }, []);
+  const shot = t => { const tl = t.toLowerCase(), p = pool.find(x => matches(x, tl)) || PRODUCTS.find(x => matches(x, tl));
+    return p ? imgSrc(p, hitColour(p, tl) || p.colours[0]) : null; };
+  return html`<div class="srch" ref=${page} style=${kb ? `bottom:${kb}px` : ''} role="dialog" aria-label="Search">
+    <div class="srch-body">
+      <h1 class="h1">Search</h1>
+      ${!ql ? html`
+        ${recents.length > 0 && html`<div class="srch-h"><h2>Recents</h2><button class="srch-clear" onClick=${() => act.set({recents:[]})}>Clear</button></div>
+          <div class="rec-row">${recents.map(t => { const src = shot(t); return html`<button class="rec" onClick=${() => use(t)}>${src && html`<img src=${src} alt="" draggable="false"/>`}<span>“${t}”</span></button>`; })}</div>`}
+        <div class="sugg">${SEARCH_SUGG.map(t => html`<button onClick=${() => use(t)}>${t}</button>`)}</div>`
+      : html`<div class="srch-n">${n} ${n === 1 ? 'style' : 'styles'}${sb ? ` ${sb.shop} can buy` : ''}</div>
+        <${ProductList} q=${q} b=${sb} season=${season} onPick=${p => { remember(q); act.sheet({type:'product', pid:p.id, colour:hitColour(p, ql)}); }}/>`}
+    </div>
+    <div class="srch-bar">
+      <label class="search"><${Icon} n="search" s=${20}/><input ref=${inp} type="search" enterkeyhint="search" placeholder="Search the collection" aria-label="Search by style, code, material, colour or keyword"
+        value=${q} onInput=${e => setQ(e.target.value)} onKeyDown=${e => { if (e.key === 'Enter') { remember(q); e.target.blur(); } }}/></label>
+      <button class="srch-x" onClick=${() => act.set({search:false})} aria-label="Close search"><${Icon} n="x"/></button>
+    </div>
+  </div>`;
 }
 
 // Signing in asks for the seller's 4-digit code: the passcode set in Profile (the avatar on Home), or any 4 digits until one is set.
@@ -2074,7 +2141,7 @@ function makeActs(setS, setUi, onReset) {
       setS(s => s.orders[id] ? s : {...s, orders:{...s.orders, [id]:newOrder(bid)}, savedAt:Date.now()});
       setUi(u => ({...u, view:id, div: u.view === id ? u.div : BUYERS[bid].divs[0], sheet:null, capture:false})); },
     back: () => setUi(u => ({...u, view:null, capture:false, sheet:null})),
-    tab: t => setUi(u => ({...u, tab:t, view:null, sub:null})),
+    tab: t => setUi(u => ({...u, tab:t, view:null, sub:null, search:false})),
     sheet: sh => setUi(u => ({...u, sheet:sh, capture: sh && sh.type === 'picker' ? false : sh && sh.type === 'size' ? false : u.capture})),
     close: () => setUi(u => ({...u, sheet:null})),
     capture: on => setUi(u => ({...u, capture:on, sheet:null})),
@@ -2156,7 +2223,7 @@ function makeActs(setS, setUi, onReset) {
 
 function App({onReset}) {
   const [S, setS] = useState(loadState);
-  const [ui, setUi] = useState({tab:'calendar', view:null, sheet:null, capture:false, div:'W', role:'sales', toast:null, session:null, catSeason:'SS27', catDrop:null, catTag:null, catMat:null});
+  const [ui, setUi] = useState({tab:'calendar', view:null, sheet:null, capture:false, div:'W', role:'sales', toast:null, session:null, catSeason:'SS27', catDrop:null, catTag:null, catMat:null, search:false, recents:['Amazona', 'Puzzle', 'Puffer jacket']});
   useEffect(() => { saveState(S); }, [S]);
   useEffect(() => { saveSession(ui.session); }, [ui.session]);
   const act = useMemo(() => makeActs(setS, setUi, onReset), []);
@@ -2196,6 +2263,7 @@ function App({onReset}) {
         ${ui.tab === 'catalogue' && html`<${CatalogueTab} key=${so ? so.id : 'none'} S=${S} ui=${ui} act=${act}/>`}
       </div>`}
     ${!order && html`<div class="dock">${pill && html`<${SessionBar} S=${S} ui=${ui} act=${act}/>`}<div class="dock-row"><${TabBar} tab=${ui.tab} act=${act}/><button class="scan" onClick=${() => act.capture(true)}><${Icon} n="cam"/>Scan</button></div></div>`}
+    ${ui.search && !order && html`<${SearchPage} S=${S} ui=${ui} act=${act}/>`}
     ${ui.capture && html`<${Capture} order=${so} div=${capDiv || 'W'} act=${act}/>`}
     ${ui.zoom && html`<${Zoom} z=${ui.zoom} act=${act}/>`}
     ${ui.pdf && html`<${PdfView} act=${act}/>`}
