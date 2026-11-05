@@ -21,7 +21,7 @@ Four sizes, each with one job. Hierarchy beyond these comes from weight, colour,
 - **Primary action:** black (`--ink` with `--bg` text). One per screen: Add to order, Finish order, Send to commercial team, Continue, Check in.
 - **Interactive (`--accent`, blue):** links, the active tab, the selected day, active filters, focus rings and selection checks. Never a filled primary button.
 - **Status:** green `--good`, amber `--warn`, red `--bad`, each with its `-bg` tint. Always with a word or icon too (Within, Over, ⚠), never colour alone. Budget spend is red while below the budget and green once it is reached or passed. "In the order" is always a green round ✓: on the Collection card (as tall as the priority tag) and on each colour chip.
-- **Client band:** `--band`, black in light and dark mode (pill, Must have tag, status bar strip).
+- **Client band:** `--band`, black in light and dark mode (client band at the top, Must have tag, status bar strip).
 
 ## Shape and depth
 - Radius: `--r-xs` 4 (chips, bars), `--r-s` 8 (photos), `--r-m` 12 (controls, inputs, size cells), `--r-l` 16 (cards, list groups, panels), `--r-xl` 22 (sheet tops). Anything as tall as it is round (pills, round buttons) uses 999px.

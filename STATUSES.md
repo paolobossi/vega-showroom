@@ -22,7 +22,7 @@ Every client gets one tier. It is back-office logic only: the seller never sees 
 | Status | Meaning |
 |---|---|
 | Scheduled (no tag) | The appointment is on the calendar and the client hasn't arrived yet. Only Check in is offered. |
-| Ongoing (`Ongoing`) | The seller checked the client in. That client is in session: the black pill (first two pieces added, client name, View order) sits above the nav, the Collection shows what they can buy and tapping the pill opens their order full screen, without the tab bar. Only one client per seller can be ongoing. |
+| Ongoing (`Ongoing`) | The seller checked the client in. That client is in session: the black client band (client name, View order ›) sits at the top of every tab, the Collection shows what they can buy and tapping the band opens their order full screen, without the tab bar. Only one client per seller can be ongoing. |
 | Checked out (order status, e.g. `Sent`) | The visit ended: Finish order in the order (sent to the commercial team or to the client to finish), or Check out on the client's row on Home. The row on Home shows where that client's order stands; the seller can view it or check the client in again. |
 | Checked in again (`Ongoing`) | Same as Ongoing, but the visit keeps its first start time. |
 
@@ -96,7 +96,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 1.4 Set passcode with a different second entry → "The codes don't match. Try again."; nothing is saved until both match.
 - [ ] 1.5 Sign out, pick Roberto D., enter a wrong code → "Wrong code. Try again." and the dots clear; the right code signs in.
 - [ ] 1.6 Cancel on the PIN pad → back to the list of sellers.
-- [ ] 1.7 Open the app (or reload it) → nobody is checked in: no client pill, nothing under Now, even if a client was checked in when the app was closed. That visit shows as checked out; its order is kept.
+- [ ] 1.7 Open the app (or reload it) → nobody is checked in: no client band, nothing under Now, even if a client was checked in when the app was closed. That visit shows as checked out; its order is kept.
 - [ ] 1.8 Sign in as Sofia L. → Home shows only Sofia's clients (Atelier Nove, Casa Prisma…) and her initials in the avatar.
 
 ### 2. Home and appointments
@@ -111,13 +111,11 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 2.6c Tap an appointment with an order → **Order**: styles · units, the status and the value; tap it → the order opens full screen. There is no order history in the sheet. The status is not repeated at the top of the sheet.
 - [ ] 2.7 Tap the Home title → the app reloads; data and the visit are kept.
 
-### 3. Check in, client pill, check out
-- [ ] 3.1 Check in Maison Dubois, then Linea Concept → no toast; the Collection opens with the Linea Concept pill; Maison Dubois is checked out automatically (only one client ongoing at a time).
-- [ ] 3.2 The black pill sits above the tab bar on every tab: client name in bold, "View order" underneath.
-- [ ] 3.3 With no products yet the pill shows the orders icon; after the first and second pieces it shows their photos; adding more pieces does not change the two photos.
-- [ ] 3.4 The right photo is on top, with a black ring cutting into the left one.
-- [ ] 3.5 Tap the pill → the order opens full screen; the tab bar is hidden; only the floating buttons show at the bottom.
-- [ ] 3.6 On Home, tap the ongoing client → Check out → toast "Checked out · …"; the pill disappears; the row shows the order status (e.g. Draft).
+### 3. Check in, client band, check out
+- [ ] 3.1 Check in Maison Dubois, then Linea Concept → no toast; the Collection opens with the Linea Concept band at the top; Maison Dubois is checked out automatically (only one client ongoing at a time).
+- [ ] 3.2 A black band runs edge to edge at the top of every tab, under the (black) status bar: client name in bold, then "View order ›" in grey, centred; the page below rounds its top corners into it. There is no pill above the tab bar.
+- [ ] 3.5 Tap the band → the order opens full screen; the band and the tab bar are hidden; only the floating buttons show at the bottom.
+- [ ] 3.6 On Home, tap the ongoing client → Check out → toast "Checked out · …"; the band disappears; the row shows the order status (e.g. Draft).
 - [ ] 3.7 Check the same client in again → Ongoing again; the sheet said "Checking in again keeps this start time".
 - [ ] 3.8 Check in from a sent order (Check in to add products) → the button is disabled when every part is sent.
 
@@ -167,7 +165,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 ### 8. Scan (photo match)
 - [ ] 8.1 A round **Scan** button (camera icon, "Scan" under it) sits right of the tab bar on every tab, as tall as it and in the same glass; in landscape it is a pill with the icon and "Scan" side by side. The Collection has no camera button.
 - [ ] 8.2 Scan → viewfinder with "Frame the sample"; the title is the client and division when one is checked in, "Scan a sample" when nobody is. Shutter → "Finding the style…" → the match (Mini Amazona 180, Sunrise Orange) and alternatives.
-- [ ] 8.3 With a client checked in: Add to order, or pick an alternative → the camera closes and the style is in the order (its photo shows in the client pill).
+- [ ] 8.3 With a client checked in: Add to order, or pick an alternative → the camera closes and the style is in the order.
 - [ ] 8.3b With nobody checked in: the button reads **View style**; it, or an alternative, closes the camera and opens that style's product page on the matched colour.
 - [ ] 8.4 Retake photo → back to the viewfinder; × closes the camera.
 
@@ -200,8 +198,8 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 11.5 As the client, Review and sign → the order is sent; the client sees the thank-you note; Back to salesperson returns to the seller app.
 
 ### 12. Profile and feedback
-- [ ] 12.1 The tab bar has three tabs: Home, Looks, Collection, with the round Scan button beside it (8.1). Profile is the round black avatar with the seller's initials at the top right of Home; tapping it opens a sheet with the seller's name, Set passcode (Change passcode once set), App feedback with one line "Tell us what works and what doesn't", and Sign out in red. There is no Orders list: orders are reached from their appointments on Home (2.6c) or the client pill.
-- [ ] 12.2 The client pill (above the tab bar while a client is checked in) opens that client's current order.
+- [ ] 12.1 The tab bar has three tabs: Home, Looks, Collection, with the round Scan button beside it (8.1). Profile is the round black avatar with the seller's initials at the top right of Home; tapping it opens a sheet with the seller's name, Set passcode (Change passcode once set), App feedback with one line "Tell us what works and what doesn't", and Sign out in red. There is no Orders list: orders are reached from their appointments on Home (2.6c) or the client band.
+- [ ] 12.2 The client band (at the top while a client is checked in) opens that client's current order.
 - [ ] 12.3 Open an order from its appointment → back returns to Home.
 - [ ] 12.4 Orders start when a client is checked in. With nobody checked in, Collection → tap a card → Add to order → Add to an order → New session: Shop, City, Buying for, budgets; Start session is disabled until a shop name is typed; starting checks the new client in.
 - [ ] 12.5 App feedback → type a note, attach a screenshot (thumbnail with ×), remove it, send → toast "Thanks · feedback sent".
@@ -209,10 +207,10 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 ### 13. General
 - [ ] 13.1 Close and reopen the app (home-screen icon): orders, notes, the client in session and the passcode are kept.
 - [ ] 13.2 Every bottom sheet closes with × and by tapping the dimmed page behind it.
-- [ ] 13.3 Landscape (iPad or the side panel's Landscape switch): layouts hold, nothing overlaps the pill or the floating buttons.
-- [ ] 13.4 Dark mode on the phone: text stays readable; the pill and the Must have tag stay black.
-- [ ] 13.5 Nothing sits under the notch or the home indicator; the last card in the Collection scrolls clear of the pill and tab bar.
-- [ ] 13.6 Messages (toasts) slide up from the bottom edge and sit just above it, the same on every screen: over the tab bar and the client pill, over a product page and over the order buttons. The one exception is a quantity change ("Saved · N units", "Added to order · N units"), which drops in at the top so it is seen while the thumb is on the sizes.
+- [ ] 13.3 Landscape (iPad or the side panel's Landscape switch): layouts hold, nothing overlaps the client band or the floating buttons.
+- [ ] 13.4 Dark mode on the phone: text stays readable; the client band and the Must have tag stay black.
+- [ ] 13.5 Nothing sits under the notch or the home indicator; the last card in the Collection scrolls clear of the tab bar.
+- [ ] 13.6 Messages (toasts) slide up from the bottom edge and sit just above it, the same on every screen: over the tab bar, over a product page and over the order buttons. The one exception is a quantity change ("Saved · N units", "Added to order · N units"), which drops in at the top so it is seen while the thumb is on the sizes.
 - [ ] 13.7 Close buttons are easy to hit: the × on the product page (a 44px circle, and a near miss just outside it still closes), on the full-screen photos and on the full-screen pages (Set passcode, Sign the order, sign-in).
 - [ ] 13.8 UI system (see DESIGN.md): text comes in four sizes only (12 labels and meta, 15 body, 17 headings, 28 titles); every filled primary button is black (Add to order, Finish order, Send to commercial team, Continue, Check in to add products); blue only marks links, the active tab, the selected day and active filters; + and − are the same icons in every stepper; no text is cut off on a 375px-wide screen (e.g. "2 outside the guidelines" on the order page).
 

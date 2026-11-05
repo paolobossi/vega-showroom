@@ -103,8 +103,7 @@ input{font:inherit;color:inherit}
 .screen{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
 /* floating pill tab bar; content scrolls underneath */
 .screen.tabbed{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
-.screen.tabbed.with-pill{padding-bottom:calc(154px + env(safe-area-inset-bottom,0px))}
-/* the client pill and the tab bar float together at the bottom; the pill takes the tab bar's width */
+/* the tab bar and Scan float together at the bottom */
 .dock{position:absolute;z-index:20;left:50%;transform:translateX(-50%);bottom:max(14px,calc(env(safe-area-inset-bottom,0px) - 6px));display:flex;flex-direction:column;gap:8px}
 .tabbar{display:flex;gap:2px;padding:6px;border-radius:999px;
   background:color-mix(in srgb,var(--surface) 78%,transparent);-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);
@@ -117,21 +116,13 @@ input{font:inherit;color:inherit}
   background:color-mix(in srgb,var(--surface) 78%,transparent);-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);
   border:1px solid color-mix(in srgb,var(--line) 70%,transparent);box-shadow:var(--shadow-float)}
 .scan:active{background:var(--surface-2)}
-/* client in session: a black pill above the tab bar, on every tab, with the first two pieces added as photos (they stay put as more are added); tapping it opens the order */
-.sbar{align-self:center;display:flex;align-items:center;gap:12px;max-width:100%;min-width:0;padding:4px 22px 4px 4px;border-radius:999px;background:var(--band);color:var(--band-ink);text-align:left;border:1px solid rgba(255,255,255,.1);box-shadow:var(--shadow-float);animation:rise .3s cubic-bezier(.2,.8,.2,1)}
-@keyframes rise{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
-.sbar-ph{position:relative;flex:none;display:flex}
-.sbar-c{width:42px;height:42px;border-radius:50%;border:2px solid var(--band);background:#fff;overflow:hidden}
-/* the right photo always sits on top, cut out from the left one by a thick black ring */
-.sbar-c + .sbar-c{position:relative;z-index:1;margin-left:-18px;border:4px solid var(--band)}
-/* the photos are full-length shots: zoom in so the piece fills the circle */
-.sbar-c img{width:100%;height:100%;object-fit:cover;object-position:50% 62%;transform:scale(1.5)}
-.sbar-none{display:grid;width:42px;height:42px;border-radius:50%;border:2px solid var(--band);place-items:center;background:#2A2C30 !important;color:rgba(255,255,255,.7)}
-@keyframes beat{from{transform:scale(1);opacity:.7}to{transform:scale(2.6);opacity:0}}
-.sbar-t{min-width:0;display:flex;flex-direction:column;gap:2px;line-height:var(--lh-tight)}
-.sbar-t b,.sbar-t span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sbar-t b{font-size:var(--fs-body);font-weight:700;letter-spacing:-.01em}
-.sbar-t span{font-size:var(--fs-caption);font-weight:400;opacity:.7}
+/* client in session: an edge-to-edge black band under the status bar, on every tab; the page below rounds its top corners into it. Tapping it opens the order */
+.app.banded{background:var(--band)}
+.app.banded > .screen{border-radius:20px 20px 0 0;background:var(--bg)}
+.sbar{flex:none;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:40px;padding:4px 18px 6px;background:var(--band);color:var(--band-ink);animation:drop .3s cubic-bezier(.2,.8,.2,1)}
+@keyframes drop{from{transform:translateY(-100%)}}
+.sbar b{min-width:0;font-size:var(--fs-body);font-weight:700;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sbar span{flex:none;display:inline-flex;align-items:center;gap:2px;font-size:var(--fs-caption);opacity:.7}
 .top{padding:14px 18px 6px}
 /* Profile: the seller, their orders, passcode and sign out */
 .prof{display:flex;align-items:center;gap:14px;padding:4px 2px 6px}
@@ -716,7 +707,6 @@ input.qty.xl{width:120px}
   .tab{flex-direction:row;gap:6px;font-size:var(--fs-caption);padding:6px 16px}
   .scan{width:auto;height:auto;align-self:stretch;flex-direction:row;gap:6px;padding:0 18px}
   .screen.tabbed{padding-bottom:64px}
-  .screen.tabbed.with-pill{padding-bottom:114px}
   .ov-body{padding-bottom:72px}
   .ov-actions{bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 8px))}
 }
@@ -2124,9 +2114,7 @@ function SessionBar({S, ui, act}) {
   const o = activeOrder(S, ui); if (!o) return null;
   const b = BUYERS[o.buyerId], n = o.lines.length, u = b.divs.reduce((a, d) => a + kpi(o, d).units, 0);
   return html`<button class="sbar" onClick=${() => act.openOrder(b.id)} aria-label=${`Ordering for ${b.shop}: ${n} ${n === 1 ? 'item' : 'items'}, ${u} units. Open the order`}>
-    <span class="sbar-ph" aria-hidden="true">${n ? o.lines.slice(0, 2).map(l => html`<span class="sbar-c"><img src=${imgSrc(P[l.pid], l.colour)} alt="" draggable="false"/></span>`)
-      : html`<span class="sbar-none"><${Icon} n="orders" s=${20}/></span>`}</span>
-    <span class="sbar-t"><b>${b.shop}</b><span>View order</span></span>
+    <b>${b.shop}</b><span>View order<${Icon} n="next" s=${14} w=${2.2}/></span>
   </button>`;
 }
 
@@ -2166,7 +2154,7 @@ function makeActs(setS, setUi, onReset) {
       setS(s => { const appts = oneOngoing({...s.appts}, bid);
         const x = appts[bid] || {}; appts[bid] = x.in ? {...x, out:null, back:now} : {...x, in:now, out:null};
         return {...s, appts, orders: s.orders[id] ? s.orders : {...s.orders, [id]:newOrder(bid)}, savedAt:now}; });
-      // no toast: the client pill appearing is the confirmation
+      // no toast: the client band appearing is the confirmation
       setUi(u => ({...u, session:id, div:BUYERS[bid].divs[0], sheet:null, capture:false, ...(stay ? {} : {tab:'catalogue', view:null})})); },
     // a visit ends from the order (Finish order: sent to the commercial team or to the client) and goes back to Home
     endVisit: (bid, msg) => { a.appt(bid, {out:Date.now()}); setUi(u => ({...u, session: u.session === 'o-' + bid ? null : u.session, view:null, sheet:null, sub:null, tab:'calendar'})); a.toast(msg); },
@@ -2254,18 +2242,19 @@ function App({onReset}) {
   // a checked-in client is always the client in session (after a reload or an account switch too)
   const ongoing = ongoingBuyer(S), sessionOk = !!activeOrder(S, ui);
   useEffect(() => { if (ongoing && !sessionOk && !buyerView) act.startSession(ongoing.id); }, [ongoing && ongoing.id, sessionOk, !!buyerView]);
-  // the client in session rides as a pill above the tab bar on every tab; an open order is full screen, without either
-  const so = activeOrder(S, ui), pill = !!(so && !order), capDiv = so && (BUYERS[so.buyerId].divs.includes(ui.capDiv) ? ui.capDiv : BUYERS[so.buyerId].divs[0]);
+  // the client in session sits in a black band at the top of every tab; an open order is full screen, without it or the tab bar
+  const so = activeOrder(S, ui), band = !!(so && !order), capDiv = so && (BUYERS[so.buyerId].divs.includes(ui.capDiv) ? ui.capDiv : BUYERS[so.buyerId].divs[0]);
   if (buyerView) return html`<div class="app"><${BuyerView} S=${S} ui=${ui} act=${act}/>${sheet}${toast}</div>`;
   if (S.signedOut) return html`<div class="app"><${SignIn} S=${S} act=${act}/>${toast}</div>`;
-  return html`<div class=${'app' + (pill ? ' with-pill' : '')}>
+  return html`<div class=${'app' + (band ? ' banded' : '')}>
     ${order ? html`<${OrderView} S=${S} ui=${ui} act=${act} order=${order}/>` : html`
-      <div class=${'screen tabbed' + (pill ? ' with-pill' : '')}>
+      ${band && html`<${SessionBar} S=${S} ui=${ui} act=${act}/>`}
+      <div class="screen tabbed">
         ${ui.tab === 'calendar' && html`<${CalendarTab} S=${S} act=${act}/>`}
         ${ui.tab === 'today' && html`<${Today} S=${S} ui=${ui} act=${act}/>`}
         ${ui.tab === 'catalogue' && html`<${CatalogueTab} key=${so ? so.id : 'none'} S=${S} ui=${ui} act=${act}/>`}
       </div>`}
-    ${!order && html`<div class="dock">${pill && html`<${SessionBar} S=${S} ui=${ui} act=${act}/>`}<div class="dock-row"><${TabBar} tab=${ui.tab} act=${act}/><button class="scan" onClick=${() => act.capture(true)}><${Icon} n="cam"/>Scan</button></div></div>`}
+    ${!order && html`<div class="dock"><div class="dock-row"><${TabBar} tab=${ui.tab} act=${act}/><button class="scan" onClick=${() => act.capture(true)}><${Icon} n="cam"/>Scan</button></div></div>`}
     ${ui.search && !order && html`<${SearchPage} S=${S} ui=${ui} act=${act}/>`}
     ${ui.capture && html`<${Capture} order=${so} div=${capDiv || 'W'} act=${act}/>`}
     ${ui.zoom && html`<${Zoom} z=${ui.zoom} act=${act}/>`}
