@@ -167,8 +167,8 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 ### 8. Scan (photo match)
 - [ ] 8.1 A round **Scan** button (camera icon, "Scan" under it) sits right of the tab bar on every tab, as tall as it and in the same glass; in landscape it is a pill with the icon and "Scan" side by side. The Collection has no camera button.
 - [ ] 8.2 Scan → viewfinder with "Frame the sample"; the title is the client and division when one is checked in, "Scan a sample" when nobody is. Shutter → "Finding the style…" → the match (Mini Amazona 180, Sunrise Orange) and alternatives.
-- [ ] 8.3 With a client checked in: Add to order, or pick an alternative → the camera closes and the style is in the order.
-- [ ] 8.3b With nobody checked in: the button reads **View style**; it, or an alternative, closes the camera and opens that style's product page on the matched colour.
+- [ ] 8.3 Under the match, two buttons side by side: **View item** on the left (white) and **Add to order** on the right (black). View item closes the camera and opens the style's product page on the matched colour. With a client checked in, Add to order, or an alternative, closes the camera and the style is in the order.
+- [ ] 8.3b With nobody checked in: Add to order, or an alternative, closes the camera and opens "Add to an order" to pick the client; picking one checks them in and adds the style.
 - [ ] 8.4 Retake photo → back to the viewfinder; × closes the camera.
 
 ### 9. Order page

@@ -725,6 +725,7 @@ input.qty.xl{width:120px}
 .shutter:active span{transform:scale(.9)}
 .match{position:absolute;left:0;right:0;bottom:0;margin:0 auto;max-width:640px;max-height:86%;overflow-y:auto;z-index:5;background:var(--bg);color:var(--ink);border-radius:var(--r-xl) var(--r-xl) 0 0;padding:16px 18px max(16px,env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px;animation:up .26s cubic-bezier(.2,.8,.2,1)}
 .match-main{display:flex;gap:14px;align-items:center}
+.match-acts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .m-name{font:700 var(--fs-heading)/var(--lh-tight) var(--f-display);letter-spacing:-.02em}
 .alts{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);overflow:hidden}
 
@@ -1867,7 +1868,7 @@ function SizeSheet({sh, S, act}) {
 /* =====================================================================
    Capture — photograph a sample, AI matches it to the catalogue
    ===================================================================== */
-// with a client checked in a match goes on their order; without one it opens the style's page
+// a match offers View item (its page) and Add to order: with a client checked in it goes on their order, without one you pick the client
 function Capture({order, div, act}) {
   const b = order && BUYERS[order.buyerId];
   const [stage, setStage] = useState('aim');
@@ -1877,7 +1878,8 @@ function Capture({order, div, act}) {
   const shoot = () => { setStage('scan'); t.current = setTimeout(() => setStage('match'), 1250); };
   const alts = alternatives(p);
   const why = order && canTake(order, p);
-  const pick = (pid, colour) => { act.capture(false); if (order) act.select(order.id, pid, colour, 'photo'); else act.sheet({type:'product', pid, colour}); };
+  const pick = (pid, colour) => { act.capture(false); if (order) act.select(order.id, pid, colour, 'photo'); else act.sheet({type:'pick', item:{pid, colour, via:'photo'}}); };
+  const view = (pid, colour) => { act.capture(false); act.sheet({type:'product', pid, colour, orderId:order && order.id}); };
   return html`<div class="capture">
     <div class="vf-top">
       <button class="vf-btn" onClick=${() => act.capture(false)} aria-label="Close camera"><${Icon} n="x"/></button>
@@ -1897,7 +1899,8 @@ function Capture({order, div, act}) {
       <div class="match-main"><${Thumb} cls="lg" pid=${p.id} colour=${s.colour}/>
         <div style="min-width:0;display:flex;flex-direction:column;gap:4px"><div class="m-name">${p.name}</div><span class="pc-code">${p.code}</span><span class="small muted"><${Colour} c=${s.colour}/></span><${Prices} p=${p}/></div></div>
       ${why && html`<div class="callout bad"><${Icon} n="lock" s=${18}/><div>${b.shop} · ${why}, so this style can’t go on the order.</div></div>`}
-      <button class="btn primary block" disabled=${!!why} onClick=${() => pick(p.id, s.colour)}>${order ? 'Add to order' : 'View style'}</button>
+      <div class="match-acts"><button class="btn secondary" onClick=${() => view(p.id, s.colour)}>View item</button>
+        <button class="btn primary" disabled=${!!why} onClick=${() => pick(p.id, s.colour)}>Add to order</button></div>
       <div class="lbl" style="margin-top:2px">Not this one?</div>
       <div class="alts">${alts.map((a, i) => html`<button class="row" onClick=${() => pick(a.id, a.colours.includes(s.colour) ? s.colour : a.colours[0])}>
         <${Thumb} cls="sm" pid=${a.id} colour=${a.colours.includes(s.colour) ? s.colour : a.colours[0]}/>
