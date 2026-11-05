@@ -405,10 +405,12 @@ input{font:inherit;color:inherit}
 .cat-nav .cn-row{gap:6px}
 .cat-nav .cn-cat{align-items:center;height:34px;padding:0 14px;margin-right:0;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:var(--fs-body);font-weight:600;color:var(--ink);transition:background .2s,color .2s}
 .cat-nav .cn-cat::after{display:none}
-/* filters: just the icon before All; a black circle while any filter is on */
-.cn-filter{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--ink);transition:background .2s,color .2s}
-.cn-filter.on{background:var(--ink);color:var(--bg)}
-.hd-ic{width:44px;height:44px;margin-right:-8px}
+/* filter and search sit top right, beside Women / Men, nudged 2px down so the icons centre on the letters (not the line box);
+   the filter gets a black circle while any filter is on */
+.hd-acts{display:flex;align-items:center;margin:4px -8px 0 0}
+.hd-ic{width:44px;height:44px}
+.hd-dot{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;transition:background .2s,color .2s}
+.hd-filter.on .hd-dot{background:var(--ink);color:var(--bg)}
 .cat-nav .cn-cat.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
 /* Women / Men as the page title: the current one in ink, the other faded beside it */
 .div-title{display:flex;gap:16px}
@@ -1531,7 +1533,8 @@ function CatalogueTab({S, ui, act}) {
   const pickDiv = d => { if (d === div) return; setDiv(d); load(); };
   return html`
     <header class="top top-bar mid"><h1 class="h1 div-title" role="tablist" aria-label="Collection">${divs.map(d => html`<button role="tab" aria-selected=${d === div} class=${d === div ? 'on' : ''} onClick=${() => pickDiv(d)}>${DIV_TAB[d]}</button>`)}</h1>
-      <button class="icon-btn hd-ic" onClick=${() => { primeKeyboard(); act.set({search:true}); }} aria-label="Search the collection"><${Icon} n="search" s=${24} w=${2}/></button></header>
+      <div class="hd-acts"><button class=${'icon-btn hd-ic hd-filter' + (filtered ? ' on' : '')} onClick=${() => act.sheet({type:'filter'})} aria-label=${`Filters: ${season.name}` + (ui.catDrop ? `, ${DROPS[ui.catDrop].split(' · ')[0]}` : '') + (ui.catTag ? `, ${TAG_OPTS.find(x => x[0] === ui.catTag)[1]}` : '') + (ui.catMat ? `, ${MATS.find(x => x[0] === ui.catMat)[1]}` : '')}><span class="hd-dot"><${Icon} n="filter" s=${22} w=${2}/></span></button>
+        <button class="icon-btn hd-ic" onClick=${() => { primeKeyboard(); act.set({search:true}); }} aria-label="Search the collection"><${Icon} n="search" s=${24} w=${2}/></button></div></header>
     <section class="sec">
       ${(ui.catDrop || ui.catTag || ui.catMat) && html`<div class="fchips">
         ${ui.catDrop && html`<button class="fchip" onClick=${() => act.set({catDrop:null})} aria-label="Clear drop filter">${DROPS[ui.catDrop].split(' · ')[0]} · ${dropWhen(ui.catDrop).replace('Delivers ', '')}<${Icon} n="x" s=${14} w=${2.2}/></button>`}
@@ -1541,7 +1544,6 @@ function CatalogueTab({S, ui, act}) {
       <div ref=${ref}>
         <nav class="cat-nav" ref=${nav} aria-label="Categories">
           <div class="cn-row">
-            <button class=${'cn-filter' + (filtered ? ' on' : '')} onClick=${() => act.sheet({type:'filter'})} aria-label=${`Filters: ${season.name}` + (ui.catDrop ? `, ${DROPS[ui.catDrop].split(' · ')[0]}` : '') + (ui.catTag ? `, ${TAG_OPTS.find(x => x[0] === ui.catTag)[1]}` : '') + (ui.catMat ? `, ${MATS.find(x => x[0] === ui.catMat)[1]}` : '')}><${Icon} n="filter" s=${20} w=${2}/></button>
             ${[null, ...all.map(g => g.cat)].map(c => html`<button role="tab" aria-selected=${on === c} class=${'cn-cat' + (on === c ? ' on' : '')} onClick=${() => pickCat(c)}>${c ? CAT_LABEL[c] : 'All'}</button>`)}</div>
         </nav>
         ${!items.length ? html`<div class="empty">No ${DIV_LABEL[div].toLowerCase()} styles in this collection${filtered ? ' with these filters' : ''}.</div>`
