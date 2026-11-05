@@ -1969,11 +1969,11 @@ function OrderView({S, ui, act, order}) {
   const locked = partLocked(order, div), allSent = b.divs.every(d => partLocked(order, d));
   // products are added during the visit: for another client, Check in switches the visit to them
   const inVisit = ui.session === order.id;
-  // what the guidelines still ask for: must-haves the client can buy and pieces of required looks that are not in the order at all
+  // what the guidelines still ask for: pieces of required looks that are not in the order at all.
+  // Must have only marks a style as highly important; the buyer is not obliged to buy it, so it is never listed as missing.
   const has = (pid, c) => order.lines.some(x => x.pid === pid && (!c || x.colour === c)), miss = [];
   const need = (pid, colour, why) => { const m = miss.find(x => x.pid === pid); if (m) m.why.push(why); else miss.push({pid, colour, why:[why]}); };
   if (!locked) {
-    PRODUCTS.filter(p => p.div === div && p.season === 'SS27' && p.tag === 'must' && available(b, p) && catBudget(b, div, p.cat) > 0 && !has(p.id)).forEach(p => need(p.id, p.colours[0], TAGS.must));
     k.looks.filter(x => !x.done).forEach(x => x.l.items.forEach(([pid, c]) => { if (!has(pid, c)) need(pid, c, lookNo(x.l)); }));
   }
   const st = order.status, when = t => new Date(t).toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
@@ -2014,7 +2014,7 @@ function OrderView({S, ui, act, order}) {
         </div>`)}
         ${miss.length > 0 && html`<div>
           <div class="grp-head"><span>Currently missing</span></div>
-          <div class="small muted miss-note">To meet the guidelines: must-haves and required look pieces not in the order yet.</div>
+          <div class="small muted miss-note">To meet the guidelines: required look pieces not in the order yet.</div>
           <div class="list">${miss.map(m => html`<button class="row" onClick=${() => act.sheet({type:'product', orderId:order.id, pid:m.pid, colour:m.colour})}>
             <${Thumb} pid=${m.pid} colour=${m.colour}/>
             <div class="row-main"><div class="row-title">${P[m.pid].name}</div><div class="row-sub"><${Colour} c=${m.colour}/></div><div class="row-sub miss-tags">${m.why.map(w => html`<span class="gtag warn">${w}</span>`)}</div></div>
