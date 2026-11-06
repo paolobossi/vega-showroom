@@ -1,0 +1,8 @@
+{
+  "name": "vega-screens",
+  "private": true,
+  "type": "module",
+  "description": "Screenshots every Vega screen and state for the FigJam flow board",
+  "scripts": { "shoot": "node shoot.mjs" },
+  "dependencies": { "puppeteer-core": "23.11.1" }
+}

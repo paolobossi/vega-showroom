@@ -2,6 +2,8 @@
 
 The states each object can be in, as the showroom app shows them today. The label in the app is in brackets.
 
+Every screen and state as a screenshot, mapped by flow: FigJam board **Vega · Screen flows** (https://www.figma.com/board/Ov9sjnHlEyzkQ2vK8c2jk6), made with `tools/screens` (see its README to refresh it).
+
 ## Client tier (set in the back office when the client is added)
 
 Every client gets one tier. It is back-office logic only: the seller never sees it in the app, only its effects. Each tier sees everything the tiers below it see, plus its own styles.
