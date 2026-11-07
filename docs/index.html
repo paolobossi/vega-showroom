@@ -21,6 +21,7 @@
 /* Layout: one phone-first app (portrait or landscape). On desktop it sits in a device frame beside a short demo guide. */
 :root{
   /* type: four sizes (caption, body, heading, title), three weights (400, 600, 700), two line heights */
+  --squircle:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M48.00 28.00 L47.97 35.54 L47.88 37.93 L47.72 39.65 L47.51 41.02 L47.23 42.17 L46.88 43.16 L46.47 44.01 L45.98 44.76 L45.41 45.41 L44.76 45.98 L44.01 46.47 L43.16 46.88 L42.17 47.23 L41.02 47.51 L39.65 47.72 L37.93 47.88 L35.54 47.97 L28.00 48.00 L20.00 48.00 L12.46 47.97 L10.07 47.88 L8.35 47.72 L6.98 47.51 L5.83 47.23 L4.84 46.88 L3.99 46.47 L3.24 45.98 L2.59 45.41 L2.02 44.76 L1.53 44.01 L1.12 43.16 L0.77 42.17 L0.49 41.02 L0.28 39.65 L0.12 37.93 L0.03 35.54 L0.00 28.00 L0.00 20.00 L0.03 12.46 L0.12 10.07 L0.28 8.35 L0.49 6.98 L0.77 5.83 L1.12 4.84 L1.53 3.99 L2.02 3.24 L2.59 2.59 L3.24 2.02 L3.99 1.53 L4.84 1.12 L5.83 0.77 L6.98 0.49 L8.35 0.28 L10.07 0.12 L12.46 0.03 L20.00 0.00 L28.00 0.00 L35.54 0.03 L37.93 0.12 L39.65 0.28 L41.02 0.49 L42.17 0.77 L43.16 1.12 L44.01 1.53 L44.76 2.02 L45.41 2.59 L45.98 3.24 L46.47 3.99 L46.88 4.84 L47.23 5.83 L47.51 6.98 L47.72 8.35 L47.88 10.07 L47.97 12.46 L48.00 20.00Z'/%3E%3C/svg%3E"); /* a 48×48 superellipse-cornered square: 20px corners and an 8px straight middle that stretches. Width and height must be set (or the image stretches to the whole box and the corners balloon); mask-box-image slices it at 20 so any box gets squircle corners, in iOS Safari too */
   --fs-caption:12px; --fs-body:15px; --fs-heading:17px; --fs-title:28px;
   --lh-tight:1.2; --lh-body:1.4;
   /* radius: xs for chips and bars, s for photos, m for controls, l for cards and groups, xl for sheets; round is 999px */
@@ -154,6 +155,7 @@ input{font:inherit;color:inherit}
 .sec{padding:16px 18px 6px;display:flex;flex-direction:column;gap:10px;min-width:0}
 .sec-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
 .sec-head h2{margin:0;font-size:var(--fs-heading);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.sec-head .cat-h{text-transform:none;color:var(--ink);letter-spacing:-.02em}
 .icon-btn{display:grid;place-items:center;width:40px;height:40px;border-radius:999px;color:var(--ink)}
 .avatar{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--ink);color:var(--bg);font:600 var(--fs-caption) var(--f-ui);letter-spacing:.02em}
 .avatar.me{width:40px;height:40px;font-size:var(--fs-body)}
@@ -320,8 +322,9 @@ input{font:inherit;color:inherit}
 /* each lookbook is one horizontal row, edge to edge; cards show one and a half on an iPhone, so the next one is seen */
 .look-list{display:flex;gap:10px;overflow-x:auto;margin:0 -18px;padding:2px 18px 6px;scroll-snap-type:x mandatory;scroll-padding:0 18px;scrollbar-width:none;overscroll-behavior-x:contain}
 .look-list::-webkit-scrollbar{display:none}
-.look-list .look{width:clamp(200px,68%,300px);padding:6px;gap:0}
-.look-list .look > .look-h{left:6px;right:6px;bottom:6px;padding:32px 10px 10px}
+.look-list .look{width:clamp(200px,68%,300px);padding:0;gap:0;background:none;border:0;border-radius:14px;corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / 14px stretch;overflow:hidden}
+.look-list .look-tile{border-radius:0}
+.look-list .look > .look-h{left:0;right:0;bottom:0;border-radius:0;padding:40px 18px 16px}
 .appts{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);overflow:hidden}
 .appt{display:flex;gap:14px;align-items:stretch;text-align:left;width:100%;padding:14px;border-top:1px solid var(--line)}
 .appt:first-child{border-top:0}
@@ -583,7 +586,7 @@ input{font:inherit;color:inherit}
 .bud-row.rule .num small{font-size:var(--fs-caption);font-weight:600;margin-top:2px}
 .bud-row .mix-track{grid-column:1 / -1;margin-top:4px}
 /* a category's spend against its budget: a squircle (superellipse corners via the mask, so iOS Safari gets them too) whose deeper tint fills up to the share used; red under half, yellow from half, green once reached */
-.bpill{--c:var(--muted);position:relative;isolation:isolate;display:grid;grid-template-columns:auto minmax(0,1fr);align-content:center;column-gap:12px;min-height:60px;margin:4px 0;padding:7px 16px 7px 7px;border-radius:18px;corner-shape:squircle;-webkit-mask-box-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M40.00 20.00 L39.98 26.89 L39.92 29.09 L39.82 30.67 L39.69 31.94 L39.51 33.02 L39.29 33.96 L39.03 34.78 L38.72 35.51 L38.37 36.17 L37.98 36.76 L37.53 37.29 L37.03 37.76 L36.47 38.18 L35.85 38.55 L35.16 38.88 L34.38 39.16 L33.50 39.40 L32.50 39.60 L31.34 39.76 L29.93 39.88 L28.10 39.96 L25.23 40.00 L14.77 40.00 L11.90 39.96 L10.07 39.88 L8.66 39.76 L7.50 39.60 L6.50 39.40 L5.62 39.16 L4.84 38.88 L4.15 38.55 L3.53 38.18 L2.97 37.76 L2.47 37.29 L2.02 36.76 L1.63 36.17 L1.28 35.51 L0.97 34.78 L0.71 33.96 L0.49 33.02 L0.31 31.94 L0.18 30.67 L0.08 29.09 L0.02 26.89 L0.00 20.00 L0.02 13.11 L0.08 10.91 L0.18 9.33 L0.31 8.06 L0.49 6.98 L0.71 6.04 L0.97 5.22 L1.28 4.49 L1.63 3.83 L2.02 3.24 L2.47 2.71 L2.97 2.24 L3.53 1.82 L4.15 1.45 L4.84 1.12 L5.62 0.84 L6.50 0.60 L7.50 0.40 L8.66 0.24 L10.07 0.12 L11.90 0.04 L14.77 0.00 L25.23 0.00 L28.10 0.04 L29.93 0.12 L31.34 0.24 L32.50 0.40 L33.50 0.60 L34.38 0.84 L35.16 1.12 L35.85 1.45 L36.47 1.82 L37.03 2.24 L37.53 2.71 L37.98 3.24 L38.37 3.83 L38.72 4.49 L39.03 5.22 L39.29 6.04 L39.51 6.98 L39.69 8.06 L39.82 9.33 L39.92 10.91 L39.98 13.11 L40.00 20.00Z'/%3E%3C/svg%3E") 20 / 20px stretch;overflow:hidden;background:color-mix(in srgb,var(--t,var(--c)) 12%,var(--surface));color:var(--c)}
+.bpill{--c:var(--muted);position:relative;isolation:isolate;display:grid;grid-template-columns:auto minmax(0,1fr);align-content:center;column-gap:12px;min-height:60px;margin:4px 0;padding:7px 16px 7px 7px;border-radius:18px;corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / 18px stretch;overflow:hidden;background:color-mix(in srgb,var(--t,var(--c)) 12%,var(--surface));color:var(--c)}
 .bpill.ok{--c:var(--good)}.bpill.warn{--c:var(--warn);--t:#F2B705}.bpill.bad{--c:var(--bad)}
 .bpill-fill{position:absolute;inset:0 auto 0 0;z-index:-1;background:color-mix(in srgb,var(--t,var(--c)) 30%,var(--surface));transition:width .35s ease}
 /* the category icon on a lighter tile at the bar's left edge, over the fill */
@@ -1339,7 +1342,7 @@ function Today({S, ui, act}) {
     <header class="top top-bar mid"><h1 class="h1">Looks</h1></header>
     <div class="today-grid">
       ${['W', 'M'].map(d => html`<section class="sec">
-        <div class="sec-head"><h2>${DIV_LABEL[d]} lookbook</h2></div>
+        <div class="sec-head"><h2 class="cat-h">${DIV_LABEL[d]} Lookbook</h2></div>
         <div class="look-list">
           ${LOOKS.filter(l => l.div === d).map(l => html`<button class="look" onClick=${() => act.sheet({type:'look', id:l.id})}>
             <${LookTile} look=${l}/>
