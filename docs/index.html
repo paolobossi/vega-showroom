@@ -582,6 +582,14 @@ input{font:inherit;color:inherit}
 .bud-row.rule .num{display:flex;flex-direction:column;align-items:flex-end;white-space:nowrap}
 .bud-row.rule .num small{font-size:var(--fs-caption);font-weight:600;margin-top:2px}
 .bud-row .mix-track{grid-column:1 / -1;margin-top:4px}
+/* a category's spend against its budget: a pill whose deeper tint fills up to the share used; red under half, yellow from half, green once reached */
+.bpill{--c:var(--muted);position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:10px;min-height:58px;margin:4px 0;padding:9px 18px;border-radius:999px;overflow:hidden;background:color-mix(in srgb,var(--t,var(--c)) 12%,var(--surface));color:var(--c)}
+.bpill.ok{--c:var(--good)}.bpill.warn{--c:var(--warn);--t:#F2B705}.bpill.bad{--c:var(--bad)}
+.bpill-fill{position:absolute;inset:0 auto 0 0;z-index:-1;background:color-mix(in srgb,var(--t,var(--c)) 30%,var(--surface));transition:width .35s ease}
+.bpill-l{grid-column:1;font-size:var(--fs-caption);font-weight:600;color:var(--ink);opacity:.8}
+.bpill-v{grid-column:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.bpill-v b{font-size:20px;font-weight:700;letter-spacing:-.01em}.bpill-v span{font-size:var(--fs-caption);font-weight:600;opacity:.85}
+.bpill-p{grid-column:2;grid-row:1 / span 2;font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
 .kpi > .bud-div:first-child{border-top:0;padding-top:0}
 .sign{position:relative}
 .sign-pad{display:block;width:100%;height:170px;border-radius:var(--r-m);border:1.5px dashed var(--line);background:var(--surface);color:var(--ink);touch-action:none;cursor:crosshair}
@@ -1009,8 +1017,8 @@ const units = q => Object.values(q || {}).reduce((a, b) => a + b, 0);
 // A line is just selected (no quantity yet) or has a quantity per size (U for one-size styles)
 const RULE_WORD = {ok:'Within', bad:'Over', warn:'Under', none:'—'};
 const ruleLimit = r => (r.max != null ? 'max ' : 'min ') + (r.limit ? fmt(r.limit) : '—');
-// budget: red while spend is below it, green once it is reached or passed; nothing spent yet stays neutral
-const usedSt = (v, bud) => !v ? 'none' : v >= bud ? 'ok' : 'bad';
+// budget: red while spend is under half of it, yellow from half, green once it is reached or passed; nothing spent yet stays neutral
+const usedSt = (v, bud) => !v ? 'none' : v >= bud ? 'ok' : v >= bud / 2 ? 'warn' : 'bad';
 const lineValue = l => units(l.qty) * P[l.pid].price;
 const qkey = q => Object.keys(q).sort().map(k => k + ':' + q[k]).join(',');
 const uid = () => Math.random().toString(36).slice(2, 9);
@@ -1241,8 +1249,10 @@ function BudDiv({b, d, k, head=true}) {
   return html`<div class="bud-div">
     ${head && html`<div class="bud-head"><span>${DIV_LABEL[d]}</span></div>`}
     ${cats.map(c => { const cb = catBudget(b, d, c), m = k && k.mix.find(x => x.cat === c);
-      return html`<div class="bud-row cat"><span>${CAT_LABEL[c]}</span><span class="num">${m ? val(m.value, cb, m.st) : fmt(cb)}</span>
-        ${m && html`<div class="mix-track"><div class=${'mix-fill ' + m.st} style=${{width: Math.min(m.used, 100) + '%'}}></div></div>`}</div>`; })}
+      return m ? html`<div class=${'bpill ' + m.st}><span class="bpill-fill" style=${{width: Math.min(m.used, 100) + '%'}}></span>
+          <span class="bpill-l">${CAT_LABEL[c]}</span><span class="bpill-v"><b>${fmt(m.value)}</b> <span>${cb ? 'of ' + fmt(cb) : 'no budget'}</span></span>
+          ${cb > 0 && html`<span class="bpill-p">${Math.round(m.used)}%</span>`}</div>`
+        : html`<div class="bud-row cat"><span>${CAT_LABEL[c]}</span><span class="num">${fmt(cb)}</span></div>`; })}
     <div class="bud-row cat bud-tot"><span>Total</span><span class="num">${k ? val(k.total, db, k.bst) : fmt(db)}</span></div>
   </div>`;
 }
@@ -2056,7 +2066,7 @@ function KpiSheet({sh, S, act}) {
 function issuesOf(o, divs) {
   const out = [];
   divs.forEach(d => { const k = kpi(o, d); if (!k.total) return;
-    // budget is not a guideline: spend against it shows in red (not reached) or green (reached) on the budget card
+    // budget is not a guideline: spend against it shows in red (under half), yellow (from half) or green (reached) on the budget card
     k.rules.filter(r => r.st === 'bad' || r.st === 'warn').forEach(r => out.push({label:`${DIV_TAB[d]} · ${r.label}`, text:`${fmt(r.value)}, ${ruleLimit(r)}`, st:r.st}));
     k.looks.filter(x => !x.done).forEach(x => out.push({label:`${DIV_TAB[d]} · ${lookNo(x.l)}`, text:`${x.have} of ${x.n} pieces`, st:'warn'})); });
   return out;
