@@ -34,6 +34,7 @@ Four sizes, each with one job. Hierarchy beyond these comes from weight, colour,
 ## Actions
 - One primary (black, filled), secondary (white with a border), tertiary (blue text link).
 - Destructive actions are red outline or red text and ask first (native confirm).
+- Collection cards: photo full-bleed to the card's top and sides, soft drop shadow (on a wrapper, since the squircle mask clips a shadow on the card itself).
 - Squircle corners (superellipse, the `--squircle` mask): budget bars 18px, look cards 20px.
 - Priority tags (Must have, Essential) are small pills in regular weight: 11px on the Collection card (the one exception to the four text sizes), 12px on the product page.
 - Icons are Phosphor (MIT), fill weight everywhere. Pure line marks (×, ✓, +, −, chevrons, filter) stay as lines (regular, or bold for a heavier stroke), since their fill version is a filled box or triangle.

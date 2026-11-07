@@ -800,6 +800,12 @@ input.qty.xl{width:120px}
 .appts .appt{background:var(--surface);border-top:0}
 .appts.now{border:0}
 .appts.now .appt{border:1.5px solid var(--good);border-radius:var(--r-l)}
+/* Collection cards: the photo runs to the card's edges (top and sides), the text keeps its margin; a soft drop shadow lifts the card off the grey page */
+.pc-wrap{display:flex;min-width:0;filter:drop-shadow(0 1px 1px rgba(0,0,0,.05)) drop-shadow(0 4px 10px rgba(0,0,0,.07))}
+.pc-wrap > .pcard{flex:1;padding:0 0 4px;gap:10px}
+.pcard .pc-photo .thumb{border-radius:0}
+.pcard .pc-info{padding:0 10px 8px}
+.pcard .ptag{left:8px;top:8px}.pcard .pc-in{right:8px;top:8px}.pcard .pc-lock{left:8px;top:8px}
 </style>
 </head>
 <body>
@@ -1551,7 +1557,8 @@ function ProductList({div, q, b, season, onPick}) {
 // The whole card opens the product page, where colour and quantities are chosen; a check on the photo means the style is in the order
 function PCard({p, o, act}) {
   const mine = o && o.lines.find(l => l.pid === p.id), has = !!mine, c = mine ? mine.colour : p.colours[0], lock = o && canTake(o, p);
-  return html`<button class=${'pcard' + (lock && !has ? ' locked' : '')} onClick=${() => act.sheet({type:'product', pid:p.id, colour:c})} aria-label=${p.name + (has ? ', in the order' : '')}>
+  // the wrapper carries the drop shadow: the card's squircle mask would clip a shadow on the card itself
+  return html`<div class="pc-wrap"><button class=${'pcard' + (lock && !has ? ' locked' : '')} onClick=${() => act.sheet({type:'product', pid:p.id, colour:c})} aria-label=${p.name + (has ? ', in the order' : '')}>
     <div class="pc-photo">
       <span class="pc-img"><${Thumb} pid=${p.id} colour=${c}/></span>
       ${lock ? html`<span class="pc-lock"><${Icon} n="lock" s=${11} w=${2.4}/>${lock}</span>` : html`<${Tag} p=${p}/>`}
@@ -1563,7 +1570,7 @@ function PCard({p, o, act}) {
       <${Prices} p=${p}/>
       <span class="dots">${p.colours.map(x => html`<span class="sw" style=${{background:COL[x][0]}}></span>`)}</span>
     </span>
-  </button>`;
+  </button></div>`;
 }
 
 // Three levels, two controls: Women / Men is the page title, categories are one sticky row, and families are headings in the grid
