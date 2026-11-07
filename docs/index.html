@@ -449,6 +449,7 @@ input{font:inherit;color:inherit}
 .cat-h{margin:0;display:flex;align-items:baseline;gap:8px;font:700 var(--fs-heading)/var(--lh-tight) var(--f-display);letter-spacing:-.02em}
 .cat-h span{font-size:var(--fs-caption);font-weight:600;color:var(--muted)}
 .pc-fam{font-size:var(--fs-caption);font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.pc-fam.look-sub{text-transform:none;letter-spacing:0;font-weight:600}
 .pgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .pcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:6px;display:flex;flex-direction:column;gap:6px;min-width:0}
 .pc-photo{position:relative}
@@ -788,6 +789,17 @@ input.qty.xl{width:120px}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
+
+/* Grey page, content in white boxes with squircle corners and no outline (the box is a step off the page in light and dark).
+   Controls (pills, fields, round buttons) lose the outline too. Appointments on Home are separate white rows with a 2px gap, not divider lines. */
+.list,.appts,.tile,.pcard,.sk-card,.ov-meta,.ov-sum,.kpi,.panel,.pdf-card,.single,.empty,.rec,.alts,.linkbox,.pre,.look,
+.day,.inp,.stp,.size-cell,.search,.sq-btn,.round-btn,.pin-k,.cn-cat,.ftab,.colour,.qbtn,.drop-tag,.pc-lock,.btn.white,.pd-in,.sugg button,.srch-x{border-color:transparent}
+.list,.appts,.pcard,.sk-card,.ov-meta,.ov-sum,.kpi,.panel,.pdf-card,.single,.empty,.rec{corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / var(--r-l) stretch}
+.tile,.alts,.linkbox,.pre{corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}
+.appts{background:none;display:flex;flex-direction:column;gap:2px}
+.appts .appt{background:var(--surface);border-top:0}
+.appts.now{border:0}
+.appts.now .appt{border:1.5px solid var(--good);border-radius:var(--r-l)}
 </style>
 </head>
 <body>
@@ -1336,6 +1348,14 @@ function PdfView({act}) {
   </div>`;
 }
 
+// The black "Add look to order" button at the bottom of a look's sheet: with a client checked in it adds every piece they can buy (no quantities yet);
+// with nobody checked in it asks which client, like adding a single style
+function LookAdd({l, o, act, cls='btn primary'}) {
+  if (!o) return html`<button class=${cls} onClick=${() => act.sheet({type:'pick', item:{look:l.id}})}>Add look to order</button>`;
+  const out = l.items.filter(([pid, c]) => !o.lines.some(x => x.pid === pid && x.colour === c)), can = out.filter(([pid]) => !canTake(o, P[pid]));
+  return html`<button class=${cls} disabled=${!can.length} onClick=${() => act.selectLook(o.id, l)}>${can.length ? 'Add look to order' : out.length ? canTake(o, P[out[0][0]]) : 'Look is in the order'}</button>`;
+}
+
 function Today({S, ui, act}) {
   // Women always first, then Men, whoever is checked in
   return html`
@@ -1350,8 +1370,7 @@ function Today({S, ui, act}) {
           </button>`)}
         </div>
       </section>`)}
-    </div>
-    <div class="foot">Loewe showroom · powered by Vega</div>`;
+    </div>`;
 }
 
 /* =====================================================================
@@ -1437,12 +1456,10 @@ function ApptOrder({o, b, act}) {
 function LookSheet({id, S, ui, act}) {
   const l = LOOKS.find(x => x.id === id);
   const o = activeOrder(S, ui);
-  const out = o ? l.items.filter(([pid, c]) => !o.lines.some(x => x.pid === pid && x.colour === c)) : [];
-  const can = out.filter(([pid]) => !canTake(o, P[pid]));
   return html`<${Sheet} tall title=${lookNo(l)} onClose=${act.close}
     media=${html`<${Carousel} cover src=${lookSrc(l)} alt=${lookNo(l)} at=${ui.photoAt} onOpen=${i => act.set({zoom:{look:l.id, i}})}/>`}
-    foot=${o && html`<button class="btn primary" disabled=${!can.length} onClick=${() => act.selectLook(o.id, l)}>${can.length ? 'Add look to basket' : out.length ? canTake(o, P[out[0][0]]) : 'Look is in the basket'}</button>`}>
-    <div class="pd-head"><span class="pc-fam">${DIV_LABEL[l.div]} · ${SHOW}${l.req ? ' · required look' : ''}</span><h1 class="pd-name">${lookNo(l)}</h1></div>
+    foot=${html`<${LookAdd} l=${l} o=${o} act=${act} cls="btn primary"/>`}>
+    <div class="pd-head"><span class="pc-fam look-sub">${DIV_LABEL[l.div]} · ${SHOW}${l.req ? ' · required look' : ''}</span><h1 class="pd-name">${lookNo(l)}</h1></div>
     <div class="lbl">In this look</div>
     <div class="list">${l.items.map(([pid, c]) => { const p = P[pid], why = o && canTake(o, p), has = o && o.lines.some(x => x.pid === pid && x.colour === c);
       return html`<button class="row" onClick=${() => act.sheet({type:'product', pid, colour:c, orderId:o && o.id, back:{type:'look', id:l.id}})}>
@@ -1724,9 +1741,9 @@ function PasscodeSheet({S, act}) {
 }
 
 function PickBuyerSheet({S, sh, act}) {
-  const p = P[sh.item.pid];
+  const look = sh.item.look && LOOKS.find(x => x.id === sh.item.look), p = P[look ? look.items[0][0] : sh.item.pid];
   const all = myBuyers(S), mine = [...all.filter(b => !dayOf(b)), ...all.filter(b => dayOf(b) > 0), ...all.filter(b => dayOf(b) < 0)];
-  return html`<${Sheet} tall title="Add to an order" sub=${`${p.name} · ${cname(sh.item.colour)}`} onClose=${act.close}>
+  return html`<${Sheet} tall title="Add to an order" sub=${look ? `${lookNo(look)} · ${look.items.length} pieces` : `${p.name} · ${cname(sh.item.colour)}`} onClose=${act.close}>
     <div class="lbl">Your appointments</div>
     <div class="list">${mine.map(b => { const o = S.orders['o-' + b.id], why = canTake(o || {buyerId:b.id, status:'draft'}, p);
       return html`<button class="row" disabled=${!!why} onClick=${() => act.addFor(b.id, sh.item)}>
@@ -2291,7 +2308,7 @@ function makeActs(setS, setUi, onReset) {
     // the client in session: land in the Collection to add products
     addProducts: () => setUi(u => ({...u, tab:'catalogue', view:null, sheet:null})),
     // add flow from Collection or a lookbook with nobody checked in: check that client in, then add the piece
-    addFor: (bid, item) => { a.checkIn(bid, true); a.select('o-' + bid, item.pid, item.colour, item.via); },
+    addFor: (bid, item) => { a.checkIn(bid, true); if (item.look) a.selectLook('o-' + bid, LOOKS.find(x => x.id === item.look)); else a.select('o-' + bid, item.pid, item.colour, item.via); },
     newBuyer: (b, item, appt) => { BUYERS[b.id] = b; setS(s => ({...s, buyers:{...s.buyers, [b.id]:b}}));
       if (item) a.addFor(b.id, item); else if (appt) a.sheet({type:'appt', bid:b.id}); else a.checkIn(b.id); },
     mut: (id, fn) => setS(s => { const o = JSON.parse(JSON.stringify(s.orders[id])); fn(o); syncStatus(o); return {...s, orders:{...s.orders, [id]:o}, savedAt:Date.now()}; }),

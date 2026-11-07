@@ -16,7 +16,7 @@ Four sizes, each with one job. Hierarchy beyond these comes from weight, colour,
 - Line height: `--lh-tight` 1.2 for headings and titles, `--lh-body` 1.4 for text.
 
 ## Colour
-- **Structural:** `--bg` (canvas), `--surface` (white cards and groups, pulled forward), `--surface-2` (pressed and secondary fills), `--line` (borders and dividers).
+- **Structural:** `--bg` (canvas), `--surface` (white cards and groups, pulled forward, with squircle corners and no outline), `--surface-2` (pressed and secondary fills), `--line` (dividers inside a box). Home appointments are separate white rows with a 2px gap instead of a divider.
 - **Text greys:** `--ink` for text, `--muted` for secondary text that must be read (4.5:1 on the canvas), `--faint` only for large text, placeholders and non-text marks (3:1).
 - **Primary action:** black (`--ink` with `--bg` text). One per screen: Add to order, Finish order, Send to commercial team, Continue, Check in.
 - **Interactive (`--accent`, blue):** links, the active tab, the selected day, active filters, focus rings and selection checks. Never a filled primary button.
