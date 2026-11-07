@@ -65,8 +65,8 @@ add('Profile', 'feedback', 'App feedback', 'Note + screenshots for the Vega team
 // 4 Browsing without a client
 add('Browse · no client', 'coll', 'Collection · Women SS27', 'No client: every style', async () => { await act('tab', 'catalogue'); });
 add('Browse · no client', 'coll-men', 'Collection · Men', 'Tap Men in the title', async () => { await act('tab', 'catalogue'); await click('Men', '.div-title button'); await wait(500); await settle(); });
-add('Browse · no client', 'coll-pre', 'Collection · Pre-SS27', 'Collection tab Pre-SS27', async () => { await act('tab', 'catalogue'); await click('Pre-SS27', '.coll-t'); await wait(500); await settle(); });
-add('Browse · no client', 'coll-perm', 'Collection · Permanent', 'Collection tab Permanent', async () => { await act('tab', 'catalogue'); await click('Permanent', '.coll-t'); await wait(500); await settle(); });
+add('Browse · no client', 'coll-pre', 'Collection · SS27 Pre-collection', 'Collection tab SS27 Pre-collection', async () => { await act('tab', 'catalogue'); await click('Pre-collection', '.coll-t'); await wait(1500); await settle(); });
+add('Browse · no client', 'coll-perm', 'Collection · Permanent styles', 'Men, category pill Accessories: Permanent tags', async () => { await act('tab', 'catalogue'); await click('Men', '.div-title button'); await wait(500); await click('Accessories', '.cn-cat'); await wait(500); await settle(); });
 add('Browse · no client', 'coll-cat', 'Collection · Bags', 'Category pill Bags', async () => { await act('tab', 'catalogue'); await click('Bags', '.cn-cat'); await wait(500); await settle(); });
 add('Browse · no client', 'filters', 'Filters', 'Drop, Priority, Material', async () => { await act('tab', 'catalogue'); await act('sheet', {type: 'filter'}); });
 add('Browse · no client', 'coll-filtered', 'Collection · filtered', 'Must have + Leather: chips, black filter icon', async () => { await act('tab', 'catalogue'); await act('set', {catTag: 'must', catMat: 'leather'}); });
