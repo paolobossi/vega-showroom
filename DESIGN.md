@@ -20,7 +20,7 @@ Four sizes, each with one job. Hierarchy beyond these comes from weight, colour,
 - **Text greys:** `--ink` for text, `--muted` for secondary text that must be read (4.5:1 on the canvas), `--faint` only for large text, placeholders and non-text marks (3:1).
 - **Primary action:** black (`--ink` with `--bg` text). One per screen: Add to order, Finish order, Send to commercial team, Continue, Check in.
 - **Interactive (`--accent`, blue):** links, the active tab, the selected day, active filters, focus rings and selection checks. Never a filled primary button.
-- **Status:** green `--good`, amber `--warn`, red `--bad`, each with its `-bg` tint. Always with a word or icon too (Within, Over, ⚠), never colour alone. Budget spend is red under half of the budget, yellow from half, and green once it is reached or passed. "In the order" is always a green round ✓: on the Collection card (as tall as the priority tag) and on each colour chip.
+- **Status:** green `--good`, amber `--warn`, red `--bad`, each with its `-bg` tint. Always with a word or icon too (Within, Over, ⚠), never colour alone. Budget spend is red under half of the budget, yellow from half, and green once it is reached or passed. "In the order" is always a green round ✓: on the Collection card (about as tall as the priority tag) and on each colour chip.
 - **Client band:** `--band`, black in light and dark mode (client band at the top, Must have tag, status bar strip).
 
 ## Shape and depth
@@ -34,5 +34,6 @@ Four sizes, each with one job. Hierarchy beyond these comes from weight, colour,
 ## Actions
 - One primary (black, filled), secondary (white with a border), tertiary (blue text link).
 - Destructive actions are red outline or red text and ask first (native confirm).
+- Priority tags (Must have, Essential) are small pills in regular weight: 11px on the Collection card (the one exception to the four text sizes), 12px on the product page.
 - Icons are Phosphor (MIT), fill weight everywhere. Pure line marks (×, ✓, +, −, chevrons, filter) stay as lines (regular, or bold for a heavier stroke), since their fill version is a filled box or triangle.
 - Icons for + and −, never text glyphs, so they line up the same in every stepper.

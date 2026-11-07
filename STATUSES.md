@@ -57,7 +57,7 @@ The whole order's status is worked out from its parts: all the same → that sta
 | Status | Meaning |
 |---|---|
 | Available (no mark) | The client can buy it. Tapping anywhere on the card slides its product page up over the Collection; entering the first quantity on a colour puts that colour in the order. |
-| In order (green ✓ in the photo's top-right corner, as tall as the Must have / Essential tag) | Already in the client's selection, in at least one colour. The card has no buttons; tapping it opens the product page on the colour in the order. |
+| In order (green ✓ in the photo's top-right corner, about as tall as the Must have / Essential tag) | Already in the client's selection, in at least one colour. The card has no buttons; tapping it opens the product page on the colour in the order. |
 | Not available (`Not available`) | Not open to this client's tier (see Client tier). Hidden from the Collection during a visit. |
 | Division not bought (no mark) | The client doesn't buy that division, but it is still shown. Adding a style from it asks "[Client] doesn't buy Men. Add Men to this order?"; on OK that division opens on the order with no budget. |
 | Division sent (`Women sent` / `Men sent`) | That part of the order is sent, so nothing more can be added to it. |
@@ -134,7 +134,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 4.3b Above the category pills, collection tabs: **SS27** (default), **Pre-SS27**, **Permanent** (no All tab); the current one in ink with an underline. Switching shows a short skeleton and that collection's styles, and the pills show only the categories it has (Women: SS27 15 styles; Pre-SS27 5, no Bags; Permanent 2, Accessories only). The tabs slide away and back with the pills while scrolling.
 - [ ] 4.4 Filters → Drop (All drops; Drop 1 "Delivers 15 January 2027"; Drop 2 "Delivers 20 February 2027"), Priority (All, Must have, Essential, Standard) and Material (All materials, Leather, Cotton, Wool, Cashmere, Silk & viscose, Nylon) → the grid updates; a chip under the title for each filter, each clears its own. The Filters button sits at the top right beside the magnifying glass, not in the pill row (the pills start with All): just the icon while nothing is filtered, a black circle with a white icon while any filter is on (the collection tabs don't count). With filters that match nothing, the row stays so the filters can be changed.
 - [ ] 4.4b Priority: Must have shows only black-tagged styles, Essential only white-tagged ones, Standard only untagged ones; the three together add up to All. Material: Leather shows bags, shoes and leather goods; Cashmere (Pre-Spring) shows the beanie, scarf and short coat.
-- [ ] 4.5 Product tags on the photos: Must have in black (e.g. Small Amazona 180), Essential in white (e.g. Medium Puzzle Fold tote), none on the others.
+- [ ] 4.5 Product tags on the photos: small pills in regular weight (not bold), Must have in black (e.g. Small Amazona 180), Essential in white (e.g. Medium Puzzle Fold tote), none on the others.
 - [ ] 4.6 With nobody in session, the Collection shows Women and Men and every style.
 
 ### 5. Client tiers (what each client can see)
