@@ -34,5 +34,5 @@ Four sizes, each with one job. Hierarchy beyond these comes from weight, colour,
 ## Actions
 - One primary (black, filled), secondary (white with a border), tertiary (blue text link).
 - Destructive actions are red outline or red text and ask first (native confirm).
-- Icons are Phosphor (MIT): regular by default, bold where a heavier line is needed, fill only for the active tab and the guideline status.
+- Icons are Phosphor (MIT), fill weight everywhere. Pure line marks (×, ✓, +, −, chevrons, filter) stay as lines (regular, or bold for a heavier stroke), since their fill version is a filled box or triangle.
 - Icons for + and −, never text glyphs, so they line up the same in every stepper.
