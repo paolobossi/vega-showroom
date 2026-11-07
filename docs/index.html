@@ -322,7 +322,7 @@ input{font:inherit;color:inherit}
 /* each lookbook is one horizontal row, edge to edge; cards show one and a half on an iPhone, so the next one is seen */
 .look-list{display:flex;gap:10px;overflow-x:auto;margin:0 -18px;padding:2px 18px 6px;scroll-snap-type:x mandatory;scroll-padding:0 18px;scrollbar-width:none;overscroll-behavior-x:contain}
 .look-list::-webkit-scrollbar{display:none}
-.look-list .look{width:clamp(200px,68%,300px);padding:0;gap:0;background:none;border:0;border-radius:10px;corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / 10px stretch;overflow:hidden}
+.look-list .look{width:clamp(200px,68%,300px);padding:0;gap:0;background:none;border:0;border-radius:20px;corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / 20px stretch;overflow:hidden}
 .look-list .look-tile{border-radius:0}
 .look-list .look > .look-h{left:0;right:0;bottom:0;border-radius:0;padding:40px 18px 16px}
 .appts{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);overflow:hidden}
@@ -1342,7 +1342,7 @@ function Today({S, ui, act}) {
     <header class="top top-bar mid"><h1 class="h1">Looks</h1></header>
     <div class="today-grid">
       ${['W', 'M'].map(d => html`<section class="sec">
-        <div class="sec-head"><h2 class="cat-h">${DIV_LABEL[d]} Lookbook</h2></div>
+        <div class="sec-head"><h2 class="cat-h">${SEASONS[0].short} ${DIV_LABEL[d]} Lookbook</h2></div>
         <div class="look-list">
           ${LOOKS.filter(l => l.div === d).map(l => html`<button class="look" onClick=${() => act.sheet({type:'look', id:l.id})}>
             <${LookTile} look=${l}/>
