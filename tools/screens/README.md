@@ -2,7 +2,7 @@
 
 `shoot.mjs` opens the app in headless Chrome at iPhone size (390×844, light mode) and takes one screenshot per screen and state: 70 scenarios in 10 flows (A Sign in … J Client view). It loads `docs/index.html` with a small hook (`window.__v`) added in memory only, to drive the app's own actions; the file on disk is not changed.
 
-The screenshots go on a review page in Claude (comments there reach Claude directly) and on the FigJam board **Vega · Screen flows**: https://www.figma.com/board/Ov9sjnHlEyzkQ2vK8c2jk6
+The screenshots go on a review page in Claude, **Vega Screen Flows**: https://claude.ai/artifact/CyixHhDDNJ9xneisjEHeqK (comments there reach Claude directly), and on the FigJam board **Vega · Screen flows**: https://www.figma.com/board/Ov9sjnHlEyzkQ2vK8c2jk6
 
 ## Refresh
 

@@ -2,7 +2,7 @@
 
 The states each object can be in, as the showroom app shows them today. The label in the app is in brackets.
 
-Every screen and state as a screenshot, mapped by flow: FigJam board **Vega · Screen flows** (https://www.figma.com/board/Ov9sjnHlEyzkQ2vK8c2jk6), made with `tools/screens` (see its README to refresh it).
+Every screen and state as a screenshot, mapped by flow: review page in Claude **Vega Screen Flows** (https://claude.ai/artifact/CyixHhDDNJ9xneisjEHeqK, comments there reach Claude) and FigJam board **Vega · Screen flows** (https://www.figma.com/board/Ov9sjnHlEyzkQ2vK8c2jk6), made with `tools/screens` (see its README to refresh it).
 
 ## Client tier (set in the back office when the client is added)
 
