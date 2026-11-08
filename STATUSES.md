@@ -104,9 +104,10 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 
 ### 2. Home and appointments
 - [ ] 2.1 Home opens on today, with one past day visible to the left of today in the day strip.
+- [ ] 2.1b Each day in the strip reads "Sun" (only the first letter capital), the date, then "Day 4" in regular weight, the same size and grey as "RTW · Bags" on the appointments. Nothing in the strip is in capitals.
 - [ ] 2.2 Tap other days → each shows its appointments, or "No appointments on this day."
 - [ ] 2.2b The page is white everywhere. Each appointment is its own light grey row; rows are split by a 2px white gap, not by a line. Content boxes everywhere are light grey on the white page, with squircle corners and no outline; Collection cards stay white with a soft shadow.
-- [ ] 2.3 After checking a client in, the ongoing client sits under **Now** with a green Ongoing tag; the others under **Today** (both headings in sentence case, black, slightly larger than the text), each with time, city and what they buy per division.
+- [ ] 2.3 After checking a client in, the ongoing client sits under **Now** with a green Ongoing tag; the others under **Today** (both headings in sentence case, black, slightly larger than the text), each with time, city and what they buy per division. The categories (RTW · Bags · Shoes · Acc.) start at the same point on every line and every row, whether the line is Women or Men.
 - [ ] 2.4 Tap a client not yet checked in → sheet with Budget and Notes, and only **Check in** at the bottom: a green full pill (round at both ends) on the sheet's grey, with no white bar behind it. Every sheet's bottom buttons are pills the same way.
 - [ ] 2.4b Budget in that sheet (Kanda Select): per division, Ready-to-wear, Bags, Shoes, Accessories, then a bold **Total** under a line (Women's €120,000, Men's €65,000) that adds up the four; every amount lines up on the same right edge. A category the client doesn't buy is left out (here and on the order).
 - [ ] 2.4c In that sheet **Buying guidelines** comes first, above Budget.

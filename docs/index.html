@@ -216,7 +216,8 @@ input{font:inherit;color:inherit}
 .days::-webkit-scrollbar{display:none}
 .day{flex:0 0 66px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0;border-radius:var(--r-m);background:var(--surface);border:1px solid var(--line);color:var(--ink)}
 .day b{font-size:var(--fs-heading);font-weight:600;line-height:var(--lh-tight)}
-.day span{font-size:var(--fs-caption);font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.day span{font-size:var(--fs-caption);font-weight:600;color:var(--muted)}
+.day .dno{font-weight:400}
 .day.on{background:var(--ink);border-color:transparent;color:var(--bg)}
 .day.on span{color:inherit;opacity:.8}
 .inp{height:46px;border:1px solid var(--line);border-radius:var(--r-m);background:var(--surface);padding:0 14px;font:var(--fs-heading) var(--f-ui);color:var(--ink);outline:0;width:100%}
@@ -345,10 +346,11 @@ input{font:inherit;color:inherit}
 .appt-buyer svg{flex:none;color:var(--muted)}
 .appt-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
 .appt-head .pill{flex:none;margin-top:2px}
-.appt-cats{font-size:var(--fs-caption);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.appt-catg{display:grid;grid-template-columns:46px minmax(0,1fr);gap:6px 8px;font-size:var(--fs-caption);color:var(--muted)}
+.appt-cats{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* section headings on Home (Now, Today) and in the order (Ready-to-wear, Bags…): sentence case, black, a step above body text */
 .lbl.appt-lbl{margin-top:14px;font-size:var(--fs-heading);font-weight:600;letter-spacing:-.01em;text-transform:none;color:var(--ink)}
-.appt-cats b{color:var(--ink);font-weight:600;margin-right:4px}
+.appt-catg b{color:var(--ink);font-weight:600}
 .kv{display:flex;align-items:center;gap:10px;font-size:var(--fs-body);color:var(--muted)}
 .live{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);padding:10px 12px;min-width:0}
@@ -1436,7 +1438,7 @@ function CalendarTab({S, act}) {
           <div class="appt-main">
             <div class="appt-head"><span class="appt-shop">${b.shop}</span><${CheckPill} a=${S.appts[b.id]} o=${S.orders['o-' + b.id]}/></div>
             <div class="appt-buyer"><${Icon} n="pin" s=${12} w=${2.2}/>${b.city}</div>
-            ${b.divs.map(d => html`<div class="appt-cats"><b>${DIV_TAB[d]}</b> ${buyingCats(b, d).map(c => CAT_SHORT[c]).join(' · ') || 'No budget yet'}</div>`)}
+            <div class="appt-catg">${b.divs.map(d => html`<b>${DIV_TAB[d]}</b><span class="appt-cats">${buyingCats(b, d).map(c => CAT_SHORT[c]).join(' · ') || 'No budget yet'}</span>`)}</div>
           </div>
         </button>`;
   return html`
@@ -1445,7 +1447,7 @@ function CalendarTab({S, act}) {
     </header>
     <section class="sec">
       <div class="days" role="tablist" ref=${strip}>${SHOW_DAYS.map((d, i) => html`<button role="tab" aria-selected=${i === day} class=${'day' + (i === day ? ' on' : '')} onClick=${() => setDay(i)}>
-        <span>${d.toLocaleDateString('en-GB', {weekday:'short'})}</span><b>${d.getDate()}</b><span>Day ${i + 1}</span></button>`)}</div>
+        <span>${d.toLocaleDateString('en-GB', {weekday:'short'})}</span><b>${d.getDate()}</b><span class="dno">Day ${i + 1}</span></button>`)}</div>
       ${!all.length && html`<div class="empty">No appointments on this day.</div>`}
       ${now.length > 0 && html`<div class="lbl appt-lbl">Now</div><div class="appts now">${now.map(row)}</div>`}
       ${list.length > 0 && html`${now.length > 0 && html`<div class="lbl appt-lbl">Today</div>`}<div class="appts">${list.map(row)}</div>`}
