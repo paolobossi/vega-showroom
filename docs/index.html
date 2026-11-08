@@ -125,9 +125,9 @@ input{font:inherit;color:inherit}
 .ord-tab .ov-actions{left:0;right:0;width:auto;transform:none;bottom:calc(52px + env(safe-area-inset-bottom,0px));padding:10px 18px;
   background:color-mix(in srgb,var(--bg) 80%,transparent);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%)}
 .ord-tab .ov-actions .cap-btn{box-shadow:none}
-/* Leave: top right of the client's order, red on a pale red squircle */
+/* Leave: top right of the client's order, like an iOS bar button: red text on a light grey pill, no red fill */
 .ov-h1{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.leave{flex:none;display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 14px;border-radius:var(--r-m);corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch;background:var(--bad-bg);color:var(--bad);font-weight:600;font-size:var(--fs-body)}
+.leave{flex:none;display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:999px;background:var(--surface);color:var(--bad);font-weight:600;font-size:var(--fs-body)}
 .leave:active{opacity:.7}
 /* confirm alert: centred card over the scrim */
 .alert{position:absolute;z-index:41;left:50%;top:50%;transform:translate(-50%,-50%);width:min(320px,calc(100% - 48px));background:var(--bg);border-radius:var(--r-xl);corner-shape:squircle;padding:22px 20px 18px;display:flex;flex-direction:column;gap:8px;box-shadow:var(--shadow-sheet);animation:fade .2s ease}
@@ -233,8 +233,6 @@ input{font:inherit;color:inherit}
 .s-confirmed{background:var(--good);color:var(--surface)}
 .s-in{background:var(--good-bg);color:var(--good)}
 .s-out{background:var(--surface-2);color:var(--muted)}
-.live-dot{position:relative;width:7px;height:7px;border-radius:50%;background:currentColor}
-.live-dot::after{content:"";position:absolute;inset:0;border-radius:50%;background:currentColor;animation:beat 1.8s ease-out infinite}
 .by{display:inline-flex;align-items:center;gap:4px;font-size:var(--fs-caption);font-weight:600;color:var(--muted);white-space:nowrap}
 .by.client{color:var(--accent)}
 .chip{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-caption);font-weight:600;padding:4px 10px;border-radius:999px;background:var(--surface-2);color:var(--muted);white-space:nowrap}
@@ -541,11 +539,13 @@ input{font:inherit;color:inherit}
 .ov-sum-st{display:inline-flex;align-items:center;gap:6px;min-width:0;overflow:hidden;text-overflow:ellipsis}
 .ov-sum-st svg{flex:none}
 .ov-lines{padding:14px 16px 20px;display:flex;flex-direction:column;gap:14px}
+/* the Order heading sits under the budget card, 10px above what follows (like Order, Budget, Notes in the sheet) */
+.ov-ord-h{margin:6px 0 -4px}
 .lines-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:8px}
 .grp-head{display:flex;justify-content:space-between;align-items:baseline;font-size:var(--fs-heading);font-weight:600;letter-spacing:-.01em;color:var(--ink);padding:0 2px 8px}
 .empty{background:var(--surface);border:1px dashed var(--line);border-radius:var(--r-l);padding:22px 18px;text-align:center;color:var(--muted);display:flex;flex-direction:column;gap:8px;align-items:center}
 .ov-bar{flex:none;display:flex;gap:10px;align-items:center;padding:10px 14px max(12px,env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--surface)}
-.cap-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;height:54px;border-radius:999px;background:var(--ink);color:var(--bg);font-weight:700;font-size:var(--fs-body);white-space:nowrap;min-width:0}
+.cap-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;height:46px;border-radius:999px;background:var(--ink);color:var(--bg);font-weight:700;font-size:var(--fs-body);white-space:nowrap;min-width:0}
 .cap-btn.two{flex-direction:column;gap:2px;height:64px;border-radius:999px}
 .cap-btn.two > span{display:flex;align-items:center;gap:8px}
 .cap-btn.two small{font-size:var(--fs-caption);font-weight:400;opacity:.85;max-width:100%;overflow:hidden;text-overflow:ellipsis}
@@ -556,7 +556,7 @@ input{font:inherit;color:inherit}
 .done p{margin:0;font-size:var(--fs-body)}
 .done-ic{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;background:var(--good);color:#fff;animation:pop .45s cubic-bezier(.2,.8,.2,1)}
 @keyframes pop{from{transform:scale(.5);opacity:0}}
-.round{width:54px;height:54px;border-radius:999px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line);flex:none}
+.round{width:46px;height:46px;border-radius:999px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line);flex:none}
 
 /* ---------- KPI ---------- */
 .kpi{display:flex;flex-direction:column;gap:16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:16px}
@@ -1302,7 +1302,7 @@ const By = ({by}) => by ? html`<span class=${'by ' + by}><${Icon} n="user" s=${1
 // Wherever a screen splits Women and Men: a black heading (Order, Budget…) and under it a Women | Men segmented control, one division at a time.
 // The choice is shared (ui.div), so the order, Budgets & KPIs, the appointment and the guidelines all open on the same division. One division: heading only.
 const divOf = (b, ui) => b.divs.includes(ui.div) ? ui.div : b.divs[0];
-const DivSwitch = ({title, b, div, act}) => html`<div class="div-sw"><h2 class="cat-h">${title}</h2>
+const DivSwitch = ({title, b, div, act}) => html`<div class="div-sw">${title && html`<h2 class="cat-h">${title}</h2>`}
   ${b.divs.length > 1 && html`<${Seg} full opts=${['W', 'M'].filter(d => b.divs.includes(d)).map(d => [d, DIV_TAB[d]])} val=${div} on=${act.div}/>`}</div>`;
 const Seg = ({opts, val, on, full}) => html`<div class=${'seg' + (full ? ' full' : '')} role="tablist">${opts.map(([v, l]) => html`<button role="tab" aria-selected=${v === val} class=${v === val ? 'on' : ''} onClick=${() => on(v)}>${l}</button>`)}</div>`;
 
@@ -1445,7 +1445,7 @@ const isOngoing = a => !!(a && a.in && !a.out);
 const ongoingBuyer = S => myBuyers(S).find(b => isOngoing(S.appts[b.id]));
 // after the visit the row shows where the order stands
 const CheckPill = ({a, o}) => !a || !a.in ? (o && o.lines.length ? html`<${Pill} s=${o.status}/>` : null) : a.out ? (o ? html`<${Pill} s=${o.status}/>` : null)
-  : html`<span class="pill s-in" title=${'Checked in at ' + hhmm(a.in)}><i class="live-dot" aria-hidden="true"></i>Ongoing</span>`;
+  : html`<span class="pill s-in" title=${'Checked in at ' + hhmm(a.in)}>Ongoing</span>`;
 
 function CalendarTab({S, act}) {
   const [day, setDay] = useState(TODAY_IDX), strip = useRef(null);
@@ -1482,7 +1482,7 @@ function ApptSheet({sh, S, ui, act}) {
     : html`${o && html`<button class="btn ring" onClick=${() => act.openOrder(b.id)}>View order</button>`}
         <button class="btn go" onClick=${() => act.checkIn(b.id)}><${Icon} n="check" s=${18} w=${2.2}/>Check in again</button>`;
   return html`<${Sheet} tall center fade title=${b.shop} sub=${dayLabel(b, true)} onClose=${act.close} foot=${foot}>
-    ${isIn && html`<div class="kv"><span class="pill s-in"><i class="live-dot" aria-hidden="true"></i>Ongoing since ${hhmm(a.in)}</span></div>`}
+    ${isIn && html`<div class="kv"><span class="pill s-in">Ongoing since ${hhmm(a.in)}</span></div>`}
     ${o && html`<${ApptOrder} o=${o} b=${b} act=${act}/>`}
     <div class="list"><button class="row" onClick=${() => act.sheet({type:'guide', bid:b.id})}>
       <div class="row-main"><div class="row-title">Buying guidelines</div><div class="row-sub">${b.cluster} client · budget per category</div></div>
@@ -2121,18 +2121,19 @@ function OrderView({S, ui, act, order, tabbed}) {
     </div>`}
     <div class="ov-body">
       ${tabbed && html`<header class="top top-bar mid"><h1 class="h1 ov-h1">${b.shop}</h1>
-      ${inVisit && html`<button class="leave" onClick=${() => act.sheet({type:'leave', bid:b.id})}><${Icon} n="out" s=${18}/>Leave</button>`}</header>`}
+      ${inVisit && html`<button class="leave" onClick=${() => act.sheet({type:'leave', bid:b.id})}>Leave</button>`}</header>`}
       <div class="ov-lines">
         ${!['draft', 'none'].includes(st) && html`<div class=${'ov-state s-' + st} role="status">
           <span class="ov-state-ic"><${Icon} n=${st === 'shared' ? 'clock' : 'check'} s=${20} w=${2.6}/></span>
           <div><b>${STATUS[st]}</b><span>${stateSub}</span></div></div>`}
-        <${DivSwitch} title="Order" b=${b} div=${div} act=${act}/>
+        ${b.divs.length > 1 && html`<${DivSwitch} b=${b} div=${div} act=${act}/>`}
         <button class="ov-sum" onClick=${() => act.sheet({type:'kpis', orderId:order.id})} aria-label=${`Budgets and KPIs. ${DIV_TAB[div]} ${fmt(k.total)} of ${fmt(k.budget)}. ${open ? `${open} outside the guidelines` : 'Within the guidelines'}`}>
           <span class="ov-sum-top"><b>${DIV_LABEL[div]} budget</b></span>
           <${BudDiv} b=${b} d=${div} k=${k} head=${false}/>
           <span class="ov-sum-foot"><span class=${'ov-sum-st ' + (open ? 'st-warn' : 'st-ok')}><${Icon} n=${open ? 'alert' : 'check'} s=${16} w=${2.4}/>${open ? `${open} outside the guidelines` : 'Within the guidelines'}</span>
             <span class="ov-sum-go">Budgets & KPIs<${Icon} n="down" s=${15} w=${2.2}/></span></span>
         </button>
+        <h2 class="cat-h ov-ord-h">Order</h2>
         ${locked && !allSent && html`<div class="callout info"><${Icon} n="lock" s=${18}/><div>The ${DIV_LABEL[div].toLowerCase()} order has been sent. You can see it here but no longer change it.</div></div>`}
         ${lines.length === 0 && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div><div class="small">Tap any style in the Collection and enter its quantities.</div></div>`}
         ${groups.filter(g => g.lines.length).map(g => html`<div>
@@ -2142,7 +2143,7 @@ function OrderView({S, ui, act, order, tabbed}) {
       </div>
     </div>
     <div class="ov-actions">
-      ${inVisit ? html`<button class="cap-btn" onClick=${() => act.sheet({type:'finish', orderId:order.id})}><${Icon} n="sign" w=${2.2}/>Finalize order</button>`
+      ${inVisit ? html`<button class="cap-btn" onClick=${() => act.sheet({type:'finish', orderId:order.id})}>Finalize order</button>`
         : html`<button class="round" onClick=${() => act.sheet({type:'finish', orderId:order.id})} aria-label="Finalize order"><${Icon} n="sign"/></button>
         <button class="cap-btn" disabled=${allSent} onClick=${() => act.checkIn(b.id)}><${Icon} n="check" w=${2.4}/>Check in to add products</button>`}
     </div>

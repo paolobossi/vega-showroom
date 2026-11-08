@@ -33,8 +33,9 @@ Four sizes, each with one job. Hierarchy beyond these comes from weight, colour,
 - Page gutter 18px. Inside components: 4–8px between a label and its value, 10–14px inside cards, 16–24px between sections.
 
 ## Actions
-- One primary (black, filled), secondary (white with a border), tertiary (blue text link). Two buttons side by side at the bottom of a sheet are each half the width.
-- Destructive actions are red outline or red text and ask first (native confirm). Leave (end the client session) is red text on a pale red squircle at the top right of the order, and asks with an in-app alert (Cancel / Yes, leave).
+- One primary (black, filled), secondary (white with a border), tertiary (blue text link). Two buttons side by side at the bottom of a sheet are each half the width. Bottom buttons are 46px tall everywhere (sheet buttons, Finalize order, Check in to add products); Finalize order is text only.
+- Status tags are just the word: Ongoing has no dot in front.
+- Destructive actions are red outline or red text and ask first (native confirm). Leave (end the client session) is red text on a light grey pill, like an iOS bar button, at the top right of the order, and asks with an in-app alert (Cancel / Yes, leave).
 - Collection cards: white, 24px squircle; photo full-bleed to the card's top and sides, soft drop shadow (on a wrapper, since the squircle mask clips a shadow on the card itself).
 - Squircle corners (superellipse, the `--squircle` mask): budget bars 18px, look cards 20px, Home day tiles, Home appointment list and Collection cards 24px.
 - Priority tags (Must have, Essential) are small pills in regular weight: 11px on the Collection card, 12px on the product page. Tab bar labels are 10px regular. These two are the exceptions to the four text sizes.
