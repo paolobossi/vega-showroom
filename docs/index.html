@@ -123,7 +123,7 @@ input{font:inherit;color:inherit}
 /* Order tab: the order of the client in session, with the tab bar under it */
 .ord-tab{position:relative;flex:1;min-height:0;display:flex;flex-direction:column}
 .ord-tab > .ov{flex:1;height:auto}
-.ord-tab .ov-body{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
+.ord-tab .ov-body{padding-bottom:calc(98px + env(safe-area-inset-bottom,0px))} /* the last line's content ends about 24px above the button */
 /* the order's one button (Finalize order, or Check in again outside a visit): full width at the bottom (just above the tab bar on the Order tab),
    on white that fades in from a gradient above it, like the buttons at the bottom of a sheet; no shadow */
 .ov .ov-actions{left:0;right:0;width:auto;transform:none;bottom:0;padding:40px 18px max(14px,env(safe-area-inset-bottom,0px));
@@ -507,7 +507,7 @@ input{font:inherit;color:inherit}
 .ov-shop{font:600 var(--fs-heading)/var(--lh-tight) var(--f-display);letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @keyframes pulse{from{opacity:.2}to{opacity:1}}
 /* order facts: three labelled columns at the top of the page, scrolling with it */
-.ov-body{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))}
+.ov-body{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;padding-bottom:calc(50px + env(safe-area-inset-bottom,0px))}
 .ov-actions{position:absolute;z-index:19;left:50%;transform:translateX(-50%);bottom:max(16px,calc(env(safe-area-inset-bottom,0px) - 4px));width:min(calc(100% - 28px),420px);display:flex;gap:10px}
 .ov-actions .cap-btn{box-shadow:var(--shadow-float)}
 .ov-actions .round{background:var(--card);box-shadow:var(--shadow-float)}
