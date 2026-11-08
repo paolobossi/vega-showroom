@@ -149,6 +149,7 @@ input{font:inherit;color:inherit}
 .top{padding:14px 18px 6px}
 /* Profile: the seller, their orders, passcode and sign out */
 .prof{display:flex;align-items:center;gap:14px;padding:4px 2px 6px}
+.prof .icon-btn{margin:0 -10px 0 auto}
 .prof .avatar{width:58px;height:58px;font-size:var(--fs-heading)}
 .prof-n{font:700 var(--fs-heading)/var(--lh-tight) var(--f-display);letter-spacing:-.02em}
 .row-ic{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:var(--r-s);background:var(--surface-2);color:var(--ink)}
@@ -1329,11 +1330,11 @@ const Seg = ({opts, val, on, full}) => html`<div class=${'seg' + (full ? ' full'
 
 // media: photos lead the sheet edge to edge, no header, close on the top left
 // page: full screen with a back button instead of a sheet over a scrim
-function Sheet({title, sub, onClose, children, tall, foot, media, page, center, fade}) {
+function Sheet({title, sub, onClose, children, tall, foot, media, page, center, fade, bare}) {
   return html`${!page && html`<div class="scrim" onClick=${onClose}></div>`}
     <div class=${'sheet' + (tall ? ' tall' : '') + (media ? ' media' : '') + (page ? ' page' : '') + (fade ? ' fade' : '')} role="dialog" aria-label=${title}>
       ${!page && html`<div class="sheet-grab"></div>`}
-      ${media ? html`<button class="sheet-x" onClick=${onClose} aria-label=${page ? 'Back' : 'Close'}><${Icon} n=${page ? 'back' : 'x'} s=${20} w=${2.2}/></button>`
+      ${bare ? null : media ? html`<button class="sheet-x" onClick=${onClose} aria-label=${page ? 'Back' : 'Close'}><${Icon} n=${page ? 'back' : 'x'} s=${20} w=${2.2}/></button>`
         : center ? html`<div class="sheet-head center"><span></span><div class="sheet-title">${title}</div>
         <button class="icon-btn" onClick=${onClose} aria-label="Close"><${Icon} n="x"/></button>${sub && html`<div class="sheet-sub">${sub}</div>`}</div>`
         : html`<div class="sheet-head"><div style="min-width:0"><div class="sheet-title">${title}</div>${sub && html`<div class="sheet-sub">${sub}</div>`}</div>
@@ -1547,9 +1548,11 @@ function LookSheet({id, S, ui, act}) {
    ===================================================================== */
 function ProfileSheet({S, act}) {
   const rep = REPS[S.rep];
-  return html`<${Sheet} title="Profile" onClose=${act.close}>
-    <div class="prof"><span class="avatar">${rep.ini}</span><div><div class="prof-n">${rep.name}</div><div class="small muted">Seller · showroom</div></div></div>
-    <div class="list">
+  // no sheet title: the seller's name heads it, with the close × on its line
+  return html`<${Sheet} bare title="Profile" onClose=${act.close}>
+    <div class="prof"><span class="avatar">${rep.ini}</span><div class="prof-n">${rep.name}</div>
+      <button class="icon-btn" onClick=${act.close} aria-label="Close"><${Icon} n="x"/></button></div>
+    <div class="list gapped">
       <button class="row" onClick=${() => act.sheet({type:'history'})}><span class="row-ic"><${Icon} n="orders" s=${19}/></span>
         <div class="row-main"><div class="row-title">Order history</div></div><${Icon} n="next" s=${18}/></button>
       <button class="row" onClick=${() => act.sheet({type:'passcode'})}><span class="row-ic"><${Icon} n="lock" s=${19}/></span>

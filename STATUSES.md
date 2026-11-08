@@ -93,6 +93,7 @@ Guideline issues never block sending (styles without a quantity do block Send to
 Run on an iPhone in portrait unless a step says otherwise. Start each run from fresh demo data: **Reset demo** in the side panel (desktop view), or clear the site data on the phone. Demo data: the seller is Roberto D.; Maison Dubois (Paris, Platinum, Women + Men) has a draft order from this morning but is not checked in; Linea Concept (Gold, Women only), Harbour & Co. (Silver, Men only) and Kanda Select (Diamond, Women + Men) are later today. Each line is: what to do → what should happen.
 
 ### 1. Sign in, sign out, passcode
+- [ ] 1.1b The Profile sheet has no "Profile" title and no "Seller · showroom" line: just the avatar and your name with the × on the same line, then Order history, Set passcode and App feedback as grey rows split by a 2px white gap (no grey lines), then Sign out.
 - [ ] 1.1 Home → the round avatar with your initials (top right) → Profile sheet → Sign out → the full-screen "Who's selling?" list of sellers shows.
 - [ ] 1.2 Pick Roberto D. with no passcode set → any 4 digits sign in; toast "Signed in as Roberto D.".
 - [ ] 1.3 Avatar → Set passcode → enter 4 digits, then the same 4 again → toast "Passcode set"; the row now reads Change passcode.
