@@ -107,7 +107,7 @@ input{font:inherit;color:inherit}
 .screen.tabbed{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 .dock{position:absolute;left:0;right:0;bottom:0;z-index:20;padding-bottom:env(safe-area-inset-bottom,0px);
   background:color-mix(in srgb,var(--bg) 80%,transparent);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%)}
-.tabbar{display:flex}
+.tabbar{display:flex;padding:0 14px}
 .tab{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;line-height:14px;font-weight:400;color:var(--muted);padding:8px 0 6px;transition:color .2s}
 .tab.on{color:var(--ink)}
 .tab:active{color:var(--ink)}
@@ -214,10 +214,10 @@ input{font:inherit;color:inherit}
 .inp.area{height:auto;min-height:104px;padding:12px 14px;line-height:var(--lh-body);resize:vertical}
 .days{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;margin:0 -18px;padding:0 18px;scroll-padding:0 18px}
 .days::-webkit-scrollbar{display:none}
-.day{flex:0 0 66px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0;border-radius:var(--r-m);background:var(--surface);border:1px solid var(--line);color:var(--ink)}
+.day{flex:0 0 54px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0;border-radius:var(--r-m);background:var(--surface);border:1px solid var(--line);color:var(--ink)}
 .day b{font-size:var(--fs-heading);font-weight:600;line-height:var(--lh-tight)}
 .day span{font-size:var(--fs-caption);font-weight:600;color:var(--muted)}
-.day .dno{font-weight:400}
+.day .dno{font-size:10px;font-weight:400}
 .day.on{background:var(--ink);border-color:transparent;color:var(--bg)}
 .day.on span{color:inherit;opacity:.8}
 .inp{height:46px;border:1px solid var(--line);border-radius:var(--r-m);background:var(--surface);padding:0 14px;font:var(--fs-heading) var(--f-ui);color:var(--ink);outline:0;width:100%}
@@ -338,7 +338,7 @@ input{font:inherit;color:inherit}
 .appt{display:flex;gap:14px;align-items:stretch;text-align:left;width:100%;padding:14px;border-top:1px solid var(--line)}
 .appt:first-child{border-top:0}
 .appts.now{border:1.5px solid var(--good)}
-.appt-time{font:600 var(--fs-caption) var(--f-ui);font-variant-numeric:tabular-nums;color:var(--muted);padding-top:4px;width:42px;flex:none}
+.appt-time{font:600 var(--fs-caption) var(--f-ui);color:var(--muted);padding-top:4px;width:42px;flex:none}
 .appt-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
 .appt-shop{font:600 var(--fs-heading)/var(--lh-tight) var(--f-display);letter-spacing:-.015em}
 .appt-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
@@ -350,7 +350,7 @@ input{font:inherit;color:inherit}
 .appt-cats{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* section headings on Home (Now, Today) and in the order (Ready-to-wear, Bags…): sentence case, black, a step above body text */
 .lbl.appt-lbl{margin-top:14px;font-size:var(--fs-heading);font-weight:600;letter-spacing:-.01em;text-transform:none;color:var(--ink)}
-.appt-catg b{color:var(--ink);font-weight:600}
+.appt-catg b{color:var(--ink);font-weight:600;text-align:right}
 .kv{display:flex;align-items:center;gap:10px;font-size:var(--fs-body);color:var(--muted)}
 .live{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);padding:10px 12px;min-width:0}
@@ -813,6 +813,9 @@ input.qty.xl{width:120px}
 .appts .appt{background:var(--surface);border-top:0}
 .appts.now{border:0}
 .appts.now .appt{border:1.5px solid var(--good);border-radius:var(--r-l)}
+/* Home: the days (24px, nearly a pill) and the appointment list (16px) use the Apple-style corner, the --squircle mask; no corner-shape or border-radius, so every browser draws the same curve */
+.day,.appts{border-radius:0;corner-shape:round;-webkit-mask-box-image:var(--squircle) 20 / var(--r-l) stretch}
+.day{-webkit-mask-box-image:var(--squircle) 20 / 24px stretch}
 /* order (basket): each style is its own grey row, split by a 2px white gap instead of a line */
 .ov-lines .list{background:none;gap:2px}
 .ov-lines .list > .sel{background:var(--surface);border-top:0}

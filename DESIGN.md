@@ -22,7 +22,7 @@ Four sizes, each with one job. Hierarchy beyond these comes from weight, colour,
 - **Interactive (`--accent`, blue):** links only (and the blue status pills and info callouts). Every active or selected state is black (`--ink`): the active tab, the selected day, active filters, selected options, sizes with a quantity, focus rings. Never a filled primary button.
 - **Status:** green `--good`, amber `--warn`, red `--bad`, each with its `-bg` tint. Always with a word or icon too (Within, Over, ⚠), never colour alone. Budget spend is red under half of the budget, yellow from half, and green once it is reached or passed. "In the order" is always a green round ✓: on the Collection card (about as tall as the priority tag) and on each colour chip.
 - **Black marks:** `--band`, black in light and dark mode (Must have tag, status bar strip). There is no client band: the client in session shows as a badge on the Order tab.
-- **Tab bar:** edge to edge at the bottom, 80% white with a blur (the page scrolls under it), no line on top; Home, Looks, Scan (middle), Collection, Order; active item black, others grey.
+- **Tab bar:** edge to edge at the bottom, 80% white with a blur (the page scrolls under it), no line on top, 14px in from each side so Home and Order don't sit on the screen edge; Home, Looks, Scan (middle), Collection, Order; active item black, others grey.
 
 ## Shape and depth
 - Radius: `--r-xs` 4 (chips, bars), `--r-s` 8 (photos), `--r-m` 12 (controls, inputs, size cells), `--r-l` 16 (cards, list groups, panels), `--r-xl` 22 (sheet tops). Anything as tall as it is round (pills, round buttons) uses 999px.
@@ -36,8 +36,8 @@ Four sizes, each with one job. Hierarchy beyond these comes from weight, colour,
 - One primary (black, filled), secondary (white with a border), tertiary (blue text link).
 - Destructive actions are red outline or red text and ask first (native confirm). Leave (end the client session) is red text on a pale red squircle at the top right of the order, and asks with an in-app alert (Cancel / Yes, leave).
 - Collection cards: white, 24px squircle; photo full-bleed to the card's top and sides, soft drop shadow (on a wrapper, since the squircle mask clips a shadow on the card itself).
-- Squircle corners (superellipse, the `--squircle` mask): budget bars 18px, look cards 20px, Collection cards 24px.
-- Priority tags (Must have, Essential) are small pills in regular weight: 11px on the Collection card, 12px on the product page. Tab bar labels are 10px regular. These two are the exceptions to the four text sizes.
+- Squircle corners (superellipse, the `--squircle` mask): Home appointment list 16px, budget bars 18px, look cards 20px, Home day tiles and Collection cards 24px.
+- Priority tags (Must have, Essential) are small pills in regular weight: 11px on the Collection card, 12px on the product page. Tab bar labels and "Day N" in the Home day strip are 10px regular. These are the exceptions to the four text sizes.
 - Segmented controls are pills: container and selected segment fully round on the sides (999px).
 - Icons are Lucide (ISC) everywhere, drawn as lines (1.8px stroke, heavier for small marks like ✓, + and −). Shoes is the one exception: Phosphor's high heel (MIT) in its regular line weight, since Lucide has no high heel.
 - Icons for + and −, never text glyphs, so they line up the same in every stepper.
