@@ -859,7 +859,8 @@ input.qty.xl{width:120px}
 /* trial: on the order the budget card has no grey box (full width, everything kept) and each category is its own grey box,
    heading inside, with the lines on white 2px apart */
 .ov-lines > .ov-sum{background:none;padding:0;-webkit-mask-box-image:none}
-.grp-box{background:var(--surface);padding:12px 8px 8px;corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / 24px stretch}
+/* full width: the category boxes run to the screen edges, no white margin on the sides */
+.grp-box{margin:0 -16px;background:var(--surface);padding:12px 8px 8px;corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / 24px stretch}
 @supports (-webkit-mask-box-image:none){.grp-box{border-radius:0;corner-shape:round}}
 .grp-box .grp-head{padding:2px 8px 10px}
 /* each line is its own white squircle card inside the category box, with a squircle photo; Edit sizes is white with a grey outline */
