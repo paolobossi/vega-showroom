@@ -850,7 +850,8 @@ input.qty.xl{width:120px}
 /* order (basket): each style is its own grey row, split by a 2px white gap instead of a line */
 .ov-lines .list{background:none;gap:2px}
 .ov-lines .list > .sel{background:var(--surface);border-top:0}
-.list.gapped.g1{gap:1px}.row.tot .row-title,.row.tot .row-val{font-weight:700}
+/* budget rows (Buying guidelines, client sheet): 1px apart, names and amounts 14px regular, Total bold */
+.list.gapped.g1{gap:1px}.list.g1 .row-title,.list.g1 .row-val{font-size:14px;font-weight:400}.list.g1 .row.tot .row-title,.list.g1 .row.tot .row-val{font-weight:700}
 .list.gapped{background:none;border:0;gap:2px}.list.gapped > .row{background:var(--surface);border-top:0}
 /* Collection cards: the photo runs to the card's edges (top and sides), the text keeps its margin; a soft drop shadow lifts the card off the grey page */
 .pc-wrap{display:flex;min-width:0;filter:drop-shadow(0 1px 1px rgba(0,0,0,.05)) drop-shadow(0 4px 10px rgba(0,0,0,.07))}
