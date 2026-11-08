@@ -729,7 +729,8 @@ input{font:inherit;color:inherit}
 .size-cell > *,.size-cell > input.qty{background:var(--surface);border-radius:0}
 .size-cell .step:first-of-type{margin-bottom:2px}
 .size-cell .step:last-of-type{margin-top:2px}
-.single{display:flex;align-items:center;justify-content:center;gap:22px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:8px}
+/* one-size quantity on the product page: just − n + (round grey buttons), no grey box around them */
+.single{display:flex;align-items:center;justify-content:center;gap:22px;background:none;border:0;padding:8px}
 .step.lg{width:64px;height:64px;border-radius:999px;background:var(--surface-2)}
 .qty.xl{font-size:var(--fs-title);min-width:70px}
 input.qty{width:100%;min-width:0;border:0;background:transparent;color:inherit;font-family:inherit;outline:none;-webkit-appearance:none;border-radius:var(--r-s)}
@@ -851,7 +852,7 @@ input.qty.xl{width:120px}
    Controls (pills, fields, round buttons) lose the outline too. Appointments on Home are separate white rows with a 2px gap, not divider lines. */
 .list,.appts,.tile,.pcard,.sk-card,.ov-sum,.kpi,.panel,.pdf-card,.single,.empty,.rec,.alts,.linkbox,.pre,.look,
 .day,.inp,.stp,.size-cell,.search,.sq-btn,.round-btn,.pin-k,.cn-cat,.ftab,.colour,.qbtn,.pc-lock,.btn.white,.pd-in,.sugg button,.srch-x{border-color:transparent}
-.list,.appts,.pcard,.sk-card,.ov-sum,.kpi,.panel,.pdf-card,.single,.empty,.rec{corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / var(--r-l) stretch}
+.list,.appts,.pcard,.sk-card,.ov-sum,.kpi,.panel,.pdf-card,.empty,.rec{corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / var(--r-l) stretch}
 /* where the mask works (Safari, Chrome) it alone shapes these boxes: a border-radius as well clips the corners a second time,
    round in Safari (no corner-shape), slightly rounder than the mask in Chrome, and eats into outlines at the corners */
 @supports (-webkit-mask-box-image:none){.list,.appts,.pcard,.sk-card,.ov-sum,.kpi,.panel,.pdf-card,.single,.empty,.rec,.bpill,.bpill-ic{border-radius:0;corner-shape:round}}
