@@ -865,7 +865,7 @@ input.qty.xl{width:120px}
 .div-sw .seg{border-color:transparent}
 .sheet-body .div-sw{margin-top:0;margin-bottom:0}.sheet-body .div-sw:not(:has(.seg)){margin-bottom:-4px}
 /* client sheet: the room taken from under the Women | Men switch goes above the Budget and Notes headings (26px) */
-.sheet-body > .field.sh-sec{margin-top:12px}
+.sh-tiles + .div-sw,.sheet-body > .field.sh-sec{margin-top:12px}
 /* a heading straight in a sheet (In this look): black, sentence case, 26px above and 10px above its box, like Budget and Notes */
 .sheet-body > .sh-h{margin:12px 0 -4px}
 </style>
@@ -1516,7 +1516,7 @@ function ApptSheet({sh, S, ui, act}) {
     <div class="sh-tiles">${o && html`<${ApptOrder} o=${o} b=${b} act=${act}/>`}
     <div class="list"><button class="row" onClick=${() => act.sheet({type:'guide', bid:b.id})}>
       <div class="row-main"><${Icon} n="chart" s=${22}/><div class="row-title">Guidelines</div><div class="row-sub">Budget and mix rules</div></div></button></div></div>
-    ${b.divs.length > 1 && html`<${DivSwitch} b=${b} div=${divOf(b, ui)} act=${act}/>`}
+    <${DivSwitch} title="Budget" b=${b} div=${divOf(b, ui)} act=${act}/>
     <${BudRows} b=${b} d=${divOf(b, ui)}/>
     <label class="field sh-sec"><span class="cat-h">Notes</span>
       <textarea class="inp area" placeholder="Add a note" value=${a.notes || ''} onInput=${e => act.note(b.id, e.target.value)}></textarea>
