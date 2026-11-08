@@ -577,6 +577,8 @@ input{font:inherit;color:inherit}
 .bud-row .mix-track{grid-column:1 / -1;margin-top:4px}
 /* a category's spend against its budget: a squircle (superellipse corners via the mask, so iOS Safari gets them too) whose deeper tint fills up to the share used; red under half, yellow from half, green once reached */
 .bpill{--c:var(--muted);position:relative;isolation:isolate;display:grid;grid-template-columns:auto minmax(0,1fr);align-content:center;column-gap:12px;min-height:60px;margin:4px 0;padding:7px 16px 7px 7px;border-radius:18px;corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / 18px stretch;overflow:hidden;background:color-mix(in srgb,var(--t,var(--c)) 12%,var(--surface));color:var(--c)}
+/* the division total: the same bar, a little apart from the categories */
+.bpill-tot{margin-top:14px}
 .bpill.ok{--c:var(--good)}.bpill.warn{--c:var(--warn);--t:#F2B705}.bpill.bad{--c:var(--bad)}
 .bpill-fill{position:absolute;inset:0 auto 0 0;z-index:-1;background:color-mix(in srgb,var(--t,var(--c)) 30%,var(--surface));transition:width .35s ease}
 /* the category icon on a lighter tile at the bar's left edge, over the fill */
@@ -1216,6 +1218,7 @@ const IC = {
   shoes:{f:'<path d="M32,144a95.28,95.28,0,0,1,37.53,7.67,4,4,0,0,1,2.47,3.7V192a16,16,0,0,1-16,16H40a16,16,0,0,1-16-16V148a4,4,0,0,1,4-4Zm199,12.19L180,144.71,69.66,34.34a8,8,0,0,0-11.56.26C36.11,58.64,24,89,24,120a8,8,0,0,0,8,8,111.2,111.2,0,0,1,63.34,19.7,112.45,112.45,0,0,1,40.55,50.39A15.9,15.9,0,0,0,150.72,208H240a16,16,0,0,0,16-16v-4.73A31.72,31.72,0,0,0,231,156.19Z"/>'}, // high-heel-fill
   acc:{f:'<path d="M232,72v92a44,44,0,0,1-87.81,4H111.81A44,44,0,0,1,24,164V72A32,32,0,0,1,56,40a8,8,0,0,1,0,16A16,16,0,0,0,40,72v58.08A44,44,0,0,1,110.32,152h35.36A44,44,0,0,1,216,130.08V72a16,16,0,0,0-16-16,8,8,0,0,1,0-16A32,32,0,0,1,232,72Z"/>'}, // eyeglasses-fill
   scan:{f:'<path d="M224,40V80a8,8,0,0,1-16,0V48H176a8,8,0,0,1,0-16h40A8,8,0,0,1,224,40ZM80,208H48V176a8,8,0,0,0-16,0v40a8,8,0,0,0,8,8H80a8,8,0,0,0,0-16Zm136-40a8,8,0,0,0-8,8v32H176a8,8,0,0,0,0,16h40a8,8,0,0,0,8-8V176A8,8,0,0,0,216,168ZM40,88a8,8,0,0,0,8-8V48H80a8,8,0,0,0,0-16H40a8,8,0,0,0-8,8V80A8,8,0,0,0,40,88Zm32-8v96a8,8,0,0,0,8,8h96a8,8,0,0,0,8-8V80a8,8,0,0,0-8-8H80A8,8,0,0,0,72,80Z"/>'}, // scan-fill
+  wallet:{f:'<path d="M216,64H56a8,8,0,0,1,0-16H192a8,8,0,0,0,0-16H56A24,24,0,0,0,32,56V184a24,24,0,0,0,24,24H216a16,16,0,0,0,16-16V80A16,16,0,0,0,216,64Zm-36,80a12,12,0,1,1,12-12A12,12,0,0,1,180,144Z"/>'}, // wallet-fill
   checkc:{f:'<path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm45.66,85.66-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32Z"/>'}, // check-circle-fill
 };
 const Icon = ({n, s=22, w=1.8}) => { const i = IC[n]; return html`<svg width=${s} height=${s} viewBox="0 0 256 256" fill="currentColor" aria-hidden="true" dangerouslySetInnerHTML=${{__html: i.f || (w >= 2.1 ? i.b : i.r)}}></svg>`; };
@@ -1308,14 +1311,15 @@ function Budgets({b, order, divs, head=true}) {
 // Every number is the same size; categories the client doesn't buy are left out rather than shown as zero.
 function BudDiv({b, d, k, head=true}) {
   const db = divBudget(b, d), cats = CATS.filter(c => catBudget(b, d, c) > 0 || (k && k.mix.find(x => x.cat === c).value));
-  const val = (v, bud, st) => html`<span class=${'bud-v' + (st && st !== 'none' ? ' st-' + st : '')}>${fmt(v)}</span> <span class="muted">${bud ? 'of ' + fmt(bud) : 'no budget'}</span>`;
   return html`<div class="bud-div">
     ${head && html`<div class="bud-head"><span>${DIV_LABEL[d]}</span></div>`}
     ${cats.map(c => { const cb = catBudget(b, d, c), m = k && k.mix.find(x => x.cat === c);
       return m ? html`<div class=${'bpill ' + m.st}><span class="bpill-fill" style=${{width: Math.min(m.used, 100) + '%'}}></span>
           <span class="bpill-ic"><${Icon} n=${c} s=${22} w=${2}/></span><span class="bpill-l">${CAT_LABEL[c]}</span><span class="bpill-v"><b>${fmt(m.value)}</b> <span>${cb ? 'of ' + fmtK(cb) : 'no budget'}</span></span></div>`
         : html`<div class="bud-row cat"><span>${CAT_LABEL[c]}</span><span class="num">${fmt(cb)}</span></div>`; })}
-    <div class="bud-row cat bud-tot"><span>Total</span><span class="num">${k ? val(k.total, db, k.bst) : fmt(db)}</span></div>
+    ${k ? html`<div class=${'bpill bpill-tot ' + usedSt(k.total, db)}><span class="bpill-fill" style=${{width: Math.min(db ? k.total / db * 100 : 0, 100) + '%'}}></span>
+          <span class="bpill-ic"><${Icon} n="wallet" s=${22}/></span><span class="bpill-l">Total</span><span class="bpill-v"><b>${fmt(k.total)}</b> <span>${db ? 'of ' + fmtK(db) : 'no budget'}</span></span></div>`
+      : html`<div class="bud-row cat bud-tot"><span>Total</span><span class="num">${fmt(db)}</span></div>`}
   </div>`;
 }
 
