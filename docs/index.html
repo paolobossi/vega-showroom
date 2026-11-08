@@ -260,6 +260,7 @@ input{font:inherit;color:inherit}
 .btn.ghost{color:var(--accent)}
 .btn.white{background:var(--surface);border:1px solid var(--line);color:var(--ink)}
 .btn.ring{background:var(--bg);box-shadow:inset 0 0 0 1px var(--line);color:var(--ink)}
+.btn.ring.leave-txt{color:var(--bad)} /* Leave in the ongoing client's sheet: red text, same as Leave on the order */
 .btn.danger{color:var(--bad)}
 .btn.block{width:100%}
 .btn:active:not(:disabled){transform:scale(.985)}
@@ -1522,7 +1523,7 @@ function CalendarTab({S, act}) {
 function ApptSheet({sh, S, ui, act}) {
   const b = BUYERS[sh.bid], o = S.orders['o-' + b.id], a = S.appts[b.id] || {}, isIn = isOngoing(a);
   const foot = !a.in ? html`<button class="btn go" onClick=${() => act.checkIn(b.id)}><${Icon} n="check" s=${18} w=${2.2}/>Check in</button>`
-    : isIn ? html`<button class="btn ring" onClick=${() => act.checkOut(b.id)}>Check out</button>
+    : isIn ? html`<button class="btn ring leave-txt" onClick=${() => act.sheet({type:'leave', bid:b.id})}>Leave</button>
         <button class="btn primary" onClick=${() => act.addProducts(b.id)}>Add products</button>`
     : html`${o && html`<button class="btn ring" onClick=${() => act.openOrder(b.id)}>View order</button>`}
         <button class="btn go" onClick=${() => act.checkIn(b.id)}><${Icon} n="check" s=${18} w=${2.2}/>Check in again</button>`;

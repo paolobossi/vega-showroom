@@ -25,7 +25,7 @@ Every client gets one tier. It is back-office logic only: the seller never sees 
 |---|---|
 | Scheduled (no tag) | The appointment is on the calendar and the client hasn't arrived yet. Only Check in is offered. |
 | Ongoing (`Ongoing`) | The seller checked the client in. That client is in session: the Order tab shows their order (with the number of items as a black badge on its icon), and the Collection shows what they can buy. Only one client per seller can be ongoing. |
-| Checked out (order status, e.g. `Sent`) | The visit ended: Finalize order in the order (sent to the commercial team or to the client to finish), or Check out on the client's row on Home. The row on Home shows where that client's order stands; the seller can view it or check the client in again. |
+| Checked out (order status, e.g. `Sent`) | The visit ended: Finalize order in the order (sent to the commercial team or to the client to finish), or Leave in the ongoing client's sheet on Home. The row on Home shows where that client's order stands; the seller can view it or check the client in again. |
 | Checked in again (`Ongoing`) | Same as Ongoing, but the visit keeps its first start time. |
 
 Checking in a new client automatically checks out the client the seller was with.
@@ -116,7 +116,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 2.4b Budget in that sheet (Kanda Select): per division, Ready-to-wear, Bags, Shoes, Accessories, then a bold **Total** under a line (Women's €120,000, Men's €65,000) that adds up the four; every amount lines up on the same right edge. A category the client doesn't buy is left out (here and on the order).
 - [ ] 2.4c In that sheet **Buying guidelines** comes first, above Budget.
 - [ ] 2.5 Type in Notes, close and reopen → the note is kept ("Saved automatically").
-- [ ] 2.6 Tap the ongoing client (check one in first) → no check-in time anywhere in the sheet; **Check out** (white, grey border) and **Add products** (black), each half the width, 46px like every other button.
+- [ ] 2.6 Tap the ongoing client (check one in first) → no check-in time anywhere in the sheet; **Leave** (white, grey border, red text) and **Add products** (black, opens the Collection), each half the width, 46px like every other button.
 - [ ] 2.6b Every appointment whose client has an order shows the order's status on its row (Draft, With client, Sent, Confirmed…), past days included; the ongoing one shows Ongoing.
 - [ ] 2.6c Tap an appointment with an order → the **Order** tile: styles · units in grey, no status and no amount for now; tap it → the order opens full screen. There is no order history in the sheet. The status is not repeated at the top of the sheet.
 - [ ] 2.7 Tap the Home title → the app reloads; data and the visit are kept.
@@ -126,7 +126,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 3.2 There is no black band at the top any more. While a client is checked in, the Order tab carries a black badge with the number of items in their order (a green dot while it is empty).
 - [ ] 3.5 Tap Order → that client's order, with the tab bar still under it and **Finalize order** full width just above it; the page title is the client's name (no back arrow), with **Leave** at the top right. Under the title: the Women | Men switch (two-division clients only), the budget card, then the **Order** heading (10px above what follows: the products, or "No women's products yet"). The title scrolls away with the page; it is not fixed at the top. Opening the same order from Home or Order history also lands on the Order tab.
 - [ ] 3.5b Nobody checked in, tap Order → "No client checked in", "Choose a client to open their order." and a black **Choose a client** button (no icon), centred vertically in the page; it opens the list of your appointments (and New session); tapping a client checks them in and shows their order on the Order tab.
-- [ ] 3.6 On Home, tap the ongoing client → Check out → toast "Checked out" (no client name: toasts never repeat it); the Order tab badge disappears; the row shows the order status (e.g. Draft).
+- [ ] 3.6 On Home, tap the ongoing client → **Leave** → the same alert as Leave on the order ("Stop the session with [shop]?", Cancel / Yes, leave) → Yes, leave → toast "Session ended" (no client name); the Order tab badge disappears; the row shows the order status (e.g. Draft).
 - [ ] 3.7 Check the same client in again → Ongoing again, with the original start time. The sheet after a check-out shows no "Checked out" tag and no start-time line: just **View order** (white, grey border) and **Check in again**, each half the width.
 - [ ] 3.8 Open an order outside a visit (Home → client → Order tile) → the client's name at the top with a back arrow and no grey line under it; no Finalize order button, just a green **Check in again** (or **Check in** if they were never checked in) at the bottom, on white that fades in from a gradient, like a sheet's buttons. It works on a fully sent order too, like Check in again in the sheet.
 
