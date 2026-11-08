@@ -7,7 +7,7 @@ Four sizes, each with one job. Hierarchy beyond these comes from weight, colour,
 
 | Token | Size | Used for |
 |---|---|---|
-| `--fs-caption` | 12px | Labels (uppercase), tags and pills, meta lines, helper text, chips, tab bar labels |
+| `--fs-caption` | 12px | Labels (uppercase), tags and pills, meta lines, helper text, chips |
 | `--fs-body` | 15px | Everything you read or tap: rows, buttons, values, callouts, card names |
 | `--fs-heading` | 17px | Section headings (Now, Today, Ready-to-wear), sheet and nav titles, client names, form inputs (17px also stops iOS zooming into a field) |
 | `--fs-title` | 28px | Page titles, the product name, big numbers (quantities, PIN keys, KPI totals) |
@@ -37,7 +37,7 @@ Four sizes, each with one job. Hierarchy beyond these comes from weight, colour,
 - Destructive actions are red outline or red text and ask first (native confirm).
 - Collection cards: white, 24px squircle; photo full-bleed to the card's top and sides, soft drop shadow (on a wrapper, since the squircle mask clips a shadow on the card itself).
 - Squircle corners (superellipse, the `--squircle` mask): budget bars 18px, look cards 20px, Collection cards 24px.
-- Priority tags (Must have, Essential) are small pills in regular weight: 11px on the Collection card (the one exception to the four text sizes), 12px on the product page.
+- Priority tags (Must have, Essential) are small pills in regular weight: 11px on the Collection card, 12px on the product page. Tab bar labels are 10px regular. These two are the exceptions to the four text sizes.
 - Segmented controls are pills: container and selected segment fully round on the sides (999px).
 - Icons are Phosphor (MIT), fill weight everywhere. Shoes use the high heel. Pure line marks (×, ✓, +, −, chevrons, filter) stay as lines (regular, or bold for a heavier stroke), since their fill version is a filled box or triangle.
 - Icons for + and −, never text glyphs, so they line up the same in every stepper.
