@@ -103,20 +103,21 @@ add('Client checked in', 'in-look', 'Look · client in session', 'Add look to ba
 // 7 Order (draft)
 add('Order · draft', 'order', 'Order · Women', 'Order tab of the client in session', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); });
 add('Order · draft', 'order-bottom', 'Order · bottom', 'Scrolled down: last lines and the buttons', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await scrollIn('.ov-body'); });
+add('Order · draft', 'order-leave', 'Leave · confirm', 'Leave at the top right: stop the session?', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('sheet', {type: 'leave', bid: 'dubois'}); });
 add('Order · draft', 'order-men', 'Order · Men', 'Men tab', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('div', 'M'); });
 add('Order · draft', 'kpis', 'Budgets & KPIs', 'Tap the budget card', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('sheet', {type: 'kpis', orderId: 'o-dubois'}); });
 add('Order · draft', 'order-empty', 'Order · empty', 'Just checked in, nothing added', async () => { await checkIn('linea'); await act('openOrder', 'linea'); });
 add('Order · draft', 'order-novisit', 'Order · outside the visit', 'From Home / history: Check in to add products', async () => { await act('openOrder', 'dubois'); });
 
 // 8 Finish and send
-add('Finish & send', 'finish', 'Finish order', 'Women + Men, 2 styles without quantity', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('sheet', {type: 'finish', orderId: 'o-dubois'}); });
-add('Finish & send', 'finish-ready', 'Finish order · signed', 'Men only, name + signature', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('sheet', {type: 'finish', orderId: 'o-dubois'});
+add('Finish & send', 'finish', 'Finalize order', 'Women + Men, 2 styles without quantity', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('sheet', {type: 'finish', orderId: 'o-dubois'}); });
+add('Finish & send', 'finish-ready', 'Finalize order · signed', 'Men only, name + signature', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('sheet', {type: 'finish', orderId: 'o-dubois'});
   await click('Women', '.fpage button.row'); await type('.fpage input[placeholder="Name of the person signing"]', 'Claire Dubois'); await sign(); });
 add('Finish & send', 'sent-team', 'Sent to the commercial team', 'Send to commercial team', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('sheet', {type: 'finish', orderId: 'o-dubois'});
   await click('Women', '.fpage button.row'); await type('.fpage input[placeholder="Name of the person signing"]', 'Claire Dubois'); await sign(); await click('Send to commercial team'); });
 add('Finish & send', 'sent-client', 'Sent to the client', 'Send to client to finish', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('sheet', {type: 'finish', orderId: 'o-dubois'});
   await type('.fpage input[placeholder="Name of the person signing"]', 'Claire Dubois'); await sign(); await click('Send to client to finish'); });
-add('Finish & send', 'all-sent-finish', 'Finish order · all sent', 'Everything is sent', async () => { await ev(() => window.__v.act.send('o-dubois', ['W', 'M'], 'client', 'Claire Dubois')); await act('openOrder', 'dubois'); await act('sheet', {type: 'finish', orderId: 'o-dubois'}); });
+add('Finish & send', 'all-sent-finish', 'Finalize order · all sent', 'Everything is sent', async () => { await ev(() => window.__v.act.send('o-dubois', ['W', 'M'], 'client', 'Claire Dubois')); await act('openOrder', 'dubois'); await act('sheet', {type: 'finish', orderId: 'o-dubois'}); });
 
 // 9 After sending
 add('After sending', 'o-partial', 'Order · partly sent (Men sent)', 'Men tab: read-only', async () => { await ev(() => window.__v.act.send('o-dubois', ['M'], 'client', 'Claire Dubois')); await act('openOrder', 'dubois'); await act('div', 'M'); });

@@ -108,7 +108,7 @@ input{font:inherit;color:inherit}
 .dock{position:absolute;left:0;right:0;bottom:0;z-index:20;padding-bottom:env(safe-area-inset-bottom,0px);
   background:color-mix(in srgb,var(--bg) 80%,transparent);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%)}
 .tabbar{display:flex}
-.tab{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;font-weight:400;color:var(--muted);padding:8px 0 6px;transition:color .2s}
+.tab{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;line-height:14px;font-weight:400;color:var(--muted);padding:8px 0 6px;transition:color .2s}
 .tab.on{color:var(--ink)}
 .tab:active{color:var(--ink)}
 .tab-ic{position:relative;display:flex}
@@ -121,7 +121,20 @@ input{font:inherit;color:inherit}
 .ord-tab{position:relative;flex:1;min-height:0;display:flex;flex-direction:column}
 .ord-tab > .ov{flex:1;height:auto}
 .ord-tab .ov-body{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
-.ord-tab .ov-actions{bottom:calc(66px + env(safe-area-inset-bottom,0px))}
+/* Finalize order: full width on a flat strip just above the tab bar, the same see-through white as the tab bar, no shadow */
+.ord-tab .ov-actions{left:0;right:0;width:auto;transform:none;bottom:calc(52px + env(safe-area-inset-bottom,0px));padding:10px 18px;
+  background:color-mix(in srgb,var(--bg) 80%,transparent);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%)}
+.ord-tab .ov-actions .cap-btn{box-shadow:none}
+/* Leave: top right of the client's order, red on a pale red squircle */
+.ov-h1{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.leave{flex:none;display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 14px;border-radius:var(--r-m);corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch;background:var(--bad-bg);color:var(--bad);font-weight:600;font-size:var(--fs-body)}
+.leave:active{opacity:.7}
+/* confirm alert: centred card over the scrim */
+.alert{position:absolute;z-index:41;left:50%;top:50%;transform:translate(-50%,-50%);width:min(320px,calc(100% - 48px));background:var(--bg);border-radius:var(--r-xl);corner-shape:squircle;padding:22px 20px 18px;display:flex;flex-direction:column;gap:8px;box-shadow:var(--shadow-sheet);animation:fade .2s ease}
+.alert b{font-size:var(--fs-heading);line-height:var(--lh-tight)}
+.alert p{margin:0 0 10px;color:var(--muted)}
+.alert-btns{display:flex;gap:10px}.alert-btns .btn{flex:1;border-radius:999px}
+.alert-btns .btn.danger{background:var(--bad-bg);color:var(--bad)}
 .no-ord-page{display:flex;flex-direction:column;min-height:100%}
 .no-ord{display:flex;flex-direction:column;align-items:center;gap:8px;margin:auto 18px;padding:28px 18px;text-align:center;color:var(--muted)}
 .no-ord b{color:var(--ink);font-size:var(--fs-heading)}
@@ -577,8 +590,6 @@ input{font:inherit;color:inherit}
 .bud-row .mix-track{grid-column:1 / -1;margin-top:4px}
 /* a category's spend against its budget: a squircle (superellipse corners via the mask, so iOS Safari gets them too) whose deeper tint fills up to the share used; red under half, yellow from half, green once reached */
 .bpill{--c:var(--muted);position:relative;isolation:isolate;display:grid;grid-template-columns:auto minmax(0,1fr);align-content:center;column-gap:12px;min-height:60px;margin:4px 0;padding:7px 16px 7px 7px;border-radius:18px;corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / 18px stretch;overflow:hidden;background:color-mix(in srgb,var(--t,var(--c)) 12%,var(--surface));color:var(--c)}
-/* the division total: the same bar, a little apart from the categories */
-.bpill-tot{margin-top:14px}
 .bpill.ok{--c:var(--good)}.bpill.warn{--c:var(--warn);--t:#F2B705}.bpill.bad{--c:var(--bad)}
 .bpill-fill{position:absolute;inset:0 auto 0 0;z-index:-1;background:color-mix(in srgb,var(--t,var(--c)) 30%,var(--surface));transition:width .35s ease}
 /* the category icon on a lighter tile at the bar's left edge, over the fill */
@@ -770,7 +781,7 @@ input.qty.xl{width:120px}
   .round{width:42px}
   .tab{flex-direction:row;justify-content:center;gap:6px;padding:8px 0}
   .screen.tabbed{padding-bottom:calc(60px + env(safe-area-inset-bottom,0px))}
-  .ord-tab .ov-actions{bottom:calc(52px + env(safe-area-inset-bottom,0px))}
+  .ord-tab .ov-actions{bottom:calc(38px + env(safe-area-inset-bottom,0px))}
   .app.docked .toast:not(.top){bottom:calc(52px + env(safe-area-inset-bottom,0px))}
   .ov-body{padding-bottom:72px}
   .ov-actions{bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 8px))}
@@ -1711,6 +1722,18 @@ function PinPad({rep, title, check, onDone, onBack}) {
 }
 
 // full-screen page instead of a bottom sheet: close on the right, back on the left when there is a step to return to
+// Leave (top right of the client's order): asks before ending the visit; the order stays as it is (a draft until it is sent)
+function LeaveAlert({S, sh, act}) {
+  const b = BUYERS[sh.bid], o = S.orders['o-' + sh.bid], open = o && b.divs.some(d => !partLocked(o, d));
+  return html`<div class="scrim" onClick=${act.close}></div>
+    <div class="alert" role="alertdialog" aria-labelledby="leave-t" aria-describedby="leave-d">
+      <b id="leave-t">Stop the session with ${b.shop}?</b>
+      <p id="leave-d">${open ? 'The order will be saved as a draft.' : 'The order is already sent.'}</p>
+      <div class="alert-btns"><button class="btn white" onClick=${act.close}>Cancel</button>
+        <button class="btn danger" onClick=${() => act.endVisit(b.id, `Session ended · ${b.shop}`)}>Yes, leave</button></div>
+    </div>`;
+}
+
 function FullPage({title, onClose, onBack, children, foot}) {
   return html`<div class="fpage" role="dialog" aria-modal="true" aria-label=${title}>
     <div class="fpage-head">${onBack ? html`<button class="icon-btn" onClick=${onBack} aria-label="Back"><${Icon} n="back"/></button>` : html`<span></span>`}
@@ -2072,12 +2095,14 @@ function OrderView({S, ui, act, order, tabbed}) {
     : st === 'confirmed' ? 'Ready for production'
     : last ? `Signed${last.signer ? ' by ' + last.signer : ''} · ${when(last.at)}` : 'Signed by the client';
   return html`<div class="ov">
-    ${tabbed ? html`<header class="top top-bar mid"><h1 class="h1">${b.shop}</h1></header>` : html`<div class="ov-nav">
+    ${!tabbed && html`<div class="ov-nav">
       <button class="icon-btn" onClick=${act.back} aria-label="Back"><${Icon} n="back"/></button>
       <div class="ov-nav-t"><div class="ov-shop">${b.shop}</div></div>
       <span class="icon-btn" aria-hidden="true"></span>
     </div>`}
     <div class="ov-body">
+      ${tabbed && html`<header class="top top-bar mid"><h1 class="h1 ov-h1">${b.shop}</h1>
+      ${inVisit && html`<button class="leave" onClick=${() => act.sheet({type:'leave', bid:b.id})}><${Icon} n="out" s=${18}/>Leave</button>`}</header>`}
       <div class="ov-lines">
         ${!['draft', 'none'].includes(st) && html`<div class=${'ov-state s-' + st} role="status">
           <span class="ov-state-ic"><${Icon} n=${st === 'shared' ? 'clock' : 'check'} s=${20} w=${2.6}/></span>
@@ -2098,9 +2123,8 @@ function OrderView({S, ui, act, order, tabbed}) {
       </div>
     </div>
     <div class="ov-actions">
-      ${inVisit ? html`<button class="cap-btn ghost" onClick=${() => act.endVisit(b.id, `Checked out · ${b.shop}`)}>Check out</button>
-        <button class="cap-btn" onClick=${() => act.sheet({type:'finish', orderId:order.id})}><${Icon} n="sign" w=${2.2}/>Finish order</button>`
-        : html`<button class="round" onClick=${() => act.sheet({type:'finish', orderId:order.id})} aria-label="Finish order"><${Icon} n="sign"/></button>
+      ${inVisit ? html`<button class="cap-btn" onClick=${() => act.sheet({type:'finish', orderId:order.id})}><${Icon} n="sign" w=${2.2}/>Finalize order</button>`
+        : html`<button class="round" onClick=${() => act.sheet({type:'finish', orderId:order.id})} aria-label="Finalize order"><${Icon} n="sign"/></button>
         <button class="cap-btn" disabled=${allSent} onClick=${() => act.checkIn(b.id)}><${Icon} n="check" w=${2.4}/>Check in to add products</button>`}
     </div>
   </div>`;
@@ -2150,7 +2174,7 @@ function FinishSheet({sh, S, act}) {
     <div class="done" role="status"><span class="done-ic"><${Icon} n="check" s=${46} w=${3}/></span>
       <h1 class="h1">${done.title}</h1><p class="muted">${done.line}</p></div>
   <//>`;
-  return html`<${FullPage} title="Finish order" onClose=${act.close}
+  return html`<${FullPage} title="Finalize order" onClose=${act.close}
     foot=${!open.length ? html`<div class="finish-btns">
       ${visit ? html`<button class="btn black" onClick=${() => act.endVisit(b.id, `Checked out · ${b.shop}`)}>Check out</button>
         <div class="small muted">Nothing left to send: the visit ends and you go back to Home.</div>`
@@ -2161,7 +2185,7 @@ function FinishSheet({sh, S, act}) {
       <button class="btn white" disabled=${!ok} onClick=${toClient}>Send to client to finish</button>
       <div class="small muted">It stays a draft. The client gets an email link to add or change quantities.</div>
     </div>`}>
-    <div><h1 class="h1">Finish order</h1><div class="small muted">${b.shop}</div></div>
+    <div><h1 class="h1">Finalize order</h1><div class="small muted">${b.shop}</div></div>
     ${!open.length ? html`<div class="callout good"><${Icon} n="check" s=${18}/><div>Everything is sent. The commercial team reviews the order and confirms it for production.</div></div>` : html`
       ${shared && html`<button class="btn secondary block" onClick=${() => act.role('buyer', o.id)}>Open as the client (demo)</button>`}
       ${b.divs.length > 1 && html`<div class="field"><span class="lbl">What to send</span>
@@ -2316,7 +2340,7 @@ function makeActs(setS, setUi, onReset) {
         return {...s, appts, orders: s.orders[id] ? s.orders : {...s.orders, [id]:newOrder(bid)}, savedAt:now}; });
       // no toast: the count on the Order tab is the confirmation
       setUi(u => ({...u, session:id, div:BUYERS[bid].divs[0], sheet:null, capture:false, ...(stay ? {} : {tab:'catalogue', view:null})})); },
-    // a visit ends from the order (Finish order: sent to the commercial team or to the client) and goes back to Home
+    // a visit ends from the order (Finalize order: sent to the commercial team or to the client) and goes back to Home
     endVisit: (bid, msg) => { a.appt(bid, {out:Date.now()}); setUi(u => ({...u, session: u.session === 'o-' + bid ? null : u.session, view:null, sheet:null, sub:null, tab:'calendar'})); a.toast(msg); },
     checkOut: bid => { a.appt(bid, {out:Date.now()}); setUi(u => u.session === 'o-' + bid ? {...u, session:null} : u); a.toast(`Checked out · ${BUYERS[bid].shop}`); },
     note: (bid, text) => a.appt(bid, {notes:text}),
@@ -2396,6 +2420,7 @@ function App({onReset}) {
     : sh.type === 'feedback' ? html`<${FeedbackSheet} act=${act}/>`
     : sh.type === 'newbuyer' ? html`<${NewBuyerSheet} S=${S} sh=${sh} act=${act}/>`
     : sh.type === 'pick' ? html`<${PickBuyerSheet} S=${S} sh=${sh} act=${act}/>`
+    : sh.type === 'leave' ? html`<${LeaveAlert} S=${S} sh=${sh} act=${act}/>`
     : sh.type === 'appt' ? html`<${ApptSheet} key=${sh.bid} sh=${sh} S=${S} ui=${ui} act=${act}/>` : null;
   const toast = ui.toast && html`<div class=${'toast' + (ui.toastTop ? ' top' : '')} key=${ui.toastId} role="status"><${Icon} n="check" s=${16} w=${2.4}/>${ui.toast}</div>`;
 
