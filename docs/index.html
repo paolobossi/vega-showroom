@@ -132,9 +132,9 @@ input{font:inherit;color:inherit}
 .ov .ov-actions > *{pointer-events:auto}.ov .ov-actions .cap-btn{box-shadow:none}
 .cap-btn.go{background:var(--good);color:var(--surface)}
 .ord-tab .ov-actions .cap-btn{box-shadow:none}
-/* Leave: top right of the client's order, like an iOS bar button: red text on a light grey pill, no red fill */
+/* Leave: top right of the client's order: red text on a white pill with a grey outline, no red fill */
 .ov-h1{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.leave{flex:none;display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:999px;background:var(--surface);color:var(--bad);font-weight:600;font-size:var(--fs-body)}
+.leave{flex:none;display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:999px;background:var(--bg);box-shadow:inset 0 0 0 1px var(--line);color:var(--bad);font-weight:600;font-size:var(--fs-body)}
 .leave:active{opacity:.7}
 /* confirm alert: centred card over the scrim */
 .alert{position:absolute;z-index:41;left:50%;top:50%;transform:translate(-50%,-50%);width:min(320px,calc(100% - 48px));background:var(--bg);border-radius:var(--r-xl);corner-shape:squircle;padding:22px 20px 18px;display:flex;flex-direction:column;gap:8px;box-shadow:var(--shadow-sheet);animation:fade .2s ease}
@@ -521,9 +521,10 @@ input{font:inherit;color:inherit}
 /* sized lines: Enter sizes / Edit sizes in the stepper's place (see .sel-ctl .sel-edit) */
 /* sized lines: the size chips on their own line, then Edit sizes where the stepper sits, with units and value on its right */
 .sel-ctl .szs{flex-basis:100%}
-.sel-ctl .sel-edit{flex:none;width:auto;height:38px;margin:0;padding:0 16px}
+.sel-ctl .sel-edit{flex:none;width:auto;height:38px;margin:0;padding:0 16px;border-radius:999px} /* a pill, like the other outlined buttons */
 .sel-val{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;line-height:var(--lh-tight)}
-.sel-val small{font-size:var(--fs-body);color:var(--muted)}
+/* units and value on an order line: the size of the size tags (12px), same colours and weights */
+.sel-val{font-size:var(--fs-caption)}.sel-val small{font-size:var(--fs-caption);color:var(--muted)}
 .sel-val b{font-weight:600}
 /* the delivery drop: white tag with a grey outline next to the item code */
 .sel.open .sel-val small{color:var(--warn);font-weight:600}
@@ -634,6 +635,8 @@ input{font:inherit;color:inherit}
 .sheet.tall{height:88%}
 .sheet-grab{width:38px;height:5px;border-radius:var(--r-xs);background:var(--line);margin:8px auto 0;flex:none}
 .sheet-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:8px 10px 6px 18px;flex:none}
+/* the close × centred on the title's (first) line */
+.sheet-head:not(.center) > .icon-btn{margin-top:-10px;margin-bottom:-10px}
 .sheet-title{font:700 var(--fs-heading)/var(--lh-tight) var(--f-display);letter-spacing:-.02em;text-wrap:balance}
 .sheet-sub{font-size:var(--fs-caption);color:var(--muted);margin-top:4px}
 /* centred head (appointment): the close button sits on the title's line, the sub line centred under the title */
@@ -871,6 +874,10 @@ input.qty.xl{width:120px}
 /* each line a white squircle card lifted by the same soft shadow as the Collection cards (drawn on the list, since the mask clips a shadow on the card) */
 .grp-box .list{gap:10px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.05)) drop-shadow(0 4px 10px rgba(0,0,0,.07))}
 .ov-lines .grp-box .list > .sel{background:var(--card);-webkit-mask-box-image:var(--squircle) 20 / 16px stretch}
+/* the − n + stepper on an order line has no grey box around it */
+/* order lines use proportional figures everywhere (Inter's tabular 1 has a foot) */
+.sel,.sel *{font-variant-numeric:normal}
+.sel .stp{background:none;border:0;border-radius:999px}.sel .stp button{border-radius:999px}
 .grp-box .sel .thumb{-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}
 @supports (-webkit-mask-box-image:none){.grp-box .list,.ov-lines .grp-box .list > .sel,.grp-box .sel .thumb{border-radius:0}}
 .grp-box .sel-edit{background:var(--bg);border:0;box-shadow:inset 0 0 0 1px var(--line);corner-shape:squircle}
