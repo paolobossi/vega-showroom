@@ -865,7 +865,9 @@ input.qty.xl{width:120px}
 .grp-box .grp-head{padding:0 2px 10px}
 /* each line is its own white squircle card inside the category box, with a squircle photo; Edit sizes is white with a grey outline */
 .grp-box .list{-webkit-mask-box-image:none}
-.ov-lines .grp-box .list > .sel{background:var(--surface);-webkit-mask-box-image:var(--squircle) 20 / 16px stretch}
+/* each line a white squircle card lifted by the same soft shadow as the Collection cards (drawn on the list, since the mask clips a shadow on the card) */
+.grp-box .list{gap:10px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.05)) drop-shadow(0 4px 10px rgba(0,0,0,.07))}
+.ov-lines .grp-box .list > .sel{background:var(--card);-webkit-mask-box-image:var(--squircle) 20 / 16px stretch}
 .grp-box .sel .thumb{-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}
 @supports (-webkit-mask-box-image:none){.grp-box .list,.ov-lines .grp-box .list > .sel,.grp-box .sel .thumb{border-radius:0}}
 .grp-box .sel-edit{background:var(--bg);border:0;box-shadow:inset 0 0 0 1px var(--line);corner-shape:squircle}
