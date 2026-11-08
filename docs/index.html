@@ -1860,7 +1860,7 @@ function PickBuyerSheet({S, sh, act}) {
   const it = sh.item, look = it && it.look && LOOKS.find(x => x.id === it.look), p = it && P[look ? look.items[0][0] : it.pid];
   const all = myBuyers(S), mine = [...all.filter(b => !dayOf(b)), ...all.filter(b => dayOf(b) > 0), ...all.filter(b => dayOf(b) < 0)];
   return html`<${Sheet} tall title=${it ? 'Add to an order' : 'Choose a client'} sub=${!it ? null : look ? `${lookNo(look)} · ${look.items.length} pieces` : `${p.name} · ${cname(it.colour)}`} onClose=${act.close}>
-    <div class="list pick">${mine.map(b => { const o = S.orders['o-' + b.id], why = p && canTake(o || {buyerId:b.id, status:'draft'}, p);
+    <div class="list gapped pick">${mine.map(b => { const o = S.orders['o-' + b.id], why = p && canTake(o || {buyerId:b.id, status:'draft'}, p);
       return html`<button class="row" disabled=${!!why} onClick=${() => it ? act.addFor(b.id, it) : act.checkIn(b.id, true)}>
         <div class="row-main"><div class="row-title">${b.shop}</div><div class="row-sub">${dayLabel(b)} · ${b.time} · ${b.city}</div></div>
         <div class="row-side">${why ? html`<span class="small muted">${why}</span>` : html`<${Pill} s=${o ? o.status : 'none'}/>`}</div>
