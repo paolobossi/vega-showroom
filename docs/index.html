@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Vega Showroom</title>
 <meta name="description" content="Vega: showroom order capture for wholesale. Clickable prototype.">
-<meta name="theme-color" content="#EFF0EC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0F1113" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -30,9 +30,9 @@
   /* depth: light from above; raised controls, floating buttons and bars, sheets */
   --shadow-raised:0 1px 3px rgba(0,0,0,.12); --shadow-float:0 8px 24px rgba(0,0,0,.16); --shadow-sheet:0 -8px 32px rgba(0,0,0,.18);
   --stage:#E1E2DE; --frame:#17181A;
-  --bg:#EFF0EC; --surface:#FFFFFF; --surface-2:#F5F6F2; --studio:#E3E4DF;
+  --bg:#FFFFFF; --surface:#F2F3F0; --surface-2:#E7E8E4; --studio:#E3E4DF; --card:#FFFFFF;
   --ink:#141619; --muted:#62666B; --faint:#808489; --line:#DCDED8;
-  --band:#000000; --band-ink:#FFFFFF; /* client band: black in light and dark mode */
+  --band:#000000; --band-ink:#FFFFFF; /* status-bar strip and the Must have tag: black in light and dark mode */
   --accent:#2238A6; --accent-ink:#FFFFFF; --accent-soft:#E3E7F8;
   --good:#1D7448; --good-bg:#E0EFE6; --warn:#946000; --warn-bg:#F7EAD2; --bad:#AE281C; --bad-bg:#F7E1DE;
   --scrim:rgba(10,12,16,.42);
@@ -42,7 +42,7 @@
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --stage:#050607; --frame:#2A2C30;
-  --bg:#0F1113; --surface:#181A1E; --surface-2:#202328; --studio:#43464B;
+  --bg:#0F1113; --surface:#181A1E; --surface-2:#202328; --studio:#43464B; --card:#181A1E;
   --ink:#ECEDEA; --muted:#A0A4A9; --faint:#6E7277; --line:#2C3036;
   --accent:#8C9DFF; --accent-ink:#0F1113; --accent-soft:#222A4C;
   --good:#58C48D; --good-bg:#15291E; --warn:#E5A93E; --warn-bg:#2E2414; --bad:#F27D72; --bad-bg:#331A18;
@@ -50,7 +50,7 @@
 }}
 :root[data-theme="dark"]{
   --stage:#050607; --frame:#2A2C30;
-  --bg:#0F1113; --surface:#181A1E; --surface-2:#202328; --studio:#43464B;
+  --bg:#0F1113; --surface:#181A1E; --surface-2:#202328; --studio:#43464B; --card:#181A1E;
   --ink:#ECEDEA; --muted:#A0A4A9; --faint:#6E7277; --line:#2C3036;
   --accent:#8C9DFF; --accent-ink:#0F1113; --accent-soft:#222A4C;
   --good:#58C48D; --good-bg:#15291E; --warn:#E5A93E; --warn-bg:#2E2414; --bad:#F27D72; --bad-bg:#331A18;
@@ -60,7 +60,7 @@
 html,body{height:100%;margin:0}
 html{padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) 0 env(safe-area-inset-left,0px);background:var(--bg)}
 body{background:var(--bg);color:var(--ink);font:var(--fs-body)/var(--lh-body) var(--f-ui);-webkit-font-smoothing:antialiased;overscroll-behavior:none}
-/* home-screen app: the status bar is see-through with white icons (fixed by iOS at launch), so the strip behind it is always black like the client band */
+/* home-screen app: the status bar is see-through with white icons (fixed by iOS at launch), so the strip behind it is always black */
 html::before{content:"";position:fixed;z-index:100;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:var(--band);pointer-events:none}
 @media (min-width:900px){html,body{background:var(--stage)}}
 [hidden]{display:none!important}
@@ -103,35 +103,27 @@ input{font:inherit;color:inherit}
 /* ---------- app frame ---------- */
 .app{position:relative;flex:1;min-height:0;display:flex;flex-direction:column;container-type:size;container-name:app;background:var(--bg)}
 .screen{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
-/* floating pill tab bar; content scrolls underneath */
-.screen.tabbed{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
-/* the tab bar and Scan float together at the bottom */
-.dock{position:absolute;z-index:20;left:50%;transform:translateX(-50%);bottom:max(14px,calc(env(safe-area-inset-bottom,0px) - 6px));display:flex;flex-direction:column;gap:8px}
-.tabbar{display:flex;gap:2px;padding:6px;border-radius:999px;
-  background:color-mix(in srgb,var(--surface) 78%,transparent);-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);
-  border:1px solid color-mix(in srgb,var(--line) 70%,transparent);box-shadow:var(--shadow-float)}
-.tab{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:var(--fs-caption);font-weight:600;color:var(--muted);min-width:74px;padding:8px 10px 6px;border-radius:999px;transition:background .2s,color .2s}
-.tab.on{color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
-/* Scan: a round button beside the tab bar, as tall as it, same glass */
-.dock-row{display:flex;align-items:center;gap:8px}
-.scan{flex:none;width:var(--scan-d,68px);height:var(--scan-d,68px);border-radius:999px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:var(--fs-caption);font-weight:600;color:var(--ink);
-  background:color-mix(in srgb,var(--surface) 78%,transparent);-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);
-  border:1px solid color-mix(in srgb,var(--line) 70%,transparent);box-shadow:var(--shadow-float)}
-.scan:active{background:var(--surface-2)}
-/* client in session: an edge-to-edge black band under the status bar, on every tab; the page below rounds its top corners into it. Tapping it opens the order */
-/* on the phone only: the desktop keeps its device frame */
-@media (max-width:899px){html.in-session,html.in-session body{background:var(--band)}}
-.app.banded{background:var(--band)}
-.app.banded > .screen{border-radius:20px 20px 0 0;background:var(--bg)}
-.sbar{flex:none;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:40px;padding:4px 18px 6px;background:var(--band);color:var(--band-ink);animation:drop .3s cubic-bezier(.2,.8,.2,1)}
-@keyframes drop{from{transform:translateY(-100%)}}
-.sbar b{min-width:0;font-size:var(--fs-body);font-weight:700;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sbar span{flex:none;display:inline-flex;align-items:center;gap:2px;font-size:var(--fs-caption);opacity:.7}
-/* green live dot before the name, pulsing, and the number of items in the order as a white badge after it */
-.sbar-dot{position:relative;flex:none;width:8px;height:8px;border-radius:50%;background:#3CCB7F}
-.sbar-dot::after{content:"";position:absolute;inset:0;border-radius:50%;background:#3CCB7F;animation:beat 1.8s ease-out infinite}
-.sbar .sbar-n{flex:none;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--band-ink);color:var(--band);font-size:var(--fs-caption);font-weight:700;font-variant-numeric:tabular-nums;display:inline-grid;place-items:center;opacity:1}
-@keyframes beat{from{transform:scale(1);opacity:.7}to{transform:scale(2.6);opacity:0}}
+/* tab bar: edge to edge at the bottom, under the page (not over it); white with a hairline on top; active item black */
+.screen.tabbed{padding-bottom:28px}
+.dock{flex:none;z-index:20;background:var(--bg);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabbar{display:flex}
+.tab{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:var(--fs-caption);font-weight:600;color:var(--muted);padding:8px 0 6px;transition:color .2s}
+.tab.on{color:var(--ink)}
+.tab:active{color:var(--ink)}
+.tab-ic{position:relative;display:flex}
+/* client checked in: number of items in their order as a black badge on Order (a green dot while it is empty) */
+.tab-n{position:absolute;top:-5px;left:calc(100% - 8px);min-width:var(--tag-h);height:var(--tag-h);padding:0 5px;border-radius:999px;background:var(--ink);color:var(--bg);font-size:var(--fs-caption);font-weight:700;font-variant-numeric:tabular-nums;display:grid;place-items:center;box-shadow:0 0 0 2px var(--bg)}
+.tab-dot{position:absolute;top:-1px;right:-3px;width:8px;height:8px;border-radius:50%;background:#3CCB7F;box-shadow:0 0 0 2px var(--bg)}
+/* messages sit just above the tab bar while it shows */
+.app.docked .toast:not(.top){bottom:calc(66px + env(safe-area-inset-bottom,0px))}
+/* Order tab: the order of the client in session, with the tab bar under it */
+.ord-tab{position:relative;flex:1;min-height:0;display:flex;flex-direction:column}
+.ord-tab > .ov{flex:1;height:auto}
+.ord-tab .ov-body{padding-bottom:88px}
+.ord-tab .ov-actions{bottom:12px}
+.no-ord{display:flex;flex-direction:column;align-items:center;gap:8px;margin:0 18px;padding:28px 18px;text-align:center;color:var(--muted)}
+.no-ord b{color:var(--ink);font-size:var(--fs-heading)}
+.no-ord .btn{margin-top:8px;border-radius:999px;min-height:52px;padding:0 28px}
 .top{padding:14px 18px 6px}
 /* Profile: the seller, their orders, passcode and sign out */
 .prof{display:flex;align-items:center;gap:14px;padding:4px 2px 6px}
@@ -236,7 +228,7 @@ input{font:inherit;color:inherit}
 .chip.ai{background:var(--accent-soft);color:var(--accent)}
 .seg{display:inline-flex;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:2px;gap:2px}
 .seg button{padding:6px 14px;border-radius:999px;font-size:var(--fs-body);font-weight:600;color:var(--muted);white-space:nowrap}
-.seg button.on{background:var(--surface);color:var(--ink);box-shadow:var(--shadow-raised)}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:var(--shadow-raised)}
 .seg.full{display:flex}.seg.full button{flex:1}
 
 /* ---------- buttons ---------- */
@@ -491,8 +483,8 @@ input{font:inherit;color:inherit}
 .ov-body{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 .ov-actions{position:absolute;z-index:19;left:50%;transform:translateX(-50%);bottom:max(16px,calc(env(safe-area-inset-bottom,0px) - 4px));width:min(calc(100% - 28px),420px);display:flex;gap:10px}
 .ov-actions .cap-btn{box-shadow:var(--shadow-float)}
-.ov-actions .round{background:var(--surface);box-shadow:var(--shadow-float)}
-.ov-actions .cap-btn.ghost{flex:none;padding:0 22px;background:var(--surface);color:var(--ink);border:1px solid var(--line);box-shadow:var(--shadow-float)}
+.ov-actions .round{background:var(--card);box-shadow:var(--shadow-float)}
+.ov-actions .cap-btn.ghost{flex:none;padding:0 22px;background:var(--card);color:var(--ink);border:1px solid var(--line);box-shadow:var(--shadow-float)}
 .sel{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 4px;padding:12px 8px 12px 14px;border-top:1px solid var(--line)}
 .sel:first-child{border-top:0}
 .sel-info{display:flex;gap:12px;align-items:center;text-align:left;min-width:0}
@@ -764,11 +756,8 @@ input.qty.xl{width:120px}
   .ov-bar{padding:6px 14px max(6px,env(safe-area-inset-bottom,0px))}
   .cap-btn,.round{height:42px}
   .round{width:42px}
-  .dock{bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 8px))}
-  .tabbar{padding:4px}
-  .tab{flex-direction:row;gap:6px;font-size:var(--fs-caption);padding:6px 16px}
-  .scan{width:auto;height:auto;align-self:stretch;flex-direction:row;gap:6px;padding:0 18px}
-  .screen.tabbed{padding-bottom:64px}
+  .tab{flex-direction:row;justify-content:center;gap:6px;padding:8px 0}
+  .screen.tabbed{padding-bottom:20px}
   .ov-body{padding-bottom:72px}
   .ov-actions{bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 8px))}
 }
@@ -799,7 +788,7 @@ input.qty.xl{width:120px}
 .appts.now .appt{border:1.5px solid var(--good);border-radius:var(--r-l)}
 /* Collection cards: the photo runs to the card's edges (top and sides), the text keeps its margin; a soft drop shadow lifts the card off the grey page */
 .pc-wrap{display:flex;min-width:0;filter:drop-shadow(0 1px 1px rgba(0,0,0,.05)) drop-shadow(0 4px 10px rgba(0,0,0,.07))}
-.pc-wrap > .pcard{flex:1;padding:0 0 4px;gap:10px;border:0}
+.pc-wrap > .pcard{flex:1;padding:0 0 4px;gap:10px;border:0;background:var(--card);border-radius:24px;-webkit-mask-box-image:var(--squircle) 20 / 24px stretch}
 .pcard .pc-photo .thumb{border-radius:0}
 .pcard .pc-info{padding:0 10px 8px}
 .pcard .ptags{left:8px;top:8px}.pcard .pc-in{right:8px;top:8px}.pcard .pc-lock{left:8px;top:8px}
@@ -1209,6 +1198,7 @@ const IC = {
   bags:{f:'<path d="M239.89,198.12l-14.26-120a16,16,0,0,0-16-14.12H176a48,48,0,0,0-96,0H46.33a16,16,0,0,0-16,14.12l-14.26,120A16,16,0,0,0,20,210.6a16.13,16.13,0,0,0,12,5.4H223.92A16.13,16.13,0,0,0,236,210.6,16,16,0,0,0,239.89,198.12ZM96,104a8,8,0,0,1-16,0V88a8,8,0,0,1,16,0Zm32-72a32,32,0,0,1,32,32H96A32,32,0,0,1,128,32Zm48,72a8,8,0,0,1-16,0V88a8,8,0,0,1,16,0Z"/>'}, // handbag-fill
   shoes:{f:'<path d="M32,144a95.28,95.28,0,0,1,37.53,7.67,4,4,0,0,1,2.47,3.7V192a16,16,0,0,1-16,16H40a16,16,0,0,1-16-16V148a4,4,0,0,1,4-4Zm199,12.19L180,144.71,69.66,34.34a8,8,0,0,0-11.56.26C36.11,58.64,24,89,24,120a8,8,0,0,0,8,8,111.2,111.2,0,0,1,63.34,19.7,112.45,112.45,0,0,1,40.55,50.39A15.9,15.9,0,0,0,150.72,208H240a16,16,0,0,0,16-16v-4.73A31.72,31.72,0,0,0,231,156.19Z"/>'}, // high-heel-fill
   acc:{f:'<path d="M232,72v92a44,44,0,0,1-87.81,4H111.81A44,44,0,0,1,24,164V72A32,32,0,0,1,56,40a8,8,0,0,1,0,16A16,16,0,0,0,40,72v58.08A44,44,0,0,1,110.32,152h35.36A44,44,0,0,1,216,130.08V72a16,16,0,0,0-16-16,8,8,0,0,1,0-16A32,32,0,0,1,232,72Z"/>'}, // eyeglasses-fill
+  scan:{f:'<path d="M224,40V80a8,8,0,0,1-16,0V48H176a8,8,0,0,1,0-16h40A8,8,0,0,1,224,40ZM80,208H48V176a8,8,0,0,0-16,0v40a8,8,0,0,0,8,8H80a8,8,0,0,0,0-16Zm136-40a8,8,0,0,0-8,8v32H176a8,8,0,0,0,0,16h40a8,8,0,0,0,8-8V176A8,8,0,0,0,216,168ZM40,88a8,8,0,0,0,8-8V48H80a8,8,0,0,0,0-16H40a8,8,0,0,0-8,8V80A8,8,0,0,0,40,88Zm32-8v96a8,8,0,0,0,8,8h96a8,8,0,0,0,8-8V80a8,8,0,0,0-8-8H80A8,8,0,0,0,72,80Z"/>'}, // scan-fill
   checkc:{f:'<path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm45.66,85.66-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32Z"/>'}, // check-circle-fill
 };
 const Icon = ({n, s=22, w=1.8}) => { const i = IC[n]; return html`<svg width=${s} height=${s} viewBox="0 0 256 256" fill="currentColor" aria-hidden="true" dangerouslySetInnerHTML=${{__html: i.f || (w >= 2.1 ? i.b : i.r)}}></svg>`; };
@@ -1753,16 +1743,16 @@ function PasscodeSheet({S, act}) {
 }
 
 function PickBuyerSheet({S, sh, act}) {
-  const look = sh.item.look && LOOKS.find(x => x.id === sh.item.look), p = P[look ? look.items[0][0] : sh.item.pid];
+  const it = sh.item, look = it && it.look && LOOKS.find(x => x.id === it.look), p = it && P[look ? look.items[0][0] : it.pid];
   const all = myBuyers(S), mine = [...all.filter(b => !dayOf(b)), ...all.filter(b => dayOf(b) > 0), ...all.filter(b => dayOf(b) < 0)];
-  return html`<${Sheet} tall title="Add to an order" sub=${look ? `${lookNo(look)} · ${look.items.length} pieces` : `${p.name} · ${cname(sh.item.colour)}`} onClose=${act.close}>
+  return html`<${Sheet} tall title=${it ? 'Add to an order' : 'Choose a client'} sub=${!it ? 'Checks them in and opens their order' : look ? `${lookNo(look)} · ${look.items.length} pieces` : `${p.name} · ${cname(it.colour)}`} onClose=${act.close}>
     <div class="lbl">Your appointments</div>
-    <div class="list">${mine.map(b => { const o = S.orders['o-' + b.id], why = canTake(o || {buyerId:b.id, status:'draft'}, p);
-      return html`<button class="row" disabled=${!!why} onClick=${() => act.addFor(b.id, sh.item)}>
+    <div class="list">${mine.map(b => { const o = S.orders['o-' + b.id], why = p && canTake(o || {buyerId:b.id, status:'draft'}, p);
+      return html`<button class="row" disabled=${!!why} onClick=${() => it ? act.addFor(b.id, it) : act.checkIn(b.id, true)}>
         <div class="row-main"><div class="row-title">${b.shop}</div><div class="row-sub">${dayLabel(b)} · ${b.time} · ${b.city}</div></div>
         <div class="row-side">${why ? html`<span class="small muted">${why}</span>` : html`<${Pill} s=${o ? o.status : 'none'}/>`}</div>
       </button>`; })}
-      <button class="row" onClick=${() => act.sheet({type:'newbuyer', item:sh.item})}>
+      <button class="row" onClick=${() => act.sheet({type:'newbuyer', item:it, stay:!it})}>
         <span class="round-btn" style="margin:0;width:34px;height:34px"><${Icon} n="plus" s=${18} w=${2.2}/></span>
         <div class="row-main"><div class="row-title">New session</div><div class="row-sub">A client without an appointment</div></div>
       </button></div>
@@ -1779,7 +1769,7 @@ function NewBuyerSheet({S, sh, act}) {
     const code = (shop.replace(/[^A-Za-z]/g, '').slice(0, 3).toUpperCase() || 'NEW') + String(10 + hash(id) % 90);
     // a walk-in client has no back-office profile yet, so it starts on the base one
     act.newBuyer({id, rep:S.rep, added:true, shop, city:f.city.trim() || 'Paris', cluster:CLUSTERS[0], divs,
-      budget:Object.fromEntries(divs.map(d => [d, Math.max(0, Number(f[d]) || 0)])), time:hhmm(Date.now()), code}, sh.item, sh.appt);
+      budget:Object.fromEntries(divs.map(d => [d, Math.max(0, Number(f[d]) || 0)])), time:hhmm(Date.now()), code}, sh.item, sh.appt, sh.stay);
   };
   return html`<${Sheet} tall title="New session" sub="Start an order with a client" onClose=${act.close}
     foot=${html`<button class="btn primary" disabled=${!ok} onClick=${start}>Start session</button>`}>
@@ -2045,7 +2035,7 @@ function SelLine({l, o, act, locked}) {
 }
 
 // One switch only (Women / Men); the card at the top shows that division's budget per category, and opens Budgets & KPIs
-function OrderView({S, ui, act, order}) {
+function OrderView({S, ui, act, order, tabbed}) {
   const b = BUYERS[order.buyerId], div = b.divs.includes(ui.div) ? ui.div : b.divs[0];
   const open = issuesOf(order, [div]).length, k = kpi(order, div);
   const lines = order.lines.filter(l => P[l.pid].div === div);
@@ -2068,11 +2058,11 @@ function OrderView({S, ui, act, order}) {
     : st === 'confirmed' ? 'Ready for production'
     : last ? `Signed${last.signer ? ' by ' + last.signer : ''} · ${when(last.at)}` : 'Signed by the client';
   return html`<div class="ov">
-    <div class="ov-nav">
+    ${tabbed ? html`<header class="top top-bar mid"><h1 class="h1">${b.shop}</h1></header>` : html`<div class="ov-nav">
       <button class="icon-btn" onClick=${act.back} aria-label="Back"><${Icon} n="back"/></button>
       <div class="ov-nav-t"><div class="ov-shop">${b.shop}</div></div>
       <span class="icon-btn" aria-hidden="true"></span>
-    </div>
+    </div>`}
     <div class="ov-body">
       <div class="ov-lines">
         ${!['draft', 'none'].includes(st) && html`<div class=${'ov-state s-' + st} role="status">
@@ -2263,17 +2253,22 @@ const GUIDE_STEPS = [
   'A sent part is read-only here. The commercial team confirms it for production in the back office.',
 ];
 
-function SessionBar({S, ui, act}) {
-  const o = activeOrder(S, ui); if (!o) return null;
-  const b = BUYERS[o.buyerId], n = o.lines.length, u = b.divs.reduce((a, d) => a + kpi(o, d).units, 0);
-  return html`<button class="sbar" onClick=${() => act.openOrder(b.id)} aria-label=${`Ordering for ${b.shop}: ${n} ${n === 1 ? 'item' : 'items'}, ${u} units. Open the order`}>
-    <i class="sbar-dot" aria-hidden="true"></i><b>${b.shop}</b>${n > 0 && html`<span class="sbar-n" aria-hidden="true">${n}</span>`}<span>View order<${Icon} n="next" s=${14} w=${2.2}/></span>
-  </button>`;
+// Home, Looks, Scan in the middle, Collection, Order. Order carries the client in session: their item count, or a green dot while empty
+function TabBar({tab, so, act}) {
+  const n = so ? so.lines.length : 0;
+  const T = [['calendar', 'Home', 'today'], ['today', 'Looks', 'spark'], ['scan', 'Scan', 'scan'], ['catalogue', 'Collection', 'grid'], ['order', 'Order', 'orders']];
+  return html`<nav class="tabbar">${T.map(([k, l, i]) => k === 'scan'
+    ? html`<button class="tab" onClick=${() => act.capture(true)}><span class="tab-ic"><${Icon} n=${i}/></span>${l}</button>`
+    : html`<button class=${'tab' + (tab === k ? ' on' : '')} onClick=${() => act.tab(k)} aria-current=${tab === k ? 'page' : null}
+        aria-label=${k === 'order' && so ? `Order, ${BUYERS[so.buyerId].shop}, ${n} ${n === 1 ? 'item' : 'items'}` : null}>
+        <span class="tab-ic"><${Icon} n=${i}/>${k === 'order' && so && (n ? html`<b class="tab-n" aria-hidden="true">${n}</b>` : html`<i class="tab-dot" aria-hidden="true"></i>`)}</span>${l}</button>`)}</nav>`;
 }
 
-function TabBar({tab, act}) {
-  const T = [['calendar', 'Home', 'home'], ['today', 'Looks', 'spark'], ['catalogue', 'Collection', 'grid']];
-  return html`<nav class="tabbar">${T.map(([k, l, i]) => html`<button class=${'tab' + (tab === k ? ' on' : '')} onClick=${() => act.tab(k)} aria-current=${tab === k ? 'page' : null}><${Icon} n=${i}/>${l}</button>`)}</nav>`;
+// Order tab with nobody checked in: one button to the list of clients; picking one checks them in and shows their order here
+function NoOrder({act}) {
+  return html`<header class="top top-bar mid"><h1 class="h1">Order</h1></header>
+    <div class="no-ord"><${Icon} n="orders" s=${32}/><b>No client checked in</b><div>Choose a client to check them in and start or continue their order.</div>
+      <button class="btn primary" onClick=${() => act.sheet({type:'pick'})}>Choose a client</button></div>`;
 }
 
 function makeActs(setS, setUi, onReset) {
@@ -2283,7 +2278,9 @@ function makeActs(setS, setUi, onReset) {
     // opening an order only shows it; the client in session changes only with a check-in
     openOrder: bid => { const id = 'o-' + bid;
       setS(s => s.orders[id] ? s : {...s, orders:{...s.orders, [id]:newOrder(bid)}, savedAt:Date.now()});
-      setUi(u => ({...u, view:id, div: u.view === id ? u.div : BUYERS[bid].divs[0], sheet:null, capture:false})); },
+      // the client in session: their order is the Order tab; any other order opens full screen
+      setUi(u => u.session === id ? {...u, tab:'order', view:null, sub:null, search:false, sheet:null, capture:false}
+        : {...u, view:id, div: u.view === id ? u.div : BUYERS[bid].divs[0], sheet:null, capture:false}); },
     back: () => setUi(u => ({...u, view:null, capture:false, sheet:null})),
     tab: t => setUi(u => ({...u, tab:t, view:null, sub:null, search:false})),
     sheet: sh => setUi(u => ({...u, sheet:sh, capture: sh && sh.type === 'picker' ? false : sh && sh.type === 'size' ? false : u.capture})),
@@ -2301,13 +2298,13 @@ function makeActs(setS, setUi, onReset) {
       setUi(u => ({...u, session:id, div: BUYERS[bid].divs[0]})); },
     // appointment record: every change is stored straight away (state persists on each update)
     appt: (bid, patch) => setS(s => ({...s, appts:{...s.appts, [bid]:{...(s.appts[bid] || {}), ...patch}}, savedAt:Date.now()})),
-    // checking in starts the client session (black band on top) and opens the Collection; one client at a time, so whoever
+    // checking in starts the client session (count on the Order tab) and opens the Collection; one client at a time, so whoever
     // was ongoing, for any seller on this device, is checked out. Checking in again after a check-out keeps the original start time.
     checkIn: (bid, stay) => { const now = Date.now(), id = 'o-' + bid;
       setS(s => { const appts = oneOngoing({...s.appts}, bid);
         const x = appts[bid] || {}; appts[bid] = x.in ? {...x, out:null, back:now} : {...x, in:now, out:null};
         return {...s, appts, orders: s.orders[id] ? s.orders : {...s.orders, [id]:newOrder(bid)}, savedAt:now}; });
-      // no toast: the client band appearing is the confirmation
+      // no toast: the count on the Order tab is the confirmation
       setUi(u => ({...u, session:id, div:BUYERS[bid].divs[0], sheet:null, capture:false, ...(stay ? {} : {tab:'catalogue', view:null})})); },
     // a visit ends from the order (Finish order: sent to the commercial team or to the client) and goes back to Home
     endVisit: (bid, msg) => { a.appt(bid, {out:Date.now()}); setUi(u => ({...u, session: u.session === 'o-' + bid ? null : u.session, view:null, sheet:null, sub:null, tab:'calendar'})); a.toast(msg); },
@@ -2317,8 +2314,8 @@ function makeActs(setS, setUi, onReset) {
     addProducts: () => setUi(u => ({...u, tab:'catalogue', view:null, sheet:null})),
     // add flow from Collection or a lookbook with nobody checked in: check that client in, then add the piece
     addFor: (bid, item) => { a.checkIn(bid, true); if (item.look) a.selectLook('o-' + bid, LOOKS.find(x => x.id === item.look)); else a.select('o-' + bid, item.pid, item.colour, item.via); },
-    newBuyer: (b, item, appt) => { BUYERS[b.id] = b; setS(s => ({...s, buyers:{...s.buyers, [b.id]:b}}));
-      if (item) a.addFor(b.id, item); else if (appt) a.sheet({type:'appt', bid:b.id}); else a.checkIn(b.id); },
+    newBuyer: (b, item, appt, stay) => { BUYERS[b.id] = b; setS(s => ({...s, buyers:{...s.buyers, [b.id]:b}}));
+      if (item) a.addFor(b.id, item); else if (appt) a.sheet({type:'appt', bid:b.id}); else a.checkIn(b.id, stay); },
     mut: (id, fn) => setS(s => { const o = JSON.parse(JSON.stringify(s.orders[id])); fn(o); syncStatus(o); return {...s, orders:{...s.orders, [id]:o}, savedAt:Date.now()}; }),
     role: (r, id) => setUi(u => ({...u, role:r, buyerOrder:id || u.buyerOrder, sheet:null, capture:false})),
     reset: onReset,
@@ -2396,24 +2393,20 @@ function App({onReset}) {
   // a checked-in client is always the client in session (after a reload or an account switch too)
   const ongoing = ongoingBuyer(S), sessionOk = !!activeOrder(S, ui);
   useEffect(() => { if (ongoing && !sessionOk && !buyerView) act.startSession(ongoing.id); }, [ongoing && ongoing.id, sessionOk, !!buyerView]);
-  // the client in session sits in a black band at the top of every tab; an open order is full screen, without it or the tab bar
-  const so = activeOrder(S, ui), band = !!(so && !order), capDiv = so && (BUYERS[so.buyerId].divs.includes(ui.capDiv) ? ui.capDiv : BUYERS[so.buyerId].divs[0]);
-  // while the band shows, the status bar area above it goes black too: the page background and the browser's theme colour
-  const black = band && !buyerView && !S.signedOut && !ui.search;
-  useEffect(() => { const root = document.documentElement; root.classList.toggle('in-session', black);
-    const ink = getComputedStyle(root).getPropertyValue('--band').trim() || '#000000';
-    document.querySelectorAll('meta[name="theme-color"]').forEach(m => { m.dataset.base = m.dataset.base || m.content; m.content = black ? ink : m.dataset.base; }); }, [black]);
+  // an order opened from Home or history is full screen, without the tab bar; the client in session's order is the Order tab
+  const so = activeOrder(S, ui), capDiv = so && (BUYERS[so.buyerId].divs.includes(ui.capDiv) ? ui.capDiv : BUYERS[so.buyerId].divs[0]);
   if (buyerView) return html`<div class="app"><${BuyerView} S=${S} ui=${ui} act=${act}/>${sheet}${toast}</div>`;
   if (S.signedOut) return html`<div class="app"><${SignIn} S=${S} act=${act}/>${toast}</div>`;
-  return html`<div class=${'app' + (band ? ' banded' : '')}>
-    ${order ? html`<${OrderView} S=${S} ui=${ui} act=${act} order=${order}/>` : html`
-      ${band && html`<${SessionBar} S=${S} ui=${ui} act=${act}/>`}
+  return html`<div class=${'app' + (order ? '' : ' docked')}>
+    ${order ? html`<${OrderView} S=${S} ui=${ui} act=${act} order=${order}/>`
+      : ui.tab === 'order' && so ? html`<div class="ord-tab"><${OrderView} S=${S} ui=${ui} act=${act} order=${so} tabbed/></div>` : html`
       <div class="screen tabbed">
+        ${ui.tab === 'order' && html`<${NoOrder} act=${act}/>`}
         ${ui.tab === 'calendar' && html`<${CalendarTab} S=${S} act=${act}/>`}
         ${ui.tab === 'today' && html`<${Today} S=${S} ui=${ui} act=${act}/>`}
         ${ui.tab === 'catalogue' && html`<${CatalogueTab} key=${so ? so.id : 'none'} S=${S} ui=${ui} act=${act}/>`}
       </div>`}
-    ${!order && html`<div class="dock"><div class="dock-row"><${TabBar} tab=${ui.tab} act=${act}/><button class="scan" onClick=${() => act.capture(true)}><${Icon} n="cam"/>Scan</button></div></div>`}
+    ${!order && html`<div class="dock"><${TabBar} tab=${ui.tab} so=${so} act=${act}/></div>`}
     ${ui.search && !order && html`<${SearchPage} S=${S} ui=${ui} act=${act}/>`}
     ${ui.capture && html`<${Capture} order=${so} div=${capDiv || 'W'} act=${act}/>`}
     ${ui.zoom && html`<${Zoom} z=${ui.zoom} act=${act}/>`}

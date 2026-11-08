@@ -48,6 +48,8 @@ add('Sign in', 'signin-wrong', 'Wrong code', 'Passcode set, wrong digits', async
 add('Home · no client', 'home', 'Home · today', 'Nobody checked in', async () => {});
 add('Home · no client', 'home-past', 'Home · past day', 'Day 1: orders sent / confirmed', async () => { await ev(() => document.querySelectorAll('.day')[0].click()); });
 add('Home · no client', 'home-future', 'Home · next day', 'Upcoming appointments', async () => { await ev(() => document.querySelectorAll('.day')[4].click()); });
+add('Home · no client', 'ord-none', 'Order tab · nobody checked in', 'Choose a client button', async () => { await act('tab', 'order'); });
+add('Home · no client', 'ord-pick', 'Choose a client', 'Order tab → Choose a client', async () => { await act('tab', 'order'); await act('sheet', {type: 'pick'}); });
 add('Home · no client', 'appt-new', 'Appointment · before check-in', 'Linea Concept, no order yet: Check in', async () => { await act('sheet', {type: 'appt', bid: 'linea'}); });
 add('Home · no client', 'appt-draft', 'Appointment · order in draft', 'Maison Dubois: order row + Check in', async () => { await act('sheet', {type: 'appt', bid: 'dubois'}); });
 add('Home · no client', 'appt-out', 'Appointment · checked out', 'Past client: View order / Check in again', async () => { await act('sheet', {type: 'appt', bid: await pastId(-1)}); });
@@ -87,7 +89,7 @@ add('Scan', 'cam-match-client', 'Scan · match, client in session', 'Maison Dubo
 add('Scan', 'cam-match-locked', 'Scan · women’s part already sent', 'Maison Dubois, Women sent: can’t go on the order', async () => { await ev(() => window.__v.act.send('o-dubois', ['W'], 'client', 'Claire Dubois')); await checkIn('dubois'); await act('capture', true); await click('', '.shutter'); await wait(1500); await settle(); });
 
 // 6 Client in session
-add('Client checked in', 'in-coll', 'Collection · client in session', 'Check in → black band, ✓ on styles in the order', async () => { await checkIn('dubois'); });
+add('Client checked in', 'in-coll', 'Collection · client in session', 'Check in → count on the Order tab, ✓ on styles in the order', async () => { await checkIn('dubois'); });
 add('Client checked in', 'in-home', 'Home · client ongoing', '“Now” section', async () => { await checkIn('dubois'); await act('tab', 'calendar'); });
 add('Client checked in', 'in-appt', 'Appointment · ongoing', 'Check out / Add products', async () => { await checkIn('dubois'); await act('sheet', {type: 'appt', bid: 'dubois'}); });
 add('Client checked in', 'in-product', 'Product page · in the order', 'Sizes and quantities save at once', async () => { await checkIn('dubois'); await act('sheet', {type: 'product', pid: 'w-shirt-dress', colour: 'Navy Blue'}); });
@@ -99,7 +101,7 @@ add('Client checked in', 'in-looks', 'Looks · client in session', 'Band on top'
 add('Client checked in', 'in-look', 'Look · client in session', 'Add look to basket', async () => { await checkIn('dubois'); await act('sheet', {type: 'look', id: 'L09'}); });
 
 // 7 Order (draft)
-add('Order · draft', 'order', 'Order · Women', 'Tap View order in the band', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); });
+add('Order · draft', 'order', 'Order · Women', 'Order tab of the client in session', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); });
 add('Order · draft', 'order-bottom', 'Order · Currently missing', 'Scrolled down: required look pieces', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await scrollIn('.ov-body'); });
 add('Order · draft', 'order-men', 'Order · Men', 'Men tab', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('div', 'M'); });
 add('Order · draft', 'kpis', 'Budgets & KPIs', 'Tap the budget card', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('sheet', {type: 'kpis', orderId: 'o-dubois'}); });
