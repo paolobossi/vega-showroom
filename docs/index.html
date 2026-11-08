@@ -605,7 +605,7 @@ input{font:inherit;color:inherit}
 .bpill-fill{position:absolute;inset:0 auto 0 0;z-index:-1;background:color-mix(in srgb,var(--t,var(--c)) 34%,var(--bg));transition:width .35s ease}
 /* the category icon on a lighter tile at the bar's left edge, over the fill */
 .bpill-ic{grid-row:1 / 3;align-self:center;display:grid;place-items:center;width:46px;height:46px;border-radius:13px;corner-shape:squircle;background:color-mix(in srgb,var(--t,var(--c)) 7%,var(--bg));color:var(--c)}
-.bpill-l{font-size:var(--fs-caption);font-weight:600;color:var(--ink);opacity:.8}
+.bpill-l{font-size:var(--fs-caption);font-weight:600;color:inherit} /* the category name in the same colour as its figures */
 .bpill-v{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
 .bpill-v{font-size:var(--fs-heading);font-weight:700;letter-spacing:-.01em}.bpill-v b{font-weight:700}
 .kpi > .bud-div:first-child{border-top:0;padding-top:0}
@@ -838,7 +838,8 @@ input.qty.xl{width:120px}
 .list,.appts,.pcard,.sk-card,.ov-sum,.kpi,.panel,.pdf-card,.single,.empty,.rec{corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / var(--r-l) stretch}
 /* where the mask works (Safari, Chrome) it alone shapes these boxes: a border-radius as well clips the corners a second time,
    round in Safari (no corner-shape), slightly rounder than the mask in Chrome, and eats into outlines at the corners */
-@supports (-webkit-mask-box-image:none){.list,.appts,.pcard,.sk-card,.ov-sum,.kpi,.panel,.pdf-card,.single,.empty,.rec{border-radius:0;corner-shape:round}}
+@supports (-webkit-mask-box-image:none){.list,.appts,.pcard,.sk-card,.ov-sum,.kpi,.panel,.pdf-card,.single,.empty,.rec,.bpill,.bpill-ic{border-radius:0;corner-shape:round}}
+.bpill-ic{-webkit-mask-box-image:var(--squircle) 20 / 13px stretch}
 .tile,.alts,.linkbox,.pre{corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}
 .appts{background:none;display:flex;flex-direction:column;gap:2px}
 .appts .appt{background:var(--surface);border-top:0}
@@ -856,8 +857,12 @@ input.qty.xl{width:120px}
 .grp-box{background:var(--surface);padding:12px 8px 8px;corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / var(--r-l) stretch}
 @supports (-webkit-mask-box-image:none){.grp-box{border-radius:0;corner-shape:round}}
 .grp-box .grp-head{padding:0 6px 10px}
-.grp-box .list{-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}
-.ov-lines .grp-box .list > .sel{background:var(--bg)}
+/* each line is its own white squircle card inside the category box, with a squircle photo; Edit sizes is white with a grey outline */
+.grp-box .list{-webkit-mask-box-image:none}
+.ov-lines .grp-box .list > .sel{background:var(--bg);-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}
+.grp-box .sel .thumb{-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}
+@supports (-webkit-mask-box-image:none){.grp-box .list,.ov-lines .grp-box .list > .sel,.grp-box .sel .thumb{border-radius:0}}
+.grp-box .sel-edit{background:var(--bg);border:0;box-shadow:inset 0 0 0 1px var(--line);corner-shape:squircle}
 /* budget rows (Buying guidelines, client sheet): 1px apart, names and amounts 14px regular, Total bold */
 .list.gapped.g1{gap:1px}.list.g1 .row-title,.list.g1 .row-val{font-size:14px;font-weight:400}.list.g1 .row.tot .row-title,.list.g1 .row.tot .row-val{font-weight:700}
 .list.gapped{background:none;border:0;gap:2px}.list.gapped > .row{background:var(--surface);border-top:0}
