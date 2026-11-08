@@ -859,13 +859,13 @@ input.qty.xl{width:120px}
 /* trial: on the order the budget card has no grey box (full width, everything kept) and each category is its own grey box,
    heading inside, with the lines on white 2px apart */
 .ov-lines > .ov-sum{background:none;padding:0;-webkit-mask-box-image:none}
-/* full width: the category boxes run to the screen edges, no white margin on the sides */
-.grp-box{margin:0 -16px;background:var(--surface);padding:12px 8px 8px;corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / 24px stretch}
+/* no box behind a category: its heading, then its lines as grey squircle cards 2px apart */
+.grp-box{background:none;padding:0}
 @supports (-webkit-mask-box-image:none){.grp-box{border-radius:0;corner-shape:round}}
-.grp-box .grp-head{padding:2px 8px 10px}
+.grp-box .grp-head{padding:0 2px 10px}
 /* each line is its own white squircle card inside the category box, with a squircle photo; Edit sizes is white with a grey outline */
 .grp-box .list{-webkit-mask-box-image:none}
-.ov-lines .grp-box .list > .sel{background:var(--bg);-webkit-mask-box-image:var(--squircle) 20 / 16px stretch} /* 24 − the box's 8px inset */
+.ov-lines .grp-box .list > .sel{background:var(--surface);-webkit-mask-box-image:var(--squircle) 20 / 16px stretch}
 .grp-box .sel .thumb{-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}
 @supports (-webkit-mask-box-image:none){.grp-box .list,.ov-lines .grp-box .list > .sel,.grp-box .sel .thumb{border-radius:0}}
 .grp-box .sel-edit{background:var(--bg);border:0;box-shadow:inset 0 0 0 1px var(--line);corner-shape:squircle}
