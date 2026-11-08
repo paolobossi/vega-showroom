@@ -552,7 +552,9 @@ input{font:inherit;color:inherit}
 .ov-sum-foot{padding-top:10px;margin-top:12px;border-top:1px solid var(--line)}
 .ov-sum-st{display:inline-flex;align-items:center;gap:6px;min-width:0;overflow:hidden;text-overflow:ellipsis}
 .ov-sum-st svg{flex:none}
-.ov-lines{padding:14px 16px 20px;display:flex;flex-direction:column;gap:14px}
+.ov-lines{flex:1 0 auto;padding:14px 16px 20px;display:flex;flex-direction:column;gap:14px}
+/* empty order: the placeholder has no box and sits centred between the Order heading and the bottom button */
+.ov-lines > .empty{flex:1;justify-content:center;background:none;border:0;-webkit-mask-box-image:none}
 /* the Order heading sits under the budget card, 10px above what follows (like Order, Budget, Notes in the sheet) */
 .ov-ord-h{margin:6px 0 -4px}
 .lines-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:8px}
@@ -2201,7 +2203,7 @@ function OrderView({S, ui, act, order, tabbed}) {
       </div>
     </div>
     <div class="ov-actions">
-      ${inVisit ? html`<button class="cap-btn" onClick=${() => act.sheet({type:'finish', orderId:order.id})}>Finalize order</button>`
+      ${inVisit ? html`<button class="cap-btn" disabled=${order.lines.length === 0} onClick=${() => act.sheet({type:'finish', orderId:order.id})}>Finalize order</button>`
         : html`<button class="cap-btn go" onClick=${() => act.checkIn(b.id)}><${Icon} n="check" s=${18} w=${2.2}/>${S.appts[b.id]?.in ? 'Check in again' : 'Check in'}</button>`}
     </div>
   </div>`;
