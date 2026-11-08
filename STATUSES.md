@@ -187,6 +187,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 9.6 A division with no products shows "No … products yet. Tap any style in the Collection and add it from its page".
 - [ ] 9.6b **Currently missing**, under the lines (not on a sent part): "To meet the guidelines: required look pieces not in the order yet", then each missing piece with its colour and an amber tag naming its look (Look 01…), and **Add** → its product page on that colour. Must have styles are never listed: Must have means a highly important piece, not one the buyer has to buy. Maison Dubois Women: Balloon skirt and Oval Double L loafer (Look 01), Shirt dress in Red (Look 02). A piece that is in the order without quantities is not listed (its line already says No quantity yet).
 - [ ] 9.7 During the visit the bottom has **Check out** (white) and **Finish order** (black, no second line). Check out ends the visit: back to Home, toast "Checked out · [shop]", the Order tab badge is gone, the row shows the order status. It works after the order is sent too. There is no Save draft. Outside a visit: a round sign button and Check in to add products.
+- [ ] 9.7b Check in again on a client whose order is all sent (e.g. Arkade, yesterday) → Order → Finish order: "Everything is sent…" and a black **Check out** button that ends the visit (back to Home, toast "Checked out · Arkade"). Opened from Home without a visit, the same page has **Close**.
 - [ ] 9.8 Lines that say 12 units read the same in the client view (units first, value under).
 
 ### 10. Finish order

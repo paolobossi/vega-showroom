@@ -2156,7 +2156,11 @@ function FinishSheet({sh, S, act}) {
       <h1 class="h1">${done.title}</h1><p class="muted">${done.line}</p></div>
   <//>`;
   return html`<${FullPage} title="Finish order" onClose=${act.close}
-    foot=${open.length > 0 && html`<div class="finish-btns">
+    foot=${!open.length ? html`<div class="finish-btns">
+      ${visit ? html`<button class="btn black" onClick=${() => act.endVisit(b.id, `Checked out · ${b.shop}`)}>Check out</button>
+        <div class="small muted">Nothing left to send: the visit ends and you go back to Home.</div>`
+        : html`<button class="btn black" onClick=${act.close}>Close</button>`}</div>`
+      : html`<div class="finish-btns">
       <button class="btn black" disabled=${!ok || noQty > 0} onClick=${toTeam}>Send to commercial team</button>
       <div class="small muted">The order is closed. The commercial team confirms it for production; the client gets a copy by email.</div>
       <button class="btn white" disabled=${!ok} onClick=${toClient}>Send to client to finish</button>
