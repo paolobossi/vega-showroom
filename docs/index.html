@@ -836,6 +836,9 @@ input.qty.xl{width:120px}
 .list,.appts,.tile,.pcard,.sk-card,.ov-sum,.kpi,.panel,.pdf-card,.single,.empty,.rec,.alts,.linkbox,.pre,.look,
 .day,.inp,.stp,.size-cell,.search,.sq-btn,.round-btn,.pin-k,.cn-cat,.ftab,.colour,.qbtn,.drop-tag,.pc-lock,.btn.white,.pd-in,.sugg button,.srch-x{border-color:transparent}
 .list,.appts,.pcard,.sk-card,.ov-sum,.kpi,.panel,.pdf-card,.single,.empty,.rec{corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / var(--r-l) stretch}
+/* where the mask works (Safari, Chrome) it alone shapes these boxes: a border-radius as well clips the corners a second time,
+   round in Safari (no corner-shape), slightly rounder than the mask in Chrome, and eats into outlines at the corners */
+@supports (-webkit-mask-box-image:none){.list,.appts,.pcard,.sk-card,.ov-sum,.kpi,.panel,.pdf-card,.single,.empty,.rec{border-radius:0;corner-shape:round}}
 .tile,.alts,.linkbox,.pre{corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}
 .appts{background:none;display:flex;flex-direction:column;gap:2px}
 .appts .appt{background:var(--surface);border-top:0}
@@ -847,6 +850,7 @@ input.qty.xl{width:120px}
 /* order (basket): each style is its own grey row, split by a 2px white gap instead of a line */
 .ov-lines .list{background:none;gap:2px}
 .ov-lines .list > .sel{background:var(--surface);border-top:0}
+.list.gapped.g1{gap:1px}.row.tot .row-title,.row.tot .row-val{font-weight:700}
 .list.gapped{background:none;border:0;gap:2px}.list.gapped > .row{background:var(--surface);border-top:0}
 /* Collection cards: the photo runs to the card's edges (top and sides), the text keeps its margin; a soft drop shadow lifts the card off the grey page */
 .pc-wrap{display:flex;min-width:0;filter:drop-shadow(0 1px 1px rgba(0,0,0,.05)) drop-shadow(0 4px 10px rgba(0,0,0,.07))}
@@ -1261,6 +1265,7 @@ const IC = {
   flag:'<path d="M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528"/>', // flag
   next:'<path d="m9 18 6-6-6-6"/>', // chevron-right
   home:'<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>', // house
+  chart:'<path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>', // chart-column
   note:'<path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M9.5 8h5"/><path d="M9.5 12H16"/><path d="M9.5 16H14"/>', // notebook-text
   pin:{r:'<path d="M128,16a88.1,88.1,0,0,0-88,88c0,75.3,80,132.17,83.41,134.55a8,8,0,0,0,9.18,0C136,236.17,216,179.3,216,104A88.1,88.1,0,0,0,128,16Zm0,56a32,32,0,1,1-32,32A32,32,0,0,1,128,72Z"/>'}, // map-pin-fill, Phosphor (MIT): filled reads better than a line at 12px
   rtw:'<path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/>', // shirt
@@ -1410,7 +1415,8 @@ function GuideSheet({bid, ui, act}) {
       <span class="row-main"><span class="row-title">Buying guidelines SS27</span><span class="row-sub">Maison PDF · Sample</span></span>
       <span class="pdf-open">Open</span></button>
     <${DivSwitch} title="Budget" b=${b} div=${d} act=${act}/>
-    <div class="list gapped">${CATS.filter(c => catBudget(b, d, c)).map(c => html`<div class="row"><div class="row-main"><div class="row-title">${CAT_LABEL[c]}</div></div><span class="row-val num">${fmt(catBudget(b, d, c))}</span></div>`)}</div>
+    <div class="list gapped g1">${CATS.filter(c => catBudget(b, d, c)).map(c => html`<div class="row"><div class="row-main"><div class="row-title">${CAT_LABEL[c]}</div></div><span class="row-val num">${fmt(catBudget(b, d, c))}</span></div>`)}
+      <div class="row tot"><div class="row-main"><div class="row-title">Total</div></div><span class="row-val num">${fmt(divBudget(b, d))}</span></div></div>
   <//>`;
 }
 
@@ -1506,7 +1512,7 @@ function ApptSheet({sh, S, ui, act}) {
   return html`<${Sheet} tall center fade title=${b.shop} sub=${dayLabel(b, true)} onClose=${act.close} foot=${foot}>
     <div class="sh-tiles">${o && html`<${ApptOrder} o=${o} b=${b} act=${act}/>`}
     <div class="list"><button class="row" onClick=${() => act.sheet({type:'guide', bid:b.id})}>
-      <div class="row-main"><${Icon} n="note" s=${22}/><div class="row-title">Guidelines</div><div class="row-sub">Budget and mix rules</div></div></button></div></div>
+      <div class="row-main"><${Icon} n="chart" s=${22}/><div class="row-title">Guidelines</div><div class="row-sub">Budget and mix rules</div></div></button></div></div>
     <${DivSwitch} title="Budget" b=${b} div=${divOf(b, ui)} act=${act}/>
     <${Budgets} b=${b} divs=${[divOf(b, ui)]} head=${b.divs.length < 2}/>
     <label class="field sh-sec"><span class="cat-h">Notes</span>
