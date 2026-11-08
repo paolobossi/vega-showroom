@@ -47,7 +47,7 @@ Walk-in clients are created in the app ("New session": shop, city, Buying for, b
 - **Styles**, one per code (e.g. A039AS0X01 Small Amazona 180):
   - name, family (Amazona, Puzzle, Dresses…), division, category;
   - size range (women's RTW 34–42, men's RTW 46–54, women's shoes 36–41, men's shoes 40–45, one size);
-  - colours, each with its Loewe colour code (e.g. Mocha 9579) and a swatch colour;
+  - colours, each with its Loewe colour code (e.g. Mocha 9579) and a swatch colour, picked from the collection's colours (2.4b);
   - photos per colourway: a front shot plus extra views for the carousel;
   - **wholesale and retail price** (one value each today, in euros);
   - drop, collection, and the Permanent flag (the permanent styles sit in SS27 with a Permanent tag);
@@ -55,10 +55,20 @@ Walk-in clients are created in the app ("New session": shop, city, Buying for, b
   - the lowest cluster that can buy it. Lower clusters don't see the style at all;
   - material / composition (shown on the product page, used by the Material filter) and search keywords (e.g. "crossbody", "short sleeve").
 
+### 2.4b Colours (new requirement, specs to discuss)
+Whoever sets up the collection also defines its colours. Each colour has:
+- a **name** (e.g. Mocha);
+- a **code** (the Loewe colour code, e.g. 9579);
+- a **display colour**, chosen with a colour picker (stored as a hex value).
+
+The app uses the display colour to draw the colour dots on the product page (and the same dot wherever that colour appears, e.g. the Collection cards and the order lines). A style's colourways are picked from this list, so a colour is defined once and reused.
+
+To discuss: whether colours are per collection or shared across seasons; who can edit a colour once orders use it; how close the dot must be to the real material (photo sample, Pantone, or free choice); what to show for multi-colour or patterned colourways.
+
 ### 2.5 Looks (lookbook)
 - Show (Spring Summer 2027 show), look number, division, photos (front, back, details).
 - Pieces: style + colour.
-- Required flag: a required look is part of the buying guidelines and the client buys every piece. Missing pieces show under "Currently missing" in the order.
+- Required flag: a required look is part of the buying guidelines and the client buys every piece.
 - Visual merchandising note (e.g. "Window lead for the season. Mocha is the hero colour…").
 
 ### 2.6 Buying guidelines
@@ -145,7 +155,7 @@ Demo clients that fit none of the four, or more than one, are listed in 3.7.
 ## 5. Back-office flows
 
 ### F1 Collection setup
-Load or import the styles (2.4), photos per colourway, drops, collections, priority tags, Permanent flags, minimum cluster, materials and keywords. Preview a style as the app shows it. Publish to the app.
+Define the collection's colours (2.4b: name, code, display colour from a colour picker). Load or import the styles (2.4), each colourway picked from those colours, photos per colourway, drops, collections, priority tags, Permanent flags, minimum cluster, materials and keywords. Preview a style as the app shows it. Publish to the app.
 
 ### F2 Price lists
 Section 3.
@@ -228,6 +238,7 @@ These come from STATUSES.md, "To define with the engineer and the back office":
 - Saved size scales: one per size range, per client, or named scales.
 - Must have on looks.
 - Whether mix rules differ by cluster (today only the budget split does).
+- Colour definitions (2.4b): scope, editing rights, how the display colour is chosen, multi-colour colourways.
 
 Integrations to decide:
 - the ERP / factory export format;
