@@ -604,7 +604,7 @@ input{font:inherit;color:inherit}
 .bpill.ok{--c:var(--good);--t:#2BBF6A}.bpill.warn{--c:var(--warn);--t:#F2B705}.bpill.bad{--c:var(--bad);--t:#F2553F}
 .bpill-fill{position:absolute;inset:0 auto 0 0;z-index:-1;background:color-mix(in srgb,var(--t,var(--c)) 34%,var(--bg));transition:width .35s ease}
 /* the category icon on a lighter tile at the bar's left edge, over the fill */
-.bpill-ic{grid-row:1 / 3;align-self:center;display:grid;place-items:center;width:46px;height:46px;border-radius:13px;corner-shape:squircle;background:color-mix(in srgb,var(--t,var(--c)) 7%,var(--bg));color:var(--c)}
+.bpill-ic{grid-row:1 / 3;align-self:center;display:grid;place-items:center;width:38px;height:46px;border-radius:15px;corner-shape:squircle;background:color-mix(in srgb,var(--t,var(--c)) 7%,var(--bg));color:var(--c)}
 .bpill-l{font-size:var(--fs-caption);font-weight:600;color:inherit} /* the category name in the same colour as its figures */
 .bpill-v{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
 .bpill-v{font-size:var(--fs-heading);font-weight:700;letter-spacing:-.01em}.bpill-v b{font-weight:700}
@@ -839,7 +839,7 @@ input.qty.xl{width:120px}
 /* where the mask works (Safari, Chrome) it alone shapes these boxes: a border-radius as well clips the corners a second time,
    round in Safari (no corner-shape), slightly rounder than the mask in Chrome, and eats into outlines at the corners */
 @supports (-webkit-mask-box-image:none){.list,.appts,.pcard,.sk-card,.ov-sum,.kpi,.panel,.pdf-card,.single,.empty,.rec,.bpill,.bpill-ic{border-radius:0;corner-shape:round}}
-.bpill-ic{-webkit-mask-box-image:var(--squircle) 20 / 13px stretch}
+.bpill-ic{-webkit-mask-box-image:var(--squircle) 20 / 15px stretch} /* icon tiles: upright (38×46) with a strong squircle */
 .tile,.alts,.linkbox,.pre{corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}
 .appts{background:none;display:flex;flex-direction:column;gap:2px}
 .appts .appt{background:var(--surface);border-top:0}
