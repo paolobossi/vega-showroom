@@ -850,6 +850,14 @@ input.qty.xl{width:120px}
 /* order (basket): each style is its own grey row, split by a 2px white gap instead of a line */
 .ov-lines .list{background:none;gap:2px}
 .ov-lines .list > .sel{background:var(--surface);border-top:0}
+/* trial: on the order the budget card has no grey box (full width, everything kept) and each category is its own grey box,
+   heading inside, with the lines on white 2px apart */
+.ov-lines > .ov-sum{background:none;padding:0;-webkit-mask-box-image:none}
+.grp-box{background:var(--surface);padding:12px 8px 8px;corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / var(--r-l) stretch}
+@supports (-webkit-mask-box-image:none){.grp-box{border-radius:0;corner-shape:round}}
+.grp-box .grp-head{padding:0 6px 10px}
+.grp-box .list{-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}
+.ov-lines .grp-box .list > .sel{background:var(--bg)}
 /* budget rows (Buying guidelines, client sheet): 1px apart, names and amounts 14px regular, Total bold */
 .list.gapped.g1{gap:1px}.list.g1 .row-title,.list.g1 .row-val{font-size:14px;font-weight:400}.list.g1 .row.tot .row-title,.list.g1 .row.tot .row-val{font-weight:700}
 .list.gapped{background:none;border:0;gap:2px}.list.gapped > .row{background:var(--surface);border-top:0}
@@ -2162,7 +2170,7 @@ function OrderView({S, ui, act, order, tabbed}) {
         <h2 class="cat-h ov-ord-h">Order</h2>
         ${locked && !allSent && html`<div class="callout info"><${Icon} n="lock" s=${18}/><div>The ${DIV_LABEL[div].toLowerCase()} order has been sent. You can see it here but no longer change it.</div></div>`}
         ${lines.length === 0 && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div><div class="small">Tap any style in the Collection and enter its quantities.</div></div>`}
-        ${groups.filter(g => g.lines.length).map(g => html`<div>
+        ${groups.filter(g => g.lines.length).map(g => html`<div class="grp-box">
           <div class="grp-head"><span>${g.label}</span></div>
           <div class="list">${g.lines.map(l => html`<${SelLine} key=${l.id} l=${l} o=${order} act=${act} locked=${locked}/>`)}</div>
         </div>`)}
