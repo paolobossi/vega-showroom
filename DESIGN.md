@@ -16,7 +16,7 @@ Four sizes, each with one job. Hierarchy beyond these comes from weight, colour,
 - Line height: `--lh-tight` 1.2 for headings and titles, `--lh-body` 1.4 for text.
 
 ## Colour
-- **Structural:** `--bg` (white canvas), `--surface` (light grey cards and groups, with squircle corners and no outline), `--surface-2` (pressed and secondary fills), `--card` (white: Collection cards and the selected segment), `--line` (dividers inside a box). Home appointments, the order's lines, a look's pieces and the Profile rows are separate grey rows with a 2px gap instead of a divider.
+- **Structural:** `--bg` (white canvas), `--surface` (light grey cards and groups, with squircle corners and no outline), `--surface-2` (pressed and secondary fills), `--card` (white: Collection cards and the selected segment), `--line` (dividers inside a box). Home appointments, the order's lines, a look's pieces, the Profile rows and the budget rows in Buying guidelines are separate grey rows with a 2px gap instead of a divider.
 - **Text greys:** `--ink` for text, `--muted` for secondary text that must be read (4.5:1 on the canvas), `--faint` only for large text, placeholders and non-text marks (3:1).
 - **Primary action:** black (`--ink` with `--bg` text). One per screen: Add to order, Finalize order, Send to commercial team, Continue. Checking a client in is green instead (`--good`), always with the same check icon (18px, 2.2 stroke), 46px, 15px semibold: Check in, Check in again, Start session. Choose a client stays black with no icon (it opens the list, it doesn't check anyone in).
 - **Toasts** never repeat the client's name: "Session ended", "Checked out", "Women sent · Checked out".

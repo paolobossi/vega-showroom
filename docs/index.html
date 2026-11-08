@@ -1410,7 +1410,7 @@ function GuideSheet({bid, ui, act}) {
       <span class="row-main"><span class="row-title">Buying guidelines SS27</span><span class="row-sub">Maison PDF · Sample</span></span>
       <span class="pdf-open">Open</span></button>
     <${DivSwitch} title="Budget" b=${b} div=${d} act=${act}/>
-    <div class="list">${CATS.filter(c => catBudget(b, d, c)).map(c => html`<div class="row"><div class="row-main"><div class="row-title">${CAT_LABEL[c]}</div></div><span class="row-val num">${fmt(catBudget(b, d, c))}</span></div>`)}</div>
+    <div class="list gapped">${CATS.filter(c => catBudget(b, d, c)).map(c => html`<div class="row"><div class="row-main"><div class="row-title">${CAT_LABEL[c]}</div></div><span class="row-val num">${fmt(catBudget(b, d, c))}</span></div>`)}</div>
   <//>`;
 }
 
