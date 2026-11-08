@@ -1558,7 +1558,7 @@ function ProfileSheet({S, act}) {
       <button class="row" onClick=${() => act.sheet({type:'passcode'})}><span class="row-ic"><${Icon} n="lock" s=${19}/></span>
         <div class="row-main"><div class="row-title">${S.pins[S.rep] ? 'Change passcode' : 'Set passcode'}</div></div><${Icon} n="next" s=${18}/></button>
       <button class="row" onClick=${() => act.sheet({type:'feedback'})}><span class="row-ic"><${Icon} n="msg" s=${19}/></span>
-        <div class="row-main"><div class="row-title">App feedback</div><div class="row-sub one-line">Tell us what works and what doesn’t</div></div><${Icon} n="next" s=${18}/></button>
+        <div class="row-main"><div class="row-title">App feedback</div></div><${Icon} n="next" s=${18}/></button>
     </div>
     <div class="list"><button class="row out" onClick=${act.signOut}><span class="row-ic"><${Icon} n="out" s=${19}/></span><div class="row-main"><div class="row-title">Sign out</div></div></button></div>
   <//>`;
@@ -1802,17 +1802,13 @@ function SignIn({S, act}) {
 
 // Sellers’ feedback on the app itself (for the Vega team): a note and screenshots. In this mockup it stays on the device (the note and how many screenshots, not the images)
 function FeedbackSheet({act}) {
-  const [text, setText] = useState(''), [shots, setShots] = useState([]);
-  const pick = e => { [...e.target.files].forEach(f => { const r = new FileReader(); r.onload = () => setShots(x => [...x, {id:uid(), src:r.result}]); r.readAsDataURL(f); }); e.target.value = ''; };
-  const ok = text.trim() || shots.length;
+  // text only for now (screenshot attachments are off); the box uses the same type as the client's Notes
+  const [text, setText] = useState('');
+  const ok = text.trim();
   return html`<${Sheet} title="App feedback" sub="Tell us what works, what doesn’t and what’s missing" onClose=${act.close}
-    foot=${html`<button class="btn primary" disabled=${!ok} onClick=${() => act.feedback(text.trim(), shots.length)}>Send feedback</button>`}>
+    foot=${html`<button class="btn primary" disabled=${!ok} onClick=${() => act.feedback(text.trim(), 0)}>Send feedback</button>`}>
     <label class="field"><span class="lbl">Your feedback on the app</span>
       <textarea class="inp area" rows="6" placeholder="e.g. On the product page I’d like to…" value=${text} onInput=${e => setText(e.target.value)}></textarea></label>
-    <div class="field"><span class="lbl">Screenshots</span>
-      ${shots.length > 0 && html`<div class="fb-shots">${shots.map(x => html`<div class="fb-shot"><img src=${x.src} alt="Screenshot"/>
-        <button onClick=${() => setShots(y => y.filter(z => z.id !== x.id))} aria-label="Remove screenshot"><${Icon} n="x" s=${14} w=${2.6}/></button></div>`)}</div>`}
-      <label class="fb-add"><${Icon} n="pic" s=${19}/>${shots.length ? 'Add another' : 'Attach a screenshot'}<input type="file" accept="image/*" multiple onChange=${pick}/></label></div>
   <//>`;
 }
 
@@ -2342,7 +2338,7 @@ function TabBar({tab, so, act}) {
 function NoOrder({act}) {
   return html`<div class="no-ord-page"><header class="top top-bar mid"><h1 class="h1">Order</h1></header>
     <div class="no-ord"><${Icon} n="orders" s=${32}/><b>No client checked in</b><div>Choose a client to check them in and start or continue their order.</div>
-      <button class="btn go" onClick=${() => act.sheet({type:'pick'})}><${Icon} n="check" s=${18} w=${2.2}/>Choose a client</button></div></div>`;
+      <button class="btn primary" onClick=${() => act.sheet({type:'pick'})}>Choose a client</button></div></div>`;
 }
 
 function makeActs(setS, setUi, onReset) {
