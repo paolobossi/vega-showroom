@@ -6,18 +6,22 @@ The new main requirement is in section 3: **every client has its own price list,
 
 ## 1. Who uses it
 
+The back office has one kind of user: **the commercial team**. Sellers and clients only use the app.
+
 | Role | In the app | In the back office |
 |---|---|---|
-| Seller (Roberto D., Sofia L., Marc D.) | Checks clients in, builds orders, sends them | Nothing, or read-only on their own clients |
-| Commercial team | Receives sent orders (the "Send to commercial team" button) | Sets up clients, budgets and price lists; reviews and confirms orders |
-| Merchandising / admin | — | Loads the collection, prices, looks and buying guidelines; manages sellers |
-| Client (buyer) | Opens the 48-hour link, edits quantities, signs | Nothing |
+| Commercial team | Receives sent orders (the "Send to commercial team" button) | Everything: collection, prices and price lists, looks, buying guidelines, sellers, clients and budgets, appointments; reviews and confirms orders |
+| Seller (Roberto D., Sofia L., Marc D.) | Checks clients in, builds orders, sends them | No access |
+| Client (buyer) | Opens the 48-hour link, edits quantities, signs | No access |
+
+Every flow in section 5 is done by the commercial team. **To decide:** do some people in the team only view (e.g. review orders) and others edit?
 
 ## 2. What the app reads from the back office
 
 ### 2.1 Sellers
 - Name, short name, initials (shown on the avatar).
 - Their clients and appointments. A seller only sees their own clients; orders show "prepared with [seller]".
+- Today the app has no seller on the order itself: an order belongs to whoever the client is assigned to. To fix an order made on the wrong profile, the order needs its own seller (4.1, F12).
 - The 4-digit passcode is set in the app (Profile → Set passcode). The back office needs a **reset passcode** action.
 
 ### 2.2 Clients
@@ -62,7 +66,7 @@ Walk-in clients are created in the app ("New session": shop, city, Buying for, b
 - **Mix rules** per division: a family's maximum share (Puzzle max 30%, Flamenco max 30%) or a category's minimum (Accessories min 5%, Small leather goods min 5%).
 - Required looks (2.5).
 - The guidelines PDF, which the seller can open from the app.
-- Already noted in STATUSES.md: the manager uploads the PDF and AI fills in the rules table. The manager reviews the table, then publishes it. The table drives the guidelines page and every check in Budgets & KPIs.
+- Already noted in STATUSES.md: the commercial team uploads the PDF and AI fills in the rules table. The team reviews the table, then publishes it. The table drives the guidelines page and every check in Budgets & KPIs.
 
 ## 3. Price lists per client (new requirement)
 
@@ -85,7 +89,7 @@ Walk-in clients are created in the app ("New session": shop, city, Buying for, b
 
 Demo clients that fit none of the four, or more than one, are listed in 3.7.
 
-### 3.3 Flow: create a price list (merchandising / admin)
+### 3.3 Flow: create a price list
 1. New price list → name, region, currency, collection.
 2. Fill the prices. There are three ways:
    - **import** a spreadsheet (style code, wholesale, retail);
@@ -94,7 +98,7 @@ Demo clients that fit none of the four, or more than one, are listed in 3.7.
 3. The back office flags styles with no price and retail prices below wholesale.
 4. Publish. Once a list is published, every change is logged (who, when, old and new price).
 
-### 3.4 Flow: assign a price list to a client (commercial team)
+### 3.4 Flow: assign a price list to a client
 1. On the client, pick the price list. **Proposal:** suggest the list of the client's region from their country, so the team only confirms it.
 2. The client's budgets are in the currency of their list. Setting a USD list means the budgets are entered in USD.
 3. Changing the list:
@@ -132,6 +136,7 @@ Demo clients that fit none of the four, or more than one, are listed in 3.7.
 - Statuses: Not started → Draft → With client (link sent, 48 hours to finish) → Sent → Confirmed. "Partly sent" means one division is sent and the other isn't.
 - Sending: client name, email, signature, time, and who sent it (seller in the showroom, or the client from the link).
 - Order log: every change with time and who made it (seller or client).
+- **Proposal: the order's seller**, stored on the order when it is created: the profile signed in at the time. Today the app takes it from the client's assigned seller. It can differ from the client's seller after a fix (F12).
 
 ### 4.2 Visits and feedback
 - Check-in / check-out times and appointment notes.
@@ -139,13 +144,13 @@ Demo clients that fit none of the four, or more than one, are listed in 3.7.
 
 ## 5. Back-office flows
 
-### F1 Collection setup (merchandising)
+### F1 Collection setup
 Load or import the styles (2.4), photos per colourway, drops, collections, priority tags, Permanent flags, minimum cluster, materials and keywords. Preview a style as the app shows it. Publish to the app.
 
-### F2 Price lists (merchandising, commercial team)
+### F2 Price lists
 Section 3.
 
-### F3 Client setup (commercial team)
+### F3 Client setup
 Create or edit a client:
 - shop, city / country, code, email, assigned seller;
 - cluster, divisions, budget per division, budget per category;
@@ -153,10 +158,10 @@ Create or edit a client:
 
 Bulk import for a whole campaign. A queue of walk-in clients created in the app, to complete.
 
-### F4 Showroom calendar (commercial team)
-Show days, then appointments per seller per day (client, time). Move an appointment, reassign a client to another seller. Optionally sync with the sellers' calendars.
+### F4 Showroom calendar
+Show days, then appointments per seller per day (client, time). Move an appointment, or move a client to another seller (F12). Optionally sync with the sellers' calendars.
 
-### F5 Buying guidelines (merchandising)
+### F5 Buying guidelines
 1. Upload the maison's PDF.
 2. AI fills in the rules table: category mix per cluster and division, tolerance, mix rules, required looks, drops.
 3. Review the table and correct it.
@@ -164,10 +169,10 @@ Show days, then appointments per seller per day (client, time). Move an appointm
 
 Keep the PDF attached so the seller can still open it.
 
-### F6 Lookbook (merchandising)
+### F6 Lookbook
 Looks per division: number, photos, pieces (style + colour), required flag, visual merchandising note.
 
-### F7 Order review and confirmation (commercial team)
+### F7 Order review and confirmation
 1. Inbox of sent orders (Sent and Partly sent), newest first, filterable by seller, region, price list, client.
 2. Open an order: lines, totals in the client's currency, the same budget and guideline checks the app shows ("2 outside the guidelines"), the signature, and the log.
 3. Confirm for production → status Confirmed, shown in the app as "Ready for production".
@@ -178,7 +183,7 @@ Looks per division: number, photos, pieces (style + colour), required flag, visu
 List of orders "With client", with the hours left on the 48-hour link. Resend the link, extend the deadline, or take the order back as a draft.
 
 ### F9 Sellers and access
-Create sellers, assign clients, set a default price list (3.4), reset a passcode, deactivate a seller.
+Create sellers, assign clients (F12), set a default price list (3.4), reset a passcode, deactivate a seller. **Proposal:** a seller with clients or open orders can only be deactivated after they are moved to someone else.
 
 ### F10 Feedback inbox
 App feedback from the sellers with screenshots, marked as read or done.
@@ -187,6 +192,33 @@ App feedback from the sellers with screenshots, marked as read or done.
 - Order value against budget per client, seller, region and price list, with currencies converted (3.7).
 - Guideline compliance: orders outside the mix rules, required looks not complete.
 - Campaign progress: appointments done, orders draft / with client / sent / confirmed.
+
+### F12 Assign clients and orders to sellers
+A client belongs to one seller, and so does each order. Both can be changed here. The usual reasons:
+- a new client;
+- a seller who leaves;
+- an order made on the wrong profile by mistake, for example a colleague's phone, or a walk-in client created under the wrong name.
+
+**Assign a client to a seller**
+1. On the client (or on several clients selected from the list), pick the new seller.
+2. The back office shows what moves with the client and lets the team untick each part:
+   - upcoming appointments;
+   - open orders (Draft, With client).
+3. **Proposal:** sent and confirmed orders keep the seller who made them, since they count for that seller's results. Each can be moved one by one (below).
+4. The client and the moved appointments and orders leave the old seller's app and appear in the new seller's: Home, Choose a client, Order history.
+
+**Assign an order to a different seller**
+1. On the order, pick the new seller. Any status, including Sent and Confirmed.
+2. A reason is required, from a short list (made on the wrong profile, seller change, other) plus an optional note.
+3. The order log records it: who changed it, when, from which seller to which, and why. The app shows the line in the order's history.
+4. The order moves to the new seller's Order history. "Prepared with [seller]" on the client's link and on the copy of the order show the new name.
+5. **To decide:** should the client follow the order? When the mistake was the profile, the client usually needs to move too. The back office asks ("Also move Maison Dubois to Sofia L.?").
+
+**While the client is checked in.** If the order or client being moved belongs to a visit in progress on the old seller's app, the back office warns first. **Proposal:** the move ends that visit (the client is checked out), and the old seller's app shows a message that the client was moved to someone else.
+
+**Permissions.** Only the commercial team assigns clients and moves orders; sellers have no access to the back office. **To decide:** should a seller be able to ask for a move from the app ("This order isn't mine")? The commercial team would then approve the request.
+
+**Reporting.** Order value per seller (F11) counts each order under the order's seller, not the client's, so a fixed order counts for the right person.
 
 ## 6. Open questions (besides 3.7)
 These come from STATUSES.md, "To define with the engineer and the back office":
