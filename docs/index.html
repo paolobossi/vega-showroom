@@ -352,6 +352,8 @@ input{font:inherit;color:inherit}
 .appt-buyer{display:flex;align-items:center;gap:4px;font-size:var(--fs-caption);color:var(--muted);margin-top:-4px}
 .appt-buyer svg{flex:none;color:var(--muted)}
 .appt-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+/* status tags on Home and in Choose a client: the small 18px / 11px regular tag */
+.pick .pill{height:var(--tag-h);padding:0 7px;font-size:11px;line-height:1.3;font-weight:400;letter-spacing:.01em}
 .appt-head .pill{flex:none;margin-top:2px;height:var(--tag-h);padding:0 7px;font-size:11px;line-height:1.3;font-weight:400;letter-spacing:.01em}
 .appt-catg{display:flex;flex-direction:column;gap:4px;margin-top:4px;font-size:var(--fs-caption);color:var(--muted)}
 .appt-cats{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1857,9 +1859,8 @@ function PasscodeSheet({S, act}) {
 function PickBuyerSheet({S, sh, act}) {
   const it = sh.item, look = it && it.look && LOOKS.find(x => x.id === it.look), p = it && P[look ? look.items[0][0] : it.pid];
   const all = myBuyers(S), mine = [...all.filter(b => !dayOf(b)), ...all.filter(b => dayOf(b) > 0), ...all.filter(b => dayOf(b) < 0)];
-  return html`<${Sheet} tall title=${it ? 'Add to an order' : 'Choose a client'} sub=${!it ? 'Checks them in and opens their order' : look ? `${lookNo(look)} · ${look.items.length} pieces` : `${p.name} · ${cname(it.colour)}`} onClose=${act.close}>
-    <div class="lbl">Your appointments</div>
-    <div class="list">${mine.map(b => { const o = S.orders['o-' + b.id], why = p && canTake(o || {buyerId:b.id, status:'draft'}, p);
+  return html`<${Sheet} tall title=${it ? 'Add to an order' : 'Choose a client'} sub=${!it ? null : look ? `${lookNo(look)} · ${look.items.length} pieces` : `${p.name} · ${cname(it.colour)}`} onClose=${act.close}>
+    <div class="list pick">${mine.map(b => { const o = S.orders['o-' + b.id], why = p && canTake(o || {buyerId:b.id, status:'draft'}, p);
       return html`<button class="row" disabled=${!!why} onClick=${() => it ? act.addFor(b.id, it) : act.checkIn(b.id, true)}>
         <div class="row-main"><div class="row-title">${b.shop}</div><div class="row-sub">${dayLabel(b)} · ${b.time} · ${b.city}</div></div>
         <div class="row-side">${why ? html`<span class="small muted">${why}</span>` : html`<${Pill} s=${o ? o.status : 'none'}/>`}</div>
