@@ -634,6 +634,9 @@ input{font:inherit;color:inherit}
 .sheet.fade .sheet-body{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))}
 /* sheet sections (Order, Budget, Notes): one heading style, 10px to what follows */
 .sh-sec{display:flex;flex-direction:column;gap:10px}
+/* client sheet: Order and Buying guidelines as two tiles side by side (one full-width tile when there is no order yet) */
+.sh-tiles{display:flex;gap:10px}.sh-tiles > .list{flex:1 1 0;min-width:0}
+.sh-tiles .row{height:100%;align-items:flex-start}.sh-tiles .row-title{white-space:normal}
 .sheet-body{flex:1;min-height:0;overflow-y:auto;padding:4px 18px 18px;display:flex;flex-direction:column;gap:14px}
 .sheet-body > *, .match > *, .ov-lines > *{flex-shrink:0}
 .sheet-foot{flex:none;display:flex;gap:10px;padding:10px 18px max(14px,env(safe-area-inset-bottom,0px))}
@@ -1486,10 +1489,9 @@ function ApptSheet({sh, S, ui, act}) {
     : html`${o && html`<button class="btn ring" onClick=${() => act.openOrder(b.id)}>View order</button>`}
         <button class="btn go" onClick=${() => act.checkIn(b.id)}><${Icon} n="check" s=${18} w=${2.2}/>Check in again</button>`;
   return html`<${Sheet} tall center fade title=${b.shop} sub=${dayLabel(b, true)} onClose=${act.close} foot=${foot}>
-    ${o && html`<${ApptOrder} o=${o} b=${b} act=${act}/>`}
+    <div class="sh-tiles">${o && html`<${ApptOrder} o=${o} b=${b} act=${act}/>`}
     <div class="list"><button class="row" onClick=${() => act.sheet({type:'guide', bid:b.id})}>
-      <div class="row-main"><div class="row-title">Buying guidelines</div><div class="row-sub">${b.cluster} client · budget per category</div></div>
-      <${Icon} n="next" s=${18}/></button></div>
+      <div class="row-main"><div class="row-title">Buying guidelines</div><div class="row-sub">${b.cluster} client · budget per category</div></div></button></div></div>
     <${DivSwitch} title="Budget" b=${b} div=${divOf(b, ui)} act=${act}/>
     <${Budgets} b=${b} divs=${[divOf(b, ui)]} head=${b.divs.length < 2}/>
     <label class="field sh-sec"><span class="cat-h">Notes</span>
@@ -1499,12 +1501,11 @@ function ApptSheet({sh, S, ui, act}) {
 }
 
 // the order behind an appointment: where it stands; tap to open it
+// Order tile in the client sheet: "Order" with styles and units under it in grey, like Buying guidelines next to it
 function ApptOrder({o, b, act}) {
-  const u = b.divs.reduce((x, d) => x + kpi(o, d).units, 0), v = b.divs.reduce((x, d) => x + kpi(o, d).total, 0);
-  return html`<div class="sh-sec"><h2 class="cat-h">Order</h2>
-    <div class="list"><button class="row" onClick=${() => act.openOrder(b.id)}>
-      <div class="row-main"><div class="row-title">${o.lines.length} ${o.lines.length === 1 ? 'style' : 'styles'} · ${u} units</div><div class="row-sub"><${Pill} s=${o.status}/></div></div>
-      <div class="row-side"><span class="row-val">${fmt(v)}</span></div><${Icon} n="next" s=${18}/></button></div></div>`;
+  const u = b.divs.reduce((x, d) => x + kpi(o, d).units, 0);
+  return html`<div class="list"><button class="row" onClick=${() => act.openOrder(b.id)}>
+    <div class="row-main"><div class="row-title">Order</div><div class="row-sub">${o.lines.length} ${o.lines.length === 1 ? 'style' : 'styles'} · ${u} units</div></div></button></div>`;
 }
 
 // Each piece opens its product page (closing it comes back to the look); the button adds every piece not in the order yet
