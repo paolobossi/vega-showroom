@@ -346,11 +346,11 @@ input{font:inherit;color:inherit}
 .appt-buyer svg{flex:none;color:var(--muted)}
 .appt-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
 .appt-head .pill{flex:none;margin-top:2px}
-.appt-catg{display:grid;grid-template-columns:46px minmax(0,1fr);gap:6px 8px;font-size:var(--fs-caption);color:var(--muted)}
+.appt-catg{display:flex;flex-direction:column;gap:6px;font-size:var(--fs-caption);color:var(--muted)}
 .appt-cats{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* section headings on Home (Now, Today) and in the order (Ready-to-wear, Bags…): sentence case, black, a step above body text */
 .lbl.appt-lbl{margin-top:14px;font-size:var(--fs-heading);font-weight:600;letter-spacing:-.01em;text-transform:none;color:var(--ink)}
-.appt-catg b{color:var(--ink);font-weight:600;text-align:right}
+.appt-catg b{color:var(--ink);font-weight:600;margin-right:6px}
 .kv{display:flex;align-items:center;gap:10px;font-size:var(--fs-body);color:var(--muted)}
 .live{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);padding:10px 12px;min-width:0}
@@ -812,10 +812,11 @@ input.qty.xl{width:120px}
 .appts{background:none;display:flex;flex-direction:column;gap:2px}
 .appts .appt{background:var(--surface);border-top:0}
 .appts.now{border:0}
-.appts.now .appt{border:1.5px solid var(--good);border-radius:var(--r-l)}
-/* Home: the days (24px, nearly a pill) and the appointment list (16px) use the Apple-style corner, the --squircle mask; no corner-shape or border-radius, so every browser draws the same curve */
-.day,.appts{border-radius:0;corner-shape:round;-webkit-mask-box-image:var(--squircle) 20 / var(--r-l) stretch}
-.day{-webkit-mask-box-image:var(--squircle) 20 / 24px stretch}
+/* the ongoing row: its green edge is the green container showing 1.5px around the row, so the edge follows the squircle too */
+.appts.now{background:var(--good);padding:1.5px}
+.appts.now .appt{border:0;-webkit-mask-box-image:var(--squircle) 20 / 22.5px stretch}
+/* Home: the days and the appointment list share one Apple-style corner, the --squircle mask at 24px; no corner-shape or border-radius, so every browser draws the same curve */
+.day,.appts{border-radius:0;corner-shape:round;-webkit-mask-box-image:var(--squircle) 20 / 24px stretch}
 /* order (basket): each style is its own grey row, split by a 2px white gap instead of a line */
 .ov-lines .list{background:none;gap:2px}
 .ov-lines .list > .sel{background:var(--surface);border-top:0}
@@ -1441,7 +1442,7 @@ function CalendarTab({S, act}) {
           <div class="appt-main">
             <div class="appt-head"><span class="appt-shop">${b.shop}</span><${CheckPill} a=${S.appts[b.id]} o=${S.orders['o-' + b.id]}/></div>
             <div class="appt-buyer"><${Icon} n="pin" s=${12} w=${2.2}/>${b.city}</div>
-            <div class="appt-catg">${b.divs.map(d => html`<b>${DIV_TAB[d]}</b><span class="appt-cats">${buyingCats(b, d).map(c => CAT_SHORT[c]).join(' · ') || 'No budget yet'}</span>`)}</div>
+            <div class="appt-catg">${b.divs.map(d => html`<div class="appt-cats"><b>${DIV_TAB[d]}</b>${buyingCats(b, d).map(c => CAT_SHORT[c]).join(' · ') || 'No budget yet'}</div>`)}</div>
           </div>
         </button>`;
   return html`
