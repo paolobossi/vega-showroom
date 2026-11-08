@@ -529,7 +529,7 @@ input{font:inherit;color:inherit}
 .sel-val b{font-weight:600}
 /* the delivery drop: white tag with a grey outline next to the item code */
 .sel.open .sel-val small{color:var(--warn);font-weight:600}
-/* Women / Men on the order: underlined tabs; the budget summary below opens Budgets & KPIs */
+/* Women / Men on the order: underlined tabs; the budget summary below opens Guidelines */
 .ov-sum{display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:12px 14px 12px}
 .ov-sum .bar{margin-top:8px}
 .ov-sum-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:var(--fs-body)}
@@ -1377,7 +1377,7 @@ function Zoom({z, act}) {
 const Pill = ({s}) => html`<span class=${'pill s-' + s}>${STATUS[s]}</span>`;
 const By = ({by}) => by ? html`<span class=${'by ' + by}><${Icon} n="user" s=${13} w=${2}/>${by === 'client' ? 'Client' : 'Salesperson'}</span>` : null;
 // Wherever a screen splits Women and Men: a black heading (Order, Budget…) and under it a Women | Men segmented control, one division at a time.
-// The choice is shared (ui.div), so the order, Budgets & KPIs, the appointment and the guidelines all open on the same division. One division: heading only.
+// The choice is shared (ui.div), so the order, Guidelines, the appointment and the guidelines all open on the same division. One division: heading only.
 const divOf = (b, ui) => b.divs.includes(ui.div) ? ui.div : b.divs[0];
 const DivSwitch = ({title, b, div, act}) => html`<div class="div-sw">${title && html`<h2 class="cat-h">${title}</h2>`}
   ${b.divs.length > 1 && html`<${Seg} full opts=${['W', 'M'].filter(d => b.divs.includes(d)).map(d => [d, DIV_TAB[d]])} val=${div} on=${act.div}/>`}</div>`;
@@ -1438,7 +1438,7 @@ function MixChecks({o, d, title=`${DIV_LABEL[d]} guidelines`}) {
   const tag = (st, word) => html`<span class=${'gtag ' + st}>${word}</span>`;
   const row = (name, st, word, sub, num) => html`<div class="bud-row g"><span class="g-main"><span class="g-name">${name}${st && tag(st, word)}</span><span class="g-sub">${sub}</span></span><span class="num">${num}</span></div>`;
   return html`<div class="bud-div">
-    <div class="bud-head"><span>${title}</span></div>
+    ${title && html`<div class="bud-head"><span>${title}</span></div>`}
     ${k.rules.map(r => { const cap = r.max != null ? r.max : r.min, word = r.max != null ? 'max' : 'min', gap = r.max != null ? r.value - r.limit : r.limit - r.value;
       const sub = r.st === 'none' ? `${word} ${cap}% of the order` : `${Math.round(r.share)}% of the order · ${word} ${cap}%${gap > 0 ? ` · ${fmt(gap)} ${r.max != null ? 'over' : 'to go'}` : ''}`;
       return row(r.label, r.st !== 'none' && r.st, RULE_WORD[r.st], sub, fmt(r.value)); })}
@@ -2169,7 +2169,7 @@ function SelLine({l, o, act, locked}) {
   </div>`;
 }
 
-// One switch only (Women / Men); the card at the top shows that division's budget per category, and opens Budgets & KPIs
+// One switch only (Women / Men); the card at the top shows that division's budget per category, and opens Guidelines
 function OrderView({S, ui, act, order, tabbed}) {
   const b = BUYERS[order.buyerId], div = b.divs.includes(ui.div) ? ui.div : b.divs[0];
   const open = issuesOf(order, [div]).length, k = kpi(order, div);
@@ -2199,11 +2199,11 @@ function OrderView({S, ui, act, order, tabbed}) {
           <span class="ov-state-ic"><${Icon} n=${st === 'shared' ? 'clock' : 'check'} s=${20} w=${2.6}/></span>
           <div><b>${STATUS[st]}</b><span>${stateSub}</span></div></div>`}
         ${b.divs.length > 1 && html`<${DivSwitch} b=${b} div=${div} act=${act}/>`}
-        <button class="ov-sum" onClick=${() => act.sheet({type:'kpis', orderId:order.id})} aria-label=${`Budgets and KPIs. ${DIV_TAB[div]} ${fmt(k.total)} of ${fmt(k.budget)}. ${open ? `${open} outside the guidelines` : 'Within the guidelines'}`}>
+        <button class="ov-sum" onClick=${() => act.sheet({type:'kpis', orderId:order.id})} aria-label=${`Guidelines. ${DIV_TAB[div]} ${fmt(k.total)} of ${fmt(k.budget)}. ${open ? `${open} outside the guidelines` : 'Within the guidelines'}`}>
           <span class="ov-sum-top"><b>${b.divs.length > 1 ? 'Budget' : DIV_LABEL[div] + ' budget'}</b></span>
           <${BudDiv} b=${b} d=${div} k=${k} head=${false}/>
           <span class="ov-sum-foot"><span class=${'ov-sum-st ' + (open ? 'st-warn' : 'st-ok')}><${Icon} n=${open ? 'alert' : 'check'} s=${16} w=${2.4}/>${open ? `${open} outside the guidelines` : 'Within the guidelines'}</span>
-            <span class="ov-sum-go">Budgets & KPIs<${Icon} n="down" s=${15} w=${2.2}/></span></span>
+            <span class="ov-sum-go">Guidelines<${Icon} n="down" s=${15} w=${2.2}/></span></span>
         </button>
         <h2 class="cat-h ov-ord-h">Order</h2>
         ${locked && !allSent && html`<div class="callout info"><${Icon} n="lock" s=${18}/><div>The ${DIV_LABEL[div].toLowerCase()} order has been sent. You can see it here but no longer change it.</div></div>`}
@@ -2218,13 +2218,12 @@ function OrderView({S, ui, act, order, tabbed}) {
   </div>`;
 }
 
-// Budgets & KPIs: Budget heading and the Women | Men switch, then that division's card: budget per category, then its guidelines
+// Guidelines (from the order's budget card): only the guidelines for the division, since the budget bars are already on the order
 function KpiSheet({sh, S, ui, act}) {
   const o = S.orders[sh.orderId], b = BUYERS[o.buyerId], d = divOf(b, ui);
-  return html`<${Sheet} tall title="Budgets & KPIs" sub=${b.shop} onClose=${act.close}>
-    <${DivSwitch} title="Budget" b=${b} div=${d} act=${act}/>
-    <div class="kpi"><${BudDiv} b=${b} d=${d} k=${kpi(o, d)} head=${b.divs.length < 2}/><${MixChecks} o=${o} d=${d} title="Guidelines"/></div>
-    <div class="kpi-foot">Each bar is spend against that category’s own budget. Styles without a quantity don’t count yet. Women’s and men’s budgets are never added up.</div>
+  return html`<${Sheet} tall title="Guidelines" sub=${b.shop} onClose=${act.close}>
+    ${b.divs.length > 1 && html`<${DivSwitch} b=${b} div=${d} act=${act}/>`}
+    <div class="kpi"><${MixChecks} o=${o} d=${d} title=${b.divs.length > 1 ? null : DIV_LABEL[d]}/></div>
   <//>`;
 }
 
@@ -2370,7 +2369,7 @@ function BuyerView({S, ui, act}) {
 const GUIDE_STEPS = [
   'The app opens with nobody checked in. In Home, open a client and tap Check in at the bottom: the Collection opens for that client.',
   'In the Collection, tap a style to open its page, pick the colour, enter sizes and add it. A check on the photo means it is in the order; Filters choose the collection, drop, priority and material.',
-  'Tap the client bar at the top to open the order: enter sizes line by line, then see Budgets & KPIs for mix rules, required looks and drops.',
+  'Tap the client bar at the top to open the order: enter sizes line by line, then see Guidelines for mix rules, required looks and drops.',
   'Tap the send button: the client signs on the phone, or gets a link to review within 48 hours. Women’s and men’s can be sent separately.',
   'A sent part is read-only here. The commercial team confirms it for production in the back office.',
 ];
