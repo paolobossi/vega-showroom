@@ -603,11 +603,11 @@ input{font:inherit;color:inherit}
 .bud-row.rule .num small{font-size:var(--fs-caption);font-weight:600;margin-top:2px}
 .bud-row .mix-track{grid-column:1 / -1;margin-top:4px}
 /* a category's spend against its budget: a squircle (superellipse corners via the mask, so iOS Safari gets them too) whose deeper tint fills up to the share used; red under half, yellow from half, green once reached */
-.bpill{--c:var(--muted);position:relative;isolation:isolate;display:grid;grid-template-columns:auto minmax(0,1fr);align-content:center;column-gap:12px;min-height:60px;margin:4px 0;padding:7px 16px 7px 7px;border-radius:32px;corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / 32px stretch;overflow:hidden;background:color-mix(in srgb,var(--t,var(--c)) 14%,var(--bg));color:var(--c)}
+.bpill{--c:var(--muted);position:relative;isolation:isolate;display:grid;grid-template-columns:auto minmax(0,1fr);align-content:center;column-gap:12px;min-height:52px;margin:4px 0;padding:6px 16px 6px 6px;border-radius:32px;corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / 32px stretch;overflow:hidden;background:color-mix(in srgb,var(--t,var(--c)) 14%,var(--bg));color:var(--c)}
 .bpill.ok{--c:var(--good);--t:#2BBF6A}.bpill.warn{--c:var(--warn);--t:#F2B705}.bpill.bad{--c:var(--bad);--t:#F2553F}
 .bpill-fill{position:absolute;inset:0 auto 0 0;z-index:-1;background:color-mix(in srgb,var(--t,var(--c)) 34%,var(--bg));transition:width .35s ease}
 /* the category icon on a lighter tile at the bar's left edge, over the fill */
-.bpill-ic{align-self:center;display:grid;place-items:center;width:38px;height:46px;border-radius:15px;corner-shape:squircle;background:color-mix(in srgb,var(--t,var(--c)) 7%,var(--bg));color:var(--c)}
+.bpill-ic{align-self:center;display:grid;place-items:center;width:34px;height:40px;border-radius:15px;corner-shape:squircle;background:color-mix(in srgb,var(--t,var(--c)) 7%,var(--bg));color:var(--c)}
 /* name and figures as one block, centred in the bar next to the icon */
 .bpill-t{display:flex;flex-direction:column;justify-content:center;min-width:0}
 .bpill-l{font-size:var(--fs-caption);font-weight:600;color:inherit;margin-bottom:-3px} /* the category name in the same colour as its figures */
@@ -845,7 +845,7 @@ input.qty.xl{width:120px}
 /* where the mask works (Safari, Chrome) it alone shapes these boxes: a border-radius as well clips the corners a second time,
    round in Safari (no corner-shape), slightly rounder than the mask in Chrome, and eats into outlines at the corners */
 @supports (-webkit-mask-box-image:none){.list,.appts,.pcard,.sk-card,.ov-sum,.kpi,.panel,.pdf-card,.single,.empty,.rec,.bpill,.bpill-ic{border-radius:0;corner-shape:round}}
-.bpill-ic{-webkit-mask-box-image:var(--squircle) 20 / 19px stretch} /* icon tiles: upright (38×46) with a strong squircle */
+.bpill-ic{-webkit-mask-box-image:var(--squircle) 20 / 17px stretch} /* icon tiles: upright (34×40) with a strong squircle */
 .tile,.alts,.linkbox,.pre{corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}
 .appts{background:none;display:flex;flex-direction:column;gap:2px}
 .appts .appt{background:var(--surface);border-top:0}
