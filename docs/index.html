@@ -583,7 +583,7 @@ input{font:inherit;color:inherit}
 .bpill-ic{grid-row:1 / 3;align-self:center;display:grid;place-items:center;width:46px;height:46px;border-radius:13px;corner-shape:squircle;background:color-mix(in srgb,var(--t,var(--c)) 7%,var(--surface));color:var(--c)}
 .bpill-l{font-size:var(--fs-caption);font-weight:600;color:var(--ink);opacity:.8}
 .bpill-v{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
-.bpill-v b{font-size:20px;font-weight:700;letter-spacing:-.01em}.bpill-v span{font-size:var(--fs-caption);font-weight:600;opacity:.85}
+.bpill-v{font-size:20px;font-weight:700;letter-spacing:-.01em}.bpill-v b{font-weight:700}.bpill-v span{opacity:.6}
 .kpi > .bud-div:first-child{border-top:0;padding-top:0}
 .sign{position:relative}
 .sign-pad{display:block;width:100%;height:170px;border-radius:var(--r-m);border:1.5px dashed var(--line);background:var(--surface);color:var(--ink);touch-action:none;cursor:crosshair}
@@ -1037,6 +1037,8 @@ const SHOW = 'Spring Summer 2027 show';
 
 /* ---------- helpers ---------- */
 const fmt = n => '€' + Math.round(n).toLocaleString('en-GB');
+// a budget target in thousands: €18K, €12.5K (budget bars)
+const fmtK = n => n >= 1000 ? '€' + (Math.round(n / 100) / 10).toLocaleString('en-GB') + 'K' : fmt(n);
 const prices = p => `${fmt(p.price)} wholesale · ${fmt(p.rrp)} retail`;
 const cname = c => `${c} ${COL[c][1]}`;
 const units = q => Object.values(q || {}).reduce((a, b) => a + b, 0);
@@ -1311,7 +1313,7 @@ function BudDiv({b, d, k, head=true}) {
     ${head && html`<div class="bud-head"><span>${DIV_LABEL[d]}</span></div>`}
     ${cats.map(c => { const cb = catBudget(b, d, c), m = k && k.mix.find(x => x.cat === c);
       return m ? html`<div class=${'bpill ' + m.st}><span class="bpill-fill" style=${{width: Math.min(m.used, 100) + '%'}}></span>
-          <span class="bpill-ic"><${Icon} n=${c} s=${22} w=${2}/></span><span class="bpill-l">${CAT_LABEL[c]}</span><span class="bpill-v"><b>${fmt(m.value)}</b> <span>${cb ? 'of ' + fmt(cb) : 'no budget'}</span></span></div>`
+          <span class="bpill-ic"><${Icon} n=${c} s=${22} w=${2}/></span><span class="bpill-l">${CAT_LABEL[c]}</span><span class="bpill-v"><b>${fmt(m.value)}</b> <span>${cb ? 'of ' + fmtK(cb) : 'no budget'}</span></span></div>`
         : html`<div class="bud-row cat"><span>${CAT_LABEL[c]}</span><span class="num">${fmt(cb)}</span></div>`; })}
     <div class="bud-row cat bud-tot"><span>Total</span><span class="num">${k ? val(k.total, db, k.bst) : fmt(db)}</span></div>
   </div>`;
