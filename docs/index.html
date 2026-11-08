@@ -520,7 +520,8 @@ input{font:inherit;color:inherit}
 .sel-ctl{grid-column:1 / -1;display:flex;align-items:center;gap:10px;padding-left:68px;padding-right:6px;flex-wrap:wrap}
 /* sized lines: Enter sizes / Edit sizes in the stepper's place (see .sel-ctl .sel-edit) */
 /* sized lines: the size chips on their own line, then Edit sizes where the stepper sits, with units and value on its right */
-.sel-ctl .szs{flex-basis:100%}
+/* the size tags sit under the colour, next to the photo */
+.sel-info .szs{margin-top:2px}
 .sel-ctl .sel-edit{flex:none;width:auto;height:38px;margin:0;padding:0 16px;border-radius:999px} /* a pill, like the other outlined buttons */
 .sel-val{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;line-height:var(--lh-tight)}
 /* units and value on an order line: the size of the size tags (12px), same colours and weights */
@@ -2144,12 +2145,12 @@ function SelLine({l, o, act, locked}) {
       <span class="row-main">
         <span class="row-title">${p.name}</span>
         <span class="row-sub"><${Colour} c=${l.colour}/></span>
+        ${sized && u > 0 && html`<span class="szs">${p.sizes.filter(s => l.qty[s]).map(s => html`<span class="sz-chip">${s} x${l.qty[s]}</span>`)}</span>`}
       </span>
     </button>
     ${!locked && html`<button class="sel-x" onClick=${() => confirm(`Delete ${p.name} in ${l.colour} from the order?`) && act.unselect(o.id, l.pid, l.colour)} aria-label=${'Remove ' + p.name + ' ' + l.colour}><${Icon} n="x" s=${16} w=${2.2}/></button>`}
     <div class="sel-ctl">
-      ${sized ? html`${u > 0 && html`<span class="szs">${p.sizes.filter(s => l.qty[s]).map(s => html`<span class="sz-chip">${s} x${l.qty[s]}</span>`)}</span>`}
-          ${!locked && html`<button class="pc-act sel-edit" onClick=${edit}>${u ? 'Edit sizes' : 'Enter sizes'}</button>`}`
+      ${sized ? html`${!locked && html`<button class="pc-act sel-edit" onClick=${edit}>${u ? 'Edit sizes' : 'Enter sizes'}</button>`}`
         : locked ? html`<span class="small muted num">×${u}</span>`
         : html`<${Stepper} n=${u} label=${p.name} on=${n => act.setUnits(o.id, l.id, n)}/>`}
       <span class="sel-val num">${u ? html`<b>${u} ${u === 1 ? 'unit' : 'units'}</b><small>${fmt(lineValue(l))}</small>` : html`<small>No quantity yet</small>`}</span>
