@@ -569,8 +569,6 @@ input{font:inherit;color:inherit}
 .gtag{display:inline-flex;align-items:center;font-size:var(--fs-caption);font-weight:600;line-height:1.3;padding:2px 8px;border-radius:999px;background:var(--surface-2);color:var(--muted);white-space:nowrap}
 .gtag.ok{background:var(--good-bg);color:var(--good)}.gtag.warn{background:var(--warn-bg);color:var(--warn)}.gtag.bad{background:var(--bad-bg);color:var(--bad)}
 .ov-sum .bud-div{border-top:0;padding-top:4px}
-.miss-note{margin:-4px 2px 8px}
-.miss-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
 .row-add{flex:none;font-weight:600;color:var(--accent);padding:0 4px}
 .bud-row.rule{align-items:start}
 .bud-row.rule .small{display:block;margin-top:2px}
@@ -668,8 +666,11 @@ input{font:inherit;color:inherit}
 .step{height:42px;display:grid;place-items:center;color:var(--ink)}
 .step:active{background:var(--surface-2)}
 .qty{text-align:center;font-size:var(--fs-title);font-weight:600;padding:2px 0}
-.size-cell .step:first-of-type{border-bottom:1px solid var(--line)}
-.size-cell .step:last-of-type{border-top:1px solid var(--line)}
+/* size cell: size and +, the number, and − are three grey blocks split by a 2px white gap instead of grey lines */
+.size-cell{background:none}
+.size-cell > *,.size-cell > input.qty{background:var(--surface);border-radius:0}
+.size-cell .step:first-of-type{margin-bottom:2px}
+.size-cell .step:last-of-type{margin-top:2px}
 .single{display:flex;align-items:center;justify-content:center;gap:22px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:8px}
 .step.lg{width:64px;height:64px;border-radius:999px;background:var(--surface-2)}
 .qty.xl{font-size:var(--fs-title);min-width:70px}
@@ -797,6 +798,9 @@ input.qty.xl{width:120px}
 .appts .appt{background:var(--surface);border-top:0}
 .appts.now{border:0}
 .appts.now .appt{border:1.5px solid var(--good);border-radius:var(--r-l)}
+/* order (basket): each style is its own grey row, split by a 2px white gap instead of a line */
+.ov-lines .list{background:none;gap:2px}
+.ov-lines .list > .sel{background:var(--surface);border-top:0}
 /* Collection cards: the photo runs to the card's edges (top and sides), the text keeps its margin; a soft drop shadow lifts the card off the grey page */
 .pc-wrap{display:flex;min-width:0;filter:drop-shadow(0 1px 1px rgba(0,0,0,.05)) drop-shadow(0 4px 10px rgba(0,0,0,.07))}
 .pc-wrap > .pcard{flex:1;padding:0 0 4px;gap:10px;border:0;background:var(--card);border-radius:24px;-webkit-mask-box-image:var(--squircle) 20 / 24px stretch}
@@ -2054,13 +2058,6 @@ function OrderView({S, ui, act, order, tabbed}) {
   const locked = partLocked(order, div), allSent = b.divs.every(d => partLocked(order, d));
   // products are added during the visit: for another client, Check in switches the visit to them
   const inVisit = ui.session === order.id;
-  // what the guidelines still ask for: pieces of required looks that are not in the order at all.
-  // Must have only marks a style as highly important; the buyer is not obliged to buy it, so it is never listed as missing.
-  const has = (pid, c) => order.lines.some(x => x.pid === pid && (!c || x.colour === c)), miss = [];
-  const need = (pid, colour, why) => { const m = miss.find(x => x.pid === pid); if (m) m.why.push(why); else miss.push({pid, colour, why:[why]}); };
-  if (!locked) {
-    k.looks.filter(x => !x.done).forEach(x => x.l.items.forEach(([pid, c]) => { if (!has(pid, c)) need(pid, c, lookNo(x.l)); }));
-  }
   const st = order.status, when = t => new Date(t).toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
   // the line under the banner title: one short line that never repeats the title
   const last = b.divs.map(d => partOf(order, d)).filter(x => x.at).sort((x, y) => y.at - x.at)[0];
@@ -2092,14 +2089,6 @@ function OrderView({S, ui, act, order, tabbed}) {
           <div class="grp-head"><span>${g.label}</span></div>
           <div class="list">${g.lines.map(l => html`<${SelLine} key=${l.id} l=${l} o=${order} act=${act} locked=${locked}/>`)}</div>
         </div>`)}
-        ${miss.length > 0 && html`<div>
-          <div class="grp-head"><span>Currently missing</span></div>
-          <div class="small muted miss-note">To meet the guidelines: required look pieces not in the order yet.</div>
-          <div class="list">${miss.map(m => html`<button class="row" onClick=${() => act.sheet({type:'product', orderId:order.id, pid:m.pid, colour:m.colour})}>
-            <${Thumb} pid=${m.pid} colour=${m.colour}/>
-            <div class="row-main"><div class="row-title">${P[m.pid].name}</div><div class="row-sub"><${Colour} c=${m.colour}/></div><div class="row-sub miss-tags">${m.why.map(w => html`<span class="gtag warn">${w}</span>`)}</div></div>
-            <span class="row-add">Add</span></button>`)}</div>
-        </div>`}
       </div>
     </div>
     <div class="ov-actions">

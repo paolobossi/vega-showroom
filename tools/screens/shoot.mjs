@@ -102,7 +102,7 @@ add('Client checked in', 'in-look', 'Look · client in session', 'Add look to ba
 
 // 7 Order (draft)
 add('Order · draft', 'order', 'Order · Women', 'Order tab of the client in session', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); });
-add('Order · draft', 'order-bottom', 'Order · Currently missing', 'Scrolled down: required look pieces', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await scrollIn('.ov-body'); });
+add('Order · draft', 'order-bottom', 'Order · bottom', 'Scrolled down: last lines and the buttons', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await scrollIn('.ov-body'); });
 add('Order · draft', 'order-men', 'Order · Men', 'Men tab', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('div', 'M'); });
 add('Order · draft', 'kpis', 'Budgets & KPIs', 'Tap the budget card', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('sheet', {type: 'kpis', orderId: 'o-dubois'}); });
 add('Order · draft', 'order-empty', 'Order · empty', 'Just checked in, nothing added', async () => { await checkIn('linea'); await act('openOrder', 'linea'); });
