@@ -69,7 +69,7 @@ html::before{content:"";position:fixed;z-index:100;top:0;left:0;right:0;height:e
 *,*::before,*::after{touch-action:manipulation}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
 button:disabled{cursor:default;opacity:.45}
-:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 input{font:inherit;color:inherit}
 .num{font-variant-numeric:tabular-nums}
 .muted{color:var(--muted)}
@@ -103,9 +103,10 @@ input{font:inherit;color:inherit}
 /* ---------- app frame ---------- */
 .app{position:relative;flex:1;min-height:0;display:flex;flex-direction:column;container-type:size;container-name:app;background:var(--bg)}
 .screen{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
-/* tab bar: edge to edge at the bottom, under the page (not over it); white with a hairline on top; active item black */
-.screen.tabbed{padding-bottom:28px}
-.dock{flex:none;z-index:20;background:var(--bg);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+/* tab bar: edge to edge at the bottom, slightly see-through white with a blur, no line on top; the page scrolls under it; active item black */
+.screen.tabbed{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+.dock{position:absolute;left:0;right:0;bottom:0;z-index:20;padding-bottom:env(safe-area-inset-bottom,0px);
+  background:color-mix(in srgb,var(--bg) 80%,transparent);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%)}
 .tabbar{display:flex}
 .tab{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:var(--fs-caption);font-weight:600;color:var(--muted);padding:8px 0 6px;transition:color .2s}
 .tab.on{color:var(--ink)}
@@ -119,9 +120,10 @@ input{font:inherit;color:inherit}
 /* Order tab: the order of the client in session, with the tab bar under it */
 .ord-tab{position:relative;flex:1;min-height:0;display:flex;flex-direction:column}
 .ord-tab > .ov{flex:1;height:auto}
-.ord-tab .ov-body{padding-bottom:88px}
-.ord-tab .ov-actions{bottom:12px}
-.no-ord{display:flex;flex-direction:column;align-items:center;gap:8px;margin:0 18px;padding:28px 18px;text-align:center;color:var(--muted)}
+.ord-tab .ov-body{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
+.ord-tab .ov-actions{bottom:calc(66px + env(safe-area-inset-bottom,0px))}
+.no-ord-page{display:flex;flex-direction:column;min-height:100%}
+.no-ord{display:flex;flex-direction:column;align-items:center;gap:8px;margin:auto 18px;padding:28px 18px;text-align:center;color:var(--muted)}
 .no-ord b{color:var(--ink);font-size:var(--fs-heading)}
 .no-ord .btn{margin-top:8px;border-radius:999px;min-height:52px;padding:0 28px}
 .top{padding:14px 18px 6px}
@@ -202,10 +204,10 @@ input{font:inherit;color:inherit}
 .day{flex:0 0 66px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0;border-radius:var(--r-m);background:var(--surface);border:1px solid var(--line);color:var(--ink)}
 .day b{font-size:var(--fs-heading);font-weight:600;line-height:var(--lh-tight)}
 .day span{font-size:var(--fs-caption);font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
-.day.on{background:var(--accent);border-color:transparent;color:var(--accent-ink)}
+.day.on{background:var(--ink);border-color:transparent;color:var(--bg)}
 .day.on span{color:inherit;opacity:.8}
 .inp{height:46px;border:1px solid var(--line);border-radius:var(--r-m);background:var(--surface);padding:0 14px;font:var(--fs-heading) var(--f-ui);color:var(--ink);outline:0;width:100%}
-.inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}
+.inp:focus{border-color:var(--ink);box-shadow:0 0 0 3px color-mix(in srgb,var(--ink) 12%,transparent)}
 .icon-btn:active{background:var(--surface-2)}
 
 /* ---------- chips, pills ---------- */
@@ -326,7 +328,7 @@ input{font:inherit;color:inherit}
 .appt-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
 .appt-shop{font:600 var(--fs-heading)/var(--lh-tight) var(--f-display);letter-spacing:-.015em}
 .appt-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-.appt-buyer{display:flex;align-items:center;gap:4px;font-size:var(--fs-body);color:var(--ink);margin-top:-4px}
+.appt-buyer{display:flex;align-items:center;gap:4px;font-size:var(--fs-caption);color:var(--muted);margin-top:-4px}
 .appt-buyer svg{flex:none;color:var(--muted)}
 .appt-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
 .appt-head .pill{flex:none;margin-top:2px}
@@ -359,7 +361,7 @@ input{font:inherit;color:inherit}
 .search input{border:0;outline:0;background:none;flex:1;min-width:0;height:100%;color:var(--ink)}
 .searchrow{display:flex;gap:8px}.searchrow .search{flex:1;min-width:0}
 .sq-btn{position:relative;flex:none;width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--line);background:var(--surface);border-radius:50%;color:var(--ink)}
-.sq-btn.on{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.sq-btn.on{background:var(--ink);color:var(--bg);border-color:transparent}
 /* Collection header: filters and search as round buttons on the right of Women / Men */
 .hd-btns{display:flex;gap:8px;flex:none}
 /* Search: a full page that slides up over the tab; the field sits at the bottom, above the keyboard */
@@ -386,7 +388,7 @@ input{font:inherit;color:inherit}
 .fchip{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-caption);font-weight:600;padding:6px 8px 6px 12px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);color:var(--ink)}
 .fchip svg{color:var(--muted)}
 .fchips{display:flex;gap:6px;flex-wrap:wrap}
-.opt .row-side{color:var(--accent)}
+.opt .row-side{color:var(--ink)}
 .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 /* collection: category rail on the left, products grouped by category and family */
 /* category tabs stick under the top while the grid scrolls; sub-categories of the current one sit beneath */
@@ -425,7 +427,7 @@ input{font:inherit;color:inherit}
 .cat-main{display:flex;flex-direction:column;gap:24px;min-width:0;padding-top:16px}
 .cat-sec{display:flex;flex-direction:column;gap:8px}
 /* collection tabs (SS27, SS27 Pre-collection) above the category pills: text with an underline on the current one */
-.coll-tabs{display:flex;gap:22px;overflow-x:auto;scrollbar-width:none;padding:0 18px;margin-bottom:10px;box-shadow:inset 0 -1px var(--line)}
+.coll-tabs{display:flex;gap:22px;overflow-x:auto;scrollbar-width:none;padding:0 18px;margin-bottom:20px}
 .coll-tabs::-webkit-scrollbar{display:none}
 .coll-t{flex:none;position:relative;padding:8px 0 10px;font-size:var(--fs-body);font-weight:600;color:var(--muted);white-space:nowrap;transition:color .2s}
 .coll-t.on{color:var(--ink)}
@@ -657,12 +659,12 @@ input{font:inherit;color:inherit}
 .colour .sw{width:16px;height:16px}
 .colour .code{font-size:inherit;line-height:inherit;font-weight:inherit}
 .colour.on{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
-.cnt{font-size:var(--fs-caption);font-weight:700;background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:2px 6px}
+.cnt{font-size:var(--fs-caption);font-weight:700;background:var(--ink);color:var(--bg);border-radius:999px;padding:2px 6px}
 .sizes{display:flex;gap:6px;overflow-x:auto;margin:0 -18px;padding:0 18px 2px;scrollbar-width:none}
 .size-cell{flex:1 0 54px;display:flex;flex-direction:column;align-items:stretch;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);overflow:hidden}
-.size-cell.has{border-color:var(--accent)}
+.size-cell.has{border-color:var(--ink)}
 .sz{font:600 var(--fs-caption) var(--f-ui);font-variant-numeric:tabular-nums;text-align:center;padding:8px 0 4px;color:var(--muted)}
-.size-cell.has .sz{color:var(--accent)}
+.size-cell.has .sz{color:var(--ink)}
 .step{height:42px;display:grid;place-items:center;color:var(--ink)}
 .step:active{background:var(--surface-2)}
 .qty{text-align:center;font-size:var(--fs-title);font-weight:600;padding:2px 0}
@@ -705,7 +707,14 @@ input.qty.xl{width:120px}
 .issue:first-of-type{border-top:0}
 
 /* ---------- capture ---------- */
-.capture{position:absolute;inset:0;z-index:30;background:var(--vf-bg);color:var(--vf-ink);display:flex;flex-direction:column;animation:fade .2s ease}
+.capture{position:absolute;inset:0;z-index:30;background:var(--vf-bg);color:var(--vf-ink);display:flex;flex-direction:column;animation:fade .2s ease;container-type:size}
+/* on the phone the viewfinder runs up under the notch / status bar: no white or black strip above it; the browser bar turns black too */
+@media (max-width:899px){
+  .capture{top:calc(0px - env(safe-area-inset-top,0px))}
+  html.cam::before{display:none}
+  html.cam,html.cam body{background:#000}
+  .vf-top{padding-top:max(8px,calc(env(safe-area-inset-top,0px) + 4px))}
+}
 .vf-top{position:absolute;z-index:3;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:8px 10px 28px;background:linear-gradient(rgba(0,0,0,.5),transparent)}
 .vf-btn{width:42px;height:42px;border-radius:999px;display:grid;place-items:center;background:rgba(0,0,0,.35);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:var(--vf-ink)}
 .vf-title{font-size:var(--fs-body);font-weight:600;color:var(--vf-ink);text-align:center;text-shadow:0 1px 3px rgba(0,0,0,.5)}
@@ -757,7 +766,9 @@ input.qty.xl{width:120px}
   .cap-btn,.round{height:42px}
   .round{width:42px}
   .tab{flex-direction:row;justify-content:center;gap:6px;padding:8px 0}
-  .screen.tabbed{padding-bottom:20px}
+  .screen.tabbed{padding-bottom:calc(60px + env(safe-area-inset-bottom,0px))}
+  .ord-tab .ov-actions{bottom:calc(52px + env(safe-area-inset-bottom,0px))}
+  .app.docked .toast:not(.top){bottom:calc(52px + env(safe-area-inset-bottom,0px))}
   .ov-body{padding-bottom:72px}
   .ov-actions{bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 8px))}
 }
@@ -1403,7 +1414,7 @@ function CalendarTab({S, act}) {
           <div class="appt-time">${b.time}</div>
           <div class="appt-main">
             <div class="appt-head"><span class="appt-shop">${b.shop}</span><${CheckPill} a=${S.appts[b.id]} o=${S.orders['o-' + b.id]}/></div>
-            <div class="appt-buyer"><${Icon} n="pin" s=${13} w=${2.2}/>${b.city}</div>
+            <div class="appt-buyer"><${Icon} n="pin" s=${12} w=${2.2}/>${b.city}</div>
             ${b.divs.map(d => html`<div class="appt-cats"><b>${DIV_TAB[d]}</b> ${buyingCats(b, d).map(c => CAT_SHORT[c]).join(' · ') || 'No budget yet'}</div>`)}
           </div>
         </button>`;
@@ -2266,9 +2277,9 @@ function TabBar({tab, so, act}) {
 
 // Order tab with nobody checked in: one button to the list of clients; picking one checks them in and shows their order here
 function NoOrder({act}) {
-  return html`<header class="top top-bar mid"><h1 class="h1">Order</h1></header>
+  return html`<div class="no-ord-page"><header class="top top-bar mid"><h1 class="h1">Order</h1></header>
     <div class="no-ord"><${Icon} n="orders" s=${32}/><b>No client checked in</b><div>Choose a client to check them in and start or continue their order.</div>
-      <button class="btn primary" onClick=${() => act.sheet({type:'pick'})}>Choose a client</button></div>`;
+      <button class="btn primary" onClick=${() => act.sheet({type:'pick'})}>Choose a client</button></div></div>`;
 }
 
 function makeActs(setS, setUi, onReset) {
@@ -2394,6 +2405,9 @@ function App({onReset}) {
   const ongoing = ongoingBuyer(S), sessionOk = !!activeOrder(S, ui);
   useEffect(() => { if (ongoing && !sessionOk && !buyerView) act.startSession(ongoing.id); }, [ongoing && ongoing.id, sessionOk, !!buyerView]);
   // an order opened from Home or history is full screen, without the tab bar; the client in session's order is the Order tab
+  // camera open: the status bar area goes black with the viewfinder (page background and the browser's theme colour)
+  useEffect(() => { const root = document.documentElement; root.classList.toggle('cam', !!ui.capture);
+    document.querySelectorAll('meta[name="theme-color"]').forEach(m => { m.dataset.base = m.dataset.base || m.content; m.content = ui.capture ? '#000000' : m.dataset.base; }); }, [!!ui.capture]);
   const so = activeOrder(S, ui), capDiv = so && (BUYERS[so.buyerId].divs.includes(ui.capDiv) ? ui.capDiv : BUYERS[so.buyerId].divs[0]);
   if (buyerView) return html`<div class="app"><${BuyerView} S=${S} ui=${ui} act=${act}/>${sheet}${toast}</div>`;
   if (S.signedOut) return html`<div class="app"><${SignIn} S=${S} act=${act}/>${toast}</div>`;

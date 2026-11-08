@@ -16,13 +16,13 @@ Four sizes, each with one job. Hierarchy beyond these comes from weight, colour,
 - Line height: `--lh-tight` 1.2 for headings and titles, `--lh-body` 1.4 for text.
 
 ## Colour
-- **Structural:** `--bg` (white canvas), `--surface` (light grey cards and groups, with squircle corners and no outline), `--surface-2` (pressed and secondary fills), `--card` (white: Collection cards and the selected segment), `--line` (dividers inside a box, the hairline over the tab bar). Home appointments are separate grey rows with a 2px gap instead of a divider.
+- **Structural:** `--bg` (white canvas), `--surface` (light grey cards and groups, with squircle corners and no outline), `--surface-2` (pressed and secondary fills), `--card` (white: Collection cards and the selected segment), `--line` (dividers inside a box). Home appointments are separate grey rows with a 2px gap instead of a divider.
 - **Text greys:** `--ink` for text, `--muted` for secondary text that must be read (4.5:1 on the canvas), `--faint` only for large text, placeholders and non-text marks (3:1).
 - **Primary action:** black (`--ink` with `--bg` text). One per screen: Add to order, Finish order, Send to commercial team, Continue, Check in.
-- **Interactive (`--accent`, blue):** links, the selected day, active filters, focus rings and selection checks. Never a filled primary button.
+- **Interactive (`--accent`, blue):** links only (and the blue status pills and info callouts). Every active or selected state is black (`--ink`): the active tab, the selected day, active filters, selected options, sizes with a quantity, focus rings. Never a filled primary button.
 - **Status:** green `--good`, amber `--warn`, red `--bad`, each with its `-bg` tint. Always with a word or icon too (Within, Over, ⚠), never colour alone. Budget spend is red under half of the budget, yellow from half, and green once it is reached or passed. "In the order" is always a green round ✓: on the Collection card (about as tall as the priority tag) and on each colour chip.
 - **Black marks:** `--band`, black in light and dark mode (Must have tag, status bar strip). There is no client band: the client in session shows as a badge on the Order tab.
-- **Tab bar:** edge to edge at the bottom, white with a hairline on top; Home, Looks, Scan (middle), Collection, Order; active item black, others grey.
+- **Tab bar:** edge to edge at the bottom, 80% white with a blur (the page scrolls under it), no line on top; Home, Looks, Scan (middle), Collection, Order; active item black, others grey.
 
 ## Shape and depth
 - Radius: `--r-xs` 4 (chips, bars), `--r-s` 8 (photos), `--r-m` 12 (controls, inputs, size cells), `--r-l` 16 (cards, list groups, panels), `--r-xl` 22 (sheet tops). Anything as tall as it is round (pills, round buttons) uses 999px.
