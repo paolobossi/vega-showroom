@@ -30,6 +30,7 @@
   /* depth: light from above; raised controls, floating buttons and bars, sheets */
   --shadow-raised:0 1px 3px rgba(0,0,0,.12); --shadow-float:0 8px 24px rgba(0,0,0,.16); --shadow-sheet:0 -8px 32px rgba(0,0,0,.18);
   --stage:#E1E2DE; --frame:#17181A;
+  --avatar:#73787E; --avatar-ink:#FFFFFF; /* profile circles: a mid grey with white initials */
   --bg:#FFFFFF; --surface:#F2F3F0; --surface-2:#E7E8E4; --studio:#E3E4DF; --card:#FFFFFF;
   --ink:#141619; --muted:#62666B; --faint:#808489; --line:#DCDED8;
   --band:#000000; --band-ink:#FFFFFF; /* status-bar strip and the Must have tag: black in light and dark mode */
@@ -42,6 +43,7 @@
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --stage:#050607; --frame:#2A2C30;
+  --avatar:#3B3F45; --avatar-ink:#ECEDEA;
   --bg:#0F1113; --surface:#181A1E; --surface-2:#202328; --studio:#43464B; --card:#181A1E;
   --ink:#ECEDEA; --muted:#A0A4A9; --faint:#6E7277; --line:#2C3036;
   --accent:#8C9DFF; --accent-ink:#0F1113; --accent-soft:#222A4C;
@@ -50,6 +52,7 @@
 }}
 :root[data-theme="dark"]{
   --stage:#050607; --frame:#2A2C30;
+  --avatar:#3B3F45; --avatar-ink:#ECEDEA;
   --bg:#0F1113; --surface:#181A1E; --surface-2:#202328; --studio:#43464B; --card:#181A1E;
   --ink:#ECEDEA; --muted:#A0A4A9; --faint:#6E7277; --line:#2C3036;
   --accent:#8C9DFF; --accent-ink:#0F1113; --accent-soft:#222A4C;
@@ -138,7 +141,7 @@ input{font:inherit;color:inherit}
 .no-ord-page{display:flex;flex-direction:column;min-height:100%}
 .no-ord{display:flex;flex-direction:column;align-items:center;gap:8px;margin:auto 18px;padding:28px 18px;text-align:center;color:var(--muted)}
 .no-ord b{color:var(--ink);font-size:var(--fs-heading)}
-.no-ord .btn{margin-top:8px;border-radius:999px;min-height:52px;padding:0 28px}
+.no-ord .btn{margin-top:8px;border-radius:999px;min-height:46px;padding:0 28px}
 .top{padding:14px 18px 6px}
 /* Profile: the seller, their orders, passcode and sign out */
 .prof{display:flex;align-items:center;gap:14px;padding:4px 2px 6px}
@@ -165,7 +168,7 @@ input{font:inherit;color:inherit}
 .sec-head h2{margin:0;font-size:var(--fs-heading);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .sec-head .cat-h{text-transform:none;color:var(--ink);letter-spacing:-.02em}
 .icon-btn{display:grid;place-items:center;width:40px;height:40px;border-radius:999px;color:var(--ink)}
-.avatar{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--ink);color:var(--bg);font:600 var(--fs-caption) var(--f-ui);letter-spacing:.02em}
+.avatar{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--avatar);color:var(--avatar-ink);font:600 var(--fs-caption) var(--f-ui);letter-spacing:.02em}
 .avatar.me{width:40px;height:40px;font-size:var(--fs-body)}
 .avatar.me:active{opacity:.7}
 .avatar.sm{width:34px;height:34px;font-size:var(--fs-caption)}
@@ -187,14 +190,14 @@ input{font:inherit;color:inherit}
 .pd-sub .code{color:var(--ink);font-weight:400}
 /* product page actions sit in the page under the prices, as full pills */
 .pd-cta{display:flex;flex-direction:column;gap:10px;margin:10px 0 14px}
-.pd-cta .btn{width:100%;min-height:52px;border-radius:999px}
+.pd-cta .btn{width:100%;min-height:46px;border-radius:999px}
 .btn.black{background:var(--ink);color:var(--bg)}
 .btn.outline{border:1px solid var(--ink)}
 .btn.outline.danger{border-color:var(--bad)}
 .pd-qty{display:flex;flex-direction:column;gap:10px}
 .pd-qty .quick{flex-wrap:nowrap;overflow-x:auto;margin:0 -18px;padding:0 18px;scrollbar-width:none}
 .pd-qty .qbtn{flex:none}
-.pd-in{display:flex;align-items:center;justify-content:center;gap:6px;min-height:52px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-weight:600;font-size:var(--fs-body)}
+.pd-in{display:flex;align-items:center;justify-content:center;gap:6px;min-height:46px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-weight:600;font-size:var(--fs-body)}
 .pd-in svg{color:var(--good)}
 .pd-cta:empty{display:none}
 .pin{display:flex;flex-direction:column;align-items:center;gap:14px;padding:4px 0 6px}
@@ -226,13 +229,12 @@ input{font:inherit;color:inherit}
 
 /* ---------- chips, pills ---------- */
 .pill{display:inline-flex;align-items:center;gap:4px;font-size:var(--fs-caption);font-weight:600;padding:4px 10px;border-radius:999px;white-space:nowrap}
-.s-none{background:var(--surface-2);color:var(--muted)}
-.s-draft{background:var(--surface-2);color:var(--muted);box-shadow:inset 0 0 0 1px var(--line)}
+/* tags have no border: grey tags are a see-through ink tint, so they read on white, on the grey rows and in dark mode */
+.s-none,.s-draft,.s-out{background:color-mix(in srgb,var(--ink) 9%,transparent);color:var(--muted)}
 .s-shared{background:var(--warn-bg);color:var(--warn)}
 .s-submitted,.s-partial{background:var(--accent-soft);color:var(--accent)}
 .s-confirmed{background:var(--good);color:var(--surface)}
-.s-in{background:var(--good-bg);color:var(--good)}
-.s-out{background:var(--surface-2);color:var(--muted)}
+.s-in{background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--good)}
 .by{display:inline-flex;align-items:center;gap:4px;font-size:var(--fs-caption);font-weight:600;color:var(--muted);white-space:nowrap}
 .by.client{color:var(--accent)}
 .chip{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-caption);font-weight:600;padding:4px 10px;border-radius:999px;background:var(--surface-2);color:var(--muted);white-space:nowrap}
@@ -246,7 +248,7 @@ input{font:inherit;color:inherit}
 .seg.full{display:flex}.seg.full button{flex:1}
 
 /* ---------- buttons ---------- */
-.btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 18px;border-radius:var(--r-m);font-weight:600;font-size:var(--fs-body)}
+.btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 18px;border-radius:var(--r-m);font-weight:600;font-size:var(--fs-body)}
 .btn.primary{background:var(--ink);color:var(--bg)}
 .btn.secondary{background:var(--surface-2);border:1px solid var(--line)}
 .btn.go{background:var(--good);color:var(--surface)}
@@ -400,7 +402,7 @@ input{font:inherit;color:inherit}
 .srch-bar .search{flex:1;min-width:0;height:52px;box-shadow:var(--shadow-float)}
 .srch-bar .search input{font-size:var(--fs-heading)}
 .srch-x{flex:none;width:52px;height:52px;border-radius:999px;display:grid;place-items:center;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow-float)}
-.fchip{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-caption);font-weight:600;padding:6px 8px 6px 12px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);color:var(--ink)}
+.fchip{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-caption);font-weight:600;padding:6px 8px 6px 12px;border-radius:999px;background:color-mix(in srgb,var(--ink) 9%,transparent);color:var(--ink)}
 .fchip svg{color:var(--muted)}
 .fchips{display:flex;gap:6px;flex-wrap:wrap}
 .opt .row-side{color:var(--ink)}
@@ -476,7 +478,7 @@ input{font:inherit;color:inherit}
 .ptags{position:absolute;z-index:2;left:6px;top:6px;display:flex;flex-wrap:wrap;gap:4px;max-width:calc(100% - 40px);pointer-events:none}
 .ptag{display:inline-flex;align-items:center;height:var(--tag-h);padding:0 7px;border-radius:999px;font-size:11px;line-height:1.3;font-weight:400;letter-spacing:.01em;white-space:nowrap;pointer-events:none}
 .ptag.must{background:var(--band);color:var(--band-ink)}
-.ptag.ess,.ptag.perm{background:#fff;color:#141619;box-shadow:0 0 0 1px rgba(20,22,25,.14)}
+.ptag.ess,.ptag.perm{background:#fff;color:#141619}
 .pd-media{position:relative}
 .pd-media .ptags{left:0;top:auto;bottom:14px}.pd-media .ptag{font-size:var(--fs-caption);height:22px;padding:0 9px}
 .pc-lock{background:var(--surface);color:var(--warn);border:1px solid var(--line)}
@@ -515,7 +517,7 @@ input{font:inherit;color:inherit}
 .sel-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:var(--fs-caption)}
 .sel-code{color:var(--ink);font-weight:400;letter-spacing:.02em}
 /* the delivery drop: white tag with a grey outline next to the item code */
-.drop-tag{font-size:var(--fs-caption);font-weight:600;line-height:1;padding:4px 8px;border-radius:999px;background:var(--surface);border:1px solid var(--line);color:var(--ink)}
+.drop-tag{font-size:var(--fs-caption);font-weight:600;line-height:1;padding:4px 8px;border-radius:999px;background:color-mix(in srgb,var(--ink) 9%,transparent);color:var(--ink)}
 .sel.open .sel-val small{color:var(--warn);font-weight:600}
 /* Women / Men on the order: underlined tabs; the budget summary below opens Budgets & KPIs */
 .ov-sum{display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:12px 14px 12px}
@@ -545,7 +547,7 @@ input{font:inherit;color:inherit}
 .grp-head{display:flex;justify-content:space-between;align-items:baseline;font-size:var(--fs-heading);font-weight:600;letter-spacing:-.01em;color:var(--ink);padding:0 2px 8px}
 .empty{background:var(--surface);border:1px dashed var(--line);border-radius:var(--r-l);padding:22px 18px;text-align:center;color:var(--muted);display:flex;flex-direction:column;gap:8px;align-items:center}
 .ov-bar{flex:none;display:flex;gap:10px;align-items:center;padding:10px 14px max(12px,env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--surface)}
-.cap-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;height:46px;border-radius:999px;background:var(--ink);color:var(--bg);font-weight:700;font-size:var(--fs-body);white-space:nowrap;min-width:0}
+.cap-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;height:46px;border-radius:999px;background:var(--ink);color:var(--bg);font-weight:600;font-size:var(--fs-body);white-space:nowrap;min-width:0}
 .cap-btn.two{flex-direction:column;gap:2px;height:64px;border-radius:999px}
 .cap-btn.two > span{display:flex;align-items:center;gap:8px}
 .cap-btn.two small{font-size:var(--fs-caption);font-weight:400;opacity:.85;max-width:100%;overflow:hidden;text-overflow:ellipsis}
@@ -1477,12 +1479,11 @@ function CalendarTab({S, act}) {
 function ApptSheet({sh, S, ui, act}) {
   const b = BUYERS[sh.bid], o = S.orders['o-' + b.id], a = S.appts[b.id] || {}, isIn = isOngoing(a);
   const foot = !a.in ? html`<button class="btn go" onClick=${() => act.checkIn(b.id)}><${Icon} n="check" s=${18} w=${2.2}/>Check in</button>`
-    : isIn ? html`<button class="btn secondary" style="flex:0 0 auto" onClick=${() => act.checkOut(b.id)}>Check out</button>
+    : isIn ? html`<button class="btn ring" onClick=${() => act.checkOut(b.id)}>Check out</button>
         <button class="btn primary" onClick=${() => act.addProducts(b.id)}>Add products</button>`
     : html`${o && html`<button class="btn ring" onClick=${() => act.openOrder(b.id)}>View order</button>`}
         <button class="btn go" onClick=${() => act.checkIn(b.id)}><${Icon} n="check" s=${18} w=${2.2}/>Check in again</button>`;
   return html`<${Sheet} tall center fade title=${b.shop} sub=${dayLabel(b, true)} onClose=${act.close} foot=${foot}>
-    ${isIn && html`<div class="kv"><span class="pill s-in">Ongoing since ${hhmm(a.in)}</span></div>`}
     ${o && html`<${ApptOrder} o=${o} b=${b} act=${act}/>`}
     <div class="list"><button class="row" onClick=${() => act.sheet({type:'guide', bid:b.id})}>
       <div class="row-main"><div class="row-title">Buying guidelines</div><div class="row-sub">${b.cluster} client · budget per category</div></div>
