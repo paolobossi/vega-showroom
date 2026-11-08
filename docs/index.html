@@ -212,7 +212,7 @@ input{font:inherit;color:inherit}
 .top-acts{display:flex;align-items:center;gap:10px}.top-acts .round-btn{margin-top:0}
 .field{display:flex;flex-direction:column;gap:6px}
 .inp.area{height:auto;min-height:104px;padding:12px 14px;line-height:var(--lh-body);resize:vertical}
-.days{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;margin:0 -18px;padding:0 18px;scroll-padding:0 18px}
+.days{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;margin:0 -18px 12px;padding:0 18px;scroll-padding:0 18px}
 .days::-webkit-scrollbar{display:none}
 .day{flex:0 0 54px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0;border-radius:var(--r-m);background:var(--surface);border:1px solid var(--line);color:var(--ink)}
 .day b{font-size:var(--fs-heading);font-weight:600;line-height:var(--lh-tight)}
@@ -350,6 +350,7 @@ input{font:inherit;color:inherit}
 .appt-cats{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* section headings on Home (Now, Today) and in the order (Ready-to-wear, Bags…): sentence case, black, a step above body text */
 .lbl.appt-lbl{margin-top:14px;font-size:var(--fs-heading);font-weight:600;letter-spacing:-.01em;text-transform:none;color:var(--ink)}
+.days + .lbl.appt-lbl{margin-top:0}
 .appt-catg b{color:var(--ink);font-weight:600;margin-right:6px}
 .kv{display:flex;align-items:center;gap:10px;font-size:var(--fs-body);color:var(--muted)}
 .live{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
@@ -812,9 +813,8 @@ input.qty.xl{width:120px}
 .appts{background:none;display:flex;flex-direction:column;gap:2px}
 .appts .appt{background:var(--surface);border-top:0}
 .appts.now{border:0}
-/* the ongoing row: its green edge is the green container showing 1.5px around the row, so the edge follows the squircle too */
-.appts.now{background:var(--good);padding:1.5px}
-.appts.now .appt{border:0;-webkit-mask-box-image:var(--squircle) 20 / 22.5px stretch}
+/* the ongoing row: a light green fill instead of the grey, no border */
+.appts.now .appt{border:0;background:var(--good-bg)}
 /* Home: the days and the appointment list share one Apple-style corner, the --squircle mask at 24px; no corner-shape or border-radius, so every browser draws the same curve */
 .day,.appts{border-radius:0;corner-shape:round;-webkit-mask-box-image:var(--squircle) 20 / 24px stretch}
 /* order (basket): each style is its own grey row, split by a 2px white gap instead of a line */
