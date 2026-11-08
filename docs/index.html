@@ -2180,10 +2180,7 @@ function OrderView({S, ui, act, order, tabbed}) {
         <h2 class="cat-h ov-ord-h">Order</h2>
         ${locked && !allSent && html`<div class="callout info"><${Icon} n="lock" s=${18}/><div>The ${DIV_LABEL[div].toLowerCase()} order has been sent. You can see it here but no longer change it.</div></div>`}
         ${lines.length === 0 && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div><div class="small">Tap any style in the Collection and enter its quantities.</div></div>`}
-        ${groups.filter(g => g.lines.length).map(g => html`<div class="grp-box">
-          <div class="grp-head"><span>${g.label}</span></div>
-          <div class="list">${g.lines.map(l => html`<${SelLine} key=${l.id} l=${l} o=${order} act=${act} locked=${locked}/>`)}</div>
-        </div>`)}
+        ${lines.length > 0 && html`<div class="grp-box"><div class="list">${groups.flatMap(g => g.lines).map(l => html`<${SelLine} key=${l.id} l=${l} o=${order} act=${act} locked=${locked}/>`)}</div></div>`}
       </div>
     </div>
     <div class="ov-actions">
