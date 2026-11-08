@@ -523,10 +523,7 @@ input{font:inherit;color:inherit}
 .sel-val{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;line-height:var(--lh-tight)}
 .sel-val small{font-size:var(--fs-body);color:var(--muted)}
 .sel-val b{font-weight:600}
-.sel-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:var(--fs-caption)}
-.sel-code{color:var(--ink);font-weight:400;letter-spacing:.02em}
 /* the delivery drop: white tag with a grey outline next to the item code */
-.drop-tag{font-size:var(--fs-caption);font-weight:600;line-height:1;padding:4px 8px;border-radius:999px;background:color-mix(in srgb,var(--ink) 9%,transparent);color:var(--ink)}
 .sel.open .sel-val small{color:var(--warn);font-weight:600}
 /* Women / Men on the order: underlined tabs; the budget summary below opens Budgets & KPIs */
 .ov-sum{display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:12px 14px 12px}
@@ -839,7 +836,7 @@ input.qty.xl{width:120px}
 /* Grey page, content in white boxes with squircle corners and no outline (the box is a step off the page in light and dark).
    Controls (pills, fields, round buttons) lose the outline too. Appointments on Home are separate white rows with a 2px gap, not divider lines. */
 .list,.appts,.tile,.pcard,.sk-card,.ov-sum,.kpi,.panel,.pdf-card,.single,.empty,.rec,.alts,.linkbox,.pre,.look,
-.day,.inp,.stp,.size-cell,.search,.sq-btn,.round-btn,.pin-k,.cn-cat,.ftab,.colour,.qbtn,.drop-tag,.pc-lock,.btn.white,.pd-in,.sugg button,.srch-x{border-color:transparent}
+.day,.inp,.stp,.size-cell,.search,.sq-btn,.round-btn,.pin-k,.cn-cat,.ftab,.colour,.qbtn,.pc-lock,.btn.white,.pd-in,.sugg button,.srch-x{border-color:transparent}
 .list,.appts,.pcard,.sk-card,.ov-sum,.kpi,.panel,.pdf-card,.single,.empty,.rec{corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / var(--r-l) stretch}
 /* where the mask works (Safari, Chrome) it alone shapes these boxes: a border-radius as well clips the corners a second time,
    round in Safari (no corner-shape), slightly rounder than the mask in Chrome, and eats into outlines at the corners */
@@ -2130,7 +2127,6 @@ function SelLine({l, o, act, locked}) {
       <${Thumb} pid=${l.pid} colour=${l.colour}/>
       <span class="row-main">
         <span class="row-title">${p.name}</span>
-        <span class="sel-meta"><span class="sel-code">${p.code}</span><span class="drop-tag">${DROPS[p.drop].split(' · ')[0]}</span></span>
         <span class="row-sub"><${Colour} c=${l.colour}/></span>
       </span>
     </button>
