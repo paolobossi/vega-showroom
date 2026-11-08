@@ -116,7 +116,7 @@ input{font:inherit;color:inherit}
 .tab:active{color:var(--ink)}
 .tab-ic{position:relative;display:flex}
 /* client checked in: number of items in their order as a black badge on Order (a green dot while it is empty) */
-.tab-n{position:absolute;top:-5px;left:calc(100% - 8px);min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:var(--ink);color:var(--bg);font-size:11px;font-weight:400;font-variant-numeric:tabular-nums;display:grid;place-items:center;box-shadow:0 0 0 2px var(--bg)} /* same type as "RTW · Bags" on Home: 12px regular */
+.tab-n{position:absolute;top:-5px;left:calc(100% - 8px);min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:var(--ink);color:var(--bg);font-size:11px;font-weight:400;display:grid;place-items:center;box-shadow:0 0 0 2px var(--bg)} /* 11px regular, proportional figures (Inter's tabular 1 has a foot) */
 .tab-dot{position:absolute;top:-1px;right:-3px;width:8px;height:8px;border-radius:50%;background:#3CCB7F;box-shadow:0 0 0 2px var(--bg)}
 /* messages sit just above the tab bar while it shows */
 .app.docked .toast:not(.top){bottom:calc(66px + env(safe-area-inset-bottom,0px))}
