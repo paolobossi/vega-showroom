@@ -128,7 +128,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 3.5b Nobody checked in, tap Order → "No client checked in", "Choose a client to open their order." and a black **Choose a client** button (no icon), centred vertically in the page; it opens the list of your appointments (and New session); tapping a client checks them in and shows their order on the Order tab.
 - [ ] 3.6 On Home, tap the ongoing client → Check out → toast "Checked out" (no client name: toasts never repeat it); the Order tab badge disappears; the row shows the order status (e.g. Draft).
 - [ ] 3.7 Check the same client in again → Ongoing again, with the original start time. The sheet after a check-out shows no "Checked out" tag and no start-time line: just **View order** (white, grey border) and **Check in again**, each half the width.
-- [ ] 3.8 Open an order outside a visit (Home → client → Order tile) → no Finalize order button, just a green **Check in again** (or **Check in** if they were never checked in) at the bottom, on white that fades in from a gradient, like a sheet's buttons. It works on a fully sent order too, like Check in again in the sheet.
+- [ ] 3.8 Open an order outside a visit (Home → client → Order tile) → the client's name at the top with a back arrow and no grey line under it; no Finalize order button, just a green **Check in again** (or **Check in** if they were never checked in) at the bottom, on white that fades in from a gradient, like a sheet's buttons. It works on a fully sent order too, like Check in again in the sheet.
 
 ### 4. Collection
 - [ ] 4.1 The title always shows Women and Men. With a client in session it opens on the division they buy (Linea: Women; Harbour: Men).
