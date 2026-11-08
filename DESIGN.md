@@ -39,5 +39,5 @@ Four sizes, each with one job. Hierarchy beyond these comes from weight, colour,
 - Squircle corners (superellipse, the `--squircle` mask): budget bars 18px, look cards 20px, Collection cards 24px.
 - Priority tags (Must have, Essential) are small pills in regular weight: 11px on the Collection card, 12px on the product page. Tab bar labels are 10px regular. These two are the exceptions to the four text sizes.
 - Segmented controls are pills: container and selected segment fully round on the sides (999px).
-- Icons are Lucide (ISC) everywhere, drawn as lines (1.8px stroke, heavier for small marks like ✓, + and −). Lucide has no high heel, so Shoes is the sneaker.
+- Icons are Lucide (ISC) everywhere, drawn as lines (1.8px stroke, heavier for small marks like ✓, + and −). Shoes is the one exception: Phosphor's high heel (MIT) in its regular line weight, since Lucide has no high heel.
 - Icons for + and −, never text glyphs, so they line up the same in every stepper.

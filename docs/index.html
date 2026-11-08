@@ -1187,7 +1187,7 @@ function alternatives(p) {
 /* =====================================================================
    Visual primitives
    ===================================================================== */
-// Icons: Lucide (lucide.dev, ISC licence), v1.61.0 (scan and wallet from 1.70.0), the inner markup of each 24×24 icon, drawn as lines; budget categories use rtw / bags / shoes / acc
+// Icons: Lucide (lucide.dev, ISC licence), v1.61.0 (scan and wallet from 1.70.0), the inner markup of each 24×24 icon, drawn as lines; budget categories use rtw / bags / shoes / acc. Shoes is the one exception: Phosphor's high heel, regular (line) weight
 const IC = {
   expand:'<path d="M15 3h6v6"/><path d="m21 3-7 7"/><path d="m3 21 7-7"/><path d="M9 21H3v-6"/>', // maximize-2
   back:'<path d="m15 18-6-6 6-6"/>', // chevron-left
@@ -1224,12 +1224,15 @@ const IC = {
   pin:'<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>', // map-pin
   rtw:'<path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/>', // shirt
   bags:'<path d="M2.048 18.566A2 2 0 0 0 4 21h16a2 2 0 0 0 1.952-2.434l-2-9A2 2 0 0 0 18 8H6a2 2 0 0 0-1.952 1.566z"/><path d="M8 11V6a4 4 0 0 1 8 0v5"/>', // handbag
-  shoes:'<path d="m15 10.42 4.8-5.07"/><path d="M19 18h3"/><path d="M9.5 22 21.414 9.415A2 2 0 0 0 21.2 6.4l-5.61-4.208A1 1 0 0 0 14 3v2a2 2 0 0 1-1.394 1.906L8.677 8.053A1 1 0 0 0 8 9c-.155 6.393-2.082 9-4 9a2 2 0 0 0 0 4h14"/>', // sport-shoe
+  shoes:{r:'<path d="M231,156.19,180,144.7,69.66,34.34a8,8,0,0,0-11.56.26C36.11,58.64,24,89,24,120v72a16,16,0,0,0,16,16H72a16,16,0,0,0,16-16V143.06c2.49,1.45,4.94,3,7.34,4.64a112.45,112.45,0,0,1,40.55,50.39A15.9,15.9,0,0,0,150.72,208H240a16,16,0,0,0,16-16v-4.73A31.72,31.72,0,0,0,231,156.19ZM72,192H40V128.29a110.88,110.88,0,0,1,32,7.12Zm168,0H150.68a128.36,128.36,0,0,0-46.27-57.46,126.9,126.9,0,0,0-64.12-22.26A110.67,110.67,0,0,1,64.46,51.78L170.34,157.66a8,8,0,0,0,3.9,2.14l53.24,12A15.81,15.81,0,0,1,240,187.31Z"/>'}, // high-heel, Phosphor regular (MIT): Lucide has no high heel
   acc:'<circle cx="6" cy="15" r="4"/><circle cx="18" cy="15" r="4"/><path d="M14 15a2 2 0 0 0-2-2 2 2 0 0 0-2 2"/><path d="M2.5 13 5 7c.7-1.3 1.4-2 3-2"/><path d="M21.5 13 19 7c-.7-1.3-1.5-2-3-2"/>', // glasses
   scan:'<path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/>', // scan
   wallet:'<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>', // wallet
 };
-const Icon = ({n, s=22, w=1.8}) => html`<svg width=${s} height=${s} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width=${w} stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" dangerouslySetInnerHTML=${{__html: IC[n]}}></svg>`;
+// An object entry ({r}) is a Phosphor 256×256 filled outline: the only one is the high heel.
+const Icon = ({n, s=22, w=1.8}) => { const i = IC[n]; return i.r
+  ? html`<svg width=${s} height=${s} viewBox="0 0 256 256" fill="currentColor" aria-hidden="true" dangerouslySetInnerHTML=${{__html: i.r}}></svg>`
+  : html`<svg width=${s} height=${s} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width=${w} stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" dangerouslySetInnerHTML=${{__html: i}}></svg>`; };
 
 // Product photography from loewe.com, one front shot per colourway (docs/img/<style>-<colour code>.jpg)
 const imgSrc = (p, colour) => 'img/' + (p.img[colour] || p.img[p.colours[0]]) + '.jpg';
