@@ -2337,7 +2337,7 @@ function TabBar({tab, so, act}) {
 // Order tab with nobody checked in: one button to the list of clients; picking one checks them in and shows their order here
 function NoOrder({act}) {
   return html`<div class="no-ord-page"><header class="top top-bar mid"><h1 class="h1">Order</h1></header>
-    <div class="no-ord"><${Icon} n="orders" s=${32}/><b>No client checked in</b><div>Choose a client to check them in and start or continue their order.</div>
+    <div class="no-ord"><${Icon} n="orders" s=${32}/><b>No client checked in</b><div>Choose a client to open their order.</div>
       <button class="btn primary" onClick=${() => act.sheet({type:'pick'})}>Choose a client</button></div></div>`;
 }
 
