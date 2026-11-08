@@ -37,7 +37,7 @@ Four sizes, each with one job. Hierarchy beyond these comes from weight, colour,
 - Destructive actions are red outline or red text and ask first (native confirm). Leave (end the client session) is red text on a pale red squircle at the top right of the order, and asks with an in-app alert (Cancel / Yes, leave).
 - Collection cards: white, 24px squircle; photo full-bleed to the card's top and sides, soft drop shadow (on a wrapper, since the squircle mask clips a shadow on the card itself).
 - Squircle corners (superellipse, the `--squircle` mask): budget bars 18px, look cards 20px, Home day tiles, Home appointment list and Collection cards 24px.
-- Priority tags (Must have, Essential) are small pills in regular weight: 11px on the Collection card, 12px on the product page. Tab bar labels and "Day N" in the Home day strip are 10px regular. These are the exceptions to the four text sizes.
+- Priority tags (Must have, Essential) are small pills in regular weight: 11px on the Collection card, 12px on the product page. Tab bar labels are 10px regular. These two are the exceptions to the four text sizes.
 - Segmented controls are pills: container and selected segment fully round on the sides (999px).
 - Icons are Lucide (ISC) everywhere, drawn as lines (1.8px stroke, heavier for small marks like ✓, + and −). Shoes is the one exception: Phosphor's high heel (MIT) in its regular line weight, since Lucide has no high heel.
 - Icons for + and −, never text glyphs, so they line up the same in every stepper.
