@@ -510,9 +510,10 @@ input{font:inherit;color:inherit}
 .ov-actions .cap-btn{box-shadow:var(--shadow-float)}
 .ov-actions .round{background:var(--card);box-shadow:var(--shadow-float)}
 .ov-actions .cap-btn.ghost{flex:none;padding:0 22px;background:var(--card);color:var(--ink);border:1px solid var(--line);box-shadow:var(--shadow-float)}
-.sel{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 4px;padding:12px 8px 12px 14px;border-top:1px solid var(--line)}
+.sel{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 4px;padding:14px 8px 12px 14px;border-top:1px solid var(--line)}
 .sel:first-child{border-top:0}
-.sel-info{display:flex;gap:12px;align-items:center;text-align:left;min-width:0}
+/* the photo sits at the top, 14px from the top and the left of the line's card */
+.sel-info{display:flex;gap:12px;align-items:flex-start;text-align:left;min-width:0}
 .sel-x{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--muted);align-self:start}
 .sel-ctl{grid-column:1 / -1;display:flex;align-items:center;gap:10px;padding-left:68px;padding-right:6px;flex-wrap:wrap}
 /* sized lines: Enter sizes / Edit sizes as a full-width button, like Edit on the Collection cards */
@@ -855,12 +856,12 @@ input.qty.xl{width:120px}
 /* trial: on the order the budget card has no grey box (full width, everything kept) and each category is its own grey box,
    heading inside, with the lines on white 2px apart */
 .ov-lines > .ov-sum{background:none;padding:0;-webkit-mask-box-image:none}
-.grp-box{background:var(--surface);padding:12px 8px 8px;corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / var(--r-l) stretch}
+.grp-box{background:var(--surface);padding:12px 8px 8px;corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / 24px stretch}
 @supports (-webkit-mask-box-image:none){.grp-box{border-radius:0;corner-shape:round}}
-.grp-box .grp-head{padding:0 6px 10px}
+.grp-box .grp-head{padding:2px 8px 10px}
 /* each line is its own white squircle card inside the category box, with a squircle photo; Edit sizes is white with a grey outline */
 .grp-box .list{-webkit-mask-box-image:none}
-.ov-lines .grp-box .list > .sel{background:var(--bg);-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}
+.ov-lines .grp-box .list > .sel{background:var(--bg);-webkit-mask-box-image:var(--squircle) 20 / 16px stretch} /* 24 − the box's 8px inset */
 .grp-box .sel .thumb{-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}
 @supports (-webkit-mask-box-image:none){.grp-box .list,.ov-lines .grp-box .list > .sel,.grp-box .sel .thumb{border-radius:0}}
 .grp-box .sel-edit{background:var(--bg);border:0;box-shadow:inset 0 0 0 1px var(--line);corner-shape:squircle}
