@@ -1407,6 +1407,9 @@ function LookTile({look}) {
 // A client's buying guidelines: the budget per main category for each division, set by the client's cluster (Silver to Diamond)
 // and budget, so they open from the client's appointment on Home. The page is filled from the maison's PDF in the back office (AI reads the rules into this
 // table); the PDF itself shows at the top and opens full screen inside the app, so there is always a Close.
+// a division's budget per category as grey rows 1px apart, then a bold Total (Buying guidelines and the client sheet)
+const BudRows = ({b, d}) => html`<div class="list gapped g1">${CATS.filter(c => catBudget(b, d, c)).map(c => html`<div class="row"><div class="row-main"><div class="row-title">${CAT_LABEL[c]}</div></div><span class="row-val num">${fmt(catBudget(b, d, c))}</span></div>`)}
+  <div class="row tot"><div class="row-main"><div class="row-title">Total</div></div><span class="row-val num">${fmt(divBudget(b, d))}</span></div></div>`;
 function GuideSheet({bid, ui, act}) {
   const b = BUYERS[bid], d = divOf(b, ui), back = () => act.sheet({type:'appt', bid});
   return html`<${Sheet} tall title="Buying guidelines" sub=${`${b.shop} · ${b.cluster} · Spring Summer 2027`} onClose=${back}>
@@ -1415,8 +1418,7 @@ function GuideSheet({bid, ui, act}) {
       <span class="row-main"><span class="row-title">Buying guidelines SS27</span><span class="row-sub">Maison PDF · Sample</span></span>
       <span class="pdf-open">Open</span></button>
     <${DivSwitch} title="Budget" b=${b} div=${d} act=${act}/>
-    <div class="list gapped g1">${CATS.filter(c => catBudget(b, d, c)).map(c => html`<div class="row"><div class="row-main"><div class="row-title">${CAT_LABEL[c]}</div></div><span class="row-val num">${fmt(catBudget(b, d, c))}</span></div>`)}
-      <div class="row tot"><div class="row-main"><div class="row-title">Total</div></div><span class="row-val num">${fmt(divBudget(b, d))}</span></div></div>
+    <${BudRows} b=${b} d=${d}/>
   <//>`;
 }
 
@@ -1514,7 +1516,7 @@ function ApptSheet({sh, S, ui, act}) {
     <div class="list"><button class="row" onClick=${() => act.sheet({type:'guide', bid:b.id})}>
       <div class="row-main"><${Icon} n="chart" s=${22}/><div class="row-title">Guidelines</div><div class="row-sub">Budget and mix rules</div></div></button></div></div>
     <${DivSwitch} title="Budget" b=${b} div=${divOf(b, ui)} act=${act}/>
-    <${Budgets} b=${b} divs=${[divOf(b, ui)]} head=${b.divs.length < 2}/>
+    <${BudRows} b=${b} d=${divOf(b, ui)}/>
     <label class="field sh-sec"><span class="cat-h">Notes</span>
       <textarea class="inp area" placeholder="Add a note" value=${a.notes || ''} onInput=${e => act.note(b.id, e.target.value)}></textarea>
       <span class="small muted">Saved automatically</span></label>
