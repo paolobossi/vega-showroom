@@ -164,7 +164,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 6.7c Copy scale: enter a scale on a dress (e.g. 36 ×2, 38 ×1) → **Copy scale** → toast "Scale copied". Open another style with the same sizes → **Paste scale** fills it (and adds that colour to the order). The copied scale is kept per size range (dresses, women's shoes, men's shoes…) until another one is copied, also across clients. Copy / Paste are greyed when they would change nothing. **Clear** empties all sizes. No Core / Full / +1 each buttons.
 - [ ] 6.8 Product page, another colour not in the order: tap that colour, enter a quantity → that colour joins the order; colours in the order carry the same green ✓.
 - [ ] 6.9 Product page: Remove from order takes that colour out.
-- [ ] 6.10 Product page: the wholesale and retail prices sit on the page with no white box; the details table starts with **Material** (e.g. "100% cotton poplin").
+- [ ] 6.10 Product page: the wholesale and retail prices sit on the page with no white box; the details table starts with **Material** (e.g. "100% cotton poplin"); each detail (Material, Division, Category, Appears in, Family, Sizes, Delivery) is its own grey row split by a 2px white gap, no grey lines.
 - [ ] 6.11 Photos: swipe the carousel; tap a photo → full-screen zoom; close it.
 - [ ] 6.13 Linea Concept (Women only) checked in → Men → open a men's style → Add to order → native alert "Linea Concept doesn't buy Men. Add Men to this order?"; Cancel adds nothing; OK adds it and the order gets a Men tab with no budget.
 - [ ] 6.12 With nobody in session, tap a card → Add to order → "Add to an order" lists your appointments; pick one → that client is checked in and the style is added.

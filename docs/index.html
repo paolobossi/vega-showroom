@@ -730,8 +730,9 @@ input.qty.xl{width:120px}
 .qbtn:active{background:var(--surface-2)}
 .impact{display:flex;flex-direction:column;gap:6px;font-size:var(--fs-body)}
 /* product facts: grey label on the left, value on the right, one size throughout */
-.facts{gap:0;padding:4px 14px}
-.facts > div{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:12px 0;border-top:1px solid var(--line);font-size:var(--fs-body)}
+/* product facts: one grey row each, split by a 2px white gap (no grey line), like the other lists */
+.facts{gap:2px;padding:0;background:none;border:0}
+.facts > div{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:12px 14px;background:var(--surface);font-size:var(--fs-body)}
 .facts > div:first-child{border-top:0}
 .facts > div > span:first-child{flex:none;color:var(--muted)}
 .facts > div > span:last-child{text-align:right;color:var(--ink)}
