@@ -636,6 +636,9 @@ input{font:inherit;color:inherit}
 .sh-sec{display:flex;flex-direction:column;gap:10px}
 /* client sheet: Order and Buying guidelines as two tiles side by side (one full-width tile when there is no order yet) */
 .sh-tiles{display:flex;gap:10px}.sh-tiles > .list{flex:1 1 0;min-width:0}
+/* white tiles with a grey outline: the grey tile shows 1px around a white inner squircle, so the outline follows the squircle in every browser */
+.sh-tiles > .list{border:0;padding:1px;background:var(--line)}
+.sh-tiles > .list > .row{border:0;border-radius:0;background:var(--bg);-webkit-mask-box-image:var(--squircle) 20 / 15px stretch}
 .sh-tiles .row{height:100%;align-items:flex-start}.sh-tiles .row-title{white-space:normal}
 .sh-tiles .row-main > svg{margin-bottom:6px}
 /* the Notes placeholder is body size, like the budget rows (the text you type stays 17px so iOS doesn't zoom) */

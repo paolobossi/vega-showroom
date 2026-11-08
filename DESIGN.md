@@ -36,6 +36,7 @@ Four sizes, each with one job. Hierarchy beyond these comes from weight, colour,
 - One primary (black, filled), secondary (white with a border), tertiary (blue text link). Two buttons side by side at the bottom of a sheet are each half the width. Finalize order is text only.
 - Status tags are just the word (Ongoing has no dot in front) and no tag has a border: grey tags are `--ink` at 9% over whatever is behind, Ongoing is `--good` at 18%, so they read on white, on grey and green rows, and in dark mode. Essential and Permanent stay white on the photo.
 - Every button is 46px tall and semibold (600), sheet, page and alert alike.
+- The Order and Guidelines tiles in the client sheet are white with a 1px grey (`--line`) outline, drawn as a grey squircle around a white one so it follows the squircle in every browser. They are the one outlined box; other content boxes are grey with no outline.
 - Profile circles use `--avatar` (mid grey, white initials; dark grey in dark mode), not black or white.
 - Destructive actions are red outline or red text and ask first (native confirm). Leave (end the client session) is red text on a light grey pill, like an iOS bar button, at the top right of the order, and asks with an in-app alert (Cancel / Yes, leave).
 - Collection cards: white, 24px squircle, shaped only by the mask (border-radius 0: Safari has no corner-shape and would draw round bottom corners); photo full-bleed to the card's top and sides, soft drop shadow (on a wrapper, since the squircle mask clips a shadow on the card itself).
