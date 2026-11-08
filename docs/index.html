@@ -124,9 +124,13 @@ input{font:inherit;color:inherit}
 .ord-tab{position:relative;flex:1;min-height:0;display:flex;flex-direction:column}
 .ord-tab > .ov{flex:1;height:auto}
 .ord-tab .ov-body{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
-/* Finalize order: full width on a flat strip just above the tab bar, the same see-through white as the tab bar, no shadow */
-.ord-tab .ov-actions{left:0;right:0;width:auto;transform:none;bottom:calc(52px + env(safe-area-inset-bottom,0px));padding:10px 18px;
-  background:color-mix(in srgb,var(--bg) 80%,transparent);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%)}
+/* the order's one button (Finalize order, or Check in again outside a visit): full width at the bottom (just above the tab bar on the Order tab),
+   on white that fades in from a gradient above it, like the buttons at the bottom of a sheet; no shadow */
+.ov .ov-actions{left:0;right:0;width:auto;transform:none;bottom:0;padding:40px 18px max(14px,env(safe-area-inset-bottom,0px));
+  background:linear-gradient(to bottom,color-mix(in srgb,var(--bg) 0%,transparent),var(--bg) 36px);pointer-events:none}
+.ord-tab .ov-actions{bottom:calc(52px + env(safe-area-inset-bottom,0px));padding-bottom:10px}
+.ov .ov-actions > *{pointer-events:auto}.ov .ov-actions .cap-btn{box-shadow:none}
+.cap-btn.go{background:var(--good);color:var(--surface)}
 .ord-tab .ov-actions .cap-btn{box-shadow:none}
 /* Leave: top right of the client's order, like an iOS bar button: red text on a light grey pill, no red fill */
 .ov-h1{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -499,7 +503,7 @@ input{font:inherit;color:inherit}
 .ov-shop{font:600 var(--fs-heading)/var(--lh-tight) var(--f-display);letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @keyframes pulse{from{opacity:.2}to{opacity:1}}
 /* order facts: three labelled columns at the top of the page, scrolling with it */
-.ov-body{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+.ov-body{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))}
 .ov-actions{position:absolute;z-index:19;left:50%;transform:translateX(-50%);bottom:max(16px,calc(env(safe-area-inset-bottom,0px) - 4px));width:min(calc(100% - 28px),420px);display:flex;gap:10px}
 .ov-actions .cap-btn{box-shadow:var(--shadow-float)}
 .ov-actions .round{background:var(--card);box-shadow:var(--shadow-float)}
@@ -547,7 +551,7 @@ input{font:inherit;color:inherit}
 .grp-head{display:flex;justify-content:space-between;align-items:baseline;font-size:var(--fs-heading);font-weight:600;letter-spacing:-.01em;color:var(--ink);padding:0 2px 8px}
 .empty{background:var(--surface);border:1px dashed var(--line);border-radius:var(--r-l);padding:22px 18px;text-align:center;color:var(--muted);display:flex;flex-direction:column;gap:8px;align-items:center}
 .ov-bar{flex:none;display:flex;gap:10px;align-items:center;padding:10px 14px max(12px,env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--surface)}
-.cap-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;height:46px;border-radius:999px;background:var(--ink);color:var(--bg);font-weight:600;font-size:var(--fs-body);white-space:nowrap;min-width:0}
+.cap-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;height:46px;border-radius:999px;background:var(--ink);color:var(--bg);font-weight:600;font-size:var(--fs-body);white-space:nowrap;min-width:0}
 .cap-btn.two{flex-direction:column;gap:2px;height:64px;border-radius:999px}
 .cap-btn.two > span{display:flex;align-items:center;gap:8px}
 .cap-btn.two small{font-size:var(--fs-caption);font-weight:400;opacity:.85;max-width:100%;overflow:hidden;text-overflow:ellipsis}
@@ -856,6 +860,8 @@ input.qty.xl{width:120px}
 .sheet-body .div-sw{margin-top:0;margin-bottom:0}.sheet-body .div-sw:not(:has(.seg)){margin-bottom:-4px}
 /* client sheet: the room taken from under the Women | Men switch goes above the Budget and Notes headings (26px) */
 .sh-tiles + .div-sw,.sheet-body > .field.sh-sec{margin-top:12px}
+/* a heading straight in a sheet (In this look): black, sentence case, 26px above and 10px above its box, like Budget and Notes */
+.sheet-body > .sh-h{margin:12px 0 -4px}
 </style>
 </head>
 <body>
@@ -1524,7 +1530,7 @@ function LookSheet({id, S, ui, act}) {
     media=${html`<${Carousel} cover src=${lookSrc(l)} alt=${lookNo(l)} at=${ui.photoAt} onOpen=${i => act.set({zoom:{look:l.id, i}})}/>`}
     foot=${html`<${LookAdd} l=${l} o=${o} act=${act} cls="btn primary"/>`}>
     <div class="pd-head"><span class="pc-fam look-sub">${DIV_LABEL[l.div]} · ${SHOW}${l.req ? ' · required look' : ''}</span><h1 class="pd-name">${lookNo(l)}</h1></div>
-    <div class="lbl">In this look</div>
+    <h2 class="cat-h sh-h">In this look</h2>
     <div class="list gapped">${l.items.map(([pid, c]) => { const p = P[pid], why = o && canTake(o, p), has = o && o.lines.some(x => x.pid === pid && x.colour === c);
       return html`<button class="row" onClick=${() => act.sheet({type:'product', pid, colour:c, orderId:o && o.id, back:{type:'look', id:l.id}})}>
         <${Thumb} pid=${pid} colour=${c}/>
@@ -1761,7 +1767,7 @@ function LeaveAlert({S, sh, act}) {
       <b id="leave-t">Stop the session with ${b.shop}?</b>
       <p id="leave-d">${open ? 'The order will be saved as a draft.' : 'The order is already sent.'}</p>
       <div class="alert-btns"><button class="btn white" onClick=${act.close}>Cancel</button>
-        <button class="btn danger" onClick=${() => act.endVisit(b.id, `Session ended · ${b.shop}`)}>Yes, leave</button></div>
+        <button class="btn danger" onClick=${() => act.endVisit(b.id, 'Session ended')}>Yes, leave</button></div>
     </div>`;
 }
 
@@ -1847,7 +1853,7 @@ function NewBuyerSheet({S, sh, act}) {
       budget:Object.fromEntries(divs.map(d => [d, Math.max(0, Number(f[d]) || 0)])), time:hhmm(Date.now()), code}, sh.item, sh.appt, sh.stay);
   };
   return html`<${Sheet} tall title="New session" sub="Start an order with a client" onClose=${act.close}
-    foot=${html`<button class="btn primary" disabled=${!ok} onClick=${start}>Start session</button>`}>
+    foot=${html`<button class=${'btn ' + (sh.appt ? 'primary' : 'go')} disabled=${!ok} onClick=${start}>${!sh.appt && html`<${Icon} n="check" s=${18} w=${2.2}/>`}Start session</button>`}>
     <label class="field"><span class="lbl">Shop</span><input class="inp" placeholder="e.g. Maison Dubois" value=${f.shop} onInput=${set('shop')} autocomplete="off"/></label>
     <label class="field"><span class="lbl">City</span><input class="inp" placeholder="e.g. Paris" value=${f.city} onInput=${set('city')} autocomplete="off"/></label>
     <div class="field"><span class="lbl">Buying for</span><${Seg} full opts=${[['WM', 'Women + Men'], ['W', 'Women'], ['M', 'Men']]} val=${f.divs} on=${v => setF(x => ({...x, divs:v}))}/></div>
@@ -2156,8 +2162,7 @@ function OrderView({S, ui, act, order, tabbed}) {
     </div>
     <div class="ov-actions">
       ${inVisit ? html`<button class="cap-btn" onClick=${() => act.sheet({type:'finish', orderId:order.id})}>Finalize order</button>`
-        : html`<button class="round" onClick=${() => act.sheet({type:'finish', orderId:order.id})} aria-label="Finalize order"><${Icon} n="sign"/></button>
-        <button class="cap-btn" disabled=${allSent} onClick=${() => act.checkIn(b.id)}><${Icon} n="check" w=${2.4}/>Check in to add products</button>`}
+        : html`<button class="cap-btn go" onClick=${() => act.checkIn(b.id)}><${Icon} n="check" s=${18} w=${2.2}/>${S.appts[b.id]?.in ? 'Check in again' : 'Check in'}</button>`}
     </div>
   </div>`;
 }
@@ -2208,7 +2213,7 @@ function FinishSheet({sh, S, act}) {
   <//>`;
   return html`<${FullPage} title="Finalize order" onClose=${act.close}
     foot=${!open.length ? html`<div class="finish-btns">
-      ${visit ? html`<button class="btn black" onClick=${() => act.endVisit(b.id, `Checked out · ${b.shop}`)}>Check out</button>
+      ${visit ? html`<button class="btn black" onClick=${() => act.endVisit(b.id, 'Checked out')}>Check out</button>
         <div class="small muted">Nothing left to send: the visit ends and you go back to Home.</div>`
         : html`<button class="btn black" onClick=${act.close}>Close</button>`}</div>`
       : html`<div class="finish-btns">
@@ -2259,7 +2264,7 @@ function SignSheet({sh, S, act}) {
   // once the client signs, the visit is over: check out and back to Home, ready for the next client
   const sent = `${sh.divs.map(d => DIV_TAB[d]).join(' + ')} sent`;
   const send = () => { act.send(o.id, sh.divs, 'client', name.trim());
-    if (isOngoing(S.appts[b.id])) act.endVisit(b.id, `${sent} · ${b.shop} checked out`); else { act.close(); act.toast(sent); } };
+    if (isOngoing(S.appts[b.id])) act.endVisit(b.id, `${sent} · Checked out`); else { act.close(); act.toast(sent); } };
   return html`<${FullPage} title="Sign the order" onClose=${act.close}
     foot=${html`<button class="btn primary" disabled=${!name.trim() || !signed} onClick=${send}>Confirm and send · ${fmt(value)}</button>`}>
     <h1 class="h1">Sign the order</h1>
@@ -2334,7 +2339,7 @@ function TabBar({tab, so, act}) {
 function NoOrder({act}) {
   return html`<div class="no-ord-page"><header class="top top-bar mid"><h1 class="h1">Order</h1></header>
     <div class="no-ord"><${Icon} n="orders" s=${32}/><b>No client checked in</b><div>Choose a client to check them in and start or continue their order.</div>
-      <button class="btn primary" onClick=${() => act.sheet({type:'pick'})}>Choose a client</button></div></div>`;
+      <button class="btn go" onClick=${() => act.sheet({type:'pick'})}><${Icon} n="check" s=${18} w=${2.2}/>Choose a client</button></div></div>`;
 }
 
 function makeActs(setS, setUi, onReset) {
@@ -2374,7 +2379,7 @@ function makeActs(setS, setUi, onReset) {
       setUi(u => ({...u, session:id, div:BUYERS[bid].divs[0], sheet:null, capture:false, ...(stay ? {} : {tab:'catalogue', view:null})})); },
     // a visit ends from the order (Finalize order: sent to the commercial team or to the client) and goes back to Home
     endVisit: (bid, msg) => { a.appt(bid, {out:Date.now()}); setUi(u => ({...u, session: u.session === 'o-' + bid ? null : u.session, view:null, sheet:null, sub:null, tab:'calendar'})); a.toast(msg); },
-    checkOut: bid => { a.appt(bid, {out:Date.now()}); setUi(u => u.session === 'o-' + bid ? {...u, session:null} : u); a.toast(`Checked out · ${BUYERS[bid].shop}`); },
+    checkOut: bid => { a.appt(bid, {out:Date.now()}); setUi(u => u.session === 'o-' + bid ? {...u, session:null} : u); a.toast('Checked out'); },
     note: (bid, text) => a.appt(bid, {notes:text}),
     // the client in session: land in the Collection to add products
     addProducts: () => setUi(u => ({...u, tab:'catalogue', view:null, sheet:null})),
