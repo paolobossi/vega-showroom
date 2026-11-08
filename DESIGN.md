@@ -37,5 +37,6 @@ Four sizes, each with one job. Hierarchy beyond these comes from weight, colour,
 - Collection cards: photo full-bleed to the card's top and sides, soft drop shadow (on a wrapper, since the squircle mask clips a shadow on the card itself).
 - Squircle corners (superellipse, the `--squircle` mask): budget bars 18px, look cards 20px.
 - Priority tags (Must have, Essential) are small pills in regular weight: 11px on the Collection card (the one exception to the four text sizes), 12px on the product page.
-- Icons are Phosphor (MIT), fill weight everywhere. Pure line marks (×, ✓, +, −, chevrons, filter) stay as lines (regular, or bold for a heavier stroke), since their fill version is a filled box or triangle.
+- Segmented controls are pills: container and selected segment fully round on the sides (999px).
+- Icons are Phosphor (MIT), fill weight everywhere. Shoes use the high heel. Pure line marks (×, ✓, +, −, chevrons, filter) stay as lines (regular, or bold for a heavier stroke), since their fill version is a filled box or triangle.
 - Icons for + and −, never text glyphs, so they line up the same in every stepper.
