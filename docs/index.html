@@ -627,7 +627,7 @@ input{font:inherit;color:inherit}
 /* the category icon on a lighter tile at the bar's left edge, over the fill */
 .bpill-ic{align-self:center;display:grid;place-items:center;width:34px;height:40px;border-radius:15px;corner-shape:squircle;background:color-mix(in srgb,var(--t,var(--c)) 7%,var(--bg));color:var(--c)}
 /* name and figures as one block, centred in the bar next to the icon */
-.bpill-t{display:flex;flex-direction:column;justify-content:center;min-width:0}
+.bpill-t{display:flex;flex-direction:column;justify-content:center;min-width:0;transform:translateY(1px)} /* name and figures 1px lower, to sit centred by eye */
 .bpill-l{font-size:var(--fs-caption);font-weight:600;color:inherit;margin-bottom:-2px} /* the category name in the same colour as its figures */
 .bpill-v{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:normal}
 .bpill-v{font-size:var(--fs-heading);font-weight:400;letter-spacing:-.01em}.bpill-v b{font-weight:700} /* only the spend is bold; "of €18K" is regular */
