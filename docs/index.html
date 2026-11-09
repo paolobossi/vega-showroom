@@ -247,7 +247,7 @@ input{font:inherit;color:inherit}
 .chip.warn{background:var(--warn-bg);color:var(--warn)}
 .chip.bad{background:var(--bad-bg);color:var(--bad)}
 .chip.ai{background:var(--accent-soft);color:var(--accent)}
-.seg{display:inline-flex;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:2px;gap:2px}
+.seg{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:2px;gap:2px}
 .seg button{padding:6px 14px;border-radius:999px;font-size:var(--fs-body);font-weight:600;color:var(--muted);white-space:nowrap}
 .seg button.on{background:var(--card);color:var(--ink);box-shadow:var(--shadow-raised)}
 .seg.full{display:flex;position:relative}.seg.full button{flex:1;position:relative;z-index:1;transition:color .2s}
@@ -639,7 +639,8 @@ input{font:inherit;color:inherit}
 .sh-tiles{display:flex;gap:10px}.sh-tiles > .list{flex:1 1 0;min-width:0}
 /* white tiles with a grey outline: the grey tile shows 1px around a white inner squircle, so the outline follows the squircle in every browser */
 .sh-tiles > .list{border:0;padding:1px;background:var(--line)}
-.sh-tiles > .list > .row{border:0;border-radius:0;background:var(--bg);-webkit-mask-box-image:var(--squircle) 20 / 15px stretch}
+.sh-tiles > .list > .row{border:0;border-radius:0;background:var(--bg);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
+.sh-tiles > .list{-webkit-mask-box-image:var(--squircle) 20 / var(--r-xl) stretch} /* 22px corners, like the Budget and Guidelines boxes */
 .sh-tiles .row{height:100%;align-items:flex-start}.sh-tiles .row-title{white-space:normal}
 .sh-tiles .row-main > svg{margin-bottom:6px}
 .sh-tiles .row{position:relative}.sh-tiles .pill{position:absolute;top:14px;right:14px} /* the order's status tag, top right, like on Home */
@@ -885,8 +886,8 @@ input.qty.xl{width:64px} /* room for three digits */
 .list.gl,.list.gl *{font-variant-numeric:normal} /* plain figures: the 1 without a foot */
 .list.gapped.g1{gap:2px}
 /* (trial) budget and guidelines as one white box with a thin grey outline (a grey squircle around a white one, like the Order tile) and light rules between rows */
-.g-box{padding:1px;background:var(--line);border-radius:var(--r-l);-webkit-mask-box-image:var(--squircle) 20 / var(--r-l) stretch}
-.g-box > .list.gapped.g1{gap:0;background:var(--bg);border:0;border-radius:calc(var(--r-l) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-l) - 1px) stretch}
+.g-box{padding:1px;background:var(--line);border-radius:var(--r-xl);-webkit-mask-box-image:var(--squircle) 20 / var(--r-xl) stretch}
+.g-box > .list.gapped.g1{gap:0;background:var(--bg);border:0;border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
 .g-box > .list.gapped > .row{background:var(--bg);border-top:1px solid color-mix(in srgb,var(--line) 55%,var(--bg))}.g-box > .list.gapped > .row:first-child{border-top:0}.g-box > .list.gapped:not(.gl) > .row{border-top:0;padding-top:5px;padding-bottom:5px}.g-box > .list.gapped:not(.gl) > .row:first-child{padding-top:12px}.g-box > .list.gapped:not(.gl) > .row:last-child{padding-bottom:12px} /* the budget box has no rules between rows */
 @supports (-webkit-mask-box-image:none){.g-box,.g-box > .list.gapped.g1{border-radius:0}}.list.g1 .row-title,.list.g1 .row-val{font-size:14px;font-weight:400}.list.g1 .row.tot .row-title,.list.g1 .row.tot .row-val{font-weight:700}
 /* a look's pieces, like the order lines: no box, a light 1px rule edge to edge, a 72px squircle photo flush left; wholesale price only, › opens the piece */
@@ -907,7 +908,7 @@ input.qty.xl{width:64px} /* room for three digits */
 .div-sw .seg{border-color:transparent}
 .sheet-body .div-sw{margin-top:0;margin-bottom:0}.sheet-body .div-sw:not(:has(.seg)){margin-bottom:-4px}
 /* client sheet: the room taken from under the Women | Men switch goes above the Budget and Notes headings (26px) */
-.sheet-body > .field.sh-sec{margin-top:12px}.sh-tiles + .div-sw{margin-top:6px}.sheet-body > .div-sw + .gl-h{margin-top:12px} /* client sheet: Order, 20px, the Women | Men switch, 26px (as on the order page), Budget */
+.sheet-body > .field.sh-sec{margin-top:12px}.sh-tiles + .div-sw{margin-top:6px}.sheet-body > .gl-h{margin-top:12px} /* client sheet: Order, 20px, the Women | Men switch, then 26px above Budget, Guidelines and Notes alike */
 /* a heading straight in a sheet (In this look): black, sentence case, 26px above and 10px above its box, like Budget and Notes */
 .sheet-body > .sh-h{margin:12px 0 -4px}
 </style>
