@@ -434,7 +434,7 @@ input{font:inherit;color:inherit}
 .cn-cat.on{color:var(--ink)}.cn-cat.on::after{transform:scaleX(1)}
 /* in the Collection the categories are rounded pills, the current one filled */
 .cat-nav .cn-row{gap:6px}
-.cat-nav .cn-cat{align-items:center;height:34px;padding:0 14px;margin-right:0;border-radius:999px;border:1px solid transparent;background:none;font-size:var(--fs-body);font-weight:600;color:var(--ink)}
+.cat-nav .cn-cat{align-items:center;height:34px;padding:0 14px;margin-right:0;border-radius:999px;border:1px solid transparent;background:none;font-size:var(--fs-body);font-weight:400;color:var(--ink)} /* regular, the selected one too */
 .cat-nav .cn-cat::after{display:none}
 /* each pill's grey is its ::before; the black pill of the current category is one .slide-ind that slides to the tapped pill */
 .cat-nav .cn-row{position:relative;isolation:isolate}
@@ -1563,7 +1563,9 @@ const CheckPill = ({a, o}) => !a || !a.in ? (o && o.lines.length ? html`<${Pill}
 const useSlide = sel => { const box = useRef(null), ind = useRef(null), last = useRef(null);
   const place = () => { const el = box.current, i = ind.current, a = el && el.querySelector(sel); if (!i) return;
     if (!a) { i.style.opacity = '0'; return; }
-    const s = i.style; s.opacity = ''; s.setProperty('--x', a.offsetLeft + 'px'); s.setProperty('--y', a.offsetTop + 'px'); s.setProperty('--w', a.offsetWidth + 'px'); s.setProperty('--h', a.offsetHeight + 'px');
+    // sub-pixel position and size (offsetLeft / offsetWidth round to whole pixels, so a regular-weight label could leave the marker 1px off)
+    const r = a.getBoundingClientRect(), e = el.getBoundingClientRect(), s = i.style; s.opacity = '';
+    s.setProperty('--x', r.left - e.left - el.clientLeft + el.scrollLeft + 'px'); s.setProperty('--y', r.top - e.top - el.clientTop + el.scrollTop + 'px'); s.setProperty('--w', r.width + 'px'); s.setProperty('--h', r.height + 'px');
     if (!i.dataset.anim) requestAnimationFrame(() => requestAnimationFrame(() => { i.dataset.anim = '1'; }));
     // tapping an item near the edge of a row that scrolls: the row slides so the next item (or the one before, on the left) shows too
     else if (a !== last.current && el.scrollWidth > el.clientWidth) {
