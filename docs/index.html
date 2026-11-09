@@ -624,17 +624,20 @@ input{font:inherit;color:inherit}
 .bpill{--c:var(--muted);position:relative;isolation:isolate;display:grid;grid-template-columns:auto minmax(0,1fr);align-content:center;column-gap:12px;min-height:52px;margin:4px 0;padding:6px 16px 6px 6px;border-radius:32px;corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / 32px stretch;overflow:hidden;background:color-mix(in srgb,var(--t,var(--c)) 14%,var(--bg));color:var(--c)}
 .bstack{display:flex;flex-direction:column;align-items:center;gap:10px;margin:4px 0}
 /* one page = 3 bars (52px, 8px apart), as wide as the content; the swipe runs edge to edge of the screen (the scroller bleeds into the 18px margins), it snaps a page at a time */
-.bstack-pages{align-self:stretch;display:flex;gap:18px;margin:0 -18px;padding:0 18px;scroll-padding:0 18px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
+.bstack-pages{align-self:stretch;display:flex;gap:18px;margin:-4px -18px;padding:4px 18px;scroll-padding:0 18px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
 .bstack-pages::-webkit-scrollbar{display:none}
 .bstack-page{flex:0 0 100%;min-width:0;display:flex;flex-direction:column;gap:8px;scroll-snap-align:start;scroll-snap-stop:always}
 .bstack-page .bpill{margin:0;flex:none;height:52px}
 .bpill-ph{background:var(--surface)} /* placeholder filling an empty slot on the last page */
-.ov-sum .bstack-pages{margin:0 -17px;padding:0 17px;scroll-padding:0 17px} /* the order card has a 1px (invisible) border: 17px reaches the screen edge exactly, no wider */
+.ov-sum .bstack-pages{margin:-4px -17px;padding:4px 17px;scroll-padding:0 17px} /* 4px above and below so a bouncing bar isn't clipped */ /* the order card has a 1px (invisible) border: 17px reaches the screen edge exactly, no wider */
 /* the dots under it are the product carousel's: 6px grey dots, the current one a 16px black bar (without the frosted pill, the page is already white) */
 .bstack-dots{display:flex;gap:6px}
 .bstack-dots button{width:6px;height:6px;border-radius:50%;background:color-mix(in srgb,var(--ink) 25%,transparent);transition:background .2s,width .2s}
 .bstack-dots button.on{background:var(--ink);width:16px;border-radius:var(--r-xs)} /* same as the carousel in light mode; ink-based so they show in dark mode too */
-.bpill.ok{--c:var(--good);--t:#2BBF6A}.bpill.warn{--c:var(--warn);--t:#F2B705}.bpill.bad{--c:var(--bad);--t:#F2553F}
+.bpill.ok{--c:var(--good);--t:#2BBF6A}
+/* a bar that just reached its budget: a springy bounce, bigger then back (0.5s), on the order page and in the quantity toast */
+@keyframes pop{0%{transform:scale(1)}30%{transform:scale(1.06)}55%{transform:scale(.98)}78%{transform:scale(1.02)}100%{transform:scale(1)}}
+.bpill.pop,.toast-bar.pop{animation:pop .5s cubic-bezier(.3,.7,.3,1.2)}.bpill.warn{--c:var(--warn);--t:#F2B705}.bpill.bad{--c:var(--bad);--t:#F2553F}
 .bpill-fill{position:absolute;inset:0 auto 0 0;z-index:-1;background:color-mix(in srgb,var(--t,var(--c)) 34%,var(--bg));transition:width .35s ease}
 /* the category icon on a lighter tile at the bar's left edge, over the fill */
 .bpill-ic{align-self:center;display:grid;place-items:center;width:34px;height:40px;border-radius:15px;corner-shape:squircle;background:color-mix(in srgb,var(--t,var(--c)) 7%,var(--bg));color:var(--c)}
@@ -1189,6 +1192,20 @@ const BUYER_CAT0 = Object.fromEntries(Object.entries(BUYERS).map(([k, b]) => [k,
 // The cluster itself is back-office logic only and never appears on screen.
 const catBudget = (b, d, c) => b.cat && b.cat[d] && b.cat[d][c] != null ? b.cat[d][c] : Math.round((b.budget[d] || 0) * GUIDE[b.cluster][d][c] / 100);
 const divBudget = (b, d) => CATS.reduce((a, c) => a + catBudget(b, d, c), 0);
+// a budget bar reaching its budget: the bars that just turned full bounce (0.5s) and the phone gives a haptic buzz
+const fullKeys = o => { const out = new Set(), b = o && BUYERS[o.buyerId]; if (!b) return out;
+  b.divs.forEach(d => { const k = kpi(o, d), db = divBudget(b, d);
+    k.mix.forEach(m => { if (m.budget && m.value >= m.budget) out.add(o.id + '|' + d + '|' + m.cat); });
+    if (db && k.total >= db) out.add(o.id + '|' + d + '|tot'); });
+  return out; };
+let JUST_FULL = null; // {keys, at, buzzed}
+const isPop = key => !!(JUST_FULL && JUST_FULL.keys.includes(key) && Date.now() - JUST_FULL.at < 1500);
+// Android vibrates; iOS Safari has no Vibration API, but since iOS 18 flipping a native switch gives a light haptic tap (twice, for a little celebration)
+const buzz = () => { if (!JUST_FULL || JUST_FULL.buzzed) return; JUST_FULL.buzzed = true;
+  try { if (navigator.vibrate && navigator.vibrate([40, 60, 80])) return; } catch (e) {}
+  try { const tap = () => { const l = document.createElement('label'), i = document.createElement('input'); i.type = 'checkbox'; i.setAttribute('switch', '');
+      l.appendChild(i); l.style.cssText = 'position:fixed;left:-200px;top:0;opacity:0;pointer-events:none'; document.body.appendChild(l); l.click(); setTimeout(() => l.remove(), 200); };
+    tap(); setTimeout(tap, 140); } catch (e) {} };
 const buyingCats = (b, d) => CATS.filter(c => catBudget(b, d, c) > 0);
 const repOf = o => REPS[BUYERS[o.buyerId].rep];
 // The client the seller is with right now (set by the check-in), if any
@@ -1508,7 +1525,7 @@ function Budgets({b, order, divs, head=true}) {
 // Every number is the same size; categories the client doesn't buy are left out rather than shown as zero.
 function BudDiv({b, d, k, head=true}) {
   const db = divBudget(b, d), cats = CATS.filter(c => catBudget(b, d, c) > 0 || (k && k.mix.find(x => x.cat === c).value));
-  const bar = (key, st, used, ic, label, value, of, w) => html`<div class=${'bpill ' + st} key=${key}><span class="bpill-fill" style=${{width: Math.min(used, 100) + '%'}}></span>
+  const bar = (key, st, used, ic, label, value, of, w) => html`<div class=${'bpill ' + st + (isPop('o-' + b.id + '|' + d + '|' + key) ? ' pop' : '')} key=${key}><span class="bpill-fill" style=${{width: Math.min(used, 100) + '%'}}></span>
       <span class="bpill-ic"><${Icon} n=${ic} s=${22} w=${w}/></span><span class="bpill-t"><span class="bpill-l">${label}</span><span class="bpill-v"><b>${fmt(value)}</b> <span>${of}</span></span></span></div>`;
   if (!k) return html`<div class="bud-div">
     ${head && html`<div class="bud-head"><span>${DIV_LABEL[d]}</span></div>`}
@@ -2540,7 +2557,9 @@ function makeActs(setS, setUi, onReset) {
     addFor: (bid, item) => { a.checkIn(bid, true); if (item.look) a.selectLook('o-' + bid, LOOKS.find(x => x.id === item.look)); else a.select('o-' + bid, item.pid, item.colour, item.via); },
     newBuyer: (b, item, appt, stay) => { BUYERS[b.id] = b; setS(s => ({...s, buyers:{...s.buyers, [b.id]:b}}));
       if (item) a.addFor(b.id, item); else if (appt) a.sheet({type:'appt', bid:b.id}); else a.checkIn(b.id, stay); },
-    mut: (id, fn) => setS(s => { const o = JSON.parse(JSON.stringify(s.orders[id])); fn(o); syncStatus(o); return {...s, orders:{...s.orders, [id]:o}, savedAt:Date.now()}; }),
+    mut: (id, fn) => setS(s => { const o = JSON.parse(JSON.stringify(s.orders[id])), was = fullKeys(s.orders[id]); fn(o); syncStatus(o);
+      const now = [...fullKeys(o)].filter(k => !was.has(k)); if (now.length) JUST_FULL = {keys:now, at:Date.now(), buzzed:false};
+      return {...s, orders:{...s.orders, [id]:o}, savedAt:Date.now()}; }),
     role: (r, id) => setUi(u => ({...u, role:r, buyerOrder:id || u.buyerOrder, sheet:null, capture:false})),
     reset: onReset,
   };
@@ -2555,7 +2574,7 @@ function makeActs(setS, setUi, onReset) {
     a.mut(id, o => { if (o.lines.some(l => l.pid === pid && l.colour === colour)) return;
       o.lines.push({id:uid(), pid, colour, qty:{...qty}, via, by:'salesperson', at:Date.now()});
       log(o, 'salesperson', `${u ? 'Added' : 'Selected'} ${p.name} · ${cname(colour)}${u ? ' ×' + u : ''}${via === 'photo' ? ' (photo match)' : ''}`); });
-    a.toast(u ? `Added to order · ${u} ${u === 1 ? 'unit' : 'units'}` : 'Added to order', u > 0, u > 0 && {o:id, pid}); };
+    a.toast(u ? `Added to order · ${u} ${u === 1 ? 'unit' : 'units'}` : 'Added to order', u > 0, u > 0 && {o:id, pid}); buzz(); };
   // the whole runway look in one go: every piece the client can buy that isn't in the order yet
   a.selectLook = (id, look) => { let k = 0; if (!a.divOk(id, look.div)) return;
     a.mut(id, o => { look.items.forEach(([pid, colour]) => { if (canTake(o, P[pid]) || o.lines.some(l => l.pid === pid && l.colour === colour)) return;
@@ -2569,13 +2588,13 @@ function makeActs(setS, setUi, onReset) {
   a.setUnits = (id, lineId, n) => { n = Math.max(0, Math.min(999, n)); a.mut(id, o => { const l = o.lines.find(x => x.id === lineId); if (!l) return; const p = P[l.pid]; l.qty = n ? {U: n} : {}; l.at = Date.now();
     const key = 'u:' + lineId, last = o.log[o.log.length - 1], text = `Set ${p.name} · ${cname(l.colour)} to ×${n}`;
     if (last && last.key === key) { last.text = text; last.at = Date.now(); } else o.log.push({at:Date.now(), by:'salesperson', text, key}); });
-    a.toast(`Saved · ${n} ${n === 1 ? 'unit' : 'units'}`, true, {o:id, line:lineId}); };
+    a.toast(`Saved · ${n} ${n === 1 ? 'unit' : 'units'}`, true, {o:id, line:lineId}); buzz(); };
   // sizes on a line from the product page; repeated taps update one log entry
   a.setQty = (id, lineId, qty) => { a.mut(id, o => { const l = o.lines.find(x => x.id === lineId); if (!l) return; const p = P[l.pid];
     l.qty = qty; l.at = Date.now();
     const key = 'u:' + lineId, last = o.log[o.log.length - 1], text = `Set ${p.name} · ${cname(l.colour)} to ×${units(qty)}`;
     if (last && last.key === key) { last.text = text; last.at = Date.now(); } else o.log.push({at:Date.now(), by:'salesperson', text, key}); });
-    const n = units(qty); a.toast(`Saved · ${n} ${n === 1 ? 'unit' : 'units'}`, true, {o:id, line:lineId}); };
+    const n = units(qty); a.toast(`Saved · ${n} ${n === 1 ? 'unit' : 'units'}`, true, {o:id, line:lineId}); buzz(); };
   // each division is sent on its own; the order's overall status follows from its parts
   a.share = (id, divs, signer, email) => a.mut(id, o => { const now = Date.now(); o.parts = o.parts || {};
     divs.forEach(d => { o.parts[d] = {status:'shared', at:now, signer, email}; }); o.sharedAt = now;
@@ -2589,7 +2608,7 @@ function makeActs(setS, setUi, onReset) {
 function App({onReset}) {
   const [S, setS] = useState(loadState);
   const [ui, setUi] = useState({tab:'calendar', view:null, sheet:null, capture:false, div:'W', role:'sales', toast:null, session:null, catSeason:'SS27', catDrop:null, catTag:null, catMat:null, search:false, recents:['Amazona', 'Puzzle', 'Puffer jacket']});
-  useEffect(() => { saveState(S); }, [S]);
+  useEffect(() => { saveState(S); buzz(); }, [S]);
   useEffect(() => { saveSession(ui.session); }, [ui.session]);
   const act = useMemo(() => makeActs(setS, setUi, onReset), []);
   const order = ui.view && S.orders[ui.view];
@@ -2613,10 +2632,10 @@ function App({onReset}) {
   // a quantity toast also shows the budget bar of that style's category, live, so the seller sees the category fill up towards its budget
   const tb = (() => { const t = ui.toastBar, o = t && S.orders[t.o]; if (!o) return null;
     const pid = t.pid || (o.lines.find(l => l.id === t.line) || {}).pid, p = pid && P[pid]; if (!p) return null;
-    const m = kpi(o, p.div).mix.find(x => x.cat === p.cat); return m && {...m, label:CAT_LABEL[p.cat]}; })();
+    const m = kpi(o, p.div).mix.find(x => x.cat === p.cat); return m && {...m, label:CAT_LABEL[p.cat], pop:isPop(o.id + '|' + p.div + '|' + p.cat)}; })();
   const toast = ui.toast && html`<div class=${'toast' + (ui.toastTop ? ' top' : '') + (tb ? ' has-bar' : '') + (ui.toastOut ? ' out' : '')} key=${ui.toastId} role="status">
     <span class="toast-msg"><${Icon} n="check" s=${16} w=${2.4}/>${ui.toast}</span>
-    ${tb && html`<span class=${'toast-bar ' + tb.st}><span class="toast-bar-t"><span>${tb.label}</span><span><b>${fmt(tb.value)}</b> ${tb.budget ? 'of ' + fmtK(tb.budget) : 'no budget'}</span></span>
+    ${tb && html`<span class=${'toast-bar ' + tb.st + (tb.pop ? ' pop' : '')}><span class="toast-bar-t"><span>${tb.label}</span><span><b>${fmt(tb.value)}</b> ${tb.budget ? 'of ' + fmtK(tb.budget) : 'no budget'}</span></span>
       <span class="toast-track"><span class="toast-fill" style=${{width: Math.min(tb.used, 100) + '%'}}></span></span></span>`}
   </div>`;
 
