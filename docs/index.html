@@ -865,10 +865,10 @@ input.qty.xl{width:64px} /* room for three digits */
 .grp-box .list{gap:0;overflow:visible;border:0}
 /* no box around a line: lines sit on the page, split by a 1px grey rule; the photo starts flush with the Order heading and is larger (72px) */
 /* the division's total under the last line: the same edge-to-edge rule above it, Total on the left, units and value on the right */
-.ord-tot{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:0 -16px;padding:14px 16px;border-top:1px solid color-mix(in srgb,var(--line) 55%,var(--bg));font-size:var(--fs-body)}
+.ord-tot{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:0 -16px;padding:15px 16px 14px;background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 16px 0 / calc(100% - 16px) 1px no-repeat;font-size:var(--fs-body)}
 .ord-tot-v{display:flex;align-items:baseline;gap:10px}.ord-tot-v span{font-size:var(--fs-caption);color:var(--muted)}
-.ov-lines .grp-box .list > .sel{background:none;margin:0 -16px;padding:14px 16px;border-top:1px solid color-mix(in srgb,var(--line) 55%,var(--bg))} /* the rule runs edge to edge, a shade lighter than --line */
-.ov-lines .grp-box .list > .sel:first-child{border-top:0;padding-top:4px}
+.ov-lines .grp-box .list > .sel{background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 16px 0 / calc(100% - 16px) 1px no-repeat;margin:0 -16px;padding:15px 16px 14px;border-top:0} /* the rule, a shade lighter than --line, starts where the photo starts and runs to the right edge */
+.ov-lines .grp-box .list > .sel:first-child{background:none;padding-top:4px}
 .grp-box .sel .thumb{width:72px;height:72px}
 .grp-box .sel-ctl{padding-left:84px;padding-right:0}
 .grp-box .sel-x{margin-right:-8px}.grp-box .sel-info{padding:0}
