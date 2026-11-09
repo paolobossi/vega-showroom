@@ -907,9 +907,11 @@ input.qty.xl{width:64px} /* room for three digits */
 .pc-wrap{display:flex;min-width:0} /* no shadow on the Collection cards */
 /* only the squircle mask shapes the card: with a border-radius too, Safari (no corner-shape) paints the white bottom with round corners
    while the photo on top follows the mask, so the bottom corners looked rounder on iPhone than the top ones */
-.pc-wrap > .pcard{flex:1;padding:0 0 4px;gap:10px;border:0;background:var(--card);border-radius:0;corner-shape:round;-webkit-mask-box-image:var(--squircle) 20 / 24px stretch}
+.pc-wrap > .pcard{flex:1;padding:0 0 4px;gap:10px;border:0;background:var(--card);border-radius:0;corner-shape:round;-webkit-mask-box-image:none}
+/* the card has no box of its own any more: the photo carries the 24px squircle and the details line up with its edges */
+.pcard .pc-photo{-webkit-mask-box-image:var(--squircle) 20 / 24px stretch}
 .pcard .pc-photo .thumb{border-radius:0}
-.pcard .pc-info{padding:0 10px 8px}
+.pcard .pc-info{padding:0 0 8px}
 .pcard .ptags{left:8px;top:8px}.pcard .pc-in{right:8px;top:8px}.pcard .pc-lock{left:8px;top:8px}
 .div-sw{display:flex;flex-direction:column;gap:10px;margin:6px 0 12px}
 .div-sw .seg{border-color:transparent}
