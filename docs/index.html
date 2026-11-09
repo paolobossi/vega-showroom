@@ -904,7 +904,7 @@ input.qty.xl{width:64px} /* room for three digits */
 .look-rows .thumb{width:72px;height:72px;border-radius:0;-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}
 .list.gapped{background:none;border:0;gap:2px}.list.gapped > .row{background:var(--surface);border-top:0}
 /* Collection cards: the photo runs to the card's edges (top and sides), the text keeps its margin; a soft drop shadow lifts the card off the grey page */
-.pc-wrap{display:flex;min-width:0;filter:drop-shadow(0 1px 1px rgba(0,0,0,.05)) drop-shadow(0 4px 10px rgba(0,0,0,.07))}
+.pc-wrap{display:flex;min-width:0} /* no shadow on the Collection cards */
 /* only the squircle mask shapes the card: with a border-radius too, Safari (no corner-shape) paints the white bottom with round corners
    while the photo on top follows the mask, so the bottom corners looked rounder on iPhone than the top ones */
 .pc-wrap > .pcard{flex:1;padding:0 0 4px;gap:10px;border:0;background:var(--card);border-radius:0;corner-shape:round;-webkit-mask-box-image:var(--squircle) 20 / 24px stretch}
