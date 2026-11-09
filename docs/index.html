@@ -112,11 +112,11 @@ input{font:inherit;color:inherit}
   background:color-mix(in srgb,var(--bg) 80%,transparent);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%)}
 .tabbar{position:relative;display:flex;padding:0 14px}
 /* the selected tab sits on a light grey squircle that slides to the tab you pick */
-.tab-ind{position:absolute;top:4px;bottom:2px;left:18px;width:calc((100% - 28px) / 5 - 8px);background:var(--surface-2);border-radius:22px;-webkit-mask-box-image:var(--squircle) 20 / 22px stretch;transform:translateX(calc(var(--i) * (100% + 8px)));transition:transform .34s cubic-bezier(.3,.7,.2,1),opacity .2s}
+.tab-ind{position:absolute;top:4px;bottom:2px;left:18px;width:calc((100% - 28px) / 5 - 8px);background:var(--surface);border-radius:22px;-webkit-mask-box-image:var(--squircle) 20 / 22px stretch;transform:translateX(calc(var(--i) * (100% + 8px)));transition:transform .34s cubic-bezier(.3,.7,.2,1),opacity .2s}
 @supports (-webkit-mask-box-image:none){.tab-ind{border-radius:0}}
 @media (prefers-reduced-motion:reduce){.tab-ind{transition:none}}
 .tab{position:relative;z-index:1}
-.tab{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;line-height:14px;font-weight:400;color:var(--muted);padding:8px 0 6px;transition:color .2s}
+.tab{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;line-height:14px;font-weight:400;color:var(--muted);padding:12px 0 8px;transition:color .2s} /* 8px between the grey squircle and the icon, 6px under the label */
 .tab.on{color:var(--ink)}
 .tab:active{color:var(--ink)}
 .tab-ic{position:relative;display:flex}
