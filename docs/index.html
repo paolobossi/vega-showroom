@@ -854,10 +854,11 @@ input.qty.xl{width:64px} /* room for three digits */
 .appts.now .appt{border:0}
 /* Home: the days and the appointment list share one Apple-style corner, the --squircle mask at 24px; no corner-shape or border-radius, so every browser draws the same curve */
 .day,.appts{border-radius:0;corner-shape:round;-webkit-mask-box-image:var(--squircle) 20 / 24px stretch}
-/* Home: each appointment is its own white squircle box, 2px apart, with a soft shadow like the Collection cards (the shadow is a filter on the list, so it follows each squircle) */
-.appts{gap:2px;margin:0;-webkit-mask-box-image:none;border-radius:0;overflow:visible;filter:drop-shadow(0 1px 1px rgba(0,0,0,.05)) drop-shadow(0 4px 10px rgba(0,0,0,.07))}
-.appts .appt{background:var(--card);border:0;border-radius:var(--r-xl);-webkit-mask-box-image:var(--squircle) 20 / var(--r-xl) stretch}
-@supports (-webkit-mask-box-image:none){.appts .appt{border-radius:0}}
+/* Home: the day's appointments are one white group with big squircle corners (the mask on the list) and a soft shadow like the Collection cards
+   (a filter on the wrapper, so it follows the squircle); inside, each appointment is its own white box 1px apart, with small 6px corners */
+.appts-sh{filter:drop-shadow(0 1px 1px rgba(0,0,0,.05)) drop-shadow(0 4px 10px rgba(0,0,0,.07))}
+.appts{gap:1px;margin:0;overflow:visible;-webkit-mask-box-image:var(--squircle) 20 / var(--r-xl) stretch}
+.appts .appt{background:var(--card);border:0;border-radius:6px}
 /* order (basket): each style is its own grey row, split by a 2px white gap instead of a line */
 .ov-lines .list{background:none;gap:2px}
 .ov-lines .list > .sel{background:var(--surface);border-top:0}
@@ -1529,8 +1530,8 @@ function CalendarTab({S, act}) {
       <div class="days" role="tablist" ref=${strip}>${SHOW_DAYS.map((d, i) => html`<button role="tab" aria-selected=${i === day} class=${'day' + (i === day ? ' on' : '')} onClick=${() => setDay(i)}>
         <span>${d.toLocaleDateString('en-GB', {weekday:'short'})}</span><b>${d.getDate()}</b><span class="dno">Day ${i + 1}</span></button>`)}</div>
       ${!all.length && html`<div class="empty">No appointments on this day.</div>`}
-      ${now.length > 0 && html`<div class="lbl appt-lbl">Now</div><div class="appts now">${now.map(row)}</div>`}
-      ${list.length > 0 && html`${now.length > 0 && html`<div class="lbl appt-lbl">Today</div>`}<div class="appts">${list.map(row)}</div>`}
+      ${now.length > 0 && html`<div class="lbl appt-lbl">Now</div><div class="appts-sh"><div class="appts now">${now.map(row)}</div></div>`}
+      ${list.length > 0 && html`${now.length > 0 && html`<div class="lbl appt-lbl">Today</div>`}<div class="appts-sh"><div class="appts">${list.map(row)}</div></div>`}
     </section>`;
 }
 
