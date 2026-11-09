@@ -740,13 +740,15 @@ input{font:inherit;color:inherit}
 .callout.good{background:var(--good-bg);color:var(--good)}
 .callout svg{flex:none;margin-top:2px}
 /* order page: where the order stands, once it has left the draft */
-.ov-state{display:flex;gap:12px;align-items:center;padding:14px 16px;border-radius:var(--r-l);box-shadow:none !important}
+/* order status banner: white with a 1px grey outline and 22px squircle corners (inside a .g-box, like Budget); the colour is only in the round icon */
+.ov-state{display:flex;gap:12px;align-items:center;padding:14px 16px;background:var(--bg);color:var(--ink);box-shadow:none !important;border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
+@supports (-webkit-mask-box-image:none){.ov-state{border-radius:0}}
 .ov-state > div{min-width:0}
-.ov-state-ic{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:currentColor}
-.ov-state-ic svg{color:var(--surface)}
-.s-confirmed .ov-state-ic{background:var(--surface)} .s-confirmed .ov-state-ic svg{color:var(--good)}
+.ov-state-ic{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--muted)}
+.ov-state-ic svg{color:#fff}
+.s-shared .ov-state-ic{background:var(--warn)}.s-submitted .ov-state-ic,.s-partial .ov-state-ic{background:var(--accent)}.s-confirmed .ov-state-ic{background:var(--good)}
 .ov-state b{display:block;font:600 var(--fs-heading)/var(--lh-tight) var(--f-display);letter-spacing:-.01em}
-.ov-state div span{display:block;font-size:var(--fs-caption);line-height:var(--lh-body);margin-top:2px;opacity:.9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ov-state div span{display:block;font-size:var(--fs-caption);line-height:var(--lh-body);margin-top:2px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:14px;display:flex;flex-direction:column;gap:10px}
 
 /* size sheet */
@@ -2301,9 +2303,9 @@ function OrderView({S, ui, act, order, tabbed}) {
       ${tabbed && html`<header class="top top-bar mid"><h1 class="h1 ov-h1">${b.shop}</h1>
       ${inVisit && html`<button class="leave" onClick=${() => act.sheet({type:'leave', bid:b.id})}>Leave</button>`}</header>`}
       <div class="ov-lines">
-        ${!['draft', 'none'].includes(st) && html`<div class=${'ov-state s-' + st} role="status">
+        ${!['draft', 'none'].includes(st) && html`<div class="g-box ov-state-box"><div class=${'ov-state s-' + st} role="status">
           <span class="ov-state-ic"><${Icon} n=${st === 'shared' ? 'clock' : 'check'} s=${20} w=${2.6}/></span>
-          <div><b>${STATUS[st]}</b><span>${stateSub}</span></div></div>`}
+          <div><b>${STATUS[st]}</b><span>${stateSub}</span></div></div></div>`}
         ${b.divs.length > 1 && html`<${DivSwitch} b=${b} div=${div} act=${act}/>`}
         <div class="ov-sum">
           <span class="ov-sum-top"><b>Budget</b></span>

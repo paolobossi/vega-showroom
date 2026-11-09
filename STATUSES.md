@@ -208,6 +208,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 10.6 Send only Women for a Women + Men client to the commercial team → also checked out and back to Home; the row shows Partly sent.
 - [ ] 10.7 Open that order → banner "Partly sent" with one line "Women signed · Men still a draft"; the tick is centred in its circle; Women lines are read-only, with the note that the women's order has been sent.
 - [ ] 10.8 Check the client in again → in the Collection, women's styles show "Women sent" and can't be added; Men can still be completed and signed.
+- [ ] 10.8b The status banner on the order (With client, Sent, Partly sent, Confirmed) is white with a 1px grey outline and soft squircle corners, like the Budget box; the colour is only in the round icon on the left (amber for With client, blue for Sent and Partly sent, green for Confirmed), the title in black and the line under it in grey.
 - [ ] 10.9 Fully sent order → banner "Sent" with one line "Signed by [name] · [date, time]". A confirmed order → "Confirmed" with "Ready for production". The line under a banner title never repeats the title and never wraps.
 
 ### 11. Sent to the client to finish
