@@ -650,13 +650,13 @@ input{font:inherit;color:inherit}
 .sheet.tall{height:88%}
 /* grouped sheet (Choose a client, Add to an order): white, grey section headings, the rows straight on the white sheet with no box,
    split by a light 1px rule from the margin to the right edge (as on Home), a grey chevron at the end of each row */
-.sheet.grouped .sheet-body{gap:24px}
+.sheet.grouped .sheet-body{gap:32px;padding-top:10px}
 .grp-sec{display:flex;flex-direction:column;gap:8px}
-.grp-h{font-size:var(--fs-body);font-weight:600;color:var(--muted)}
-/* each section is one white box with a 1px grey outline and 22px squircle corners (a grey squircle round a white one, like the Budget box),
+.grp-h{margin:0;font-size:var(--fs-body);font-weight:600;color:var(--muted)} /* 8px above its box (no browser h3 margins) */
+/* each section is one white box with a 1px grey outline and 40px squircle corners (a squircle reads less round than its number) (a grey squircle round a white one, like the Budget box),
    its rows split by a light rule from 16px in to the right edge */
-.grp{padding:1px;background:var(--line);border-radius:var(--r-xl);-webkit-mask-box-image:var(--squircle) 20 / var(--r-xl) stretch}
-.grp-in{display:flex;flex-direction:column;background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
+.grp{--gr:40px;padding:1px;background:var(--line);border-radius:var(--gr);-webkit-mask-box-image:var(--squircle) 20 / var(--gr) stretch} /* rounder than the 22px boxes: these are tall */
+.grp-in{display:flex;flex-direction:column;background:var(--bg);border-radius:calc(var(--gr) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--gr) - 1px) stretch}
 @supports (-webkit-mask-box-image:none){.grp,.grp-in{border-radius:0}}
 .grp-in > .row{min-height:60px;padding:10px 12px 10px 16px;border-top:0;background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 16px 0 / calc(100% - 16px) 1px no-repeat}
 .grp-in > .row:first-child{background:none}
@@ -665,7 +665,7 @@ input{font:inherit;color:inherit}
 .grp .row-side{flex-direction:row;align-items:center;gap:8px}
 .grp .chev{display:flex;color:var(--faint)}
 .grp .g-new .row-title{color:var(--accent)}
-.grp-note{margin:-16px 2px 0;font-size:var(--fs-caption);line-height:var(--lh-body);color:var(--muted)}
+.grp-note{margin:-24px 2px 0;font-size:var(--fs-caption);line-height:var(--lh-body);color:var(--muted)}
 .sheet-grab{width:38px;height:5px;border-radius:var(--r-xs);background:var(--line);margin:8px auto 0;flex:none}
 .sheet-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:8px 10px 6px 18px;flex:none}
 /* the close × centred on the title's (first) line */
