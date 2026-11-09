@@ -622,16 +622,17 @@ input{font:inherit;color:inherit}
 .bud-row .mix-track{grid-column:1 / -1;margin-top:4px}
 /* a category's spend against its budget: a squircle (superellipse corners via the mask, so iOS Safari gets them too) whose deeper tint fills up to the share used; red under half, yellow from half, green once reached */
 .bpill{--c:var(--muted);position:relative;isolation:isolate;display:grid;grid-template-columns:auto minmax(0,1fr);align-content:center;column-gap:12px;min-height:52px;margin:4px 0;padding:6px 16px 6px 6px;border-radius:32px;corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / 32px stretch;overflow:hidden;background:color-mix(in srgb,var(--t,var(--c)) 14%,var(--bg));color:var(--c)}
-.bstack{display:flex;align-items:center;gap:10px;margin:4px 0}
-/* one page = 3 bars (52px) with 8px between them; the box scrolls a page at a time */
-.bstack-pages{flex:1;min-width:0;height:172px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none}
+.bstack{display:flex;flex-direction:column;align-items:center;gap:10px;margin:4px 0}
+/* one page = 3 bars (52px, 8px apart), a page as wide as the card; swipe sideways, it snaps a page at a time */
+.bstack-pages{align-self:stretch;display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
 .bstack-pages::-webkit-scrollbar{display:none}
-.bstack-page{flex:none;height:172px;display:flex;flex-direction:column;gap:8px;scroll-snap-align:start;scroll-snap-stop:always}
+.bstack-page{flex:0 0 100%;min-width:0;display:flex;flex-direction:column;gap:8px;scroll-snap-align:start;scroll-snap-stop:always}
 .bstack-page .bpill{margin:0;flex:none;height:52px}
 .bpill-ph{background:var(--surface)} /* placeholder filling an empty slot on the last page */
-.bstack-dots{flex:none;display:flex;flex-direction:column;gap:6px}
-.bstack-dots button{width:6px;height:6px;border-radius:50%;background:color-mix(in srgb,var(--ink) 18%,transparent);transition:background .2s}
-.bstack-dots button.on{background:var(--ink)}
+/* the dots under it are the product carousel's: 6px grey dots, the current one a 16px black bar (without the frosted pill, the page is already white) */
+.bstack-dots{display:flex;gap:6px}
+.bstack-dots button{width:6px;height:6px;border-radius:50%;background:color-mix(in srgb,var(--ink) 25%,transparent);transition:background .2s,width .2s}
+.bstack-dots button.on{background:var(--ink);width:16px;border-radius:var(--r-xs)} /* same as the carousel in light mode; ink-based so they show in dark mode too */
 .bpill.ok{--c:var(--good);--t:#2BBF6A}.bpill.warn{--c:var(--warn);--t:#F2B705}.bpill.bad{--c:var(--bad);--t:#F2553F}
 .bpill-fill{position:absolute;inset:0 auto 0 0;z-index:-1;background:color-mix(in srgb,var(--t,var(--c)) 34%,var(--bg));transition:width .35s ease}
 /* the category icon on a lighter tile at the bar's left edge, over the fill */
@@ -1504,13 +1505,13 @@ function BudDiv({b, d, k, head=true}) {
     ${bars.length > 3 ? html`<${BarStack} key=${d} bars=${bars}/>` : bars}
   </div>`;
 }
-// More than 3 budget bars: they stack 3 at a time in a box one page tall; swipe up and down to page through (it snaps a page at a time),
-// the dots on the right show which page is on and can be tapped; a last page with fewer than 3 bars is filled with light grey placeholders
+// More than 3 budget bars: they stack 3 at a time, a page per column; swipe sideways to page through (it snaps a page at a time),
+// the carousel dots under it show which page is on and can be tapped; a last page with fewer than 3 bars is filled with light grey placeholders
 function BarStack({bars}) {
   const pages = [], [at, setAt] = useState(0), box = useRef(null);
   for (let i = 0; i < bars.length; i += 3) { const pg = bars.slice(i, i + 3); while (pg.length < 3) pg.push(html`<div class="bpill bpill-ph" aria-hidden="true"></div>`); pages.push(pg); }
-  const onScroll = e => { const el = e.currentTarget, i = Math.round(el.scrollTop / (el.clientHeight + 8)); if (i !== at) setAt(i); };
-  const go = i => { const el = box.current; if (el) el.scrollTo({top: i * (el.clientHeight + 8), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); };
+  const onScroll = e => { const el = e.currentTarget, i = Math.round(el.scrollLeft / (el.clientWidth + 12)); if (i !== at) setAt(i); };
+  const go = i => { const el = box.current; if (el) el.scrollTo({left: i * (el.clientWidth + 12), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); };
   return html`<div class="bstack">
     <div class="bstack-pages" ref=${box} onScroll=${onScroll}>${pages.map(pg => html`<div class="bstack-page">${pg}</div>`)}</div>
     <div class="bstack-dots" role="tablist" aria-label="Budget pages">${pages.map((_, i) => html`<button role="tab" aria-selected=${i === at} aria-label=${'Page ' + (i + 1)} class=${i === at ? 'on' : ''} onClick=${() => go(i)}></button>`)}</div>
