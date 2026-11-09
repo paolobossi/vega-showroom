@@ -593,7 +593,7 @@ input{font:inherit;color:inherit}
 .bpill-ic{align-self:center;display:grid;place-items:center;width:34px;height:40px;border-radius:15px;corner-shape:squircle;background:color-mix(in srgb,var(--t,var(--c)) 7%,var(--bg));color:var(--c)}
 /* name and figures as one block, centred in the bar next to the icon */
 .bpill-t{display:flex;flex-direction:column;justify-content:center;min-width:0}
-.bpill-l{font-size:var(--fs-caption);font-weight:600;color:inherit;margin-bottom:-3px} /* the category name in the same colour as its figures */
+.bpill-l{font-size:var(--fs-caption);font-weight:600;color:inherit;margin-bottom:-2px} /* the category name in the same colour as its figures */
 .bpill-v{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
 .bpill-v{font-size:var(--fs-heading);font-weight:700;letter-spacing:-.01em}.bpill-v b{font-weight:700}
 .kpi > .bud-div:first-child{border-top:0;padding-top:0}
@@ -858,6 +858,9 @@ input.qty.xl{width:64px} /* room for three digits */
 .grp-box .list{-webkit-mask-box-image:none}
 .grp-box .list{gap:0;overflow:visible;border:0}
 /* no box around a line: lines sit on the page, split by a 1px grey rule; the photo starts flush with the Order heading and is larger (72px) */
+/* the division's total under the last line: the same edge-to-edge rule above it, Total on the left, units and value on the right */
+.ord-tot{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:0 -16px;padding:14px 16px;border-top:1px solid color-mix(in srgb,var(--line) 55%,var(--bg));font-size:var(--fs-body)}
+.ord-tot-v{display:flex;align-items:baseline;gap:10px}.ord-tot-v span{font-size:var(--fs-caption);color:var(--muted)}
 .ov-lines .grp-box .list > .sel{background:none;margin:0 -16px;padding:14px 16px;border-top:1px solid color-mix(in srgb,var(--line) 55%,var(--bg))} /* the rule runs edge to edge, a shade lighter than --line */
 .ov-lines .grp-box .list > .sel:first-child{border-top:0;padding-top:4px}
 .grp-box .sel .thumb{width:72px;height:72px}
@@ -2163,7 +2166,8 @@ function OrderView({S, ui, act, order, tabbed}) {
         <h2 class="cat-h ov-ord-h">Order</h2>
         ${locked && !allSent && html`<div class="callout info"><${Icon} n="lock" s=${18}/><div>The ${DIV_LABEL[div].toLowerCase()} order has been sent. You can see it here but no longer change it.</div></div>`}
         ${lines.length === 0 && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div><div class="small">Tap any style in the Collection and enter its quantities.</div></div>`}
-        ${lines.length > 0 && html`<div class="grp-box"><div class="list">${groups.flatMap(g => g.lines).map(l => html`<${SelLine} key=${l.id} l=${l} o=${order} act=${act} locked=${locked}/>`)}</div></div>`}
+        ${lines.length > 0 && html`<div class="grp-box"><div class="list">${groups.flatMap(g => g.lines).map(l => html`<${SelLine} key=${l.id} l=${l} o=${order} act=${act} locked=${locked}/>`)}</div>
+          <div class="ord-tot"><b>Total</b><span class="ord-tot-v"><span>${k.units} ${k.units === 1 ? 'unit' : 'units'}</span><b>${fmt(k.total)}</b></span></div></div>`}
       </div>
     </div>
     <div class="ov-actions">
