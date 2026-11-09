@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Vega Showroom</title>
 <meta name="description" content="Vega: showroom order capture for wholesale. Clickable prototype.">
 <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
@@ -219,7 +219,7 @@ input{font:inherit;color:inherit}
 .pin-k.txt{background:none;border:0;font-size:var(--fs-body);font-weight:600;color:var(--accent)}
 .top-acts{display:flex;align-items:center;gap:10px}.top-acts .round-btn{margin-top:0}
 .field{display:flex;flex-direction:column;gap:6px}
-.inp.area{height:auto;min-height:104px;padding:12px 14px;line-height:var(--lh-body);resize:vertical}
+.inp.area{height:auto;min-height:104px;padding:12px 14px;font-size:var(--fs-body);line-height:var(--lh-body);resize:vertical} /* typed text the same size as the placeholder */
 .days{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;margin:0 -18px 12px;padding:0 18px;scroll-padding:0 18px}
 .days::-webkit-scrollbar{display:none}
 .day{flex:0 0 54px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0;border-radius:var(--r-m);background:var(--surface);border:1px solid var(--line);color:var(--ink)}
@@ -229,7 +229,7 @@ input{font:inherit;color:inherit}
 .day.on{background:var(--ink);border-color:transparent;color:var(--bg)}
 .day.on span{color:inherit;opacity:.8}
 .inp{height:46px;border:1px solid var(--line);border-radius:var(--r-m);background:var(--surface);padding:0 14px;font:var(--fs-heading) var(--f-ui);color:var(--ink);outline:0;width:100%}
-.inp:focus{border-color:var(--ink);box-shadow:0 0 0 3px color-mix(in srgb,var(--ink) 12%,transparent)}
+.inp:focus,.inp:focus-visible{outline:0;border-color:transparent;box-shadow:inset 0 0 0 2px var(--ink)} /* focus: just a 2px black outline, no halo */
 .icon-btn:active{background:var(--surface-2)}
 
 /* ---------- chips, pills ---------- */
