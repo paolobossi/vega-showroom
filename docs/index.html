@@ -31,7 +31,7 @@
   --shadow-raised:0 1px 3px rgba(0,0,0,.12); --shadow-float:0 8px 24px rgba(0,0,0,.16); --shadow-sheet:0 -8px 32px rgba(0,0,0,.18);
   --stage:#E1E2DE; --frame:#17181A;
   --avatar-top:#9A9FA5; --avatar:#64696F; --avatar-ink:#FFFFFF; /* profile circles: grey, lighter at the top and darker at the bottom, white initials */
-  --bg:#FFFFFF; --surface:#F2F3F0; --surface-2:#E7E8E4; --studio:#E3E4DF; --card:#FFFFFF; --flip-bg:#FAFAF8; --flip-box:#FFFFFF;
+  --bg:#FFFFFF; --surface:#F2F3F0; --surface-2:#E7E8E4; --studio:#E3E4DF; --card:#FFFFFF;
   --ink:#141619; --muted:#62666B; --faint:#808489; --line:#DCDED8;
   --band:#000000; --band-ink:#FFFFFF; /* status-bar strip and the Must have tag: black in light and dark mode */
   --accent:#2238A6; --accent-ink:#FFFFFF; --accent-soft:#E3E7F8;
@@ -44,7 +44,7 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --stage:#050607; --frame:#2A2C30;
   --avatar-top:#575C63; --avatar:#30343A; --avatar-ink:#ECEDEA;
-  --bg:#0F1113; --surface:#181A1E; --surface-2:#202328; --studio:#43464B; --card:#181A1E; --flip-bg:#0F1113; --flip-box:#202328;
+  --bg:#0F1113; --surface:#181A1E; --surface-2:#202328; --studio:#43464B; --card:#181A1E;
   --ink:#ECEDEA; --muted:#A0A4A9; --faint:#6E7277; --line:#2C3036;
   --accent:#8C9DFF; --accent-ink:#0F1113; --accent-soft:#222A4C;
   --good:#58C48D; --good-bg:#15291E; --warn:#E5A93E; --warn-bg:#2E2414; --bad:#F27D72; --bad-bg:#331A18;
@@ -53,7 +53,7 @@
 :root[data-theme="dark"]{
   --stage:#050607; --frame:#2A2C30;
   --avatar-top:#575C63; --avatar:#30343A; --avatar-ink:#ECEDEA;
-  --bg:#0F1113; --surface:#181A1E; --surface-2:#202328; --studio:#43464B; --card:#181A1E; --flip-bg:#0F1113; --flip-box:#202328;
+  --bg:#0F1113; --surface:#181A1E; --surface-2:#202328; --studio:#43464B; --card:#181A1E;
   --ink:#ECEDEA; --muted:#A0A4A9; --faint:#6E7277; --line:#2C3036;
   --accent:#8C9DFF; --accent-ink:#0F1113; --accent-soft:#222A4C;
   --good:#58C48D; --good-bg:#15291E; --warn:#E5A93E; --warn-bg:#2E2414; --bad:#F27D72; --bad-bg:#331A18;
@@ -903,12 +903,6 @@ input.qty.xl{width:64px} /* room for three digits */
 .sheet-body .div-sw{margin-top:0;margin-bottom:0}.sheet-body .div-sw:not(:has(.seg)){margin-bottom:-4px}
 /* client sheet: the room taken from under the Women | Men switch goes above the Budget and Notes headings (26px) */
 .sh-tiles + .div-sw,.sheet-body > .field.sh-sec{margin-top:12px}
-/* (trial) "flip" client sheet: the sheet is a translucent light grey with a blur, and every content box on it is solid white (no outline) */
-.sheet.flip{background:color-mix(in srgb,var(--flip-bg) 94%,transparent);-webkit-backdrop-filter:blur(30px) saturate(180%);backdrop-filter:blur(30px) saturate(180%)}
-.sheet.flip .sh-tiles > .list{padding:0;background:var(--flip-box)}
-.sheet.flip .sh-tiles > .list > .row,.sheet.flip .list.gapped > .row,.sheet.flip .inp{background:var(--flip-box)}
-.sheet.flip .seg{background:color-mix(in srgb,var(--ink) 7%,transparent)}.sheet.flip .seg-ind{background:var(--flip-box)}
-.sheet.flip.fade .sheet-foot{background:linear-gradient(to bottom,transparent,color-mix(in srgb,var(--flip-bg) 94%,transparent) 36px)}
 /* a heading straight in a sheet (In this look): black, sentence case, 26px above and 10px above its box, like Budget and Notes */
 .sheet-body > .sh-h{margin:12px 0 -4px}
 </style>
@@ -1380,9 +1374,9 @@ const Seg = ({opts, val, on, full}) => html`<div class=${'seg' + (full ? ' full'
 
 // media: photos lead the sheet edge to edge, no header, close on the top left
 // page: full screen with a back button instead of a sheet over a scrim
-function Sheet({title, sub, onClose, children, tall, foot, media, page, center, fade, bare, flip}) {
+function Sheet({title, sub, onClose, children, tall, foot, media, page, center, fade, bare}) {
   return html`${!page && html`<div class="scrim" onClick=${onClose}></div>`}
-    <div class=${'sheet' + (tall ? ' tall' : '') + (media ? ' media' : '') + (page ? ' page' : '') + (fade ? ' fade' : '') + (flip ? ' flip' : '')} role="dialog" aria-label=${title}>
+    <div class=${'sheet' + (tall ? ' tall' : '') + (media ? ' media' : '') + (page ? ' page' : '') + (fade ? ' fade' : '')} role="dialog" aria-label=${title}>
       ${!page && html`<div class="sheet-grab"></div>`}
       ${bare ? null : media ? html`<button class="sheet-x" onClick=${onClose} aria-label=${page ? 'Back' : 'Close'}><${Icon} n=${page ? 'back' : 'x'} s=${20} w=${2.2}/></button>`
         : center ? html`<div class="sheet-head center"><span></span><div class="sheet-title">${title}</div>
@@ -1532,7 +1526,7 @@ function ApptSheet({sh, S, ui, act}) {
     : isIn ? html`<button class="btn ring leave-txt" onClick=${() => act.sheet({type:'leave', bid:b.id})}>Leave</button>
         <button class="btn primary" onClick=${() => act.addProducts(b.id)}>Add products</button>`
     : html`<button class="btn go" onClick=${() => act.checkIn(b.id)}><${Icon} n="check" s=${18} w=${2.2}/>Check in again</button>`;
-  return html`<${Sheet} tall center fade flip title=${b.shop} sub=${dayLabel(b, true)} onClose=${act.close} foot=${foot}>
+  return html`<${Sheet} tall center fade title=${b.shop} sub=${dayLabel(b, true)} onClose=${act.close} foot=${foot}>
     ${o && html`<div class="sh-tiles"><${ApptOrder} o=${o} b=${b} act=${act}/></div>`}
     <${DivSwitch} title="Budget" b=${b} div=${divOf(b, ui)} act=${act}/>
     <${BudRows} b=${b} d=${divOf(b, ui)}/>
