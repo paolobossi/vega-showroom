@@ -866,6 +866,15 @@ input.qty.xl{width:64px} /* room for three digits */
 /* quantity saved: drops in from the top so it is seen while the thumb is on the sizes */
 .toast.top{bottom:auto;top:max(10px,calc(env(safe-area-inset-top,0px) + 6px));animation-name:toast-top}
 @keyframes toast-top{from{transform:translate(-50%,calc(-100% - 40px))}}
+.toast-msg{display:flex;gap:6px;align-items:center;min-width:0;overflow:hidden;text-overflow:ellipsis}
+/* with a category bar: a rounded card instead of a pill, the message on top and the category's budget bar under it */
+.toast.has-bar{flex-direction:column;align-items:stretch;gap:8px;width:min(340px,calc(100% - 36px));max-width:none;padding:12px 16px 14px;border-radius:20px}
+.toast-bar{--t:color-mix(in srgb,var(--bg) 50%,transparent);display:flex;flex-direction:column;gap:6px}
+.toast-bar.ok{--t:#2BBF6A}.toast-bar.warn{--t:#F2B705}.toast-bar.bad{--t:#F2553F}
+.toast-bar-t{display:flex;justify-content:space-between;gap:12px;font-size:var(--fs-caption);font-weight:400}
+.toast-bar-t span:first-child{opacity:.75}.toast-bar-t b{font-weight:700}
+.toast-track{height:6px;border-radius:999px;background:color-mix(in srgb,var(--bg) 20%,transparent);overflow:hidden}
+.toast-fill{display:block;height:100%;border-radius:999px;background:var(--t);transition:width .35s ease}
 
 /* ---------- landscape: horizontal working layout ---------- */
 @container app (orientation: landscape){
@@ -2479,7 +2488,8 @@ function NoOrder({act}) {
 function makeActs(setS, setUi, onReset) {
   let toastT = 0;
   const a = {
-    toast: (msg, top) => { setUi(u => ({...u, toast:msg, toastTop:!!top, toastId: top && u.toast && u.toastTop ? u.toastId : Date.now()})); clearTimeout(toastT); toastT = setTimeout(() => setUi(u => ({...u, toast:null})), 2200); },
+    // bar: {o, pid} or {o, line} adds that style's category budget bar under the message (quantity saved)
+    toast: (msg, top, bar) => { setUi(u => ({...u, toast:msg, toastBar:bar || null, toastTop:!!top, toastId: top && u.toast && u.toastTop ? u.toastId : Date.now()})); clearTimeout(toastT); toastT = setTimeout(() => setUi(u => ({...u, toast:null})), 2200); },
     // opening an order only shows it; the client in session changes only with a check-in
     openOrder: bid => { const id = 'o-' + bid;
       setS(s => s.orders[id] ? s : {...s, orders:{...s.orders, [id]:newOrder(bid)}, savedAt:Date.now()});
@@ -2536,7 +2546,7 @@ function makeActs(setS, setUi, onReset) {
     a.mut(id, o => { if (o.lines.some(l => l.pid === pid && l.colour === colour)) return;
       o.lines.push({id:uid(), pid, colour, qty:{...qty}, via, by:'salesperson', at:Date.now()});
       log(o, 'salesperson', `${u ? 'Added' : 'Selected'} ${p.name} · ${cname(colour)}${u ? ' ×' + u : ''}${via === 'photo' ? ' (photo match)' : ''}`); });
-    a.toast(u ? `Added to order · ${u} ${u === 1 ? 'unit' : 'units'}` : 'Added to order', u > 0); };
+    a.toast(u ? `Added to order · ${u} ${u === 1 ? 'unit' : 'units'}` : 'Added to order', u > 0, u > 0 && {o:id, pid}); };
   // the whole runway look in one go: every piece the client can buy that isn't in the order yet
   a.selectLook = (id, look) => { let k = 0; if (!a.divOk(id, look.div)) return;
     a.mut(id, o => { look.items.forEach(([pid, colour]) => { if (canTake(o, P[pid]) || o.lines.some(l => l.pid === pid && l.colour === colour)) return;
@@ -2550,13 +2560,13 @@ function makeActs(setS, setUi, onReset) {
   a.setUnits = (id, lineId, n) => { n = Math.max(0, Math.min(999, n)); a.mut(id, o => { const l = o.lines.find(x => x.id === lineId); if (!l) return; const p = P[l.pid]; l.qty = n ? {U: n} : {}; l.at = Date.now();
     const key = 'u:' + lineId, last = o.log[o.log.length - 1], text = `Set ${p.name} · ${cname(l.colour)} to ×${n}`;
     if (last && last.key === key) { last.text = text; last.at = Date.now(); } else o.log.push({at:Date.now(), by:'salesperson', text, key}); });
-    a.toast(`Saved · ${n} ${n === 1 ? 'unit' : 'units'}`, true); };
+    a.toast(`Saved · ${n} ${n === 1 ? 'unit' : 'units'}`, true, {o:id, line:lineId}); };
   // sizes on a line from the product page; repeated taps update one log entry
   a.setQty = (id, lineId, qty) => { a.mut(id, o => { const l = o.lines.find(x => x.id === lineId); if (!l) return; const p = P[l.pid];
     l.qty = qty; l.at = Date.now();
     const key = 'u:' + lineId, last = o.log[o.log.length - 1], text = `Set ${p.name} · ${cname(l.colour)} to ×${units(qty)}`;
     if (last && last.key === key) { last.text = text; last.at = Date.now(); } else o.log.push({at:Date.now(), by:'salesperson', text, key}); });
-    const n = units(qty); a.toast(`Saved · ${n} ${n === 1 ? 'unit' : 'units'}`, true); };
+    const n = units(qty); a.toast(`Saved · ${n} ${n === 1 ? 'unit' : 'units'}`, true, {o:id, line:lineId}); };
   // each division is sent on its own; the order's overall status follows from its parts
   a.share = (id, divs, signer, email) => a.mut(id, o => { const now = Date.now(); o.parts = o.parts || {};
     divs.forEach(d => { o.parts[d] = {status:'shared', at:now, signer, email}; }); o.sharedAt = now;
@@ -2591,7 +2601,15 @@ function App({onReset}) {
     : sh.type === 'pick' ? html`<${PickBuyerSheet} S=${S} sh=${sh} act=${act}/>`
     : sh.type === 'leave' ? html`<${LeaveAlert} S=${S} sh=${sh} act=${act}/>`
     : sh.type === 'appt' ? html`<${ApptSheet} key=${sh.bid} sh=${sh} S=${S} ui=${ui} act=${act}/>` : null;
-  const toast = ui.toast && html`<div class=${'toast' + (ui.toastTop ? ' top' : '')} key=${ui.toastId} role="status"><${Icon} n="check" s=${16} w=${2.4}/>${ui.toast}</div>`;
+  // a quantity toast also shows the budget bar of that style's category, live, so the seller sees the category fill up towards its budget
+  const tb = (() => { const t = ui.toastBar, o = t && S.orders[t.o]; if (!o) return null;
+    const pid = t.pid || (o.lines.find(l => l.id === t.line) || {}).pid, p = pid && P[pid]; if (!p) return null;
+    const m = kpi(o, p.div).mix.find(x => x.cat === p.cat); return m && {...m, label:CAT_LABEL[p.cat]}; })();
+  const toast = ui.toast && html`<div class=${'toast' + (ui.toastTop ? ' top' : '') + (tb ? ' has-bar' : '')} key=${ui.toastId} role="status">
+    <span class="toast-msg"><${Icon} n="check" s=${16} w=${2.4}/>${ui.toast}</span>
+    ${tb && html`<span class=${'toast-bar ' + tb.st}><span class="toast-bar-t"><span>${tb.label}</span><span><b>${fmt(tb.value)}</b> ${tb.budget ? 'of ' + fmtK(tb.budget) : 'no budget'}</span></span>
+      <span class="toast-track"><span class="toast-fill" style=${{width: Math.min(tb.used, 100) + '%'}}></span></span></span>`}
+  </div>`;
 
   const buyerView = ui.role === 'buyer' && S.orders[ui.buyerOrder];
   // a checked-in client is always the client in session (after a reload or an account switch too)
