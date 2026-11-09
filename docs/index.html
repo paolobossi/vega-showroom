@@ -219,7 +219,7 @@ input{font:inherit;color:inherit}
 .pin-k.txt{background:none;border:0;font-size:var(--fs-body);font-weight:600;color:var(--accent)}
 .top-acts{display:flex;align-items:center;gap:10px}.top-acts .round-btn{margin-top:0}
 .field{display:flex;flex-direction:column;gap:6px}
-.inp.area{height:auto;min-height:104px;padding:12px 14px;font-size:var(--fs-body);line-height:var(--lh-body);resize:vertical} /* typed text the same size as the placeholder */
+.inp.area{height:auto;min-height:104px;padding:12px 14px;font-size:14px;line-height:var(--lh-body);resize:vertical} /* typed text and placeholder 14px, like the Budget and Guidelines rows */
 .days{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;margin:0 -18px 12px;padding:0 18px;scroll-padding:0 18px}
 .days::-webkit-scrollbar{display:none}
 .day{flex:0 0 54px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0;border-radius:var(--r-m);background:var(--surface);border:1px solid var(--line);color:var(--ink)}
@@ -645,7 +645,7 @@ input{font:inherit;color:inherit}
 .sh-tiles .row-main > svg{margin-bottom:6px}
 .sh-tiles .row{position:relative}.sh-tiles .pill{position:absolute;top:14px;right:14px} /* the order's status tag, top right, like on Home */
 /* the Notes placeholder is body size, like the budget rows (the text you type stays 17px so iOS doesn't zoom) */
-.inp.area::placeholder{font-size:var(--fs-body)}
+.inp.area::placeholder{font-size:14px}
 .sheet-body{flex:1;min-height:0;overflow-y:auto;padding:4px 18px 18px;display:flex;flex-direction:column;gap:14px}
 .sheet-body > *, .match > *, .ov-lines > *{flex-shrink:0}
 .sheet-foot{flex:none;display:flex;gap:10px;padding:10px 18px max(14px,env(safe-area-inset-bottom,0px))}
