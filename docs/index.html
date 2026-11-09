@@ -775,10 +775,12 @@ input.qty.xl{width:64px} /* room for three digits */
 .qbtn:active{background:var(--surface-2)}
 .impact{display:flex;flex-direction:column;gap:6px;font-size:var(--fs-body)}
 /* product facts: grey label on the left, value on the right, one size throughout */
-/* product facts: one grey row each, split by a 2px white gap (no grey line), like the other lists */
-.facts{gap:2px;padding:0;background:none;border:0}
-.facts > div{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:12px 14px;background:var(--surface);font-size:var(--fs-body)}
-.facts > div:first-child{border-top:0}
+/* product facts: styled like the Budget box: a white list inside a 1px grey outline (.g-box), 22px squircle corners, 14px regular text,
+   no rules, rows 10px apart with 12px above the first and below the last */
+.facts{display:flex;flex-direction:column;background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
+@supports (-webkit-mask-box-image:none){.facts{border-radius:0}}
+.facts > div{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:5px 14px;font-size:14px;font-weight:400;line-height:var(--lh-body)}
+.facts > div:first-child{padding-top:12px}.facts > div:last-child{padding-bottom:12px}
 .facts > div > span:first-child{flex:none;color:var(--muted)}
 .facts > div > span:last-child{text-align:right;color:var(--ink)}
 .facts .plain{font:inherit;color:inherit;padding:0}
@@ -2048,7 +2050,7 @@ function ProductSheet({pid, colour, orderId, back, S, ui, act}) {
       : why ? html`${line && html`<div class="pd-in">In order · ${u ? val(u) : 'no quantity'}</div>`}<button class="btn black" disabled>${b.shop} · ${why}</button>`
       : line ? html`<button class="btn outline danger" onClick=${() => act.unselect(o.id, pid, c)}>Remove from order</button>`
       : null}</div>
-    <div class="panel facts">
+    <div class="g-box"><div class="facts">
       ${p.material && html`<div><span>Material</span><span>${p.material}</span></div>`}
       <div><span>Division</span><span>${p.div === 'W' ? 'Womenswear' : 'Menswear'}</span></div>
       <div><span>Category</span><span>${CAT_LABEL[p.cat]}</span></div>
@@ -2056,7 +2058,7 @@ function ProductSheet({pid, colour, orderId, back, S, ui, act}) {
       <div><span>Family</span><span>${p.family}</span></div>
       <div><span>Sizes</span><span>${p.sizes.join(' · ')}</span></div>
       <div><span>Delivery</span><span>${dropName(p.drop)}</span></div>
-    </div>
+    </div></div>
   <//>`;
 }
 
