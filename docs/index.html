@@ -526,7 +526,7 @@ input{font:inherit;color:inherit}
 .ov-shop{font:600 var(--fs-heading)/var(--lh-tight) var(--f-display);letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @keyframes pulse{from{opacity:.2}to{opacity:1}}
 /* order facts: three labelled columns at the top of the page, scrolling with it */
-.ov-body{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;padding-bottom:calc(50px + env(safe-area-inset-bottom,0px))}
+.ov-body{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior-x:none;display:flex;flex-direction:column;padding-bottom:calc(50px + env(safe-area-inset-bottom,0px))}
 .ov-actions{position:absolute;z-index:19;left:50%;transform:translateX(-50%);bottom:max(16px,calc(env(safe-area-inset-bottom,0px) - 4px));width:min(calc(100% - 28px),420px);display:flex;gap:10px}
 .ov-actions .cap-btn{box-shadow:var(--shadow-float)}
 .ov-actions .round{background:var(--card);box-shadow:var(--shadow-float)}
@@ -629,6 +629,7 @@ input{font:inherit;color:inherit}
 .bstack-page{flex:0 0 100%;min-width:0;display:flex;flex-direction:column;gap:8px;scroll-snap-align:start;scroll-snap-stop:always}
 .bstack-page .bpill{margin:0;flex:none;height:52px}
 .bpill-ph{background:var(--surface)} /* placeholder filling an empty slot on the last page */
+.ov-sum .bstack-pages{margin:0 -17px;padding:0 17px;scroll-padding:0 17px} /* the order card has a 1px (invisible) border: 17px reaches the screen edge exactly, no wider */
 /* the dots under it are the product carousel's: 6px grey dots, the current one a 16px black bar (without the frosted pill, the page is already white) */
 .bstack-dots{display:flex;gap:6px}
 .bstack-dots button{width:6px;height:6px;border-radius:50%;background:color-mix(in srgb,var(--ink) 25%,transparent);transition:background .2s,width .2s}
