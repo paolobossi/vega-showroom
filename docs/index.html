@@ -877,7 +877,7 @@ input.qty.xl{width:64px} /* room for three digits */
 @keyframes toast-top-out{to{transform:translate(-50%,calc(-100% - 40px))}}
 .toast-msg{display:flex;gap:6px;align-items:center;min-width:0;overflow:hidden;text-overflow:ellipsis}
 /* with a category bar: a rounded card instead of a pill, the message on top and the category's budget bar under it */
-.toast.has-bar{flex-direction:column;align-items:stretch;gap:8px;width:min(340px,calc(100% - 36px));max-width:none;padding:12px 16px 14px;border-radius:20px;-webkit-mask-box-image:var(--squircle) 20 / 22px stretch} /* Apple squircle corners, like the other boxes */
+.toast.has-bar{flex-direction:column;align-items:stretch;gap:8px;width:min(340px,calc(100% - 36px));max-width:none;padding:12px 16px 14px;border-radius:32px;-webkit-mask-box-image:var(--squircle) 20 / 32px stretch} /* Apple squircle corners, rounder than the boxes */
 @supports (-webkit-mask-box-image:none){.toast.has-bar{border-radius:0}}
 .toast-bar{--t:color-mix(in srgb,var(--bg) 50%,transparent);display:flex;flex-direction:column;gap:6px}
 .toast-bar.ok{--t:#2BBF6A}.toast-bar.warn{--t:#F2B705}.toast-bar.bad{--t:#F2553F}
