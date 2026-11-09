@@ -797,9 +797,9 @@ input.qty.xl{width:64px} /* room for three digits */
 @supports (-webkit-mask-box-image:none){.facts{border-radius:0}}
 .facts > div{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:5px 14px;font-size:14px;font-weight:400;line-height:var(--lh-body)}
 .facts > div:first-child{padding-top:12px}.facts > div:last-child{padding-bottom:12px}
-/* the prices open the details box as two highlights side by side: light grey tiles (14px squircle, the box's 22px corner less the 8px inset), the figure 20px bold */
-.facts > .pd-hl{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px 8px 8px}
-.pd-hl > div{display:flex;flex-direction:column;gap:2px;min-width:0;padding:10px 12px 11px;background:var(--surface);border-radius:14px;-webkit-mask-box-image:var(--squircle) 20 / 14px stretch}
+/* the prices open the details box as two highlights side by side: light grey tiles (12px squircle, the box's 22px corner less the 10px inset), the figure 20px bold */
+.facts > .pd-hl,.facts > .pd-hl:first-child{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 10px 6px} /* 10px all round the tiles and between them (the 6px under them plus the next row's 5px padding) */
+.pd-hl > div{display:flex;flex-direction:column;gap:2px;min-width:0;padding:10px 12px 11px;background:var(--surface);border-radius:12px;-webkit-mask-box-image:var(--squircle) 20 / 12px stretch}
 @supports (-webkit-mask-box-image:none){.pd-hl > div{border-radius:0}}
 .pd-hl small{font-size:var(--fs-caption);font-weight:400;color:var(--muted)}
 .pd-hl b{font-size:20px;font-weight:700;line-height:var(--lh-tight);letter-spacing:-.01em;color:var(--ink)}
