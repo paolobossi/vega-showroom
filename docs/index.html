@@ -762,10 +762,12 @@ input{font:inherit;color:inherit}
 .ss-top{display:flex;gap:14px;align-items:center}
 .ss-info{display:flex;flex-direction:column;gap:6px;min-width:0}
 .ss-total{font-size:var(--fs-body)}.ss-total b{font-size:var(--fs-heading);font-variant-numeric:normal}
-.colours{display:flex;gap:8px;overflow-x:auto;margin:0 -18px;padding:0 18px 2px;scrollbar-width:none}
+.colours{position:relative;display:flex;gap:8px;overflow-x:auto;margin:0 -18px;padding:0 18px 2px;scroll-padding:0 18px;scrollbar-width:none}
 .colour{display:flex;align-items:center;gap:8px;padding:0 12px;height:40px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:var(--fs-body);white-space:nowrap;flex:none}
 .colour .sw{width:16px;height:16px}
-.colour .code{font-size:inherit;line-height:inherit;font-weight:inherit}
+/* name and code are the same size and line height, both centred, so they share one baseline; the code black like the name, in regular weight */
+.colour .nm,.colour .code{display:block;font-size:var(--fs-body);line-height:20px}
+.colour .code{font-weight:400;color:var(--ink)}
 .colour.on{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
 .cnt{font-size:var(--fs-caption);font-weight:700;background:var(--ink);color:var(--bg);border-radius:999px;padding:2px 6px}
 .sizes{display:flex;gap:6px;overflow-x:auto;margin:0 -18px;padding:0 18px 2px;scrollbar-width:none}
@@ -1638,6 +1640,19 @@ const CheckPill = ({a, o}) => !a || !a.in ? (o && o.lines.length ? html`<${Pill}
 
 // a marker that slides to the selected item of a row: measures the item matching sel inside box and moves ind (a .slide-ind) there;
 // it jumps into place on first show and glides from then on
+// tapping an item near the edge of a row that scrolls (el must be position:relative): the row slides so the next item (or the one before, on the left) shows too
+const revealNear = (el, a) => { if (!el || !a || el.scrollWidth <= el.clientWidth) return;
+  const item = e => e && !e.classList.contains('slide-ind') ? e : null, prev = item(a.previousElementSibling) || a, next = item(a.nextElementSibling) || a, pad = 18;
+  const lo = prev.offsetLeft - pad, hi = next.offsetLeft + next.offsetWidth + pad - el.clientWidth;
+  let to = el.scrollLeft < hi ? Math.min(hi, a.offsetLeft - pad) : el.scrollLeft > lo ? Math.max(lo, a.offsetLeft + a.offsetWidth + pad - el.clientWidth) : null;
+  // a row that snaps to its items (Home days) would pull an in-between stop back, so stop on the first item edge past the target
+  const snaps = getComputedStyle(el).scrollSnapType !== 'none' ? [...el.children].filter(item).map(e => e.offsetLeft - pad) : null;
+  if (to != null && snaps) to = to >= el.scrollLeft ? (snaps.find(x => x >= to - 1) ?? to) : (snaps.filter(x => x <= to + 1).pop() ?? to);
+  if (to != null) el.scrollTo({left:to, behavior:matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); };
+// the colour chips on the product page and in the size sheet: reveal the neighbour of the colour just tapped (not on first show)
+const useRevealOn = (sel, dep) => { const box = useRef(null), first = useRef(true);
+  useEffect(() => { if (first.current) { first.current = false; return; } const el = box.current; revealNear(el, el && el.querySelector(sel)); }, [dep]);
+  return box; };
 const useSlide = sel => { const box = useRef(null), ind = useRef(null), last = useRef(null);
   const place = () => { const el = box.current, i = ind.current, a = el && el.querySelector(sel); if (!i) return;
     if (!a) { i.style.opacity = '0'; return; }
@@ -1646,14 +1661,7 @@ const useSlide = sel => { const box = useRef(null), ind = useRef(null), last = u
     s.setProperty('--x', r.left - e.left - el.clientLeft + el.scrollLeft + 'px'); s.setProperty('--y', r.top - e.top - el.clientTop + el.scrollTop + 'px'); s.setProperty('--w', r.width + 'px'); s.setProperty('--h', r.height + 'px');
     if (!i.dataset.anim) requestAnimationFrame(() => requestAnimationFrame(() => { i.dataset.anim = '1'; }));
     // tapping an item near the edge of a row that scrolls: the row slides so the next item (or the one before, on the left) shows too
-    else if (a !== last.current && el.scrollWidth > el.clientWidth) {
-      const item = e => e && !e.classList.contains('slide-ind') ? e : null, prev = item(a.previousElementSibling) || a, next = item(a.nextElementSibling) || a, pad = 18;
-      const lo = prev.offsetLeft - pad, hi = next.offsetLeft + next.offsetWidth + pad - el.clientWidth;
-      let to = el.scrollLeft < hi ? Math.min(hi, a.offsetLeft - pad) : el.scrollLeft > lo ? Math.max(lo, a.offsetLeft + a.offsetWidth + pad - el.clientWidth) : null;
-      // a row that snaps to its items (Home days) would pull an in-between stop back, so stop on the first item edge past the target
-      const snaps = getComputedStyle(el).scrollSnapType !== 'none' ? [...el.children].filter(item).map(e => e.offsetLeft - pad) : null;
-      if (to != null && snaps) to = to >= el.scrollLeft ? (snaps.find(x => x >= to - 1) ?? to) : (snaps.filter(x => x <= to + 1).pop() ?? to);
-      if (to != null) el.scrollTo({left:to, behavior:matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); }
+    else if (a !== last.current) revealNear(el, a);
     last.current = a; };
   useLayoutEffect(place);
   useEffect(() => { addEventListener('resize', place); if (document.fonts) document.fonts.ready.then(place); return () => removeEventListener('resize', place); }, []);
@@ -2075,7 +2083,7 @@ function FilterSheet({ui, act}) {
 // Copy scale keeps this style's size scale (per size range, until another one is copied); Paste scale fills it on the next style.
 function ProductSheet({pid, colour, orderId, back, S, ui, act}) {
   const p = P[pid], o = orderId ? S.orders[orderId] : activeOrder(S, ui), b = o && BUYERS[o.buyerId], why = o && canTake(o, p);
-  const [c, setC] = useState(() => { const l = o && o.lines.find(x => x.pid === pid); return colour || (l ? l.colour : p.colours[0]); });
+  const [c, setC] = useState(() => { const l = o && o.lines.find(x => x.pid === pid); return colour || (l ? l.colour : p.colours[0]); }), colRow = useRevealOn('.colour.on', c);
   const looks = LOOKS.filter(l => l.items.some(([x]) => x === pid));
   const pick = () => act.sheet({type:'pick', item:{pid, colour:c, via:'search'}});
   const lineOf = x => o && o.lines.find(l => l.pid === pid && l.colour === x), line = lineOf(c);
@@ -2097,7 +2105,7 @@ function ProductSheet({pid, colour, orderId, back, S, ui, act}) {
     media=${html`<div class="pd-media"><${Carousel} p=${p} colour=${c} at=${ui.photoAt} onOpen=${i => act.set({zoom:{pid, colour:c, i}})}/><${Tag} p=${p}/></div>`}>
     <div class="pd-head"><h1 class="pd-name">${p.name}</h1>
       <div class="pd-sub"><span class="code">${p.code}</span></div></div>
-    <div class="colours">${p.colours.map(x => html`<button class=${'colour' + (x === c ? ' on' : '')} onClick=${() => setC(x)}><span class="sw" style=${{background:COL[x][0]}}></span>${x}<span class="code">${COL[x][1]}</span>${lineOf(x) && html`<span class="flag-dot" title="In order"><${Icon} n="check" s=${12} w=${3}/></span>`}</button>`)}</div>
+    <div class="colours" ref=${colRow}>${p.colours.map(x => html`<button class=${'colour' + (x === c ? ' on' : '')} onClick=${() => setC(x)}><span class="sw" style=${{background:COL[x][0]}}></span><span class="nm">${x}</span><span class="code">${COL[x][1]}</span>${lineOf(x) && html`<span class="flag-dot" title="In order"><${Icon} n="check" s=${12} w=${3}/></span>`}</button>`)}</div>
     ${edit && html`<div class="pd-qty">
       ${p.sizes.length > 1 ? html`
         <div class="sizes">${p.sizes.map(sz => html`<div class=${'size-cell' + (q[sz] ? ' has' : '')}>
@@ -2144,7 +2152,7 @@ function SizeSheet({sh, S, act}) {
   const init = useMemo(() => Object.fromEntries(p.colours.map(c => [c, {...((order.lines.find(l => l.pid === p.id && l.colour === c) || {}).qty || {})}])), []);
   const [draft, setDraft] = useState(init);
   const existing = order.lines.some(l => l.pid === p.id);
-  const [col, setCol] = useState(sh.colour || (order.lines.find(l => l.pid === p.id) || {}).colour || p.colours[0]);
+  const [col, setCol] = useState(sh.colour || (order.lines.find(l => l.pid === p.id) || {}).colour || p.colours[0]), colRow = useRevealOn('.colour.on', col);
   const locked = !available(b, p);
   // once a part is sent it is read-only for the seller and the client alike
   const readOnly = partLocked(order, p.div);
@@ -2180,7 +2188,7 @@ function SizeSheet({sh, S, act}) {
     ${locked && html`<div class="callout bad"><${Icon} n="lock" s=${18}/><div>${p.name} isn’t available to ${b.shop}, so it can’t go on this order.</div></div>`}
     ${readOnly && html`<div class="callout info"><${Icon} n="lock" s=${18}/><div>The ${DIV_LABEL[p.div].toLowerCase()} order has been sent and can’t be changed here.</div></div>`}
     <div class="lbl">Colour <span style="text-transform:none;letter-spacing:0;font-weight:400">· ${p.colours.length} options</span></div>
-    <div class="colours">${p.colours.map(c => html`<button class=${'colour' + (c === col ? ' on' : '')} onClick=${() => setCol(c)}><span class="sw" style=${{background:COL[c][0]}}></span>${c}<span class="code">${COL[c][1]}</span>${units(draft[c]) > 0 && html`<span class="cnt">${units(draft[c])}</span>`}</button>`)}</div>
+    <div class="colours" ref=${colRow}>${p.colours.map(c => html`<button class=${'colour' + (c === col ? ' on' : '')} onClick=${() => setCol(c)}><span class="sw" style=${{background:COL[c][0]}}></span><span class="nm">${c}</span><span class="code">${COL[c][1]}</span>${units(draft[c]) > 0 && html`<span class="cnt">${units(draft[c])}</span>`}</button>`)}</div>
     ${!locked && !readOnly && html`
       <div class="lbl">${p.sizes.length > 1 ? 'Sizes' : 'Quantity'} · ${col}</div>
       ${p.sizes.length > 1 ? html`
