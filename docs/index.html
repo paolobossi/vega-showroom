@@ -854,11 +854,9 @@ input.qty.xl{width:64px} /* room for three digits */
 .appts.now .appt{border:0}
 /* Home: the days and the appointment list share one Apple-style corner, the --squircle mask at 24px; no corner-shape or border-radius, so every browser draws the same curve */
 .day,.appts{border-radius:0;corner-shape:round;-webkit-mask-box-image:var(--squircle) 20 / 24px stretch}
-/* Home: the day's appointments are one white group with big squircle corners (the mask on the list) and a soft shadow like the Collection cards
-   (a filter on the wrapper, so it follows the squircle); inside, each appointment is its own white box 1px apart, with small 6px corners */
-.appts-sh{filter:drop-shadow(0 1px 1px rgba(0,0,0,.05)) drop-shadow(0 4px 10px rgba(0,0,0,.07))}
-.appts{gap:1px;margin:0;overflow:visible;-webkit-mask-box-image:var(--squircle) 20 / var(--r-xl) stretch}
-.appts .appt{background:var(--card);border:0;border-radius:6px}
+/* Home: the day's appointments sit straight on the white page, no box or shadow; a light 1px rule (as between order lines) starts at the page margin and runs to the right edge */
+.appts{gap:0;margin:0 -18px;-webkit-mask-box-image:none}
+.appts .appt{background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 18px 0 / calc(100% - 18px) 1px no-repeat;border:0;border-radius:0;padding:15px 18px 14px}.appts .appt:first-child{background:none;padding-top:6px}
 /* order (basket): each style is its own grey row, split by a 2px white gap instead of a line */
 .ov-lines .list{background:none;gap:2px}
 .ov-lines .list > .sel{background:var(--surface);border-top:0}
