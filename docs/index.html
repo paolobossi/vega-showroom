@@ -287,6 +287,7 @@ input{font:inherit;color:inherit}
 .prices span{display:flex;flex-direction:column;min-width:0}
 .prices small{font-size:var(--fs-caption);font-weight:600;color:var(--muted)} /* "Wholesale", "Retail" in sentence case */
 .prices b{font-size:var(--fs-body);font-weight:600;color:var(--ink)}
+.prices span + span b{font-weight:400} /* the retail price is regular; only wholesale is bold */
 .prices.lg{padding:2px 0}
 .prices.lg b{font-size:var(--fs-heading)}
 .stp{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:var(--r-m);background:var(--surface);overflow:hidden}
