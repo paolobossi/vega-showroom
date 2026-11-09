@@ -108,7 +108,7 @@ input{font:inherit;color:inherit}
 .screen{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
 /* tab bar: a floating white pill (fully round) with a soft shadow, all five items inside; the page scrolls under it and fades to white behind it */
 .screen.tabbed{padding-bottom:calc(84px + max(10px,env(safe-area-inset-bottom,0px)))}
-.dock{position:absolute;left:0;right:0;bottom:0;z-index:20;padding:24px 12px max(10px,env(safe-area-inset-bottom,0px));pointer-events:none;
+.dock{position:absolute;left:0;right:0;bottom:0;z-index:20;padding:24px 8px max(10px,env(safe-area-inset-bottom,0px));pointer-events:none;
   background:linear-gradient(to bottom,color-mix(in srgb,var(--bg) 0%,transparent),color-mix(in srgb,var(--bg) 92%,transparent) 55%)}
 .tabbar{position:relative;display:flex;padding:5px;border-radius:999px;background:var(--card);box-shadow:0 1px 2px rgba(0,0,0,.06),0 6px 24px rgba(0,0,0,.10);pointer-events:auto}
 /* the selected tab sits on a light grey capsule (fully round, like the bar) that slides to the tab you pick */
