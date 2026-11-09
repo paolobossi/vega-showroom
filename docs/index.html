@@ -887,7 +887,7 @@ input.qty.xl{width:64px} /* room for three digits */
 /* (trial) budget and guidelines as one white box with a thin grey outline (a grey squircle around a white one, like the Order tile) and light rules between rows */
 .g-box{padding:1px;background:var(--line);border-radius:var(--r-l);-webkit-mask-box-image:var(--squircle) 20 / var(--r-l) stretch}
 .g-box > .list.gapped.g1{gap:0;background:var(--bg);border:0;border-radius:calc(var(--r-l) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-l) - 1px) stretch}
-.g-box > .list.gapped > .row{background:var(--bg);border-top:1px solid color-mix(in srgb,var(--line) 55%,var(--bg))}.g-box > .list.gapped > .row:first-child{border-top:0}.g-box > .list.gapped:not(.gl) > .row{border-top:0} /* the budget box has no rules between rows */
+.g-box > .list.gapped > .row{background:var(--bg);border-top:1px solid color-mix(in srgb,var(--line) 55%,var(--bg))}.g-box > .list.gapped > .row:first-child{border-top:0}.g-box > .list.gapped:not(.gl) > .row{border-top:0;padding-top:5px;padding-bottom:5px}.g-box > .list.gapped:not(.gl) > .row:first-child{padding-top:12px}.g-box > .list.gapped:not(.gl) > .row:last-child{padding-bottom:12px} /* the budget box has no rules between rows */
 @supports (-webkit-mask-box-image:none){.g-box,.g-box > .list.gapped.g1{border-radius:0}}.list.g1 .row-title,.list.g1 .row-val{font-size:14px;font-weight:400}.list.g1 .row.tot .row-title,.list.g1 .row.tot .row-val{font-weight:700}
 /* a look's pieces, like the order lines: no box, a light 1px rule edge to edge, a 72px squircle photo flush left; wholesale price only, › opens the piece */
 .list.look-rows{background:none;border:0;gap:0;overflow:visible;-webkit-mask-box-image:none}
