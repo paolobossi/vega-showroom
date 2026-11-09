@@ -656,7 +656,7 @@ input{font:inherit;color:inherit}
 /* each section is one white box with a 1px grey outline and 40px squircle corners (a grey squircle round a white one, like the Budget box;
    a squircle reads less round than its number, and these boxes are tall), no rules between its rows */
 .grp{--gr:40px;padding:1px;background:var(--line);border-radius:var(--gr);-webkit-mask-box-image:var(--squircle) 20 / var(--gr) stretch}
-.grp-in{display:flex;flex-direction:column;background:var(--bg);border-radius:calc(var(--gr) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--gr) - 1px) stretch}
+.grp-in{display:flex;flex-direction:column;padding:8px 0;background:var(--bg);border-radius:calc(var(--gr) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--gr) - 1px) stretch}
 @supports (-webkit-mask-box-image:none){.grp,.grp-in{border-radius:0}}
 .grp-in > .row{min-height:60px;padding:10px 12px 10px 16px;border-top:0;background:none}
 .grp .row-main{gap:2px}
