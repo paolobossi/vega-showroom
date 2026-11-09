@@ -902,7 +902,7 @@ input.qty.xl{width:64px} /* room for three digits */
 .div-sw .seg{border-color:transparent}
 .sheet-body .div-sw{margin-top:0;margin-bottom:0}.sheet-body .div-sw:not(:has(.seg)){margin-bottom:-4px}
 /* client sheet: the room taken from under the Women | Men switch goes above the Budget and Notes headings (26px) */
-.sh-tiles + .div-sw,.sheet-body > .field.sh-sec{margin-top:12px}
+.sheet-body > .field.sh-sec{margin-top:12px}.sh-tiles + .div-sw{margin-top:6px}.sheet-body > .div-sw + .gl-h{margin-top:12px} /* client sheet: Order, 20px, the Women | Men switch, 26px (as on the order page), Budget */
 /* a heading straight in a sheet (In this look): black, sentence case, 26px above and 10px above its box, like Budget and Notes */
 .sheet-body > .sh-h{margin:12px 0 -4px}
 </style>
@@ -1528,7 +1528,8 @@ function ApptSheet({sh, S, ui, act}) {
     : html`<button class="btn go" onClick=${() => act.checkIn(b.id)}><${Icon} n="check" s=${18} w=${2.2}/>Check in again</button>`;
   return html`<${Sheet} tall center fade title=${b.shop} sub=${dayLabel(b, true)} onClose=${act.close} foot=${foot}>
     ${o && html`<div class="sh-tiles"><${ApptOrder} o=${o} b=${b} act=${act}/></div>`}
-    <${DivSwitch} title="Budget" b=${b} div=${divOf(b, ui)} act=${act}/>
+    ${b.divs.length > 1 && html`<${DivSwitch} b=${b} div=${divOf(b, ui)} act=${act}/>`}
+    <h2 class="cat-h gl-h">Budget</h2>
     <${BudRows} b=${b} d=${divOf(b, ui)}/>
     <${Guides} o=${o || {buyerId:b.id, lines:[]}} d=${divOf(b, ui)}/>
     <label class="field sh-sec"><span class="cat-h">Notes</span>
