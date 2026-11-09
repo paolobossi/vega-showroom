@@ -2288,7 +2288,7 @@ function OrderView({S, ui, act, order, tabbed}) {
           <div><b>${STATUS[st]}</b><span>${stateSub}</span></div></div>`}
         ${b.divs.length > 1 && html`<${DivSwitch} b=${b} div=${div} act=${act}/>`}
         <div class="ov-sum">
-          <span class="ov-sum-top"><b>${b.divs.length > 1 ? 'Budget' : DIV_LABEL[div] + ' budget'}</b></span>
+          <span class="ov-sum-top"><b>Budget</b></span>
           <${BudDiv} b=${b} d=${div} k=${k} head=${false}/>
           <${Guides} o=${order} d=${div}/>
         </div>
