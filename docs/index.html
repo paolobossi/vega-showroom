@@ -111,6 +111,9 @@ input{font:inherit;color:inherit}
 .dock{position:absolute;left:0;right:0;bottom:0;z-index:20;padding-bottom:env(safe-area-inset-bottom,0px);
   background:color-mix(in srgb,var(--bg) 80%,transparent);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%)}
 .tabbar{position:relative;display:flex;padding:0 14px}
+/* Looks and Collection: the tab bar is solid white, with a white fade above it so the photos dissolve into it */
+.dock.solid{background:var(--bg);-webkit-backdrop-filter:none;backdrop-filter:none}
+.dock.solid::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:36px;background:linear-gradient(to bottom,color-mix(in srgb,var(--bg) 0%,transparent),var(--bg));pointer-events:none}
 /* the selected tab sits on a light grey squircle that slides to the tab you pick */
 .tab-ind{position:absolute;top:4px;bottom:2px;left:18px;width:calc((100% - 28px) / 5 - 8px);background:var(--surface);border-radius:28px;-webkit-mask-box-image:var(--squircle) 20 / 28px stretch;transform:translateX(calc(var(--i) * (100% + 8px)));transition:transform .34s cubic-bezier(.3,.7,.2,1),opacity .2s}
 @supports (-webkit-mask-box-image:none){.tab-ind{border-radius:0}}
@@ -2504,7 +2507,7 @@ function App({onReset}) {
         ${ui.tab === 'today' && html`<${Today} S=${S} ui=${ui} act=${act}/>`}
         ${ui.tab === 'catalogue' && html`<${CatalogueTab} key=${so ? so.id : 'none'} S=${S} ui=${ui} act=${act}/>`}
       </div>`}
-    ${!order && html`<div class="dock"><${TabBar} tab=${ui.tab} so=${so} act=${act}/></div>`}
+    ${!order && html`<div class=${'dock' + (['today', 'catalogue'].includes(ui.tab) ? ' solid' : '')}><${TabBar} tab=${ui.tab} so=${so} act=${act}/></div>`}
     ${ui.search && !order && html`<${SearchPage} S=${S} ui=${ui} act=${act}/>`}
     ${ui.capture && html`<${Capture} order=${so} div=${capDiv || 'W'} act=${act}/>`}
     ${ui.zoom && html`<${Zoom} z=${ui.zoom} act=${act}/>`}
