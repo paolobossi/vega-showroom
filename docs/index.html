@@ -230,8 +230,19 @@ input{font:inherit;color:inherit}
 .day b{font-size:var(--fs-heading);font-weight:600;line-height:var(--lh-tight)}
 .day span{font-size:var(--fs-caption);font-weight:600;color:var(--muted)}
 .day .dno{font-weight:400}
-.day.on{background:var(--ink);border-color:transparent;color:var(--bg)}
+.day.on{color:var(--bg)} /* its black tile is the sliding .slide-ind */
 .day.on span{color:inherit;opacity:.8}
+/* a selection marker that slides between the items of a row (Home days, Collection collections and categories): useSlide measures the selected item
+   and moves one .slide-ind there; it sits under the items' text (z-index -1, after their own grey tiles), so it glides over the other items */
+.slide-ind{position:absolute;left:0;top:0;z-index:-1;width:var(--w,0);height:var(--h,0);transform:translate(var(--x,0),var(--y,0));pointer-events:none}
+.slide-ind[data-anim]{transition:transform .32s cubic-bezier(.3,.7,.2,1),width .32s cubic-bezier(.3,.7,.2,1)}
+@media (prefers-reduced-motion:reduce){.slide-ind[data-anim]{transition:none}}
+/* Home days: each day's grey tile is its ::before, so the black tile of the selected day can slide over it */
+.days{position:relative;isolation:isolate}
+.day{position:relative;background:none;transition:color .25s}
+.day span{transition:color .25s}
+.day::before{content:"";position:absolute;inset:-1px;z-index:-1;background:var(--surface);border-radius:var(--r-m)}
+.days .slide-ind{background:var(--ink)}
 .inp{height:46px;border:1px solid var(--line);border-radius:var(--r-m);background:var(--surface);padding:0 14px;font:var(--fs-heading) var(--f-ui);color:var(--ink);outline:0;width:100%}
 .inp:focus,.inp:focus-visible{outline:0;border-color:transparent;box-shadow:inset 0 0 0 2px var(--ink)} /* focus: just a 2px black outline, no halo */
 .icon-btn:active{background:var(--surface-2)}
@@ -418,15 +429,19 @@ input{font:inherit;color:inherit}
 .cn-cat.on{color:var(--ink)}.cn-cat.on::after{transform:scaleX(1)}
 /* in the Collection the categories are rounded pills, the current one filled */
 .cat-nav .cn-row{gap:6px}
-.cat-nav .cn-cat{align-items:center;height:34px;padding:0 14px;margin-right:0;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:var(--fs-body);font-weight:600;color:var(--ink);transition:background .2s,color .2s}
+.cat-nav .cn-cat{align-items:center;height:34px;padding:0 14px;margin-right:0;border-radius:999px;border:1px solid var(--line);background:none;font-size:var(--fs-body);font-weight:600;color:var(--ink);transition:color .25s}
 .cat-nav .cn-cat::after{display:none}
+/* each pill's grey is its ::before; the black pill of the current category is one .slide-ind that slides to the tapped pill */
+.cat-nav .cn-row{position:relative;isolation:isolate}
+.cat-nav .cn-cat::before{content:"";position:absolute;inset:-1px;z-index:-1;border-radius:999px;background:var(--surface)}
+.cat-nav .cn-row .slide-ind{border-radius:999px;background:var(--ink)}
 /* filter and search sit top right, beside Women / Men, nudged 2px down so the icons centre on the letters (not the line box);
    the filter gets a black circle while any filter is on */
 .hd-acts{display:flex;align-items:center;margin:4px -8px 0 0}
 .hd-ic{width:44px;height:44px}
 .hd-dot{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;transition:background .2s,color .2s}
 .hd-filter.on .hd-dot{background:var(--ink);color:var(--bg)}
-.cat-nav .cn-cat.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.cat-nav .cn-cat.on{background:none;border-color:transparent;color:var(--bg)}
 /* Women / Men as the page title: the current one in ink, the other faded beside it */
 .div-title{display:flex;gap:16px}
 .div-title button{font:inherit;letter-spacing:inherit;color:var(--faint);transition:color .2s}
@@ -444,11 +459,11 @@ input{font:inherit;color:inherit}
 .cat-main{display:flex;flex-direction:column;gap:24px;min-width:0;padding-top:16px}
 .cat-sec{display:flex;flex-direction:column;gap:8px}
 /* collection tabs (SS27, SS27 Pre-collection) above the category pills: text with an underline on the current one */
-.coll-tabs{display:flex;gap:22px;overflow-x:auto;scrollbar-width:none;padding:0 18px;margin-bottom:20px}
+.coll-tabs{position:relative;isolation:isolate;display:flex;gap:22px;overflow-x:auto;scrollbar-width:none;padding:0 18px;margin-bottom:20px}
 .coll-tabs::-webkit-scrollbar{display:none}
 .coll-t{flex:none;position:relative;padding:8px 0 10px;font-size:var(--fs-body);font-weight:600;color:var(--muted);white-space:nowrap;transition:color .2s}
 .coll-t.on{color:var(--ink)}
-.coll-t.on::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;border-radius:2px;background:var(--ink)}
+.coll-tabs .slide-ind{height:2px;border-radius:2px;background:var(--ink);transform:translate(var(--x,0),calc(var(--y,0) + var(--h,0) - 2px))} /* the underline slides to the tapped collection */
 /* scrolled down: tucked away above the top edge until you scroll back up */
 .cat-nav.hid{transform:translateY(-100%)}
 /* loading skeleton: card-shaped grey blocks with a soft sheen, the size of the real cards */
@@ -853,7 +868,7 @@ input.qty.xl{width:64px} /* room for three digits */
 /* the ongoing row (under Now): white like the others, no border; the Ongoing tag says it is in progress */
 .appts.now .appt{border:0}
 /* Home: the days and the appointment list share one Apple-style corner, the --squircle mask at 24px; no corner-shape or border-radius, so every browser draws the same curve */
-.day,.appts{border-radius:0;corner-shape:round;-webkit-mask-box-image:var(--squircle) 20 / 24px stretch}
+.day::before,.days .slide-ind,.appts{border-radius:0;corner-shape:round;-webkit-mask-box-image:var(--squircle) 20 / 24px stretch}
 /* Home: the day's appointments sit straight on the white page, no box or shadow; a light 1px rule (as between order lines) starts at the page margin and runs to the right edge */
 .appts{gap:0;margin:0 -18px;-webkit-mask-box-image:none}
 .appts .appt{background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 18px 0 / calc(100% - 18px) 1px no-repeat;border:0;border-radius:0;padding:15px 18px 14px}.appts .appt:first-child{background:none;padding-top:6px}
@@ -930,7 +945,7 @@ input.qty.xl{width:64px} /* room for three digits */
 
 <script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/preact/standalone.umd.js"></script>
 <script>
-const {html, render, useState, useEffect, useMemo, useRef} = window.htmPreact;
+const {html, render, useState, useEffect, useLayoutEffect, useMemo, useRef} = window.htmPreact;
 
 /* =====================================================================
    Data — catalogue built from loewe.com (styles, colour codes, photos; wholesale prices indicative). Mirrors the shape of the
@@ -1512,8 +1527,19 @@ const ongoingBuyer = S => myBuyers(S).find(b => isOngoing(S.appts[b.id]));
 const CheckPill = ({a, o}) => !a || !a.in ? (o && o.lines.length ? html`<${Pill} s=${o.status}/>` : null) : a.out ? (o ? html`<${Pill} s=${o.status}/>` : null)
   : html`<span class="pill s-in" title=${'Checked in at ' + hhmm(a.in)}>Ongoing</span>`;
 
+// a marker that slides to the selected item of a row: measures the item matching sel inside box and moves ind (a .slide-ind) there;
+// it jumps into place on first show and glides from then on
+const useSlide = sel => { const box = useRef(null), ind = useRef(null);
+  const place = () => { const el = box.current, i = ind.current, a = el && el.querySelector(sel); if (!i) return;
+    if (!a) { i.style.opacity = '0'; return; }
+    const s = i.style; s.opacity = ''; s.setProperty('--x', a.offsetLeft + 'px'); s.setProperty('--y', a.offsetTop + 'px'); s.setProperty('--w', a.offsetWidth + 'px'); s.setProperty('--h', a.offsetHeight + 'px');
+    if (!i.dataset.anim) requestAnimationFrame(() => requestAnimationFrame(() => { i.dataset.anim = '1'; })); };
+  useLayoutEffect(place);
+  useEffect(() => { addEventListener('resize', place); if (document.fonts) document.fonts.ready.then(place); return () => removeEventListener('resize', place); }, []);
+  return [box, ind]; };
+
 function CalendarTab({S, act}) {
-  const [day, setDay] = useState(TODAY_IDX), strip = useRef(null);
+  const [day, setDay] = useState(TODAY_IDX), [strip, dayInd] = useSlide('.day.on');
   // open with today in view, one past day showing to its left
   useEffect(() => { const el = strip.current, t = el && el.children[TODAY_IDX]; if (t) el.scrollLeft = t.offsetLeft - el.offsetLeft - t.offsetWidth - 8; }, []);
   const all = myBuyers(S).filter(b => dayOf(b) === DAY_OFFS[day]), now = all.filter(b => isOngoing(S.appts[b.id])), list = all.filter(b => !now.includes(b));
@@ -1531,7 +1557,7 @@ function CalendarTab({S, act}) {
     </header>
     <section class="sec">
       <div class="days" role="tablist" ref=${strip}>${SHOW_DAYS.map((d, i) => html`<button role="tab" aria-selected=${i === day} class=${'day' + (i === day ? ' on' : '')} onClick=${() => setDay(i)}>
-        <span>${d.toLocaleDateString('en-GB', {weekday:'short'})}</span><b>${d.getDate()}</b><span class="dno">Day ${i + 1}</span></button>`)}</div>
+        <span>${d.toLocaleDateString('en-GB', {weekday:'short'})}</span><b>${d.getDate()}</b><span class="dno">Day ${i + 1}</span></button>`)}<span class="slide-ind" ref=${dayInd} aria-hidden="true"></span></div>
       ${!all.length && html`<div class="empty">No appointments on this day.</div>`}
       ${now.length > 0 && html`<div class="lbl appt-lbl">Now</div><div class="appts-sh"><div class="appts now">${now.map(row)}</div></div>`}
       ${list.length > 0 && html`${now.length > 0 && html`<div class="lbl appt-lbl">Today</div>`}<div class="appts-sh"><div class="appts">${list.map(row)}</div></div>`}
@@ -1697,7 +1723,7 @@ function CatalogueTab({S, ui, act}) {
       : [...new Set(ps.map(p => p.family))].map(f => ({f:null, id:c + '-' + slug(f), ps:ps.filter(p => p.family === f)}))}; }).filter(g => g.n);
   // a pill filters the page to one category (All shows every one); a category the division doesn't have falls back to All
   const on = all.some(g => g.cat === cat) ? cat : null, groups = on ? all.filter(g => g.cat === on) : all;
-  const ref = useRef(null), t = useRef(0), nav = useRef(null);
+  const ref = useRef(null), t = useRef(0), nav = useRef(null), [collBox, collInd] = useSlide('.coll-t.on'), [catBox, catInd] = useSlide('.cn-cat.on');
   // the category bar slides away while scrolling down and slides back in from the top as soon as you scroll up
   useEffect(() => { const sc = ref.current && ref.current.closest('.screen'); if (!sc) return; let last = sc.scrollTop;
     const on = () => { const el = nav.current; if (!el) return; const y = sc.scrollTop, d = y - last;
@@ -1727,9 +1753,9 @@ function CatalogueTab({S, ui, act}) {
       </div>`}
       <div ref=${ref}>
         <nav class="cat-nav" ref=${nav} aria-label="Collections and categories">
-          <div class="coll-tabs" role="tablist" aria-label="Collections">${SEASONS.map(x => [x.id, x.short, x.name]).map(([id, t, full]) => html`<button role="tab" aria-selected=${season.id === id} aria-label=${full} class=${'coll-t' + (season.id === id ? ' on' : '')} onClick=${() => pickSeason(id)}>${t}</button>`)}</div>
-          <div class="cn-row">
-            ${[null, ...all.map(g => g.cat)].map(c => html`<button role="tab" aria-selected=${on === c} class=${'cn-cat' + (on === c ? ' on' : '')} onClick=${() => pickCat(c)}>${c ? CAT_LABEL[c] : 'All'}</button>`)}</div>
+          <div class="coll-tabs" role="tablist" aria-label="Collections" ref=${collBox}>${SEASONS.map(x => [x.id, x.short, x.name]).map(([id, t, full]) => html`<button role="tab" aria-selected=${season.id === id} aria-label=${full} class=${'coll-t' + (season.id === id ? ' on' : '')} onClick=${() => pickSeason(id)}>${t}</button>`)}<span class="slide-ind" ref=${collInd} aria-hidden="true"></span></div>
+          <div class="cn-row" ref=${catBox}>
+            ${[null, ...all.map(g => g.cat)].map(c => html`<button role="tab" aria-selected=${on === c} class=${'cn-cat' + (on === c ? ' on' : '')} onClick=${() => pickCat(c)}>${c ? CAT_LABEL[c] : 'All'}</button>`)}<span class="slide-ind" ref=${catInd} aria-hidden="true"></span></div>
         </nav>
         ${!items.length ? html`<div class="empty">No ${DIV_LABEL[div].toLowerCase()} styles in this collection${filtered ? ' with these filters' : ''}.</div>`
         : busy ? html`<div class="cat-main" aria-busy="true" aria-label="Loading"><div class="sk-h"></div><div class="pgrid">${[0, 1, 2, 3, 4, 5].map(i => html`<div class="sk-card" key=${i}><div class="sk-img"></div><div class="sk-l"></div><div class="sk-l s"></div><div class="sk-l s"></div></div>`)}</div></div>`
