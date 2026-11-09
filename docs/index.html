@@ -449,8 +449,11 @@ input{font:inherit;color:inherit}
 .hd-dot{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;transition:background .2s,color .2s}
 .hd-filter.on .hd-dot{background:var(--ink);color:var(--bg)}
 .cat-nav .cn-cat.on{background:none;border-color:transparent}
-/* the selected item's grey sits 1px inside the black marker, so no grey hairline shows round its edge */
-.cat-nav .cn-cat.on::before,.day.on::before{inset:1px}
+/* the selected item's grey stays as it is while the black marker travels to it, then goes once the marker covers it (no grey hairline round the black);
+   it never changes size, so the tapped tile doesn't jump. An item that loses the selection gets its grey back at once */
+.cat-nav .cn-cat::before,.day::before{transition:opacity 0s}
+.cat-nav .cn-cat.on::before,.day.on::before{opacity:0;transition:opacity 0s .32s}
+@media (prefers-reduced-motion:reduce){.cat-nav .cn-cat.on::before,.day.on::before{transition:none}}
 /* Women / Men as the page title: the current one in ink, the other faded beside it */
 .div-title{display:flex;gap:16px}
 .div-title button{font:inherit;letter-spacing:inherit;color:var(--faint);transition:color .2s}
