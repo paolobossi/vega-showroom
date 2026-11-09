@@ -432,7 +432,7 @@ input{font:inherit;color:inherit}
 .div-title button{font:inherit;letter-spacing:inherit;color:var(--faint);transition:color .2s}
 .div-title button.on{color:var(--ink)}
 /* family headings run across the grid */
-.fam-h{grid-column:1 / -1;display:flex;align-items:baseline;gap:6px;margin:12px 2px 0;font-size:var(--fs-body);font-weight:600;color:var(--muted)}
+.fam-h{grid-column:1 / -1;display:flex;align-items:baseline;gap:6px;margin:0 0 -18px;font-size:var(--fs-body);font-weight:600;color:var(--muted)}
 .fam-h:first-child{margin-top:0}
 /* filter chips (Orders) */
 .ftabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -18px;padding:0 18px}
@@ -462,7 +462,7 @@ input{font:inherit;color:inherit}
 .cat-h span{font-size:var(--fs-caption);font-weight:600;color:var(--muted)}
 .pc-fam{font-size:var(--fs-caption);font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
 .pc-fam.look-sub{text-transform:none;letter-spacing:0;font-weight:600}
-.pgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.pgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 8px} /* more room between one row of cards and the next */
 .pcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:6px;display:flex;flex-direction:column;gap:6px;min-width:0}
 .pc-photo{position:relative}
 .pc-img{display:block;width:100%}
@@ -911,7 +911,8 @@ input.qty.xl{width:64px} /* room for three digits */
 /* the card has no box of its own any more: the photo carries the 24px squircle and the details line up with its edges */
 .pcard .pc-photo{-webkit-mask-box-image:var(--squircle) 20 / 24px stretch}
 .pcard .pc-photo .thumb{border-radius:0}
-.pcard .pc-info{padding:0 0 8px}
+.pcard .pc-info{padding:0;gap:4px} /* compact: the lines of text close together */
+.pcard .prices{gap:0}
 .pcard .ptags{left:8px;top:8px}.pcard .pc-in{right:8px;top:8px}.pcard .pc-lock{left:8px;top:8px}
 .div-sw{display:flex;flex-direction:column;gap:10px;margin:6px 0 12px}
 .div-sw .seg{border-color:transparent}
