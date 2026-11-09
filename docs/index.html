@@ -306,22 +306,6 @@ input{font:inherit;color:inherit}
 .zoom .car{flex:1;min-height:0}
 .zoom .car-track{flex:1;min-height:0;border-radius:0}
 .zoom .car-slide{aspect-ratio:auto;max-height:none;height:100%}
-/* the guidelines PDF as a small card: a drawn page (folded corner, text lines, red PDF label), its name and Open */
-.pdf-card{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l)}
-.pdf-card .row-main{display:flex;flex-direction:column;gap:2px}
-.pdf-doc{position:relative;flex:none;width:44px;height:56px;border-radius:4px;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-raised);padding:14px 7px 0;display:flex;flex-direction:column;gap:4px;
-  clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%)}
-.pdf-doc::after{content:"";position:absolute;right:0;top:0;width:12px;height:12px;background:linear-gradient(225deg,transparent 50%,#E3E4E0 50%)}
-.pdf-doc i{display:block;height:3px;border-radius:2px;background:#D9DAD6}
-.pdf-doc i:nth-child(2){width:80%}.pdf-doc i:nth-child(4){width:60%}
-.pdf-doc b{position:absolute;left:4px;bottom:5px;padding:1px 4px;border-radius:2px;background:#C8372D;color:#fff;font-size:9px;font-weight:700;letter-spacing:.04em;line-height:1.3}
-.pdf-open{flex:none;font-weight:600;color:var(--accent);padding:8px 14px;border-radius:999px;background:color-mix(in srgb,var(--accent) 10%,transparent)}
-.pdf-prev{position:relative;display:block;width:100%;padding:0;border:1px solid var(--line);border-radius:var(--r-s);overflow:hidden;background:#fff}
-.pdf-prev img{display:block;width:100%;height:auto}
-.pdf-tag{position:absolute;right:8px;bottom:8px;display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;background:var(--band);color:var(--band-ink);font-size:var(--fs-caption);font-weight:600}
-.pdf-scroll{flex:1;min-height:0;overflow:auto;background:var(--surface-2);padding:12px}
-.pdf-page{display:block;width:100%;height:auto;background:#fff;box-shadow:var(--shadow-raised)}
-.pdf-page.big{width:220%;max-width:none}
 .zoom-foot{flex:none;display:flex;flex-direction:column;gap:8px;padding:10px 18px max(14px,env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--surface)}
 
 /* ---------- today ---------- */
@@ -536,10 +520,6 @@ input{font:inherit;color:inherit}
 .ov-sum-top .num{white-space:nowrap}
 /* the Budget title on the order: same type as the Order heading (17px bold), 10px above the bars */
 .ov-lines > .ov-sum .ov-sum-top{margin-bottom:0}.ov-lines > .ov-sum .ov-sum-top b{font:700 var(--fs-heading)/var(--lh-tight) var(--f-display);letter-spacing:-.02em}
-.ov-sum-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;font-size:var(--fs-caption);font-weight:600;white-space:nowrap}
-.ov-sum-foot > span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis}
-.ov-sum-go{flex:none;display:inline-flex;align-items:center;gap:2px;color:var(--accent);font-size:var(--fs-caption)}
-.ov-sum-go svg{transform:rotate(-90deg)}
 .ov-sum.slim{flex-direction:row;justify-content:space-between;align-items:center;gap:8px;padding:12px 14px;font-size:var(--fs-body);font-weight:600;white-space:nowrap}
 .cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px;margin-top:10px}
 .cat-t{display:flex;flex-direction:column;gap:2px;min-width:0}
@@ -549,9 +529,6 @@ input{font:inherit;color:inherit}
 .cat-t .mix-track{display:block;margin-top:4px}
 .cat-t .mix-fill{display:block}
 .cat-t.off .cat-v{font-size:var(--fs-caption);color:var(--muted)}
-.ov-sum-foot{padding-top:10px;margin-top:12px;border-top:1px solid var(--line)}
-.ov-sum-st{display:inline-flex;align-items:center;gap:6px;min-width:0;overflow:hidden;text-overflow:ellipsis}
-.ov-sum-st svg{flex:none}
 .ov-lines{flex:1 0 auto;padding:14px 16px 20px;display:flex;flex-direction:column;gap:14px}
 /* empty order: the placeholder has no box and sits centred between the Order heading and the bottom button */
 .ov-lines > .empty{flex:1;justify-content:center;background:none;border:0;-webkit-mask-box-image:none}
@@ -852,12 +829,12 @@ input.qty.xl{width:64px} /* room for three digits */
 
 /* Grey page, content in white boxes with squircle corners and no outline (the box is a step off the page in light and dark).
    Controls (pills, fields, round buttons) lose the outline too. Appointments on Home are separate white rows with a 2px gap, not divider lines. */
-.list,.appts,.tile,.pcard,.sk-card,.ov-sum,.kpi,.panel,.pdf-card,.single,.empty,.rec,.alts,.linkbox,.pre,.look,
+.list,.appts,.tile,.pcard,.sk-card,.ov-sum,.kpi,.panel,.single,.empty,.rec,.alts,.linkbox,.pre,.look,
 .day,.inp,.stp,.size-cell,.search,.sq-btn,.round-btn,.pin-k,.cn-cat,.ftab,.colour,.qbtn,.pc-lock,.btn.white,.pd-in,.sugg button,.srch-x{border-color:transparent}
-.list,.appts,.pcard,.sk-card,.ov-sum,.kpi,.panel,.pdf-card,.empty,.rec{corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / var(--r-l) stretch}
+.list,.appts,.pcard,.sk-card,.ov-sum,.kpi,.panel,.empty,.rec{corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / var(--r-l) stretch}
 /* where the mask works (Safari, Chrome) it alone shapes these boxes: a border-radius as well clips the corners a second time,
    round in Safari (no corner-shape), slightly rounder than the mask in Chrome, and eats into outlines at the corners */
-@supports (-webkit-mask-box-image:none){.list,.appts,.pcard,.sk-card,.ov-sum,.kpi,.panel,.pdf-card,.empty,.rec,.bpill,.bpill-ic{border-radius:0;corner-shape:round}}
+@supports (-webkit-mask-box-image:none){.list,.appts,.pcard,.sk-card,.ov-sum,.kpi,.panel,.empty,.rec,.bpill,.bpill-ic{border-radius:0;corner-shape:round}}
 .bpill-ic{-webkit-mask-box-image:var(--squircle) 20 / 17px stretch} /* icon tiles: upright (34×40) with a strong squircle */
 .tile,.alts,.linkbox,.pre{corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}
 .appts{background:none;display:flex;flex-direction:column;gap:2px}
@@ -894,6 +871,9 @@ input.qty.xl{width:64px} /* room for three digits */
 @supports (-webkit-mask-box-image:none){.grp-box .list,.ov-lines .grp-box .list > .sel,.grp-box .sel .thumb{border-radius:0}}
 .grp-box .sel-edit{background:var(--bg);border:0;box-shadow:inset 0 0 0 1px var(--line);corner-shape:squircle}
 /* budget rows (Buying guidelines, client sheet): 1px apart, names and amounts 14px regular, Total bold */
+/* guidelines rows (client sheet, order, client view): like the budget rows, the tag next to the name and the rule in grey under it */
+.list.gl .row{align-items:flex-start}.list.gl .row-title{display:flex;align-items:center;gap:8px;flex-wrap:wrap;white-space:normal}.list.gl .row-val{white-space:nowrap}
+.gl-h{margin-top:26px}
 .list.gapped.g1{gap:1px}.list.g1 .row-title,.list.g1 .row-val{font-size:14px;font-weight:400}.list.g1 .row.tot .row-title,.list.g1 .row.tot .row-val{font-weight:700}
 /* a look's pieces, like the order lines: no box, a light 1px rule edge to edge, a 72px squircle photo flush left; wholesale price only, › opens the piece */
 .list.look-rows{background:none;border:0;gap:0;overflow:visible;-webkit-mask-box-image:none}
@@ -1432,13 +1412,13 @@ function BudDiv({b, d, k, head=true}) {
   </div>`;
 }
 
-// The client's guidelines for one division: mix rules per family, required looks, and how the order splits across the drops
-function MixChecks({o, d, title=`${DIV_LABEL[d]} guidelines`}) {
+// The client's guidelines for one division: mix rules per family, required looks, and how the order splits across the drops.
+// Grey rows 1px apart like the budget rows; they sit under the budget in the client sheet, the order and the client view (no PDF, no separate sheet)
+function MixChecks({o, d}) {
   const k = kpi(o, d), drops = k.drops.filter(x => x.units > 0);
   const tag = (st, word) => html`<span class=${'gtag ' + st}>${word}</span>`;
-  const row = (name, st, word, sub, num) => html`<div class="bud-row g"><span class="g-main"><span class="g-name">${name}${st && tag(st, word)}</span><span class="g-sub">${sub}</span></span><span class="num">${num}</span></div>`;
-  return html`<div class="bud-div">
-    ${title && html`<div class="bud-head"><span>${title}</span></div>`}
+  const row = (name, st, word, sub, num) => html`<div class="row"><div class="row-main"><div class="row-title">${name}${st && tag(st, word)}</div><div class="row-sub">${sub}</div></div><span class="row-val num">${num}</span></div>`;
+  return html`<div class="list gapped g1 gl">
     ${k.rules.map(r => { const cap = r.max != null ? r.max : r.min, word = r.max != null ? 'max' : 'min', gap = r.max != null ? r.value - r.limit : r.limit - r.value;
       const sub = r.st === 'none' ? `${word} ${cap}% of the order` : `${Math.round(r.share)}% of the order · ${word} ${cap}%${gap > 0 ? ` · ${fmt(gap)} ${r.max != null ? 'over' : 'to go'}` : ''}`;
       return row(r.label, r.st !== 'none' && r.st, RULE_WORD[r.st], sub, fmt(r.value)); })}
@@ -1446,6 +1426,7 @@ function MixChecks({o, d, title=`${DIV_LABEL[d]} guidelines`}) {
     ${drops.map(x => row(DROPS[x.k].split(' · ')[0], null, null, `${DROPS[x.k].split(' · ')[1]} · ${x.units} ${x.units === 1 ? 'unit' : 'units'}`, fmt(x.value)))}
   </div>`;
 }
+const Guides = ({o, d}) => html`<h2 class="cat-h gl-h">Guidelines</h2><${MixChecks} o=${o} d=${d}/>`;
 
 /* =====================================================================
    Looks: lookbooks
@@ -1454,33 +1435,9 @@ function LookTile({look}) {
   return html`<div class="look-tile"><img src=${lookSrc(look)[0]} alt=${`${lookNo(look)}, ${SHOW}`} loading="lazy" decoding="async" draggable="false"/></div>`;
 }
 
-// A client's buying guidelines: the budget per main category for each division, set by the client's cluster (Silver to Diamond)
-// and budget, so they open from the client's appointment on Home. The page is filled from the maison's PDF in the back office (AI reads the rules into this
-// table); the PDF itself shows at the top and opens full screen inside the app, so there is always a Close.
-// a division's budget per category as grey rows 1px apart, then a bold Total (Buying guidelines and the client sheet)
+// a division's budget per category as grey rows 1px apart, then a bold Total (client sheet)
 const BudRows = ({b, d}) => html`<div class="list gapped g1">${CATS.filter(c => catBudget(b, d, c)).map(c => html`<div class="row"><div class="row-main"><div class="row-title">${CAT_LABEL[c]}</div></div><span class="row-val num">${fmt(catBudget(b, d, c))}</span></div>`)}
   <div class="row tot"><div class="row-main"><div class="row-title">Total</div></div><span class="row-val num">${fmt(divBudget(b, d))}</span></div></div>`;
-function GuideSheet({bid, ui, act}) {
-  const b = BUYERS[bid], d = divOf(b, ui), back = () => act.sheet({type:'appt', bid});
-  return html`<${Sheet} tall title="Buying guidelines" sub=${`${b.shop} · ${b.cluster} · Spring Summer 2027`} onClose=${back}>
-    <button class="pdf-card" onClick=${() => act.set({pdf:true})} aria-label="Open the guidelines PDF">
-      <span class="pdf-doc" aria-hidden="true"><i></i><i></i><i></i><i></i><b>PDF</b></span>
-      <span class="row-main"><span class="row-title">Buying guidelines SS27</span><span class="row-sub">Maison PDF · Sample</span></span>
-      <span class="pdf-open">Open</span></button>
-    <${DivSwitch} title="Budget" b=${b} div=${d} act=${act}/>
-    <${BudRows} b=${b} d=${d}/>
-  <//>`;
-}
-
-// the maison's PDF full screen: tap the page to zoom in, Close returns to the guidelines
-function PdfView({act}) {
-  const [big, setBig] = useState(false);
-  return html`<div class="zoom" role="dialog" aria-label="Buying guidelines PDF">
-    <div class="zoom-top"><div style="min-width:0"><div class="zoom-t">Buying guidelines</div><div class="small muted">PDF · tap the page to ${big ? 'fit it' : 'zoom in'}</div></div>
-      <button class="icon-btn" onClick=${() => act.set({pdf:null})} aria-label="Close"><${Icon} n="x"/></button></div>
-    <div class="pdf-scroll"><img class=${'pdf-page' + (big ? ' big' : '')} src="guidelines-sample.png" alt="Buying guidelines PDF, page 1" onClick=${() => setBig(!big)}/></div>
-  </div>`;
-}
 
 // The black "Add look to order" button at the bottom of a look's sheet: with a client checked in it adds every piece they can buy (no quantities yet);
 // with nobody checked in it asks which client, like adding a single style
@@ -1561,11 +1518,10 @@ function ApptSheet({sh, S, ui, act}) {
         <button class="btn primary" onClick=${() => act.addProducts(b.id)}>Add products</button>`
     : html`<button class="btn go" onClick=${() => act.checkIn(b.id)}><${Icon} n="check" s=${18} w=${2.2}/>Check in again</button>`;
   return html`<${Sheet} tall center fade title=${b.shop} sub=${dayLabel(b, true)} onClose=${act.close} foot=${foot}>
-    <div class="sh-tiles">${o && html`<${ApptOrder} o=${o} b=${b} act=${act}/>`}
-    <div class="list"><button class="row" onClick=${() => act.sheet({type:'guide', bid:b.id})}>
-      <div class="row-main"><${Icon} n="chart" s=${22}/><div class="row-title">Guidelines</div><div class="row-sub">Budget and mix rules</div></div></button></div></div>
+    ${o && html`<div class="sh-tiles"><${ApptOrder} o=${o} b=${b} act=${act}/></div>`}
     <${DivSwitch} title="Budget" b=${b} div=${divOf(b, ui)} act=${act}/>
     <${BudRows} b=${b} d=${divOf(b, ui)}/>
+    <${Guides} o=${o || {buyerId:b.id, lines:[]}} d=${divOf(b, ui)}/>
     <label class="field sh-sec"><span class="cat-h">Notes</span>
       <textarea class="inp area" placeholder="Add a note" value=${a.notes || ''} onInput=${e => act.note(b.id, e.target.value)}></textarea>
       <span class="small muted">Saved automatically</span></label>
@@ -2199,12 +2155,11 @@ function OrderView({S, ui, act, order, tabbed}) {
           <span class="ov-state-ic"><${Icon} n=${st === 'shared' ? 'clock' : 'check'} s=${20} w=${2.6}/></span>
           <div><b>${STATUS[st]}</b><span>${stateSub}</span></div></div>`}
         ${b.divs.length > 1 && html`<${DivSwitch} b=${b} div=${div} act=${act}/>`}
-        <button class="ov-sum" onClick=${() => act.sheet({type:'kpis', orderId:order.id})} aria-label=${`Guidelines. ${DIV_TAB[div]} ${fmt(k.total)} of ${fmt(k.budget)}. ${open ? `${open} outside the guidelines` : 'Within the guidelines'}`}>
+        <div class="ov-sum">
           <span class="ov-sum-top"><b>${b.divs.length > 1 ? 'Budget' : DIV_LABEL[div] + ' budget'}</b></span>
           <${BudDiv} b=${b} d=${div} k=${k} head=${false}/>
-          <span class="ov-sum-foot"><span class=${'ov-sum-st ' + (open ? 'st-warn' : 'st-ok')}><${Icon} n=${open ? 'alert' : 'check'} s=${16} w=${2.4}/>${open ? `${open} outside the guidelines` : 'Within the guidelines'}</span>
-            <span class="ov-sum-go">Guidelines<${Icon} n="down" s=${15} w=${2.2}/></span></span>
-        </button>
+          <${Guides} o=${order} d=${div}/>
+        </div>
         <h2 class="cat-h ov-ord-h">Order</h2>
         ${locked && !allSent && html`<div class="callout info"><${Icon} n="lock" s=${18}/><div>The ${DIV_LABEL[div].toLowerCase()} order has been sent. You can see it here but no longer change it.</div></div>`}
         ${lines.length === 0 && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div><div class="small">Tap any style in the Collection and enter its quantities.</div></div>`}
@@ -2216,15 +2171,6 @@ function OrderView({S, ui, act, order, tabbed}) {
         : html`<button class="cap-btn go" onClick=${() => act.checkIn(b.id)}><${Icon} n="check" s=${18} w=${2.2}/>${S.appts[b.id]?.in ? 'Check in again' : 'Check in'}</button>`}
     </div>
   </div>`;
-}
-
-// Guidelines (from the order's budget card): only the guidelines for the division, since the budget bars are already on the order
-function KpiSheet({sh, S, ui, act}) {
-  const o = S.orders[sh.orderId], b = BUYERS[o.buyerId], d = divOf(b, ui);
-  return html`<${Sheet} tall title="Guidelines" sub=${b.shop} onClose=${act.close}>
-    ${b.divs.length > 1 && html`<${DivSwitch} b=${b} div=${d} act=${act}/>`}
-    <div class="kpi"><${MixChecks} o=${o} d=${d} title=${b.divs.length > 1 ? null : DIV_LABEL[d]}/></div>
-  <//>`;
 }
 
 function issuesOf(o, divs) {
@@ -2349,7 +2295,7 @@ function BuyerView({S, ui, act}) {
       <div class="ov-kpi">
         <${DivSwitch} title="Budget" b=${b} div=${div} act=${act}/>
         <${Budgets} b=${b} order=${o} divs=${[div]} head=${b.divs.length < 2}/>
-        <div class="kpi" style="margin-top:16px"><${MixChecks} o=${o} d=${div}/></div>
+        <${Guides} o=${o} d=${div}/>
       </div>
       <div class="ov-lines">
         <div class="lines-head"><span class="lbl">${lines.length} styles</span>${open && html`<button class="linkbtn" onClick=${() => act.sheet({type:'picker', orderId:o.id, div, actor:'client'})}>Add from the collection</button>`}</div>
@@ -2495,8 +2441,6 @@ function App({onReset}) {
     : sh.type === 'size' ? html`<${SizeSheet} key=${sh.pid + (sh.actor || '')} sh=${sh} S=${S} act=${act}/>`
     : sh.type === 'picker' ? html`<${PickerSheet} sh=${sh} act=${act}/>`
     : sh.type === 'finish' ? html`<${FinishSheet} sh=${sh} S=${S} act=${act}/>`
-    : sh.type === 'kpis' ? html`<${KpiSheet} sh=${sh} S=${S} ui=${ui} act=${act}/>`
-    : sh.type === 'guide' ? html`<${GuideSheet} bid=${sh.bid} ui=${ui} act=${act}/>`
     : sh.type === 'sign' ? html`<${SignSheet} sh=${sh} S=${S} act=${act}/>`
     : sh.type === 'look' ? html`<${LookSheet} id=${sh.id} S=${S} ui=${ui} act=${act}/>`
     : sh.type === 'product' ? html`<${ProductSheet} key=${sh.pid} pid=${sh.pid} colour=${sh.colour} orderId=${sh.orderId} back=${sh.back} S=${S} ui=${ui} act=${act}/>`
@@ -2535,7 +2479,6 @@ function App({onReset}) {
     ${ui.search && !order && html`<${SearchPage} S=${S} ui=${ui} act=${act}/>`}
     ${ui.capture && html`<${Capture} order=${so} div=${capDiv || 'W'} act=${act}/>`}
     ${ui.zoom && html`<${Zoom} z=${ui.zoom} act=${act}/>`}
-    ${ui.pdf && html`<${PdfView} act=${act}/>`}
     ${sheet}${toast}
   </div>`;
 }
