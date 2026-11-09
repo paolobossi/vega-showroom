@@ -623,8 +623,8 @@ input{font:inherit;color:inherit}
 /* a category's spend against its budget: a squircle (superellipse corners via the mask, so iOS Safari gets them too) whose deeper tint fills up to the share used; red under half, yellow from half, green once reached */
 .bpill{--c:var(--muted);position:relative;isolation:isolate;display:grid;grid-template-columns:auto minmax(0,1fr);align-content:center;column-gap:12px;min-height:52px;margin:4px 0;padding:6px 16px 6px 6px;border-radius:32px;corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / 32px stretch;overflow:hidden;background:color-mix(in srgb,var(--t,var(--c)) 14%,var(--bg));color:var(--c)}
 .bstack{display:flex;flex-direction:column;align-items:center;gap:10px;margin:4px 0}
-/* one page = 3 bars (52px, 8px apart), a page as wide as the card; swipe sideways, it snaps a page at a time */
-.bstack-pages{align-self:stretch;display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
+/* one page = 3 bars (52px, 8px apart), as wide as the content; the swipe runs edge to edge of the screen (the scroller bleeds into the 18px margins), it snaps a page at a time */
+.bstack-pages{align-self:stretch;display:flex;gap:18px;margin:0 -18px;padding:0 18px;scroll-padding:0 18px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
 .bstack-pages::-webkit-scrollbar{display:none}
 .bstack-page{flex:0 0 100%;min-width:0;display:flex;flex-direction:column;gap:8px;scroll-snap-align:start;scroll-snap-stop:always}
 .bstack-page .bpill{margin:0;flex:none;height:52px}
@@ -1087,7 +1087,8 @@ const TAGS = {must:'Must have', ess:'Essential'};
 const TAG_OF = {must:['w-amazona-s','w-puzzle-mini','w-flamenco','w-shirt-dress','w-toy','m-puzzle-l','m-pogo','m-puffer'],
   ess:['w-puzzle-fold','w-pebble-lace','w-scarf','w-cord','m-tee','m-ballet','m-wallet','m-card','m-belt']};
 PRODUCTS.forEach(p => { p.tag = Object.keys(TAG_OF).find(k => TAG_OF[k].includes(p.id)) || null; p.perm = PERMANENT.includes(p.id); });
-const Tag = ({p}) => (p.tag || p.perm) && html`<span class="ptags">${p.tag && html`<span class=${'ptag ' + p.tag}>${TAGS[p.tag]}</span>`}${p.perm && html`<span class="ptag perm">Permanent</span>`}</span>`;
+// the Collection cards show only the priority tag; Permanent appears on the product page alone
+const Tag = ({p, perm=true}) => (p.tag || (perm && p.perm)) && html`<span class="ptags">${p.tag && html`<span class=${'ptag ' + p.tag}>${TAGS[p.tag]}</span>`}${perm && p.perm && html`<span class="ptag perm">Permanent</span>`}</span>`;
 // Composition shown on the product page, and keywords sellers search by (short sleeve, crossbody…); both come from the back office
 const MAT = {
   'w-amazona-s':['Calfskin leather','top handle, structured'], 'w-amazona-mini':['Calfskin leather','top handle, mini'],
@@ -1510,8 +1511,9 @@ function BudDiv({b, d, k, head=true}) {
 function BarStack({bars}) {
   const pages = [], [at, setAt] = useState(0), box = useRef(null);
   for (let i = 0; i < bars.length; i += 3) { const pg = bars.slice(i, i + 3); while (pg.length < 3) pg.push(html`<div class="bpill bpill-ph" aria-hidden="true"></div>`); pages.push(pg); }
-  const onScroll = e => { const el = e.currentTarget, i = Math.round(el.scrollLeft / (el.clientWidth + 12)); if (i !== at) setAt(i); };
-  const go = i => { const el = box.current; if (el) el.scrollTo({left: i * (el.clientWidth + 12), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); };
+  const step = el => el.firstElementChild.offsetWidth + 18; // a page plus the gap between pages
+  const onScroll = e => { const el = e.currentTarget, i = Math.round(el.scrollLeft / step(el)); if (i !== at) setAt(i); };
+  const go = i => { const el = box.current; if (el) el.scrollTo({left: i * step(el), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); };
   return html`<div class="bstack">
     <div class="bstack-pages" ref=${box} onScroll=${onScroll}>${pages.map(pg => html`<div class="bstack-page">${pg}</div>`)}</div>
     <div class="bstack-dots" role="tablist" aria-label="Budget pages">${pages.map((_, i) => html`<button role="tab" aria-selected=${i === at} aria-label=${'Page ' + (i + 1)} class=${i === at ? 'on' : ''} onClick=${() => go(i)}></button>`)}</div>
@@ -1773,7 +1775,7 @@ function PCard({p, o, act}) {
   return html`<div class="pc-wrap"><button class=${'pcard' + (lock && !has ? ' locked' : '')} onClick=${() => act.sheet({type:'product', pid:p.id, colour:c})} aria-label=${p.name + (has ? ', in the order' : '')}>
     <div class="pc-photo">
       <span class="pc-img"><${Thumb} pid=${p.id} colour=${c}/></span>
-      ${lock ? html`<span class="pc-lock"><${Icon} n="lock" s=${11} w=${2.4}/>${lock}</span>` : html`<${Tag} p=${p}/>`}
+      ${lock ? html`<span class="pc-lock"><${Icon} n="lock" s=${11} w=${2.4}/>${lock}</span>` : html`<${Tag} p=${p} perm=${false}/>`}
       ${has && html`<span class="pc-in" aria-hidden="true"><${Icon} n="check" s=${11} w=${3}/></span>`}
     </div>
     <span class="pc-info">
