@@ -31,7 +31,7 @@
   --shadow-raised:0 1px 3px rgba(0,0,0,.12); --shadow-float:0 8px 24px rgba(0,0,0,.16); --shadow-sheet:0 -8px 32px rgba(0,0,0,.18);
   --stage:#E1E2DE; --frame:#17181A;
   --avatar-top:#9A9FA5; --avatar:#64696F; --avatar-ink:#FFFFFF; /* profile circles: grey, lighter at the top and darker at the bottom, white initials */
-  --bg:#FFFFFF; --surface:#F2F3F0; --surface-2:#E7E8E4; --studio:#E3E4DF; --card:#FFFFFF; --flip-bg:#F2F3F0; --flip-box:#FFFFFF;
+  --bg:#FFFFFF; --surface:#F2F3F0; --surface-2:#E7E8E4; --studio:#E3E4DF; --card:#FFFFFF; --flip-bg:#FAFAF8; --flip-box:#FFFFFF;
   --ink:#141619; --muted:#62666B; --faint:#808489; --line:#DCDED8;
   --band:#000000; --band-ink:#FFFFFF; /* status-bar strip and the Must have tag: black in light and dark mode */
   --accent:#2238A6; --accent-ink:#FFFFFF; --accent-soft:#E3E7F8;
@@ -900,11 +900,11 @@ input.qty.xl{width:64px} /* room for three digits */
 /* client sheet: the room taken from under the Women | Men switch goes above the Budget and Notes headings (26px) */
 .sh-tiles + .div-sw,.sheet-body > .field.sh-sec{margin-top:12px}
 /* (trial) "flip" client sheet: the sheet is a translucent light grey with a blur, and every content box on it is solid white (no outline) */
-.sheet.flip{background:color-mix(in srgb,var(--flip-bg) 86%,transparent);-webkit-backdrop-filter:blur(30px) saturate(180%);backdrop-filter:blur(30px) saturate(180%)}
+.sheet.flip{background:color-mix(in srgb,var(--flip-bg) 94%,transparent);-webkit-backdrop-filter:blur(30px) saturate(180%);backdrop-filter:blur(30px) saturate(180%)}
 .sheet.flip .sh-tiles > .list{padding:0;background:var(--flip-box)}
 .sheet.flip .sh-tiles > .list > .row,.sheet.flip .list.gapped > .row,.sheet.flip .inp{background:var(--flip-box)}
 .sheet.flip .seg{background:color-mix(in srgb,var(--ink) 7%,transparent)}.sheet.flip .seg button.on{background:var(--flip-box)}
-.sheet.flip.fade .sheet-foot{background:linear-gradient(to bottom,transparent,color-mix(in srgb,var(--flip-bg) 86%,transparent) 36px)}
+.sheet.flip.fade .sheet-foot{background:linear-gradient(to bottom,transparent,color-mix(in srgb,var(--flip-bg) 94%,transparent) 36px)}
 /* a heading straight in a sheet (In this look): black, sentence case, 26px above and 10px above its box, like Budget and Notes */
 .sheet-body > .sh-h{margin:12px 0 -4px}
 </style>
