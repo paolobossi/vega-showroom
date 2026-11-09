@@ -653,9 +653,12 @@ input{font:inherit;color:inherit}
 .sheet.grouped .sheet-body{gap:32px;padding-top:10px}
 .grp-sec{display:flex;flex-direction:column;gap:8px}
 .grp-h{margin:0;font-size:var(--fs-body);font-weight:600;color:var(--muted)} /* 8px above its box (no browser h3 margins) */
-/* the clients are plain text on the white sheet: no box, no outline, no rules; the names line up with the section heading */
-.grp-in{display:flex;flex-direction:column}
-.grp-in > .row{min-height:56px;padding:8px 0;border-top:0;background:none}
+/* each section is one white box with a 1px grey outline and 40px squircle corners (a grey squircle round a white one, like the Budget box;
+   a squircle reads less round than its number, and these boxes are tall), no rules between its rows */
+.grp{--gr:40px;padding:1px;background:var(--line);border-radius:var(--gr);-webkit-mask-box-image:var(--squircle) 20 / var(--gr) stretch}
+.grp-in{display:flex;flex-direction:column;background:var(--bg);border-radius:calc(var(--gr) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--gr) - 1px) stretch}
+@supports (-webkit-mask-box-image:none){.grp,.grp-in{border-radius:0}}
+.grp-in > .row{min-height:60px;padding:10px 12px 10px 16px;border-top:0;background:none}
 .grp .row-main{gap:2px}
 .grp .row-title{font-size:var(--fs-heading);font-weight:400}
 .grp .row-side{flex-direction:row;align-items:center;gap:8px}
@@ -1937,7 +1940,7 @@ function PasscodeSheet({S, act}) {
 
 function PickBuyerSheet({S, sh, act}) {
   const it = sh.item, look = it && it.look && LOOKS.find(x => x.id === it.look), p = it && P[look ? look.items[0][0] : it.pid];
-  const all = myBuyers(S), secs = [['Today', all.filter(b => !dayOf(b))], ['Coming up', all.filter(b => dayOf(b) > 0)], ['Earlier', all.filter(b => dayOf(b) < 0)]];
+  const all = myBuyers(S), secs = [['Today', all.filter(b => !dayOf(b))], ['Earlier', all.filter(b => dayOf(b) < 0)], ['Coming up', all.filter(b => dayOf(b) > 0)]]; // today, then past, then upcoming
   const row = b => { const o = S.orders['o-' + b.id], why = p && canTake(o || {buyerId:b.id, status:'draft'}, p);
     return html`<button class="row" disabled=${!!why} onClick=${() => it ? act.addFor(b.id, it) : act.checkIn(b.id, true)}>
       <div class="row-main"><div class="row-title">${b.shop}</div>${dayOf(b) ? html`<div class="row-sub">${dayLabel(b)}</div>` : null}</div>
