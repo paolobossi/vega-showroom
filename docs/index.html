@@ -1538,11 +1538,21 @@ const CheckPill = ({a, o}) => !a || !a.in ? (o && o.lines.length ? html`<${Pill}
 
 // a marker that slides to the selected item of a row: measures the item matching sel inside box and moves ind (a .slide-ind) there;
 // it jumps into place on first show and glides from then on
-const useSlide = sel => { const box = useRef(null), ind = useRef(null);
+const useSlide = sel => { const box = useRef(null), ind = useRef(null), last = useRef(null);
   const place = () => { const el = box.current, i = ind.current, a = el && el.querySelector(sel); if (!i) return;
     if (!a) { i.style.opacity = '0'; return; }
     const s = i.style; s.opacity = ''; s.setProperty('--x', a.offsetLeft + 'px'); s.setProperty('--y', a.offsetTop + 'px'); s.setProperty('--w', a.offsetWidth + 'px'); s.setProperty('--h', a.offsetHeight + 'px');
-    if (!i.dataset.anim) requestAnimationFrame(() => requestAnimationFrame(() => { i.dataset.anim = '1'; })); };
+    if (!i.dataset.anim) requestAnimationFrame(() => requestAnimationFrame(() => { i.dataset.anim = '1'; }));
+    // tapping an item near the edge of a row that scrolls: the row slides so the next item (or the one before, on the left) shows too
+    else if (a !== last.current && el.scrollWidth > el.clientWidth) {
+      const item = e => e && !e.classList.contains('slide-ind') ? e : null, prev = item(a.previousElementSibling) || a, next = item(a.nextElementSibling) || a, pad = 18;
+      const lo = prev.offsetLeft - pad, hi = next.offsetLeft + next.offsetWidth + pad - el.clientWidth;
+      let to = el.scrollLeft < hi ? Math.min(hi, a.offsetLeft - pad) : el.scrollLeft > lo ? Math.max(lo, a.offsetLeft + a.offsetWidth + pad - el.clientWidth) : null;
+      // a row that snaps to its items (Home days) would pull an in-between stop back, so stop on the first item edge past the target
+      const snaps = getComputedStyle(el).scrollSnapType !== 'none' ? [...el.children].filter(item).map(e => e.offsetLeft - pad) : null;
+      if (to != null && snaps) to = to >= el.scrollLeft ? (snaps.find(x => x >= to - 1) ?? to) : (snaps.filter(x => x <= to + 1).pop() ?? to);
+      if (to != null) el.scrollTo({left:to, behavior:matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); }
+    last.current = a; };
   useLayoutEffect(place);
   useEffect(() => { addEventListener('resize', place); if (document.fonts) document.fonts.ready.then(place); return () => removeEventListener('resize', place); }, []);
   return [box, ind]; };
