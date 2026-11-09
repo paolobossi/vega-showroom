@@ -337,7 +337,7 @@ input{font:inherit;color:inherit}
 .appt-buyer svg{flex:none;color:var(--muted)}
 .appt-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
 /* status tags on Home and in Choose a client: the small 18px / 11px regular tag */
-.pick .pill{height:var(--tag-h);padding:0 7px;font-size:11px;line-height:1.3;font-weight:400;letter-spacing:.01em}
+.pick .pill,.sh-tiles .pill{height:var(--tag-h);padding:0 7px;font-size:11px;line-height:1.3;font-weight:400;letter-spacing:.01em}
 .appt-head .pill{flex:none;margin-top:2px;height:var(--tag-h);padding:0 7px;font-size:11px;line-height:1.3;font-weight:400;letter-spacing:.01em}
 .appt-catg{display:flex;flex-direction:column;gap:4px;margin-top:4px;font-size:var(--fs-caption);color:var(--muted)}
 .appt-cats{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -638,6 +638,7 @@ input{font:inherit;color:inherit}
 .sh-tiles > .list > .row{border:0;border-radius:0;background:var(--bg);-webkit-mask-box-image:var(--squircle) 20 / 15px stretch}
 .sh-tiles .row{height:100%;align-items:flex-start}.sh-tiles .row-title{white-space:normal}
 .sh-tiles .row-main > svg{margin-bottom:6px}
+.sh-tiles .row{position:relative}.sh-tiles .pill{position:absolute;top:14px;right:14px} /* the order's status tag, top right, like on Home */
 /* the Notes placeholder is body size, like the budget rows (the text you type stays 17px so iOS doesn't zoom) */
 .inp.area::placeholder{font-size:var(--fs-body)}
 .sheet-body{flex:1;min-height:0;overflow-y:auto;padding:4px 18px 18px;display:flex;flex-direction:column;gap:14px}
@@ -1537,6 +1538,7 @@ function ApptSheet({sh, S, ui, act}) {
 function ApptOrder({o, b, act}) {
   const u = b.divs.reduce((x, d) => x + kpi(o, d).units, 0), v = b.divs.reduce((x, d) => x + kpi(o, d).total, 0);
   return html`<div class="list"><button class="row" onClick=${() => act.openOrder(b.id)}>
+    <${Pill} s=${o.status}/>
     <div class="row-main"><${Icon} n="orders" s=${22}/><div class="row-title">Order</div><div class="row-sub">${u} ${u === 1 ? 'unit' : 'units'} · ${fmt(v)}</div></div></button></div>`;
 }
 
