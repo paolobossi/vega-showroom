@@ -654,12 +654,11 @@ input{font:inherit;color:inherit}
 .grp-sec{display:flex;flex-direction:column;gap:8px}
 .grp-h{margin:0;font-size:var(--fs-body);font-weight:600;color:var(--muted)} /* 8px above its box (no browser h3 margins) */
 /* each section is one white box with a 1px grey outline and 40px squircle corners (a squircle reads less round than its number) (a grey squircle round a white one, like the Budget box),
-   its rows split by a light rule from 16px in to the right edge */
+   no rules between its rows */
 .grp{--gr:40px;padding:1px;background:var(--line);border-radius:var(--gr);-webkit-mask-box-image:var(--squircle) 20 / var(--gr) stretch} /* rounder than the 22px boxes: these are tall */
 .grp-in{display:flex;flex-direction:column;background:var(--bg);border-radius:calc(var(--gr) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--gr) - 1px) stretch}
 @supports (-webkit-mask-box-image:none){.grp,.grp-in{border-radius:0}}
-.grp-in > .row{min-height:60px;padding:10px 12px 10px 16px;border-top:0;background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 16px 0 / calc(100% - 16px) 1px no-repeat}
-.grp-in > .row:first-child{background:none}
+.grp-in > .row{min-height:60px;padding:10px 12px 10px 16px;border-top:0;background:none} /* no rules between rows */
 .grp .row-main{gap:2px}
 .grp .row-title{font-size:var(--fs-heading);font-weight:400}
 .grp .row-side{flex-direction:row;align-items:center;gap:8px}
