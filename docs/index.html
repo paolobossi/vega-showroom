@@ -846,13 +846,13 @@ input.qty.xl{width:64px} /* room for three digits */
 .appts{background:none;display:flex;flex-direction:column;gap:2px}
 .appts .appt{background:var(--surface);border-top:0}
 .appts.now{border:0}
-/* the ongoing row: a light green fill instead of the grey, no border */
-.appts.now .appt{border:0;background:var(--good-bg)}
+/* the ongoing row (under Now): white like the others, no border; the Ongoing tag says it is in progress */
+.appts.now .appt{border:0}
 /* Home: the days and the appointment list share one Apple-style corner, the --squircle mask at 24px; no corner-shape or border-radius, so every browser draws the same curve */
 .day,.appts{border-radius:0;corner-shape:round;-webkit-mask-box-image:var(--squircle) 20 / 24px stretch}
 /* Home: the day's appointments sit straight on the page, no grey box; a light 1px rule (as between order lines) starts at the page margin and runs to the right edge */
-.appts:not(.now){gap:0;margin:0 -18px;-webkit-mask-box-image:none}
-.appts:not(.now) .appt{background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 18px 0 / calc(100% - 18px) 1px no-repeat;padding:15px 18px 14px}.appts:not(.now) .appt:first-child{background:none;padding-top:6px}
+.appts{gap:0;margin:0 -18px;-webkit-mask-box-image:none}
+.appts .appt{background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 18px 0 / calc(100% - 18px) 1px no-repeat;padding:15px 18px 14px}.appts .appt:first-child{background:none;padding-top:6px}
 /* order (basket): each style is its own grey row, split by a 2px white gap instead of a line */
 .ov-lines .list{background:none;gap:2px}
 .ov-lines .list > .sel{background:var(--surface);border-top:0}
