@@ -37,7 +37,7 @@ Four sizes, each with one job. Hierarchy beyond these comes from weight, colour,
 - One primary (black, filled), secondary (white with a border), tertiary (blue text link). Two buttons side by side at the bottom of a sheet are each half the width. Finalize order is text only.
 - Status tags are just the word (Ongoing has no dot in front) and no tag has a border: grey tags are `--ink` at 9% over whatever is behind, Ongoing is `--good` at 18%, so they read on white, on grey and green rows, and in dark mode. Essential and Permanent stay white on the photo.
 - Every button is 46px tall and semibold (600), sheet, page and alert alike.
-- Tab bar: the active tab sits on a light grey (`--surface-2`) 16px squircle, `.tab-ind`, that slides to the tapped tab (transform, 0.34s ease-out; none under prefers-reduced-motion).
+- Tab bar: the active tab sits on a light grey (`--surface-2`) 22px squircle, `.tab-ind`, that slides to the tapped tab (transform, 0.34s ease-out; none under prefers-reduced-motion).
 - Money: `fmt` / `fmtK` print euros with a dot for thousands and a comma for decimals (de-DE grouping, since it-IT leaves 4-digit numbers ungrouped), € in front: €18.000, €18,5K.
 - Segmented controls with equal segments (`Seg full`) draw the selected pill as one `.seg-ind` indicator that slides to the chosen segment (transform, 0.32s ease-out; none under prefers-reduced-motion).
 - Budget and Guidelines lists sit in a `.g-box`: a grey (`--line`) squircle with 1px padding around a white squircle list, no rules between rows (Budget rows 10px apart, Guidelines rows 16px). `.g-box` and the Order tile use a 22px squircle (`--r-xl`).

@@ -112,7 +112,7 @@ input{font:inherit;color:inherit}
   background:color-mix(in srgb,var(--bg) 80%,transparent);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%)}
 .tabbar{position:relative;display:flex;padding:0 14px}
 /* the selected tab sits on a light grey squircle that slides to the tab you pick */
-.tab-ind{position:absolute;top:4px;bottom:2px;left:18px;width:calc((100% - 28px) / 5 - 8px);background:var(--surface-2);border-radius:16px;-webkit-mask-box-image:var(--squircle) 20 / 16px stretch;transform:translateX(calc(var(--i) * (100% + 8px)));transition:transform .34s cubic-bezier(.3,.7,.2,1),opacity .2s}
+.tab-ind{position:absolute;top:4px;bottom:2px;left:18px;width:calc((100% - 28px) / 5 - 8px);background:var(--surface-2);border-radius:22px;-webkit-mask-box-image:var(--squircle) 20 / 22px stretch;transform:translateX(calc(var(--i) * (100% + 8px)));transition:transform .34s cubic-bezier(.3,.7,.2,1),opacity .2s}
 @supports (-webkit-mask-box-image:none){.tab-ind{border-radius:0}}
 @media (prefers-reduced-motion:reduce){.tab-ind{transition:none}}
 .tab{position:relative;z-index:1}
