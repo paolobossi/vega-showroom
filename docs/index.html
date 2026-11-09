@@ -664,7 +664,6 @@ input{font:inherit;color:inherit}
 .grp .row-side{flex-direction:row;align-items:center;gap:8px}
 .grp .chev{display:flex;color:var(--faint)}
 .grp .g-new .row-title{color:var(--accent)}
-.grp-note{margin:-24px 2px 0;font-size:var(--fs-caption);line-height:var(--lh-body);color:var(--muted)}
 .sheet-grab{width:38px;height:5px;border-radius:var(--r-xs);background:var(--line);margin:8px auto 0;flex:none}
 .sheet-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:8px 10px 6px 18px;flex:none}
 /* the close × centred on the title's (first) line */
@@ -1952,7 +1951,6 @@ function PickBuyerSheet({S, sh, act}) {
     ${it && html`<div class="grp"><div class="grp-in"><button class="row g-new" onClick=${() => act.sheet({type:'newbuyer', item:it, stay:false})}>
       <div class="row-main"><div class="row-title">New session</div><div class="row-sub">A client without an appointment</div></div><div class="row-side"><span class="chev"><${Icon} n="next" s=${18} w=${2}/></span></div></button></div></div>`}
     ${secs.filter(([, l]) => l.length).map(([h, l]) => html`<section class="grp-sec"><h3 class="grp-h">${h}</h3><div class="grp pick"><div class="grp-in">${l.map(row)}</div></div></section>`)}
-    ${!it && html`<p class="grp-note">Tapping a client checks them in and opens their order.</p>`}
   <//>`;
 }
 
