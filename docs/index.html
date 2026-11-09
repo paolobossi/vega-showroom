@@ -663,7 +663,7 @@ input{font:inherit;color:inherit}
 .scrim{position:absolute;inset:0;background:var(--scrim);z-index:40;animation:fade .2s ease}
 .sheet{position:absolute;left:0;right:0;bottom:0;margin:0 auto;max-width:640px;max-height:88%;z-index:41;background:var(--bg);border-radius:var(--r-xl) var(--r-xl) 0 0;display:flex;flex-direction:column;animation:up .26s cubic-bezier(.2,.8,.2,1);box-shadow:var(--shadow-sheet)}
 .sheet.tall{height:88%}
-/* grouped sheet (Choose a client, Add to an order): white, grey section headings, the rows straight on the white sheet with no box,
+/* grouped sheet (Choose a client, Add to order): white, grey section headings, the rows straight on the white sheet with no box,
    split by a light 1px rule from the margin to the right edge (as on Home), a grey chevron at the end of each row */
 .sheet.grouped .sheet-body{gap:32px;padding-top:10px}
 .grp-sec{display:flex;flex-direction:column;gap:8px}
@@ -687,6 +687,11 @@ input{font:inherit;color:inherit}
 .sheet-head:not(.center){padding-bottom:16px}
 .sheet-title{font:700 var(--fs-heading)/var(--lh-tight) var(--f-display);letter-spacing:-.02em;text-wrap:balance}
 .sheet-sub{font-size:var(--fs-caption);color:var(--muted);margin-top:4px}
+/* a sheet about one piece (Add to order) shows its photo left of the title: a 48px squircle tile */
+.sheet-tt{display:flex;align-items:center;gap:12px;min-width:0}
+.sheet-thumb{flex:none;width:48px;height:48px;overflow:hidden;background:var(--surface);border-radius:12px;-webkit-mask-box-image:var(--squircle) 20 / 12px stretch}
+@supports (-webkit-mask-box-image:none){.sheet-thumb{border-radius:0}}
+.sheet-thumb > img,.sheet-thumb > .thumb{display:block;width:100%;height:100%;object-fit:cover;border-radius:0;margin:0}
 /* centred head (appointment): the close button sits on the title's line, the sub line centred under the title */
 .sheet-head.center{display:grid;grid-template-columns:40px minmax(0,1fr) 40px;align-items:center;gap:0 8px;padding:10px 10px 14px;text-align:center}
 .sheet-head.center .sheet-sub{grid-column:2;margin-top:2px}
@@ -1495,14 +1500,14 @@ const Seg = ({opts, val, on, full}) => html`<div class=${'seg' + (full ? ' full'
 
 // media: photos lead the sheet edge to edge, no header, close on the top left
 // page: full screen with a back button instead of a sheet over a scrim
-function Sheet({title, sub, onClose, children, tall, foot, media, page, center, fade, bare, grouped}) {
+function Sheet({title, sub, onClose, children, tall, foot, media, page, center, fade, bare, grouped, thumb}) {
   return html`${!page && html`<div class="scrim" onClick=${onClose}></div>`}
     <div class=${'sheet' + (tall ? ' tall' : '') + (media ? ' media' : '') + (page ? ' page' : '') + (fade ? ' fade' : '') + (grouped ? ' grouped' : '')} role="dialog" aria-label=${title}>
       ${!page && html`<div class="sheet-grab"></div>`}
       ${bare ? null : media ? html`<button class="sheet-x" onClick=${onClose} aria-label=${page ? 'Back' : 'Close'}><${Icon} n=${page ? 'back' : 'x'} s=${20} w=${2.2}/></button>`
         : center ? html`<div class="sheet-head center"><span></span><div class="sheet-title">${title}</div>
         <button class="icon-btn" onClick=${onClose} aria-label="Close"><${Icon} n="x"/></button>${sub && html`<div class="sheet-sub">${sub}</div>`}</div>`
-        : html`<div class="sheet-head"><div style="min-width:0"><div class="sheet-title">${title}</div>${sub && html`<div class="sheet-sub">${sub}</div>`}</div>
+        : html`<div class="sheet-head"><div class="sheet-tt">${thumb && html`<div class="sheet-thumb">${thumb}</div>`}<div style="min-width:0"><div class="sheet-title">${title}</div>${sub && html`<div class="sheet-sub">${sub}</div>`}</div></div>
         <button class="icon-btn" onClick=${onClose} aria-label="Close"><${Icon} n="x"/></button></div>`}
       <div class="sheet-body">${media}${children}</div>
       ${foot && html`<div class="sheet-foot">${foot}</div>`}
@@ -2018,7 +2023,8 @@ function PickBuyerSheet({S, sh, act}) {
       <div class="row-side">${why ? html`<span class="small muted">${why}</span>` : o && o.status !== 'none' && html`<${Pill} s=${o.status}/>`}<span class="chev"><${Icon} n="next" s=${18} w=${2}/></span></div>
     </button>`; };
   // a section per part of the show, each in a white box with a grey outline, the date under every name, Today's too (no time or city)
-  return html`<${Sheet} tall grouped title=${it ? 'Add to an order' : 'Choose a client'} sub=${!it ? null : look ? `${lookNo(look)} · ${look.items.length} pieces` : `${p.name} · ${cname(it.colour)}`} onClose=${act.close}>
+  const thumb = !it ? null : look ? html`<img src=${lookSrc(look)[0]} alt=""/>` : html`<${Thumb} pid=${it.pid} colour=${it.colour}/>`;
+  return html`<${Sheet} tall grouped thumb=${thumb} title=${it ? 'Add to order' : 'Choose a client'} sub=${!it ? null : look ? `${lookNo(look)} · ${look.items.length} pieces` : `${p.name} · ${cname(it.colour)}`} onClose=${act.close}>
     ${secs.filter(([, l]) => l.length).map(([h, l]) => html`<section class="grp-sec"><h3 class="grp-h">${h}</h3><div class="grp pick"><div class="grp-in">${l.map(row)}</div></div></section>`)}
   <//>`;
 }
