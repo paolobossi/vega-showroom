@@ -1943,10 +1943,10 @@ function PickBuyerSheet({S, sh, act}) {
   const all = myBuyers(S), secs = [['Today', all.filter(b => !dayOf(b))], ['Past', all.filter(b => dayOf(b) < 0)], ['Upcoming', all.filter(b => dayOf(b) > 0)]]; // today, then past, then upcoming
   const row = b => { const o = S.orders['o-' + b.id], why = p && canTake(o || {buyerId:b.id, status:'draft'}, p);
     return html`<button class="row" disabled=${!!why} onClick=${() => it ? act.addFor(b.id, it) : act.checkIn(b.id, true)}>
-      <div class="row-main"><div class="row-title">${b.shop}</div>${dayOf(b) ? html`<div class="row-sub">${dayLabel(b)}</div>` : null}</div>
+      <div class="row-main"><div class="row-title">${b.shop}</div><div class="row-sub">${SHOW_DAYS[DAY_OFFS.indexOf(dayOf(b))].toLocaleDateString('en-GB', {weekday:'short', day:'numeric'})}</div></div>
       <div class="row-side">${why ? html`<span class="small muted">${why}</span>` : o && o.status !== 'none' && html`<${Pill} s=${o.status}/>`}<span class="chev"><${Icon} n="next" s=${18} w=${2}/></span></div>
     </button>`; };
-  // a section per part of the show, each in a white box with a grey outline, rows split by light rules; the day under the name only outside Today (no time or city)
+  // a section per part of the show, each in a white box with a grey outline, the date under every name, Today's too (no time or city)
   return html`<${Sheet} tall grouped title=${it ? 'Add to an order' : 'Choose a client'} sub=${!it ? null : look ? `${lookNo(look)} · ${look.items.length} pieces` : `${p.name} · ${cname(it.colour)}`} onClose=${act.close}>
     ${it && html`<div class="grp"><div class="grp-in"><button class="row g-new" onClick=${() => act.sheet({type:'newbuyer', item:it, stay:false})}>
       <div class="row-main"><div class="row-title">New session</div><div class="row-sub">A client without an appointment</div></div><div class="row-side"><span class="chev"><${Icon} n="next" s=${18} w=${2}/></span></div></button></div></div>`}
