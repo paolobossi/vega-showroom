@@ -866,9 +866,14 @@ input.qty.xl{width:64px} /* room for three digits */
 /* quantity saved: drops in from the top so it is seen while the thumb is on the sizes */
 .toast.top{bottom:auto;top:max(10px,calc(env(safe-area-inset-top,0px) + 6px));animation-name:toast-top}
 @keyframes toast-top{from{transform:translate(-50%,calc(-100% - 40px))}}
+/* leaving: it slides back out the way it came in (down for the bottom ones, up for the quantity ones) */
+.toast.out{animation:toast-out .28s cubic-bezier(.4,0,1,1) forwards}.toast.top.out{animation-name:toast-top-out}
+@keyframes toast-out{to{transform:translate(-50%,calc(100% + 40px))}}
+@keyframes toast-top-out{to{transform:translate(-50%,calc(-100% - 40px))}}
 .toast-msg{display:flex;gap:6px;align-items:center;min-width:0;overflow:hidden;text-overflow:ellipsis}
 /* with a category bar: a rounded card instead of a pill, the message on top and the category's budget bar under it */
-.toast.has-bar{flex-direction:column;align-items:stretch;gap:8px;width:min(340px,calc(100% - 36px));max-width:none;padding:12px 16px 14px;border-radius:20px}
+.toast.has-bar{flex-direction:column;align-items:stretch;gap:8px;width:min(340px,calc(100% - 36px));max-width:none;padding:12px 16px 14px;border-radius:20px;-webkit-mask-box-image:var(--squircle) 20 / 22px stretch} /* Apple squircle corners, like the other boxes */
+@supports (-webkit-mask-box-image:none){.toast.has-bar{border-radius:0}}
 .toast-bar{--t:color-mix(in srgb,var(--bg) 50%,transparent);display:flex;flex-direction:column;gap:6px}
 .toast-bar.ok{--t:#2BBF6A}.toast-bar.warn{--t:#F2B705}.toast-bar.bad{--t:#F2553F}
 .toast-bar-t{display:flex;justify-content:space-between;gap:12px;font-size:var(--fs-caption);font-weight:400}
@@ -2489,7 +2494,9 @@ function makeActs(setS, setUi, onReset) {
   let toastT = 0;
   const a = {
     // bar: {o, pid} or {o, line} adds that style's category budget bar under the message (quantity saved)
-    toast: (msg, top, bar) => { setUi(u => ({...u, toast:msg, toastBar:bar || null, toastTop:!!top, toastId: top && u.toast && u.toastTop ? u.toastId : Date.now()})); clearTimeout(toastT); toastT = setTimeout(() => setUi(u => ({...u, toast:null})), 2200); },
+    // after 2.2s it slides back out the way it came (toastOut), then goes; a new message while it is leaving brings in a fresh one
+    toast: (msg, top, bar) => { setUi(u => ({...u, toast:msg, toastBar:bar || null, toastTop:!!top, toastOut:false, toastId: top && u.toast && u.toastTop && !u.toastOut ? u.toastId : Date.now()}));
+      clearTimeout(toastT); toastT = setTimeout(() => { setUi(u => ({...u, toastOut:true})); toastT = setTimeout(() => setUi(u => ({...u, toast:null, toastOut:false})), 300); }, 2200); },
     // opening an order only shows it; the client in session changes only with a check-in
     openOrder: bid => { const id = 'o-' + bid;
       setS(s => s.orders[id] ? s : {...s, orders:{...s.orders, [id]:newOrder(bid)}, savedAt:Date.now()});
@@ -2605,7 +2612,7 @@ function App({onReset}) {
   const tb = (() => { const t = ui.toastBar, o = t && S.orders[t.o]; if (!o) return null;
     const pid = t.pid || (o.lines.find(l => l.id === t.line) || {}).pid, p = pid && P[pid]; if (!p) return null;
     const m = kpi(o, p.div).mix.find(x => x.cat === p.cat); return m && {...m, label:CAT_LABEL[p.cat]}; })();
-  const toast = ui.toast && html`<div class=${'toast' + (ui.toastTop ? ' top' : '') + (tb ? ' has-bar' : '')} key=${ui.toastId} role="status">
+  const toast = ui.toast && html`<div class=${'toast' + (ui.toastTop ? ' top' : '') + (tb ? ' has-bar' : '') + (ui.toastOut ? ' out' : '')} key=${ui.toastId} role="status">
     <span class="toast-msg"><${Icon} n="check" s=${16} w=${2.4}/>${ui.toast}</span>
     ${tb && html`<span class=${'toast-bar ' + tb.st}><span class="toast-bar-t"><span>${tb.label}</span><span><b>${fmt(tb.value)}</b> ${tb.budget ? 'of ' + fmtK(tb.budget) : 'no budget'}</span></span>
       <span class="toast-track"><span class="toast-fill" style=${{width: Math.min(tb.used, 100) + '%'}}></span></span></span>`}
