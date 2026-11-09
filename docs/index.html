@@ -110,7 +110,12 @@ input{font:inherit;color:inherit}
 .screen.tabbed{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 .dock{position:absolute;left:0;right:0;bottom:0;z-index:20;padding-bottom:env(safe-area-inset-bottom,0px);
   background:color-mix(in srgb,var(--bg) 80%,transparent);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%)}
-.tabbar{display:flex;padding:0 14px}
+.tabbar{position:relative;display:flex;padding:0 14px}
+/* the selected tab sits on a light grey squircle that slides to the tab you pick */
+.tab-ind{position:absolute;top:4px;bottom:2px;left:18px;width:calc((100% - 28px) / 5 - 8px);background:var(--surface-2);border-radius:16px;-webkit-mask-box-image:var(--squircle) 20 / 16px stretch;transform:translateX(calc(var(--i) * (100% + 8px)));transition:transform .34s cubic-bezier(.3,.7,.2,1),opacity .2s}
+@supports (-webkit-mask-box-image:none){.tab-ind{border-radius:0}}
+@media (prefers-reduced-motion:reduce){.tab-ind{transition:none}}
+.tab{position:relative;z-index:1}
 .tab{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;line-height:14px;font-weight:400;color:var(--muted);padding:8px 0 6px;transition:color .2s}
 .tab.on{color:var(--ink)}
 .tab:active{color:var(--ink)}
@@ -850,9 +855,10 @@ input.qty.xl{width:64px} /* room for three digits */
 .appts.now .appt{border:0}
 /* Home: the days and the appointment list share one Apple-style corner, the --squircle mask at 24px; no corner-shape or border-radius, so every browser draws the same curve */
 .day,.appts{border-radius:0;corner-shape:round;-webkit-mask-box-image:var(--squircle) 20 / 24px stretch}
-/* Home: the day's appointments sit straight on the page, no grey box; a light 1px rule (as between order lines) starts at the page margin and runs to the right edge */
-.appts{gap:0;margin:0 -18px;-webkit-mask-box-image:none}
-.appts .appt{background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 18px 0 / calc(100% - 18px) 1px no-repeat;padding:15px 18px 14px}.appts .appt:first-child{background:none;padding-top:6px}
+/* Home: each appointment is its own white squircle box, 2px apart, with a soft shadow like the Collection cards (the shadow is a filter on the list, so it follows each squircle) */
+.appts{gap:2px;margin:0;-webkit-mask-box-image:none;border-radius:0;overflow:visible;filter:drop-shadow(0 1px 1px rgba(0,0,0,.05)) drop-shadow(0 4px 10px rgba(0,0,0,.07))}
+.appts .appt{background:var(--card);border:0;border-radius:var(--r-xl);-webkit-mask-box-image:var(--squircle) 20 / var(--r-xl) stretch}
+@supports (-webkit-mask-box-image:none){.appts .appt{border-radius:0}}
 /* order (basket): each style is its own grey row, split by a 2px white gap instead of a line */
 .ov-lines .list{background:none;gap:2px}
 .ov-lines .list > .sel{background:var(--surface);border-top:0}
@@ -891,7 +897,7 @@ input.qty.xl{width:64px} /* room for three digits */
 /* budget and guidelines as one white box with a thin grey outline (a grey squircle around a white one, like the Order tile) and light rules between rows */
 .g-box{padding:1px;background:var(--line);border-radius:var(--r-xl);-webkit-mask-box-image:var(--squircle) 20 / var(--r-xl) stretch}
 .g-box > .list.gapped.g1{gap:0;background:var(--bg);border:0;border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
-.g-box > .list.gapped > .row{background:var(--bg);border-top:1px solid color-mix(in srgb,var(--line) 55%,var(--bg))}.g-box > .list.gapped > .row:first-child{border-top:0}.g-box > .list.gapped:not(.gl) > .row{border-top:0;padding-top:5px;padding-bottom:5px}.g-box > .list.gapped:not(.gl) > .row:first-child{padding-top:12px}.g-box > .list.gapped:not(.gl) > .row:last-child{padding-bottom:12px} /* the budget box has no rules between rows */
+.g-box > .list.gapped > .row{background:var(--bg);border-top:0}.g-box > .list.gapped.gl > .row{padding-top:8px;padding-bottom:8px}.g-box > .list.gapped.gl > .row:first-child{padding-top:12px}.g-box > .list.gapped.gl > .row:last-child{padding-bottom:12px}.g-box > .list.gapped:not(.gl) > .row{padding-top:5px;padding-bottom:5px}.g-box > .list.gapped:not(.gl) > .row:first-child{padding-top:12px}.g-box > .list.gapped:not(.gl) > .row:last-child{padding-bottom:12px} /* the budget box has no rules between rows */
 @supports (-webkit-mask-box-image:none){.g-box,.g-box > .list.gapped.g1{border-radius:0}}.list.g1 .row-title,.list.g1 .row-val{font-size:14px;font-weight:400}.list.g1 .row.tot .row-title,.list.g1 .row.tot .row-val{font-weight:700}
 /* a look's pieces, like the order lines: no box, a light 1px rule edge to edge, a 72px squircle photo flush left; wholesale price only, › opens the piece */
 .list.look-rows{background:none;border:0;gap:0;overflow:visible;-webkit-mask-box-image:none}
@@ -1141,9 +1147,10 @@ const lookSrc = l => l.pics.split(' ').map(v => `img/looks/${String(l.n).padStar
 const SHOW = 'Spring Summer 2027 show';
 
 /* ---------- helpers ---------- */
-const fmt = n => '€' + Math.round(n).toLocaleString('en-GB');
+// euros the Italian / French way: dot for thousands, comma for decimals (€18.000, €18,5K); de-DE groups 4-digit numbers too (it-IT would print 1234)
+const fmt = n => '€' + Math.round(n).toLocaleString('de-DE');
 // a budget target in thousands: €18K, €12.5K (budget bars)
-const fmtK = n => n >= 1000 ? '€' + (Math.round(n / 100) / 10).toLocaleString('en-GB') + 'K' : fmt(n);
+const fmtK = n => n >= 1000 ? '€' + (Math.round(n / 100) / 10).toLocaleString('de-DE') + 'K' : fmt(n);
 const prices = p => `${fmt(p.price)} wholesale · ${fmt(p.rrp)} retail`;
 const cname = c => `${c} ${COL[c][1]}`;
 const units = q => Object.values(q || {}).reduce((a, b) => a + b, 0);
@@ -2345,7 +2352,8 @@ const GUIDE_STEPS = [
 function TabBar({tab, so, act}) {
   const n = so ? so.lines.length : 0;
   const T = [['calendar', 'Home', 'today'], ['today', 'Looks', 'spark'], ['scan', 'Scan', 'scan'], ['catalogue', 'Collection', 'grid'], ['order', 'Order', 'orders']];
-  return html`<nav class="tabbar">${T.map(([k, l, i]) => k === 'scan'
+  const at = T.findIndex(([k]) => k === tab);
+  return html`<nav class="tabbar"><span class="tab-ind" aria-hidden="true" style=${{'--i': Math.max(at, 0), opacity: at < 0 ? 0 : 1}}></span>${T.map(([k, l, i]) => k === 'scan'
     ? html`<button class="tab" onClick=${() => act.capture(true)}><span class="tab-ic"><${Icon} n=${i}/></span>${l}</button>`
     : html`<button class=${'tab' + (tab === k ? ' on' : '')} onClick=${() => act.tab(k)} aria-current=${tab === k ? 'page' : null}
         aria-label=${k === 'order' && so ? `Order, ${BUYERS[so.buyerId].shop}, ${n} ${n === 1 ? 'item' : 'items'}` : null}>
