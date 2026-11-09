@@ -622,6 +622,16 @@ input{font:inherit;color:inherit}
 .bud-row .mix-track{grid-column:1 / -1;margin-top:4px}
 /* a category's spend against its budget: a squircle (superellipse corners via the mask, so iOS Safari gets them too) whose deeper tint fills up to the share used; red under half, yellow from half, green once reached */
 .bpill{--c:var(--muted);position:relative;isolation:isolate;display:grid;grid-template-columns:auto minmax(0,1fr);align-content:center;column-gap:12px;min-height:52px;margin:4px 0;padding:6px 16px 6px 6px;border-radius:32px;corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / 32px stretch;overflow:hidden;background:color-mix(in srgb,var(--t,var(--c)) 14%,var(--bg));color:var(--c)}
+.bstack{display:flex;align-items:center;gap:10px;margin:4px 0}
+/* one page = 3 bars (52px) with 8px between them; the box scrolls a page at a time */
+.bstack-pages{flex:1;min-width:0;height:172px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none}
+.bstack-pages::-webkit-scrollbar{display:none}
+.bstack-page{flex:none;height:172px;display:flex;flex-direction:column;gap:8px;scroll-snap-align:start;scroll-snap-stop:always}
+.bstack-page .bpill{margin:0;flex:none;height:52px}
+.bpill-ph{background:var(--surface)} /* placeholder filling an empty slot on the last page */
+.bstack-dots{flex:none;display:flex;flex-direction:column;gap:6px}
+.bstack-dots button{width:6px;height:6px;border-radius:50%;background:color-mix(in srgb,var(--ink) 18%,transparent);transition:background .2s}
+.bstack-dots button.on{background:var(--ink)}
 .bpill.ok{--c:var(--good);--t:#2BBF6A}.bpill.warn{--c:var(--warn);--t:#F2B705}.bpill.bad{--c:var(--bad);--t:#F2553F}
 .bpill-fill{position:absolute;inset:0 auto 0 0;z-index:-1;background:color-mix(in srgb,var(--t,var(--c)) 34%,var(--bg));transition:width .35s ease}
 /* the category icon on a lighter tile at the bar's left edge, over the fill */
@@ -1479,15 +1489,31 @@ function Budgets({b, order, divs, head=true}) {
 // Every number is the same size; categories the client doesn't buy are left out rather than shown as zero.
 function BudDiv({b, d, k, head=true}) {
   const db = divBudget(b, d), cats = CATS.filter(c => catBudget(b, d, c) > 0 || (k && k.mix.find(x => x.cat === c).value));
+  const bar = (key, st, used, ic, label, value, of, w) => html`<div class=${'bpill ' + st} key=${key}><span class="bpill-fill" style=${{width: Math.min(used, 100) + '%'}}></span>
+      <span class="bpill-ic"><${Icon} n=${ic} s=${22} w=${w}/></span><span class="bpill-t"><span class="bpill-l">${label}</span><span class="bpill-v"><b>${fmt(value)}</b> <span>${of}</span></span></span></div>`;
+  if (!k) return html`<div class="bud-div">
+    ${head && html`<div class="bud-head"><span>${DIV_LABEL[d]}</span></div>`}
+    ${cats.map(c => html`<div class="bud-row cat"><span>${CAT_LABEL[c]}</span><span class="num">${fmt(catBudget(b, d, c))}</span></div>`)}
+    <div class="bud-row cat bud-tot"><span>Total</span><span class="num">${fmt(db)}</span></div>
+  </div>`;
+  const bars = [...cats.map(c => { const cb = catBudget(b, d, c), m = k.mix.find(x => x.cat === c);
+      return bar(c, m.st, m.used, c, CAT_LABEL[c], m.value, cb ? 'of ' + fmtK(cb) : 'no budget', 2); }),
+    bar('tot', 'bpill-tot ' + usedSt(k.total, db), db ? k.total / db * 100 : 0, 'wallet', 'Total', k.total, db ? 'of ' + fmtK(db) : 'no budget')];
   return html`<div class="bud-div">
     ${head && html`<div class="bud-head"><span>${DIV_LABEL[d]}</span></div>`}
-    ${cats.map(c => { const cb = catBudget(b, d, c), m = k && k.mix.find(x => x.cat === c);
-      return m ? html`<div class=${'bpill ' + m.st}><span class="bpill-fill" style=${{width: Math.min(m.used, 100) + '%'}}></span>
-          <span class="bpill-ic"><${Icon} n=${c} s=${22} w=${2}/></span><span class="bpill-t"><span class="bpill-l">${CAT_LABEL[c]}</span><span class="bpill-v"><b>${fmt(m.value)}</b> <span>${cb ? 'of ' + fmtK(cb) : 'no budget'}</span></span></span></div>`
-        : html`<div class="bud-row cat"><span>${CAT_LABEL[c]}</span><span class="num">${fmt(cb)}</span></div>`; })}
-    ${k ? html`<div class=${'bpill bpill-tot ' + usedSt(k.total, db)}><span class="bpill-fill" style=${{width: Math.min(db ? k.total / db * 100 : 0, 100) + '%'}}></span>
-          <span class="bpill-ic"><${Icon} n="wallet" s=${22}/></span><span class="bpill-t"><span class="bpill-l">Total</span><span class="bpill-v"><b>${fmt(k.total)}</b> <span>${db ? 'of ' + fmtK(db) : 'no budget'}</span></span></span></div>`
-      : html`<div class="bud-row cat bud-tot"><span>Total</span><span class="num">${fmt(db)}</span></div>`}
+    ${bars.length > 3 ? html`<${BarStack} key=${d} bars=${bars}/>` : bars}
+  </div>`;
+}
+// More than 3 budget bars: they stack 3 at a time in a box one page tall; swipe up and down to page through (it snaps a page at a time),
+// the dots on the right show which page is on and can be tapped; a last page with fewer than 3 bars is filled with light grey placeholders
+function BarStack({bars}) {
+  const pages = [], [at, setAt] = useState(0), box = useRef(null);
+  for (let i = 0; i < bars.length; i += 3) { const pg = bars.slice(i, i + 3); while (pg.length < 3) pg.push(html`<div class="bpill bpill-ph" aria-hidden="true"></div>`); pages.push(pg); }
+  const onScroll = e => { const el = e.currentTarget, i = Math.round(el.scrollTop / (el.clientHeight + 8)); if (i !== at) setAt(i); };
+  const go = i => { const el = box.current; if (el) el.scrollTo({top: i * (el.clientHeight + 8), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); };
+  return html`<div class="bstack">
+    <div class="bstack-pages" ref=${box} onScroll=${onScroll}>${pages.map(pg => html`<div class="bstack-page">${pg}</div>`)}</div>
+    <div class="bstack-dots" role="tablist" aria-label="Budget pages">${pages.map((_, i) => html`<button role="tab" aria-selected=${i === at} aria-label=${'Page ' + (i + 1)} class=${i === at ? 'on' : ''} onClick=${() => go(i)}></button>`)}</div>
   </div>`;
 }
 
