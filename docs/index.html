@@ -31,7 +31,7 @@
   --shadow-raised:0 1px 3px rgba(0,0,0,.12); --shadow-float:0 8px 24px rgba(0,0,0,.16); --shadow-sheet:0 -8px 32px rgba(0,0,0,.18);
   --stage:#E1E2DE; --frame:#17181A;
   --avatar-top:#9A9FA5; --avatar:#64696F; --avatar-ink:#FFFFFF; /* profile circles: grey, lighter at the top and darker at the bottom, white initials */
-  --bg:#FFFFFF; --surface:#F2F3F0; --surface-2:#E7E8E4; --studio:#E3E4DF; --card:#FFFFFF;
+  --bg:#FFFFFF; --surface:#F2F3F0; --surface-2:#E7E8E4; --studio:#E3E4DF; --card:#FFFFFF; --grouped:#F2F3F0;
   --ink:#141619; --muted:#62666B; --faint:#808489; --line:#DCDED8;
   --band:#000000; --band-ink:#FFFFFF; /* status-bar strip and the Must have tag: black in light and dark mode */
   --accent:#2238A6; --accent-ink:#FFFFFF; --accent-soft:#E3E7F8;
@@ -44,7 +44,7 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --stage:#050607; --frame:#2A2C30;
   --avatar-top:#575C63; --avatar:#30343A; --avatar-ink:#ECEDEA;
-  --bg:#0F1113; --surface:#181A1E; --surface-2:#202328; --studio:#43464B; --card:#181A1E;
+  --bg:#0F1113; --surface:#181A1E; --surface-2:#202328; --studio:#43464B; --card:#181A1E; --grouped:#0F1113;
   --ink:#ECEDEA; --muted:#A0A4A9; --faint:#6E7277; --line:#2C3036;
   --accent:#8C9DFF; --accent-ink:#0F1113; --accent-soft:#222A4C;
   --good:#58C48D; --good-bg:#15291E; --warn:#E5A93E; --warn-bg:#2E2414; --bad:#F27D72; --bad-bg:#331A18;
@@ -53,7 +53,7 @@
 :root[data-theme="dark"]{
   --stage:#050607; --frame:#2A2C30;
   --avatar-top:#575C63; --avatar:#30343A; --avatar-ink:#ECEDEA;
-  --bg:#0F1113; --surface:#181A1E; --surface-2:#202328; --studio:#43464B; --card:#181A1E;
+  --bg:#0F1113; --surface:#181A1E; --surface-2:#202328; --studio:#43464B; --card:#181A1E; --grouped:#0F1113;
   --ink:#ECEDEA; --muted:#A0A4A9; --faint:#6E7277; --line:#2C3036;
   --accent:#8C9DFF; --accent-ink:#0F1113; --accent-soft:#222A4C;
   --good:#58C48D; --good-bg:#15291E; --warn:#E5A93E; --warn-bg:#2E2414; --bad:#F27D72; --bad-bg:#331A18;
@@ -361,7 +361,7 @@ input{font:inherit;color:inherit}
 .appt-buyer svg{flex:none;color:var(--muted)}
 .appt-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
 /* status tags on Home and in Choose a client: the small 18px / 11px regular tag */
-.pick .pill,.sh-tiles .pill{height:var(--tag-h);padding:0 7px;font-size:11px;line-height:1.3;font-weight:400;letter-spacing:.01em}
+.pick .pill,.grp .pill,.sh-tiles .pill{height:var(--tag-h);padding:0 7px;font-size:11px;line-height:1.3;font-weight:400;letter-spacing:.01em}
 .appt-head .pill{flex:none;margin-top:2px;height:var(--tag-h);padding:0 7px;font-size:11px;line-height:1.3;font-weight:400;letter-spacing:.01em}
 .appt-catg{display:flex;flex-direction:column;gap:4px;margin-top:4px;font-size:var(--fs-caption);color:var(--muted)}
 .appt-cats{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -645,6 +645,22 @@ input{font:inherit;color:inherit}
 .scrim{position:absolute;inset:0;background:var(--scrim);z-index:40;animation:fade .2s ease}
 .sheet{position:absolute;left:0;right:0;bottom:0;margin:0 auto;max-width:640px;max-height:88%;z-index:41;background:var(--bg);border-radius:var(--r-xl) var(--r-xl) 0 0;display:flex;flex-direction:column;animation:up .26s cubic-bezier(.2,.8,.2,1);box-shadow:var(--shadow-sheet)}
 .sheet.tall{height:88%}
+/* grouped sheet (Choose a client), iOS settings style: a light grey sheet (--grouped), grey section headings, white squircle groups,
+   rows split by a light rule inset 16px on both sides, a grey chevron at the end of each row */
+.sheet.grouped{background:var(--grouped)}
+.sheet.grouped .sheet-body{gap:24px}
+.grp-sec{display:flex;flex-direction:column;gap:8px}
+.grp-h{margin:0 16px;font-size:var(--fs-body);font-weight:600;color:var(--muted)}
+.grp{display:flex;flex-direction:column;background:var(--card);border-radius:22px;-webkit-mask-box-image:var(--squircle) 20 / 22px stretch}
+@supports (-webkit-mask-box-image:none){.grp{border-radius:0}}
+.grp > .row{min-height:60px;padding:10px 12px 10px 16px;border-top:0;background:linear-gradient(var(--line),var(--line)) 16px 0 / calc(100% - 32px) 1px no-repeat}
+.grp > .row:first-child{background:none}
+.grp .row-main{gap:2px}
+.grp .row-title{font-size:var(--fs-heading);font-weight:400}
+.grp .row-side{flex-direction:row;align-items:center;gap:8px}
+.grp .chev{display:flex;color:var(--faint)}
+.grp .g-new .row-title{color:var(--accent)}
+.grp-note{margin:-16px 16px 0;font-size:var(--fs-caption);line-height:var(--lh-body);color:var(--muted)}
 .sheet-grab{width:38px;height:5px;border-radius:var(--r-xs);background:var(--line);margin:8px auto 0;flex:none}
 .sheet-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:8px 10px 6px 18px;flex:none}
 /* the close × centred on the title's (first) line */
@@ -1422,9 +1438,9 @@ const Seg = ({opts, val, on, full}) => html`<div class=${'seg' + (full ? ' full'
 
 // media: photos lead the sheet edge to edge, no header, close on the top left
 // page: full screen with a back button instead of a sheet over a scrim
-function Sheet({title, sub, onClose, children, tall, foot, media, page, center, fade, bare}) {
+function Sheet({title, sub, onClose, children, tall, foot, media, page, center, fade, bare, grouped}) {
   return html`${!page && html`<div class="scrim" onClick=${onClose}></div>`}
-    <div class=${'sheet' + (tall ? ' tall' : '') + (media ? ' media' : '') + (page ? ' page' : '') + (fade ? ' fade' : '')} role="dialog" aria-label=${title}>
+    <div class=${'sheet' + (tall ? ' tall' : '') + (media ? ' media' : '') + (page ? ' page' : '') + (fade ? ' fade' : '') + (grouped ? ' grouped' : '')} role="dialog" aria-label=${title}>
       ${!page && html`<div class="sheet-grab"></div>`}
       ${bare ? null : media ? html`<button class="sheet-x" onClick=${onClose} aria-label=${page ? 'Back' : 'Close'}><${Icon} n=${page ? 'back' : 'x'} s=${20} w=${2.2}/></button>`
         : center ? html`<div class="sheet-head center"><span></span><div class="sheet-title">${title}</div>
@@ -1919,17 +1935,18 @@ function PasscodeSheet({S, act}) {
 
 function PickBuyerSheet({S, sh, act}) {
   const it = sh.item, look = it && it.look && LOOKS.find(x => x.id === it.look), p = it && P[look ? look.items[0][0] : it.pid];
-  const all = myBuyers(S), mine = [...all.filter(b => !dayOf(b)), ...all.filter(b => dayOf(b) > 0), ...all.filter(b => dayOf(b) < 0)];
-  return html`<${Sheet} tall title=${it ? 'Add to an order' : 'Choose a client'} sub=${!it ? null : look ? `${lookNo(look)} · ${look.items.length} pieces` : `${p.name} · ${cname(it.colour)}`} onClose=${act.close}>
-    <div class="list gapped pick">${mine.map(b => { const o = S.orders['o-' + b.id], why = p && canTake(o || {buyerId:b.id, status:'draft'}, p);
-      return html`<button class="row" disabled=${!!why} onClick=${() => it ? act.addFor(b.id, it) : act.checkIn(b.id, true)}>
-        <div class="row-main"><div class="row-title">${b.shop}</div><div class="row-sub">${dayLabel(b)}</div></div>
-        <div class="row-side">${why ? html`<span class="small muted">${why}</span>` : o && o.status !== 'none' && html`<${Pill} s=${o.status}/>`}</div>
-      </button>`; })}
-      ${it && html`<button class="row" onClick=${() => act.sheet({type:'newbuyer', item:it, stay:false})}>
-        <span class="round-btn" style="margin:0;width:34px;height:34px"><${Icon} n="plus" s=${18} w=${2.2}/></span>
-        <div class="row-main"><div class="row-title">New session</div><div class="row-sub">A client without an appointment</div></div>
-      </button>`}</div>
+  const all = myBuyers(S), secs = [['Today', all.filter(b => !dayOf(b))], ['Coming up', all.filter(b => dayOf(b) > 0)], ['Earlier', all.filter(b => dayOf(b) < 0)]];
+  const row = b => { const o = S.orders['o-' + b.id], why = p && canTake(o || {buyerId:b.id, status:'draft'}, p);
+    return html`<button class="row" disabled=${!!why} onClick=${() => it ? act.addFor(b.id, it) : act.checkIn(b.id, true)}>
+      <div class="row-main"><div class="row-title">${b.shop}</div>${dayOf(b) ? html`<div class="row-sub">${dayLabel(b)}</div>` : null}</div>
+      <div class="row-side">${why ? html`<span class="small muted">${why}</span>` : o && o.status !== 'none' && html`<${Pill} s=${o.status}/>`}<span class="chev"><${Icon} n="next" s=${18} w=${2}/></span></div>
+    </button>`; };
+  // grouped like iOS settings: a section per part of the show, each a white group with inset rules; the day under the name only outside Today (no time or city)
+  return html`<${Sheet} tall grouped title=${it ? 'Add to an order' : 'Choose a client'} sub=${!it ? null : look ? `${lookNo(look)} · ${look.items.length} pieces` : `${p.name} · ${cname(it.colour)}`} onClose=${act.close}>
+    ${it && html`<div class="grp"><button class="row g-new" onClick=${() => act.sheet({type:'newbuyer', item:it, stay:false})}>
+      <div class="row-main"><div class="row-title">New session</div><div class="row-sub">A client without an appointment</div></div><div class="row-side"><span class="chev"><${Icon} n="next" s=${18} w=${2}/></span></div></button></div>`}
+    ${secs.filter(([, l]) => l.length).map(([h, l]) => html`<section class="grp-sec"><h3 class="grp-h">${h}</h3><div class="grp pick">${l.map(row)}</div></section>`)}
+    ${!it && html`<p class="grp-note">Tapping a client checks them in and opens their order.</p>`}
   <//>`;
 }
 
