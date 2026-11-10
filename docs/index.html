@@ -788,7 +788,7 @@ input{font:inherit;color:inherit}
 .ss-total{font-size:var(--fs-body)}.ss-total b{font-size:var(--fs-heading);font-variant-numeric:normal}
 .colours{position:relative;isolation:isolate;display:flex;gap:8px;overflow-x:auto;margin:0 -18px;padding:0 18px 2px;scroll-padding:0 18px;scrollbar-width:none}
 .colour{display:flex;align-items:center;gap:8px;padding:0 12px;height:40px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:var(--fs-body);white-space:nowrap;flex:none}
-.colour .sw{width:16px;height:16px}
+.colour .sw{width:16px;height:16px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.4)} /* a 2px light ring inside every colour swatch, on the grey chips too */
 .colour .flag-dot{width:16px;height:16px} /* the "in the order" check as big as the colour swatch */
 /* name and code are the same size and line height, both centred, so they share one baseline; the code black like the name, in regular weight */
 .colour .nm,.colour .code{display:block;font-size:var(--fs-body);line-height:20px}
@@ -799,12 +799,15 @@ input{font:inherit;color:inherit}
 .colour::before{content:"";position:absolute;inset:-1px;z-index:-1;border-radius:999px;background:var(--surface);transition:opacity 0s}
 .colour.on::before{opacity:0;transition:opacity 0s .32s}
 @media (prefers-reduced-motion:reduce){.colour.on::before{transition:none}}
-.colours .slide-ind{border-radius:999px;background:var(--ink)}
+/* trial: the pill is the chosen colour itself (its swatch colour) and fades to the next colour as it slides; text dark or white to suit (--pill-ink) */
+.colours .slide-ind{border-radius:999px;background:var(--pill,var(--ink))}
+.colours .slide-ind[data-anim]{transition:left .32s cubic-bezier(.3,.7,.2,1),width .32s cubic-bezier(.3,.7,.2,1),background-color .32s ease}
 .colours .slide-copy{gap:8px;padding:0 18px}
-.colours .slide-copy > .colour,.colours .slide-copy .code{color:var(--bg)}
-.colours .slide-copy .sw{box-shadow:inset 0 0 0 2px rgba(255,255,255,.4)} /* a black swatch still shows on the black pill */
-.colours .slide-copy .flag-dot{color:#fff;box-shadow:inset 0 0 0 1.5px #fff} /* on the black pill the check is white, not green */
-.colours .slide-copy .cnt{background:var(--bg);color:var(--ink)}
+.colours .slide-copy > .colour,.colours .slide-copy .code{color:var(--pill-ink,var(--bg));transition:color .32s ease}
+.colours .slide-copy .sw{box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--pill-ink,#fff) 45%,transparent)} /* the swatch, the same colour as the pill, shows by its ring */
+.colours .slide-copy .flag-dot{color:var(--pill-ink,#fff);box-shadow:inset 0 0 0 1.5px var(--pill-ink,#fff)} /* the in-order check in the pill's text colour, not green */
+.colours .slide-copy .cnt{background:var(--pill-ink,var(--bg));color:var(--pill,var(--ink))}
+@media (prefers-reduced-motion:reduce){.colours .slide-ind[data-anim]{transition:none}}
 .cnt{font-size:var(--fs-caption);font-weight:700;background:var(--ink);color:var(--bg);border-radius:999px;padding:2px 6px}
 .sizes{display:flex;gap:6px;overflow-x:auto;margin:0 -18px;padding:0 18px 2px;scrollbar-width:none}
 .size-cell{flex:1 0 54px;display:flex;flex-direction:column;align-items:stretch;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);overflow:hidden}
@@ -1083,6 +1086,9 @@ const REPS = {
   sofia:  {id:'sofia', name:'Sofia L.', full:'Sofia L.', ini:'SL'},
   marc:   {id:'marc', name:'Marc D.', full:'Marc D.', ini:'MD'},
 };
+// the colour pill takes the chosen colour's own swatch colour, with dark or white text depending on how light it is
+const pillOf = x => { const h = COL[x][0].replace('#', ''), [r, g, b] = [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16) / 255);
+  return {'--pill': COL[x][0], '--pill-ink': 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.62 ? '#141619' : '#FFFFFF'}; };
 const COL = {
   'Carmine Red':['#9E1B24','0241'], 'Mineral Mist':['#B9BCB8','0371'], Black:['#1E1E1F','1100'], White:['#F4F4F2','2100'],
   Mocha:['#6A4B3A','9579'], 'Sunrise Orange':['#E0662A','5557'], Sand:['#CDB892','2150'], Squirrel:['#8A6E55','4927'],
@@ -2152,7 +2158,7 @@ function ProductSheet({pid, colour, orderId, back, S, ui, act}) {
     <div class="pd-head"><h1 class="pd-name">${p.name}</h1>
       <div class="pd-sub"><span class="code">${p.code}</span></div></div>
     <div class="colours" ref=${colBox}>${p.colours.map(x => html`<button class=${'colour' + (x === c ? ' on' : '')} onClick=${() => setC(x)}>${chip(x)}</button>`)}
-      <span class="slide-ind" ref=${colInd} aria-hidden="true"><span class="slide-copy">${p.colours.map(x => html`<button class="colour" tabindex="-1">${chip(x)}</button>`)}</span></span></div>
+      <span class="slide-ind" ref=${colInd} aria-hidden="true" style=${pillOf(c)}><span class="slide-copy">${p.colours.map(x => html`<button class="colour" tabindex="-1">${chip(x)}</button>`)}</span></span></div>
     ${edit && html`<div class="pd-qty">
       ${p.sizes.length > 1 ? html`
         <div class="sizes">${p.sizes.map(sz => html`<div class=${'size-cell' + (q[sz] ? ' has' : '')}>
@@ -2237,7 +2243,7 @@ function SizeSheet({sh, S, act}) {
     ${readOnly && html`<div class="callout info"><${Icon} n="lock" s=${18}/><div>The ${DIV_LABEL[p.div].toLowerCase()} order has been sent and can’t be changed here.</div></div>`}
     <div class="lbl">Colour <span style="text-transform:none;letter-spacing:0;font-weight:400">· ${p.colours.length} options</span></div>
     <div class="colours" ref=${colBox}>${p.colours.map(c => html`<button class=${'colour' + (c === col ? ' on' : '')} onClick=${() => setCol(c)}>${chip(c)}</button>`)}
-      <span class="slide-ind" ref=${colInd} aria-hidden="true"><span class="slide-copy">${p.colours.map(c => html`<button class="colour" tabindex="-1">${chip(c)}</button>`)}</span></span></div>
+      <span class="slide-ind" ref=${colInd} aria-hidden="true" style=${pillOf(col)}><span class="slide-copy">${p.colours.map(c => html`<button class="colour" tabindex="-1">${chip(c)}</button>`)}</span></span></div>
     ${!locked && !readOnly && html`
       <div class="lbl">${p.sizes.length > 1 ? 'Sizes' : 'Quantity'} · ${col}</div>
       ${p.sizes.length > 1 ? html`
