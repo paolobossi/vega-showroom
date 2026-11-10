@@ -1068,7 +1068,7 @@ input.qty.xl{width:64px} /* room for three digits */
 .pcard .pc-info{padding:0;gap:4px} /* compact: the lines of text close together */
 .pcard .prices{gap:0}
 .pcard .dots{margin-top:4px} /* 8px above the colour dots */
-.pcard .ptags{left:8px;top:8px}.pcard .pc-in{right:8px;top:8px}.pcard .pc-lock{left:8px;top:8px}
+.pcard .ptags{left:8px;top:8px}.pcard .pc-in{right:8px;top:8px;width:22px;height:22px} /* 22px: a touch bigger than the 18px tag height it used to match */.pcard .pc-lock{left:8px;top:8px}
 /* loading placeholders match the cards: no box, no border, a grey 24px squircle for the photo and bare text lines flush with its edges */
 .sk-card{background:none;border:0;padding:0;gap:6px;border-radius:0;-webkit-mask-box-image:none}
 .sk-img{border-radius:0;-webkit-mask-box-image:var(--squircle) 20 / 24px stretch}
@@ -1894,7 +1894,7 @@ function PCard({p, o, act}) {
     <div class="pc-photo">
       <span class="pc-img"><${Thumb} pid=${p.id} colour=${c}/></span>
       ${lock && html`<span class="pc-lock"><${Icon} n="lock" s=${11} w=${2.4}/>${lock}</span>`}
-      ${has && html`<span class="pc-in" aria-hidden="true"><${Icon} n="check" s=${11} w=${3}/></span>`}
+      ${has && html`<span class="pc-in" aria-hidden="true"><${Icon} n="check" s=${13} w=${3}/></span>`}
     </div>
     <span class="pc-info">
       <${TagLine} p=${p} perm=${false}/>
