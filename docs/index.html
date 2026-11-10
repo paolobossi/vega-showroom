@@ -125,12 +125,12 @@ input{font:inherit;color:inherit}
 .tab-dot{position:absolute;top:-1px;right:-3px;width:8px;height:8px;border-radius:50%;background:#3CCB7F;box-shadow:0 0 0 2px var(--bg)}
 /* client in session: a black pill (black in light and dark mode) floating 8px above the tab bar, as wide as it; hidden on the Order tab, where it slides down out of sight */
 .dock-in{position:relative}
-.sess{position:absolute;left:0;right:0;bottom:calc(100% + 8px);z-index:0;display:flex;align-items:center;gap:12px;min-height:54px;padding:8px 14px 8px 18px;border-radius:999px;background:var(--band);color:var(--band-ink);text-align:left;pointer-events:auto;
+.sess{position:absolute;left:0;right:0;bottom:calc(100% + 8px);z-index:0;display:flex;align-items:center;gap:12px;min-height:54px;padding:8px 14px 8px 22.5px;border-radius:999px;background:var(--band);color:var(--band-ink);text-align:left;pointer-events:auto;
   box-shadow:0 6px 24px rgba(0,0,0,.18);transition:transform .34s cubic-bezier(.3,.7,.2,1),opacity .25s;animation:sess-in .34s cubic-bezier(.3,.7,.2,1)}
 .sess.hid{transform:translateY(calc(100% + 80px));opacity:0;pointer-events:none;animation:none}
 @keyframes sess-in{from{transform:translateY(calc(100% + 80px));opacity:0}}
 @media (prefers-reduced-motion:reduce){.sess{transition:none;animation:none}}
-.sess-dot{flex:none;width:9px;height:9px;border-radius:50%;background:#3CCB7F;box-shadow:0 0 0 4px rgba(60,203,127,.22);animation:pulse 1.1s ease-in-out infinite alternate}
+.sess-dot{flex:none;width:9px;height:9px;margin-right:10.5px; /* its centre 27px in: the centre of the pill's rounded end (54px tall), so it sits concentric with the curve; the name starts 27px after it, at 54px, as far from the dot as the dot is from the edge */border-radius:50%;background:#3CCB7F;box-shadow:0 0 0 4px rgba(60,203,127,.22);animation:pulse 1.1s ease-in-out infinite alternate}
 .sess-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
 .sess-t b{font-size:var(--fs-body);font-weight:600;line-height:var(--lh-tight);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sess-t span{font-size:var(--fs-caption);line-height:var(--lh-tight);color:rgba(255,255,255,.6)}
