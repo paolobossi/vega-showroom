@@ -780,6 +780,7 @@ input{font:inherit;color:inherit}
 .colours{position:relative;display:flex;gap:8px;overflow-x:auto;margin:0 -18px;padding:0 18px 2px;scroll-padding:0 18px;scrollbar-width:none}
 .colour{display:flex;align-items:center;gap:8px;padding:0 12px;height:40px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:var(--fs-body);white-space:nowrap;flex:none}
 .colour .sw{width:16px;height:16px}
+.colour .flag-dot{width:16px;height:16px} /* the "in the order" check as big as the colour swatch */
 /* name and code are the same size and line height, both centred, so they share one baseline; the code black like the name, in regular weight */
 .colour .nm,.colour .code{display:block;font-size:var(--fs-body);line-height:20px}
 .colour .code{font-weight:400;color:var(--ink)}
@@ -946,6 +947,16 @@ input.qty.xl{width:64px} /* room for three digits */
    Controls (pills, fields, round buttons) lose the outline too. Appointments on Home are separate white rows with a 2px gap, not divider lines. */
 .list,.appts,.tile,.pcard,.sk-card,.ov-sum,.kpi,.panel,.single,.empty,.rec,.alts,.linkbox,.pre,.look,
 .day,.inp,.stp,.size-cell,.search,.sq-btn,.round-btn,.pin-k,.cn-cat,.ftab,.colour,.qbtn,.pc-lock,.btn.white,.pd-in,.sugg button,.srch-x{border-color:transparent}
+/* size cells, like the one-size stepper: a white vertical pill with a grey outline and no fills: the size on top, then +, the number, − ; a size with a quantity gets a black outline */
+.sizes{gap:8px}
+.size-cell,.size-cell.has{flex:1 0 56px;gap:0;padding:4px 4px 6px;border:0;border-radius:999px;background:var(--bg);box-shadow:inset 0 0 0 1px var(--line);overflow:visible}
+.size-cell.has{box-shadow:inset 0 0 0 1.5px var(--ink)}
+.size-cell > *,.size-cell > input.qty{background:none}
+.size-cell .step:first-of-type,.size-cell .step:last-of-type{margin:0}
+.size-cell .sz{padding:10px 0 2px;font-weight:400}
+.size-cell .step{align-self:center;width:40px;height:40px;border-radius:999px;color:var(--ink)}
+.size-cell .step:active{background:var(--surface-2)}
+.size-cell .qty{font-size:22px;font-weight:600;padding:4px 0;font-variant-numeric:normal}
 .list,.appts,.pcard,.sk-card,.ov-sum,.kpi,.panel,.empty,.rec{corner-shape:squircle;-webkit-mask-box-image:var(--squircle) 20 / var(--r-l) stretch}
 /* where the mask works (Safari, Chrome) it alone shapes these boxes: a border-radius as well clips the corners a second time,
    round in Safari (no corner-shape), slightly rounder than the mask in Chrome, and eats into outlines at the corners */
@@ -2121,7 +2132,7 @@ function ProductSheet({pid, colour, orderId, back, S, ui, act}) {
     media=${html`<div class="pd-media"><${Carousel} p=${p} colour=${c} at=${ui.photoAt} onOpen=${i => act.set({zoom:{pid, colour:c, i}})}/><${Tag} p=${p}/></div>`}>
     <div class="pd-head"><h1 class="pd-name">${p.name}</h1>
       <div class="pd-sub"><span class="code">${p.code}</span></div></div>
-    <div class="colours" ref=${colRow}>${p.colours.map(x => html`<button class=${'colour' + (x === c ? ' on' : '')} onClick=${() => setC(x)}><span class="sw" style=${{background:COL[x][0]}}></span><span class="nm">${x}</span><span class="code">${COL[x][1]}</span>${lineOf(x) && html`<span class="flag-dot" title="In order"><${Icon} n="check" s=${12} w=${3}/></span>`}</button>`)}</div>
+    <div class="colours" ref=${colRow}>${p.colours.map(x => html`<button class=${'colour' + (x === c ? ' on' : '')} onClick=${() => setC(x)}><span class="sw" style=${{background:COL[x][0]}}></span><span class="nm">${x}</span><span class="code">${COL[x][1]}</span>${lineOf(x) && html`<span class="flag-dot" title="In order"><${Icon} n="check" s=${10} w=${3}/></span>`}</button>`)}</div>
     ${edit && html`<div class="pd-qty">
       ${p.sizes.length > 1 ? html`
         <div class="sizes">${p.sizes.map(sz => html`<div class=${'size-cell' + (q[sz] ? ' has' : '')}>
