@@ -34,7 +34,7 @@
   --avatar-top:#9A9FA5; --avatar:#64696F; --avatar-ink:#FFFFFF; /* profile circles: grey, lighter at the top and darker at the bottom, white initials */
   --bg:#FFFFFF; --surface:#F2F3F0; --surface-2:#E7E8E4; --studio:#E3E4DF; --card:#FFFFFF;
   --ink:#141619; --muted:#62666B; --faint:#808489; --line:#DCDED8;
-  --band:#000000; --band-ink:#FFFFFF; --must:#C8643F; --ess:#5E4A99; /* trial tag text: Claude orange, dark lilac */ /* status-bar strip and the Must have tag: black in light and dark mode */
+  --band:#000000; --band-ink:#FFFFFF; --must:#C8643F; --ess:#635BFF; /* trial tag text: Claude orange, a Stripe-like blurple */ /* status-bar strip and the Must have tag: black in light and dark mode */
   --accent:#2238A6; --accent-ink:#FFFFFF; --accent-soft:#E3E7F8;
   --good:#1D7448; --good-bg:#E0EFE6; --warn:#946000; --warn-bg:#F7EAD2; --bad:#AE281C; --bad-bg:#F7E1DE;
   --scrim:rgba(10,12,16,.42);
@@ -49,7 +49,7 @@
   --ink:#ECEDEA; --muted:#A0A4A9; --faint:#6E7277; --line:#2C3036;
   --accent:#8C9DFF; --accent-ink:#0F1113; --accent-soft:#222A4C;
   --good:#58C48D; --good-bg:#15291E; --warn:#E5A93E; --warn-bg:#2E2414; --bad:#F27D72; --bad-bg:#331A18;
-  --scrim:rgba(0,0,0,.6); --sw-ring:rgba(255,255,255,.22); --must:#E58E6D; --ess:#B7A3EE; color-scheme:dark;
+  --scrim:rgba(0,0,0,.6); --sw-ring:rgba(255,255,255,.22); --must:#E58E6D; --ess:#9C97FF; color-scheme:dark;
 }}
 :root[data-theme="dark"]{
   --stage:#050607; --frame:#2A2C30;
@@ -58,7 +58,7 @@
   --ink:#ECEDEA; --muted:#A0A4A9; --faint:#6E7277; --line:#2C3036;
   --accent:#8C9DFF; --accent-ink:#0F1113; --accent-soft:#222A4C;
   --good:#58C48D; --good-bg:#15291E; --warn:#E5A93E; --warn-bg:#2E2414; --bad:#F27D72; --bad-bg:#331A18;
-  --scrim:rgba(0,0,0,.6); --sw-ring:rgba(255,255,255,.22); --must:#E58E6D; --ess:#B7A3EE; color-scheme:dark;
+  --scrim:rgba(0,0,0,.6); --sw-ring:rgba(255,255,255,.22); --must:#E58E6D; --ess:#9C97FF; color-scheme:dark;
 }
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
@@ -1059,7 +1059,7 @@ input.qty.xl{width:64px} /* room for three digits */
 .g-box > .look-rows > .row:first-child{background:none;padding-top:10px}
 .look-rows .row-title{font-size:var(--fs-body);font-weight:600;line-height:var(--lh-tight)} /* as the Collection card name */
 .look-rows .row-val{font-size:var(--fs-caption);font-weight:600} /* as the Collection card price */
-.look-rows .row > svg:last-child{color:var(--faint)} /* grey chevron, in light and dark mode */
+.look-rows .row > svg:last-child{color:var(--faint);margin-left:-8px} /* grey chevron, in light and dark mode, 4px after the price */
 .look-rows .thumb{width:72px;height:72px;border-radius:0;-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}
 .list.gapped{background:none;border:0;gap:2px}.list.gapped > .row{background:var(--surface);border-top:0}
 /* Collection cards: the photo runs to the card's edges (top and sides), the text keeps its margin; a soft drop shadow lifts the card off the grey page */
