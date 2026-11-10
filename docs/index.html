@@ -1079,7 +1079,8 @@ const COL = {
   'Black Brown':['#2E2620','0202'], 'White Blue':['#DDE4EE','2105'], 'Khaki Yellow':['#8C8450','4157'], 'Blue Grey':['#6E7C8C','0362'],
   'Dark Cigar':['#5A3A28','8779'], 'Shell Grey':['#BDB8AE','6579'],
 };
-const SZ = {wr:['34','36','38','40','42'], mr:['46','48','50','52','54'], ws:['36','37','38','39','40','41'], ms:['40','41','42','43','44','45'], u:['U']};
+const SZ = {wr:['34','36','38','40','42','44'], mr:['46','48','50','52','54','56'], // at least six sizes per style, so the size row scrolls sideways on a phone
+   ws:['36','37','38','39','40','41'], ms:['40','41','42','43','44','45'], u:['U']};
 const CATS = ['rtw','bags','shoes','acc'];
 const CAT_LABEL = {bags:'Bags', rtw:'Ready-to-wear', shoes:'Shoes', acc:'Accessories'};
 const CAT_SHORT = {bags:'Bags', rtw:'RTW', shoes:'Shoes', acc:'Acc.'};
@@ -2112,7 +2113,7 @@ function ProductSheet({pid, colour, orderId, back, S, ui, act}) {
   const p = P[pid], o = orderId ? S.orders[orderId] : activeOrder(S, ui), b = o && BUYERS[o.buyerId], why = o && canTake(o, p);
   const [c, setC] = useState(() => { const l = o && o.lines.find(x => x.pid === pid); return colour || (l ? l.colour : p.colours[0]); }), colRow = useRevealOn('.colour.on', c);
   const looks = LOOKS.filter(l => l.items.some(([x]) => x === pid));
-  const pick = () => act.sheet({type:'pick', item:{pid, colour:c, via:'search'}});
+  const pick = () => act.sheet({type:'pick', item:{pid, colour:c, via:'search', ret:'product'}}); // once a client is picked, back to this page
   const lineOf = x => o && o.lines.find(l => l.pid === pid && l.colour === x), line = lineOf(c);
   const q = line ? line.qty : {}, u = units(q), sized = p.sizes.length > 1, skey = p.sizes.join(' ');
   const clean = x => Object.fromEntries(Object.entries(x).filter(([, n]) => n > 0).map(([k, n]) => [k, Math.min(999, n)]));
@@ -2610,7 +2611,9 @@ function makeActs(setS, setUi, onReset) {
     // the client in session: land in the Collection to add products
     addProducts: () => setUi(u => ({...u, tab:'catalogue', view:null, sheet:null})),
     // add flow from Collection or a lookbook with nobody checked in: check that client in, then add the piece
-    addFor: (bid, item) => { a.checkIn(bid, true); if (item.look) a.selectLook('o-' + bid, LOOKS.find(x => x.id === item.look)); else a.select('o-' + bid, item.pid, item.colour, item.via); },
+    addFor: (bid, item) => { a.checkIn(bid, true); if (item.look) a.selectLook('o-' + bid, LOOKS.find(x => x.id === item.look)); else a.select('o-' + bid, item.pid, item.colour, item.via);
+      // from a product page: stay on it, now showing the piece in that client's order
+      if (item.ret === 'product') a.sheet({type:'product', pid:item.pid, colour:item.colour}); },
     newBuyer: (b, item, appt, stay) => { BUYERS[b.id] = b; setS(s => ({...s, buyers:{...s.buyers, [b.id]:b}}));
       if (item) a.addFor(b.id, item); else if (appt) a.sheet({type:'appt', bid:b.id}); else a.checkIn(b.id, stay); },
     mut: (id, fn) => setS(s => { const o = JSON.parse(JSON.stringify(s.orders[id])), was = fullKeys(s.orders[id]); fn(o); syncStatus(o);
