@@ -154,7 +154,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 ### 6. Adding a style and entering quantities
 - [ ] 6.1 Each card shows photo, name, code, wholesale and retail price and colour dots, with no button. Tapping anywhere on it slides the product page up over the Collection.
 - [ ] 6.2 Product page of a style not in the order: the photo is short (the name, prices and sizes show without scrolling) and there is no Add button and no hint line under the sizes. Tap + on a size → that colour is in the order: top toast "Added to order · 1 unit", the colour chip gets the green ✓ and **Remove from order** appears (no "In order" box: the ✓ and the toast already say it).
-- [ ] 6.2b Each size is a white vertical pill with a thin grey outline and no grey fills, like the one-size − n + stepper: the size on top, then +, the number (22px) and − under it; a size with a quantity has a black outline. The same in the sizes sheet.
+- [ ] 6.2b Each size is a white vertical pill with a thin grey outline and no grey fills, like the one-size − n + stepper: the size on top, then +, the number (22px) and − under it; no black outline on any size: a quantity shows as a black number, while 0 is light grey, like placeholder text (the one-size quantity too). The same in the sizes sheet.
 - [ ] 6.3 Close the page → the card shows a green round ✓ in the photo's top-right corner, the same height as the Must have / Essential tag on the left.
 - [ ] 6.4 Tap that card again → the product page opens on the colour in the order, with its quantities; another colour can be added from there.
 - [ ] 6.5 Remove from order on the product page (the last colour) → the ✓ disappears from the card.
@@ -179,7 +179,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 7.5 **Add the whole look · N pieces** → every missing piece the client can buy is added; the button then reads "Whole look is in the order".
 
 ### 8. Scan (photo match)
-- [ ] 8.1 **Scan** is the middle item of the tab bar, with the four-corner scan icon; it opens the viewfinder on every tab. On the phone the camera picture runs up to the top edge, behind the notch and the status bar: no white strip above it, and Safari's bar turns black while it is open. The Collection has no camera button.
+- [ ] 8.1 **Scan** is the middle item of the tab bar, with the four-corner scan icon; it opens the viewfinder on every tab. On the phone the camera picture runs up to the top edge, behind the notch and the status bar: no white strip above it, and Safari's bar turns black while it is open. At the top, centred, just the client in session's name (no Women / Men), or "Scan a sample" with nobody checked in. The Collection has no camera button.
 - [ ] 8.2 Scan → viewfinder with "Frame the sample"; the title is the client and division when one is checked in, "Scan a sample" when nobody is. Shutter → "Finding the style…" → the match (Mini Amazona 180, Sunrise Orange) and alternatives.
 - [ ] 8.3 Under the match, two buttons side by side: **View item** on the left (white) and **Add to order** on the right (black). View item closes the camera and opens the style's product page on the matched colour. With a client checked in, Add to order, or an alternative, closes the camera and the style is in the order.
 - [ ] 8.3b With nobody checked in: Add to order, or an alternative, closes the camera and opens "Add to order" to pick the client; picking one checks them in and adds the style.

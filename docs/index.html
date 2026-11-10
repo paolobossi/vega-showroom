@@ -862,7 +862,7 @@ input.qty.xl{width:64px} /* room for three digits */
 }
 .vf-top{position:absolute;z-index:3;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:8px 10px 28px;background:linear-gradient(rgba(0,0,0,.5),transparent)}
 .vf-btn{width:42px;height:42px;border-radius:999px;display:grid;place-items:center;background:rgba(0,0,0,.35);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:var(--vf-ink)}
-.vf-title{font-size:var(--fs-body);font-weight:600;color:var(--vf-ink);text-align:center;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.vf-title{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:var(--fs-body);font-weight:600;color:var(--vf-ink);text-align:center;text-shadow:0 1px 3px rgba(0,0,0,.5)}
 /* live viewfinder: the shelf photo fills the screen like the iPhone camera (cover); brackets stay locked on the sample */
 .vf-scene{position:absolute;inset:0;overflow:hidden;background:#000}
 .vf-stage{position:absolute;left:50%;top:50%;width:max(100cqw,calc(100cqh * 941 / 1672));height:max(100cqh,calc(100cqw * 1672 / 941));transform:translate(-50%,-50%)}
@@ -950,10 +950,10 @@ input.qty.xl{width:64px} /* room for three digits */
    Controls (pills, fields, round buttons) lose the outline too. Appointments on Home are separate white rows with a 2px gap, not divider lines. */
 .list,.appts,.tile,.pcard,.sk-card,.ov-sum,.kpi,.panel,.single,.empty,.rec,.alts,.linkbox,.pre,.look,
 .day,.inp,.stp,.size-cell,.search,.sq-btn,.round-btn,.pin-k,.cn-cat,.ftab,.colour,.qbtn,.pc-lock,.btn.white,.pd-in,.sugg button,.srch-x{border-color:transparent}
-/* size cells, like the one-size stepper: a white vertical pill with a grey outline and no fills: the size on top, then +, the number, − ; a size with a quantity gets a black outline */
+/* size cells, like the one-size stepper: a white vertical pill with a grey outline and no fills: the size on top, then +, the number, − ; no black outline: a quantity shows by its black number (0 is light grey) */
 .sizes{gap:8px}
 .size-cell,.size-cell.has{flex:1 0 56px;gap:0;padding:4px 4px 6px;border:0;border-radius:999px;background:var(--bg);box-shadow:inset 0 0 0 1px var(--line);overflow:visible}
-.size-cell.has{box-shadow:inset 0 0 0 1.5px var(--ink)}
+.qty.zero{color:var(--faint)} /* 0 reads like a placeholder; a quantity is black */
 .size-cell > *,.size-cell > input.qty{background:none}
 .size-cell .step:first-of-type,.size-cell .step:last-of-type{margin:0}
 .size-cell .sz{padding:10px 0 2px;font-weight:400}
@@ -2129,7 +2129,7 @@ function ProductSheet({pid, colour, orderId, back, S, ui, act}) {
   const edit = o && !why;
   const val = n => `${n} ${n === 1 ? 'unit' : 'units'}`;
   // tap the number to type it on the number pad (up to 999); + and − still step by one
-  const num = (sz, cls = '') => html`<input class=${'qty num ' + cls} inputmode="numeric" pattern="[0-9]*" enterkeyhint="done" value=${q[sz] || 0}
+  const num = (sz, cls = '') => html`<input class=${'qty num ' + cls + (q[sz] ? '' : ' zero')} inputmode="numeric" pattern="[0-9]*" enterkeyhint="done" value=${q[sz] || 0}
     aria-label=${sz === 'U' ? 'Quantity' : 'Quantity, size ' + sz} onFocus=${e => e.target.select()} onKeyDown=${e => e.key === 'Enter' && e.target.blur()}
     onInput=${e => setQty(sz, Math.min(999, parseInt(e.target.value.replace(/\D/g, ''), 10) || 0))}/>`;
   return html`<${Sheet} tall title=${p.name} onClose=${close}
@@ -2226,13 +2226,13 @@ function SizeSheet({sh, S, act}) {
         <div class="sizes">${p.sizes.map(s => html`<div class=${'size-cell' + (q[s] ? ' has' : '')}>
           <div class="sz">${s}</div>
           <button class="step" aria-label=${'Add one size ' + s} onClick=${() => setQty(s, (q[s] || 0) + 1)}><${Icon} n="plus" s=${20} w=${2}/></button>
-          <div class="qty num">${q[s] || 0}</div>
+          <div class=${'qty num' + (q[s] ? '' : ' zero')}>${q[s] || 0}</div>
           <button class="step" aria-label=${'Remove one size ' + s} onClick=${() => setQty(s, (q[s] || 0) - 1)}><${Icon} n="minus" s=${20} w=${2}/></button>
         </div>`)}</div>
         ${units(q) > 0 && html`<div class="quick"><button class="qbtn" onClick=${() => setAll([])}>Clear</button></div>`}` : html`
         <div class="single">
           <button class="step lg" aria-label="Remove one" onClick=${() => setQty('U', (q.U || 0) - 1)}><${Icon} n="minus" s=${26} w=${2}/></button>
-          <div class="qty xl num">${q.U || 0}</div>
+          <div class=${'qty xl num' + (q.U ? '' : ' zero')}>${q.U || 0}</div>
           <button class="step lg" aria-label="Add one" onClick=${() => setQty('U', (q.U || 0) + 1)}><${Icon} n="plus" s=${26} w=${2}/></button>
         </div>`}
       <div class="panel impact">
@@ -2263,7 +2263,7 @@ function Capture({order, div, act}) {
   return html`<div class="capture">
     <div class="vf-top">
       <button class="vf-btn" onClick=${() => act.capture(false)} aria-label="Close camera"><${Icon} n="x"/></button>
-      <div class="vf-title">${b ? `${b.shop} · ${DIV_LABEL[div]}` : 'Scan a sample'}</div>
+      <div class="vf-title">${b ? b.shop : 'Scan a sample'}</div>
       <span style="width:42px" aria-hidden="true"></span>
     </div>
     <div class="vf-scene">
