@@ -780,14 +780,24 @@ input{font:inherit;color:inherit}
 .ss-top{display:flex;gap:14px;align-items:center}
 .ss-info{display:flex;flex-direction:column;gap:6px;min-width:0}
 .ss-total{font-size:var(--fs-body)}.ss-total b{font-size:var(--fs-heading);font-variant-numeric:normal}
-.colours{position:relative;display:flex;gap:8px;overflow-x:auto;margin:0 -18px;padding:0 18px 2px;scroll-padding:0 18px;scrollbar-width:none}
+.colours{position:relative;isolation:isolate;display:flex;gap:8px;overflow-x:auto;margin:0 -18px;padding:0 18px 2px;scroll-padding:0 18px;scrollbar-width:none}
 .colour{display:flex;align-items:center;gap:8px;padding:0 12px;height:40px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:var(--fs-body);white-space:nowrap;flex:none}
 .colour .sw{width:16px;height:16px}
 .colour .flag-dot{width:16px;height:16px} /* the "in the order" check as big as the colour swatch */
 /* name and code are the same size and line height, both centred, so they share one baseline; the code black like the name, in regular weight */
 .colour .nm,.colour .code{display:block;font-size:var(--fs-body);line-height:20px}
 .colour .code{font-weight:400;color:var(--ink)}
-.colour.on{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.colour.on{border-color:transparent;box-shadow:none}
+/* like the Collection categories: each chip's grey is its ::before; the chosen colour is one black pill (.slide-ind) that slides to the tapped chip, holding a white copy of the row */
+.colour{position:relative;background:none}
+.colour::before{content:"";position:absolute;inset:-1px;z-index:-1;border-radius:999px;background:var(--surface);transition:opacity 0s}
+.colour.on::before{opacity:0;transition:opacity 0s .32s}
+@media (prefers-reduced-motion:reduce){.colour.on::before{transition:none}}
+.colours .slide-ind{border-radius:999px;background:var(--ink)}
+.colours .slide-copy{gap:8px;padding:0 18px}
+.colours .slide-copy > .colour,.colours .slide-copy .code{color:var(--bg)}
+.colours .slide-copy .sw{box-shadow:inset 0 0 0 1px rgba(255,255,255,.4)} /* a black swatch still shows on the black pill */
+.colours .slide-copy .cnt{background:var(--bg);color:var(--ink)}
 .cnt{font-size:var(--fs-caption);font-weight:700;background:var(--ink);color:var(--bg);border-radius:999px;padding:2px 6px}
 .sizes{display:flex;gap:6px;overflow-x:auto;margin:0 -18px;padding:0 18px 2px;scrollbar-width:none}
 .size-cell{flex:1 0 54px;display:flex;flex-direction:column;align-items:stretch;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);overflow:hidden}
@@ -811,7 +821,7 @@ input.qty{width:100%;min-width:0;border:0;background:transparent;color:inherit;f
 input.qty:focus{background:var(--surface-2)}
 input.qty.xl{width:64px} /* room for three digits */
 .single .qty{font-variant-numeric:normal} /* plain 1, no foot */
-.quick{display:flex;gap:6px;flex-wrap:wrap}
+.quick{display:flex;gap:6px;flex-wrap:wrap;justify-content:center} /* always there (greyed out until there is something to copy, paste or clear), so nothing jumps */
 .qbtn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:var(--fs-caption);font-weight:600}
 .qbtn:disabled{color:var(--faint)}
 .qbtn:active{background:var(--surface-2)}
@@ -953,7 +963,7 @@ input.qty.xl{width:64px} /* room for three digits */
 /* size cells, like the one-size stepper: a white vertical pill with a grey outline and no fills: the size on top, then +, the number, − ; no black outline: a quantity shows by its black number (0 is light grey) */
 .sizes{gap:8px}
 .size-cell,.size-cell.has{flex:1 0 56px;gap:0;padding:4px 4px 6px;border:0;border-radius:999px;background:var(--bg);box-shadow:inset 0 0 0 1px var(--line);overflow:visible}
-.qty.zero{color:var(--faint)} /* 0 reads like a placeholder; a quantity is black */
+.qty.zero{color:color-mix(in srgb,var(--ink) 22%,transparent)} /* 0 is very light, like a placeholder; a quantity is black */
 .size-cell > *,.size-cell > input.qty{background:none}
 .size-cell .step:first-of-type,.size-cell .step:last-of-type{margin:0}
 .size-cell .sz{padding:10px 0 2px;font-weight:400}
@@ -1680,10 +1690,6 @@ const revealNear = (el, a) => { if (!el || !a || el.scrollWidth <= el.clientWidt
   const snaps = getComputedStyle(el).scrollSnapType !== 'none' ? [...el.children].filter(item).map(e => e.offsetLeft - pad) : null;
   if (to != null && snaps) to = to >= el.scrollLeft ? (snaps.find(x => x >= to - 1) ?? to) : (snaps.filter(x => x <= to + 1).pop() ?? to);
   if (to != null) el.scrollTo({left:to, behavior:matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); };
-// the colour chips on the product page and in the size sheet: reveal the neighbour of the colour just tapped (not on first show)
-const useRevealOn = (sel, dep) => { const box = useRef(null), first = useRef(true);
-  useEffect(() => { if (first.current) { first.current = false; return; } const el = box.current; revealNear(el, el && el.querySelector(sel)); }, [dep]);
-  return box; };
 const useSlide = sel => { const box = useRef(null), ind = useRef(null), last = useRef(null);
   const place = () => { const el = box.current, i = ind.current, a = el && el.querySelector(sel); if (!i) return;
     if (!a) { i.style.opacity = '0'; return; }
@@ -2114,7 +2120,9 @@ function FilterSheet({ui, act}) {
 // Copy scale keeps this style's size scale (per size range, until another one is copied); Paste scale fills it on the next style.
 function ProductSheet({pid, colour, orderId, back, S, ui, act}) {
   const p = P[pid], o = orderId ? S.orders[orderId] : activeOrder(S, ui), b = o && BUYERS[o.buyerId], why = o && canTake(o, p);
-  const [c, setC] = useState(() => { const l = o && o.lines.find(x => x.pid === pid); return colour || (l ? l.colour : p.colours[0]); }), colRow = useRevealOn('.colour.on', c);
+  const [c, setC] = useState(() => { const l = o && o.lines.find(x => x.pid === pid); return colour || (l ? l.colour : p.colours[0]); }), [colBox, colInd] = useSlide('.colour.on');
+  // a colour chip: swatch, name, code and, when that colour is in the order, a green check (drawn twice: the chip and its white copy inside the sliding black pill)
+  const chip = x => html`<span class="sw" style=${{background:COL[x][0]}}></span><span class="nm">${x}</span><span class="code">${COL[x][1]}</span>${lineOf(x) && html`<span class="flag-dot" title="In order"><${Icon} n="check" s=${10} w=${3}/></span>`}`;
   const looks = LOOKS.filter(l => l.items.some(([x]) => x === pid));
   const pick = () => act.sheet({type:'pick', item:{pid, colour:c, via:'search', ret:'product'}}); // once a client is picked, back to this page
   const lineOf = x => o && o.lines.find(l => l.pid === pid && l.colour === x), line = lineOf(c);
@@ -2136,7 +2144,8 @@ function ProductSheet({pid, colour, orderId, back, S, ui, act}) {
     media=${html`<div class="pd-media"><${Carousel} p=${p} colour=${c} at=${ui.photoAt} onOpen=${i => act.set({zoom:{pid, colour:c, i}})}/><${Tag} p=${p}/></div>`}>
     <div class="pd-head"><h1 class="pd-name">${p.name}</h1>
       <div class="pd-sub"><span class="code">${p.code}</span></div></div>
-    <div class="colours" ref=${colRow}>${p.colours.map(x => html`<button class=${'colour' + (x === c ? ' on' : '')} onClick=${() => setC(x)}><span class="sw" style=${{background:COL[x][0]}}></span><span class="nm">${x}</span><span class="code">${COL[x][1]}</span>${lineOf(x) && html`<span class="flag-dot" title="In order"><${Icon} n="check" s=${10} w=${3}/></span>`}</button>`)}</div>
+    <div class="colours" ref=${colBox}>${p.colours.map(x => html`<button class=${'colour' + (x === c ? ' on' : '')} onClick=${() => setC(x)}>${chip(x)}</button>`)}
+      <span class="slide-ind" ref=${colInd} aria-hidden="true"><span class="slide-copy">${p.colours.map(x => html`<button class="colour" tabindex="-1">${chip(x)}</button>`)}</span></span></div>
     ${edit && html`<div class="pd-qty">
       ${p.sizes.length > 1 ? html`
         <div class="sizes">${p.sizes.map(sz => html`<div class=${'size-cell' + (q[sz] ? ' has' : '')}>
@@ -2145,10 +2154,10 @@ function ProductSheet({pid, colour, orderId, back, S, ui, act}) {
           ${num(sz)}
           <button class="step" aria-label=${'Remove one size ' + sz} onClick=${() => setQty(sz, (q[sz] || 0) - 1)}><${Icon} n="minus" s=${20} w=${2}/></button>
         </div>`)}</div>
-        ${(last || u > 0) && html`<div class="quick">
-          ${u > 0 && html`<button class="qbtn" disabled=${same} onClick=${copy}><${Icon} n="copy" s=${15} w=${2}/>Copy scale</button>`}
-          ${last && html`<button class="qbtn" disabled=${same} onClick=${() => setQ(last)}>Paste scale</button>`}
-          ${u > 0 && html`<button class="qbtn" onClick=${() => setQ({})}>Clear</button>`}</div>`}` : html`
+        <div class="quick">
+          <button class="qbtn" disabled=${!u || same} onClick=${copy}><${Icon} n="copy" s=${15} w=${2}/>Copy scale</button>
+          <button class="qbtn" disabled=${!last || same} onClick=${() => setQ(last)}>Paste scale</button>
+          <button class="qbtn" disabled=${!u} onClick=${() => setQ({})}>Clear</button></div>` : html`
         <div class="single">
           <button class="step lg" aria-label="Remove one" onClick=${() => setQty('U', (q.U || 0) - 1)}><${Icon} n="minus" s=${26} w=${2}/></button>
           ${num('U', 'xl')}
@@ -2183,7 +2192,8 @@ function SizeSheet({sh, S, act}) {
   const init = useMemo(() => Object.fromEntries(p.colours.map(c => [c, {...((order.lines.find(l => l.pid === p.id && l.colour === c) || {}).qty || {})}])), []);
   const [draft, setDraft] = useState(init);
   const existing = order.lines.some(l => l.pid === p.id);
-  const [col, setCol] = useState(sh.colour || (order.lines.find(l => l.pid === p.id) || {}).colour || p.colours[0]), colRow = useRevealOn('.colour.on', col);
+  const [col, setCol] = useState(sh.colour || (order.lines.find(l => l.pid === p.id) || {}).colour || p.colours[0]), [colBox, colInd] = useSlide('.colour.on');
+  const chip = c => html`<span class="sw" style=${{background:COL[c][0]}}></span><span class="nm">${c}</span><span class="code">${COL[c][1]}</span>${units(draft[c]) > 0 && html`<span class="cnt">${units(draft[c])}</span>`}`;
   const locked = !available(b, p);
   // once a part is sent it is read-only for the seller and the client alike
   const readOnly = partLocked(order, p.div);
@@ -2219,7 +2229,8 @@ function SizeSheet({sh, S, act}) {
     ${locked && html`<div class="callout bad"><${Icon} n="lock" s=${18}/><div>${p.name} isn’t available to ${b.shop}, so it can’t go on this order.</div></div>`}
     ${readOnly && html`<div class="callout info"><${Icon} n="lock" s=${18}/><div>The ${DIV_LABEL[p.div].toLowerCase()} order has been sent and can’t be changed here.</div></div>`}
     <div class="lbl">Colour <span style="text-transform:none;letter-spacing:0;font-weight:400">· ${p.colours.length} options</span></div>
-    <div class="colours" ref=${colRow}>${p.colours.map(c => html`<button class=${'colour' + (c === col ? ' on' : '')} onClick=${() => setCol(c)}><span class="sw" style=${{background:COL[c][0]}}></span><span class="nm">${c}</span><span class="code">${COL[c][1]}</span>${units(draft[c]) > 0 && html`<span class="cnt">${units(draft[c])}</span>`}</button>`)}</div>
+    <div class="colours" ref=${colBox}>${p.colours.map(c => html`<button class=${'colour' + (c === col ? ' on' : '')} onClick=${() => setCol(c)}>${chip(c)}</button>`)}
+      <span class="slide-ind" ref=${colInd} aria-hidden="true"><span class="slide-copy">${p.colours.map(c => html`<button class="colour" tabindex="-1">${chip(c)}</button>`)}</span></span></div>
     ${!locked && !readOnly && html`
       <div class="lbl">${p.sizes.length > 1 ? 'Sizes' : 'Quantity'} · ${col}</div>
       ${p.sizes.length > 1 ? html`
@@ -2229,7 +2240,7 @@ function SizeSheet({sh, S, act}) {
           <div class=${'qty num' + (q[s] ? '' : ' zero')}>${q[s] || 0}</div>
           <button class="step" aria-label=${'Remove one size ' + s} onClick=${() => setQty(s, (q[s] || 0) - 1)}><${Icon} n="minus" s=${20} w=${2}/></button>
         </div>`)}</div>
-        ${units(q) > 0 && html`<div class="quick"><button class="qbtn" onClick=${() => setAll([])}>Clear</button></div>`}` : html`
+        <div class="quick"><button class="qbtn" disabled=${!units(q)} onClick=${() => setAll([])}>Clear</button></div>` : html`
         <div class="single">
           <button class="step lg" aria-label="Remove one" onClick=${() => setQty('U', (q.U || 0) - 1)}><${Icon} n="minus" s=${26} w=${2}/></button>
           <div class=${'qty xl num' + (q.U ? '' : ' zero')}>${q.U || 0}</div>
