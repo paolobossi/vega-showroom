@@ -849,6 +849,7 @@ input.qty.xl{width:64px} /* room for three digits */
 .facts > div > span:first-child{flex:none;color:var(--muted)}
 .facts > div > span:last-child{text-align:right;color:var(--ink)}
 .facts .plain{font:inherit;color:inherit;padding:0}
+.facts > .fx-sep{border:0;height:1px;margin:7px 14px;background:var(--line);flex:none} /* groups: what it is · where it sits in the collection · ordering · looks */
 .impact-row{display:flex;justify-content:space-between;gap:10px;align-items:center}
 .sugs{display:flex;gap:10px;overflow-x:auto;margin:0 -18px;padding:0 18px 4px;scrollbar-width:none}
 .sug{flex:none;width:118px;text-align:left;display:flex;flex-direction:column;gap:6px}
@@ -2176,12 +2177,14 @@ function ProductSheet({pid, colour, orderId, back, S, ui, act}) {
       <div class="pd-hl"><div><small>Wholesale</small><b class="num">${fmt(p.price)}</b></div><div><small>Retail</small><b class="num">${fmt(p.rrp)}</b></div></div>
       <div><span>Code</span><span>${p.code}</span></div>
       ${p.material && html`<div><span>Material</span><span>${p.material}</span></div>`}
+      <hr class="fx-sep"/>
       <div><span>Division</span><span>${p.div === 'W' ? 'Womenswear' : 'Menswear'}</span></div>
       <div><span>Category</span><span>${CAT_LABEL[p.cat]}</span></div>
-      ${looks.length > 0 && html`<div><span>Appears in</span><span>${looks.map((l, i) => html`${i ? ', ' : ''}<button class="plain" onClick=${() => act.sheet({type:'look', id:l.id})}>${lookNo(l)}</button>`)}</span></div>`}
       <div><span>Family</span><span>${p.family}</span></div>
+      <hr class="fx-sep"/>
       <div><span>Sizes</span><span>${p.sizes.join(' · ')}</span></div>
       <div><span>Delivery</span><span>${dropName(p.drop)}</span></div>
+      ${looks.length > 0 && html`<hr class="fx-sep"/><div><span>Appears in</span><span>${looks.map((l, i) => html`${i ? ', ' : ''}<button class="plain" onClick=${() => act.sheet({type:'look', id:l.id})}>${lookNo(l)}</button>`)}</span></div>`}
     </div></div>
   <//>`;
 }
