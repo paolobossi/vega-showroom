@@ -147,7 +147,10 @@ input{font:inherit;color:inherit}
    on white that fades in from a gradient above it, like the buttons at the bottom of a sheet; no shadow */
 .ov .ov-actions{left:0;right:0;width:auto;transform:none;bottom:0;padding:40px 18px max(14px,env(safe-area-inset-bottom,0px));
   background:linear-gradient(to bottom,color-mix(in srgb,var(--bg) 0%,transparent),var(--bg) 36px);pointer-events:none}
-.ord-tab .ov-actions{bottom:calc(66px + max(10px,env(safe-area-inset-bottom,0px)));padding-bottom:10px}
+.ord-tab .ov-actions{bottom:0;padding-bottom:calc(76px + max(10px,env(safe-area-inset-bottom,0px)));
+  background:linear-gradient(to bottom,color-mix(in srgb,var(--bg) 0%,transparent),color-mix(in srgb,var(--bg) 70%,transparent) 36px)}
+/* on the Order tab the button's backdrop runs on down behind the tab bar, in the tab bar's own 70% white, so the two read as one even fade with no gap; the tab bar adds none of its own */
+.ord-tab ~ .dock{background:none}
 .ov .ov-actions > *{pointer-events:auto}.ov .ov-actions .cap-btn{box-shadow:none}
 .cap-btn.go{background:var(--good);color:var(--surface)}
 .ord-tab .ov-actions .cap-btn{box-shadow:none}
@@ -923,7 +926,7 @@ input.qty.xl{width:64px} /* room for three digits */
   .round{width:42px}
   .tab{flex-direction:row;justify-content:center;gap:6px;padding:8px 0}
   .screen.tabbed{padding-bottom:calc(64px + max(10px,env(safe-area-inset-bottom,0px)))}
-  .ord-tab .ov-actions{bottom:calc(52px + max(10px,env(safe-area-inset-bottom,0px)))}
+  .ord-tab .ov-actions{bottom:0;padding-bottom:calc(62px + max(10px,env(safe-area-inset-bottom,0px)))}
   .app.docked .toast:not(.top){bottom:calc(62px + max(10px,env(safe-area-inset-bottom,0px)))}
   .ov-body{padding-bottom:72px}
   .ov-actions{bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 8px))}
