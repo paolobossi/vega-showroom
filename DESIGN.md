@@ -22,6 +22,8 @@ Four sizes, each with one job. Hierarchy beyond these comes from weight, colour,
 - **Above the tab bar:** the client pill and the Order tab's Finalize order both sit 8px above the tab bar, edge to edge with it (18px from the sides).
 - **Sticky Collection header** (`.cat-nav`): collections and category pills on the page colour at 88% with an 18px blur, drawn in `::before` and masked to fade out over its last 20px; it reaches 28px below the pills' row, 6px solid then 22px fading (padding 28px, margin -20px so the page does not move).
 - **Order status banner icon:** a 38px circle in a 14% tint of the status colour with the icon in the status colour (the budget bars' icon logic), not a solid circle with a white icon.
+- **No quantity yet:** a tag like the status tags (18px tall, 11px regular), light yellow (`--warn-bg`) with `--warn` text.
+- **A part already sent:** `canTake` says "Women's order submitted" / "Men's order submitted"; Collection cards show it only by the faded photo (the lock tag was dropped), the product page's disabled button carries the words alone (no shop name).
 - **Order line amounts:** units on top, 12px grey; the value under them, 12px semibold ink; the division Total stacks the same way.
 - **Profile sheet:** grouped like Select client (`.grp` boxes, rules from under the text at 48px), plain 20px icons with no tile, grey chevrons, Sign out red in its own box.
 - **Toasts from the top:** every message drops in at the top and slides back up (Added to order, Saved, Removed from order, Scale copied, Checked out, Signed in…); none comes from the bottom any more (a bottom message sat high above the client pill and the tab bar, almost mid-screen).

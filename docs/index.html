@@ -582,7 +582,8 @@ input{font:inherit;color:inherit}
 .sel-val{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;line-height:var(--lh-tight)}
 /* units and value on an order line: the size of the size tags (12px), same colours and weights */
 .sel-val{font-size:var(--fs-caption)}.sel-val small{font-size:var(--fs-caption);color:var(--muted)}
-.sel-val b{font-weight:600;color:var(--ink)} /* the value bold in ink, the units above it small and grey */
+.sel-val b{font-weight:600;color:var(--ink)}
+.qtag{display:inline-flex;align-items:center;height:var(--tag-h);padding:0 7px;border-radius:999px;font-size:11px;line-height:1.3;font-weight:400;letter-spacing:.01em;background:var(--warn-bg);color:var(--warn);white-space:nowrap} /* "No quantity yet": a light yellow tag, regular weight, like the status tags */ /* the value bold in ink, the units above it small and grey */
 /* the delivery drop: white tag with a grey outline next to the item code */
 .sel.open .sel-val small{color:var(--warn);font-weight:600}
 /* Women / Men on the order: underlined tabs; the budget summary below opens Guidelines */
@@ -1314,7 +1315,7 @@ function syncStatus(o) { const sts = [...new Set(BUYERS[o.buyerId].divs.map(d =>
   o.status = sts.length === 1 ? sts[0] : sts.some(isSent) ? 'partial' : sts.includes('shared') ? 'shared' : 'draft'; }
 // a division the client doesn't buy is not a reason: adding to it asks first (see a.select)
 const canTake = (o, p) => { const b = BUYERS[o.buyerId];
-  return !available(b, p) ? 'Not available' : partLocked(o, p.div) ? `${DIV_TAB[p.div]} sent` : null; };
+  return !available(b, p) ? 'Not available' : partLocked(o, p.div) ? `${DIV_LABEL[p.div]} order submitted` : null; }; // "Women's order submitted": that part of the order has been sent, so nothing more goes in
 
 // Runway looks; n is the show number and names the photos, the app labels them 01, 02… per division. Required looks are part of the buying guidelines (the client buys every piece).
 // Photos are the real looks from the LOEWE Spring Summer 2027 show on loewe.com: docs/img/looks/<look>_<view>.jpg
@@ -1910,7 +1911,6 @@ function PCard({p, o, act}) {
   return html`<div class="pc-wrap"><button class=${'pcard' + (lock && !has ? ' locked' : '')} onClick=${() => act.sheet({type:'product', pid:p.id, colour:c})} aria-label=${p.name + (has ? ', in the order' : '')}>
     <div class="pc-photo">
       <span class="pc-img"><${Thumb} pid=${p.id} colour=${c}/></span>
-      ${lock && html`<span class="pc-lock"><${Icon} n="lock" s=${11} w=${2.4}/>${lock}</span>`}
       ${has && html`<span class="pc-in" aria-hidden="true"><${Icon} n="check" s=${13} w=${3}/></span>`}
     </div>
     <span class="pc-info">
@@ -2212,7 +2212,7 @@ function ProductSheet({pid, colour, orderId, back, S, ui, act}) {
     </div>`}
     <div class="pd-cta">${!o ? html`<div class="g-box"><div class="pd-pick"><${Icon} n="checkin" s=${28}/><b>No client checked in</b><div>Pieces you add go into their order.</div>
         <button class="btn black" onClick=${pick}>Select client</button></div></div>`
-      : why ? html`${line && html`<div class="pd-in">In order · ${u ? val(u) : 'no quantity'}</div>`}<button class="btn black" disabled>${b.shop} · ${why}</button>`
+      : why ? html`${line && html`<div class="pd-in">In order · ${u ? val(u) : 'no quantity'}</div>`}<button class="btn black" disabled>${why}</button>`
       : line ? html`<button class="btn outline danger" onClick=${() => act.unselect(o.id, pid, c)}>Remove from order</button>`
       : null}</div>
     <div class="g-box"><div class="facts">
@@ -2397,7 +2397,7 @@ function SelLine({l, o, act, locked}) {
       ${sized ? html`${!locked && html`<button class="pc-act sel-edit" onClick=${edit}>${u ? 'Edit sizes' : 'Enter sizes'}</button>`}`
         : locked ? html`<span class="small muted num">×${u}</span>`
         : html`<${Stepper} n=${u} label=${p.name} on=${n => act.setUnits(o.id, l.id, n)}/>`}
-      <span class="sel-val num">${u ? html`<small>${u} ${u === 1 ? 'unit' : 'units'}</small><b>${fmt(lineValue(l))}</b>` : html`<small>No quantity yet</small>`}</span>
+      <span class="sel-val num">${u ? html`<small>${u} ${u === 1 ? 'unit' : 'units'}</small><b>${fmt(lineValue(l))}</b>` : html`<span class="qtag">No quantity yet</span>`}</span>
     </div>
   </div>`;
 }
