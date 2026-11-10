@@ -786,7 +786,7 @@ input{font:inherit;color:inherit}
 .colour .flag-dot{width:16px;height:16px} /* the "in the order" check as big as the colour swatch */
 /* name and code are the same size and line height, both centred, so they share one baseline; the code black like the name, in regular weight */
 .colour .nm,.colour .code{display:block;font-size:var(--fs-body);line-height:20px}
-.colour .code{font-weight:400;color:var(--ink)}
+.colour .code{font-weight:400;color:var(--ink);margin-left:-2px} /* 6px from the name (the chip's gap is 8px) */
 .colour.on{border-color:transparent;box-shadow:none}
 /* like the Collection categories: each chip's grey is its ::before; the chosen colour is one black pill (.slide-ind) that slides to the tapped chip, holding a white copy of the row */
 .colour{position:relative;background:none}
