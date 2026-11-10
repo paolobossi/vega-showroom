@@ -242,7 +242,7 @@ input{font:inherit;color:inherit}
 .pin{display:flex;flex-direction:column;align-items:center;gap:14px;padding:4px 0 6px}
 .pin-t{font-size:var(--fs-heading);font-weight:600}
 .pin-dots{display:flex;gap:16px;margin:2px 0 6px}
-.pin-dots i{width:13px;height:13px;border-radius:50%;border:1.5px solid var(--ink);transition:background .12s}
+.pin-dots i{width:14px;height:14px;border-radius:50%;box-shadow:inset 0 0 0 1px var(--ink);transition:background .12s} /* a crisp 1px ring (an inset shadow on a whole-pixel circle; the 1.5px border rendered unevenly) */
 .pin-dots i.on{background:var(--ink)}
 .pin-t.bad{color:var(--bad)}
 .pin-dots.bad{animation:shake .32s}
@@ -250,7 +250,7 @@ input{font:inherit;color:inherit}
 .pin-pad{display:grid;grid-template-columns:repeat(3,72px);gap:14px 26px}
 .pin-k{width:72px;height:72px;border-radius:50%;background:var(--surface);border:1px solid var(--line);font-size:var(--fs-title);font-weight:400;display:grid;place-items:center;font-variant-numeric:normal}
 .pin-k:active:not(:disabled){background:var(--surface-2)}
-.pin-k.txt{background:none;border:0;font-size:var(--fs-body);font-weight:600;color:var(--accent)}
+.pin-k.txt{background:none;border:0;font-size:var(--fs-body);font-weight:600;color:var(--ink)} /* Cancel and delete in ink, not blue */
 .top-acts{display:flex;align-items:center;gap:10px}.top-acts .round-btn{margin-top:0}
 .field{display:flex;flex-direction:column;gap:6px}
 .inp.area{height:auto;min-height:104px;padding:12px 14px;font-size:14px;line-height:var(--lh-body);resize:vertical} /* typed text and placeholder 14px, like the Budget and Guidelines rows */
@@ -2037,7 +2037,7 @@ function PinPad({rep, title, check, onDone, onBack}) {
     window.addEventListener('keydown', key); return () => window.removeEventListener('keydown', key); }, []);
   return html`<div class="pin">
     <span class="avatar">${rep.ini}</span>
-    <div class=${'pin-t' + (bad ? ' bad' : '')} role="status">${bad || title || `Enter ${rep.name}’s code`}</div>
+    <div class=${'pin-t' + (bad ? ' bad' : '')} role="status">${bad || title || `Enter ${rep.name.split(' ')[0]}’s code`}</div>
     <div class=${'pin-dots' + (bad ? ' bad' : '')} aria-label=${pin.length + ' of 4 digits entered'}>${[0, 1, 2, 3].map(i => html`<i class=${i < pin.length ? 'on' : ''}></i>`)}</div>
     <div class="pin-pad">${['1', '2', '3', '4', '5', '6', '7', '8', '9', 'back', '0', 'del'].map(k => k === 'back'
       ? html`<button class="pin-k txt" onClick=${onBack}>Cancel</button>`

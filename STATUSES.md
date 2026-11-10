@@ -95,7 +95,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 ### 1. Sign in, sign out, passcode
 - [ ] 1.1b The Profile sheet has no "Profile" title and no "Seller · showroom" line: just the avatar and your name with the × on the same line, then, laid out like Select client, Order history, Set passcode and App feedback in one white box with a grey outline and squircle corners, light rules between them (from under the text), each with a plain icon (no grey square behind it) and a grey ›, then Sign out in red in a box of its own.
 - [ ] 1.1 Home → the round avatar with your initials (top right) → Profile sheet → Sign out → the full-screen "Who's selling?" list of sellers shows: no "Vega" above the title, the sellers (avatar, name, grey ›) in one white box with a grey outline and light rules, like Select client.
-- [ ] 1.2 Pick Roberto D. with no passcode set → any 4 digits sign in; toast "Signed in as Roberto D.".
+- [ ] 1.2 Pick Roberto D. → "Enter Roberto's code" (first name only); the four dots are 14px circles with an even 1px black ring, filled black as you type; Cancel (bottom left) and delete are black, not blue. With no passcode set any 4 digits sign in; toast "Signed in as Roberto D.".
 - [ ] 1.3 Avatar → Set passcode → enter 4 digits, then the same 4 again → toast "Passcode set"; the row now reads Change passcode.
 - [ ] 1.4 Set passcode with a different second entry → "The codes don't match. Try again."; nothing is saved until both match.
 - [ ] 1.5 Sign out, pick Roberto D., enter a wrong code → "Wrong code. Try again." and the dots clear; the right code signs in.
