@@ -745,8 +745,10 @@ input{font:inherit;color:inherit}
 .sheet.media .sheet-body{padding-top:0}
 .sheet.media .car{margin:0 -18px}
 .sheet.media .car-track{border-radius:0}
-/* in a sheet the photo is kept short (5:4, the whole product shown) so the name, prices and sizes are on screen without scrolling */
+/* in a sheet the photo is kept short so the name, prices and sizes are on screen without scrolling: a product's photo 3:2 (a classic photo ratio,
+   lower than the old 5:4, not as flat as 16:9; the whole product shown), a runway look's 5:4 (cropped from a tall photo, so it keeps more height) */
 .sheet.media .car-slide{aspect-ratio:5/4;max-height:none}
+.sheet.media .car:not(.cover) .car-slide{aspect-ratio:3/2}
 .sheet.media .car:not(.cover) .car-slide img{object-fit:contain}
 /* page: the product detail fills the screen like a page, over the tab bar, and slides in from the right */
 .sheet.media.page{top:0;bottom:0;height:auto;max-height:none;max-width:none;border-radius:0;box-shadow:none;animation:push .26s cubic-bezier(.2,.8,.2,1)}
