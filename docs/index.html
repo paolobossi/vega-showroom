@@ -2669,7 +2669,7 @@ function makeActs(setS, setUi, onReset) {
     a.close(); a.toast('Added to order'); };
   a.unselect = (id, pid, colour, by='salesperson') => { const p = P[pid];
     a.mut(id, o => { o.lines = o.lines.filter(l => !(l.pid === pid && (!colour || l.colour === colour))); log(o, by, `Removed ${p.name}${colour ? ' · ' + cname(colour) : ''}`); });
-    setUi(u => u.sheet && u.sheet.type === 'size' ? {...u, sheet:null} : u); a.toast('Removed from order'); };
+    setUi(u => u.sheet && u.sheet.type === 'size' ? {...u, sheet:null} : u); a.toast('Removed from order', true); }; // from the top, like the quantity messages
   // stepper on one-size styles; repeated taps update one log entry
   a.setUnits = (id, lineId, n) => { n = Math.max(0, Math.min(999, n)); a.mut(id, o => { const l = o.lines.find(x => x.id === lineId); if (!l) return; const p = P[l.pid]; l.qty = n ? {U: n} : {}; l.at = Date.now();
     const key = 'u:' + lineId, last = o.log[o.log.length - 1], text = `Set ${p.name} · ${cname(l.colour)} to ×${n}`;
