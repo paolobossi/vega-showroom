@@ -2145,7 +2145,7 @@ function ProductSheet({pid, colour, orderId, back, S, ui, act}) {
   const close = back ? () => act.sheet(back) : act.close;
   const setQty = (sz, n) => setQ({...q, [sz]: Math.max(0, n)});
   const last = sized && ui.lastScale && ui.lastScale[skey], same = last && qkey(last) === qkey(clean(q));
-  const copy = () => { act.set({lastScale: {...ui.lastScale, [skey]: clean(q)}}); act.toast('Scale copied'); };
+  const copy = () => { act.set({lastScale: {...ui.lastScale, [skey]: clean(q)}}); act.toast('Scale copied', true); }; // from the top, like the quantity messages
   const edit = o && !why;
   const val = n => `${n} ${n === 1 ? 'unit' : 'units'}`;
   // tap the number to type it on the number pad (up to 999); + and − still step by one
