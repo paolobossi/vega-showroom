@@ -1901,7 +1901,7 @@ function CatalogueTab({S, ui, act}) {
   const all = CATS.map(c => { const ps = items.filter(p => p.cat === c), sub = SUBTYPE[c];
     return {cat:c, n:ps.length, fams:sub ? [...new Set(ps.map(sub))].map(f => ({f, id:c + '-' + slug(f), ps:ps.filter(p => sub(p) === f)}))
       : [...new Set(ps.map(p => p.family))].map(f => ({f:null, id:c + '-' + slug(f), ps:ps.filter(p => p.family === f)}))}; }).filter(g => g.n);
-  // a pill filters the page to one category (All shows every one); a category the division doesn't have falls back to All
+  // a pill filters the page to one category (All shows every one, each under its heading; a single category has no heading, the pill already names it); a category the division doesn't have falls back to All
   const on = all.some(g => g.cat === cat) ? cat : null, groups = on ? all.filter(g => g.cat === on) : all;
   const ref = useRef(null), t = useRef(0), nav = useRef(null), [collBox, collInd] = useSlide('.coll-t.on'), [catBox, catInd] = useSlide('.cn-cat.on');
   // the category bar slides away while scrolling down and slides back in from the top as soon as you scroll up
@@ -1939,9 +1939,9 @@ function CatalogueTab({S, ui, act}) {
             <span class="slide-ind" ref=${catInd} aria-hidden="true"><span class="slide-copy">${[null, ...all.map(g => g.cat)].map(c => html`<button class="cn-cat" tabindex="-1">${c ? CAT_LABEL[c] : 'All'}</button>`)}</span></span></div>
         </nav>
         ${!items.length ? html`<div class="empty">No ${DIV_LABEL[div].toLowerCase()} styles in this collection${filtered ? ' with these filters' : ''}.</div>`
-        : busy ? html`<div class="cat-main" aria-busy="true" aria-label="Loading"><div class="sk-h"></div><div class="pgrid">${[0, 1, 2, 3, 4, 5].map(i => html`<div class="sk-card" key=${i}><div class="sk-img"></div><div class="sk-l"></div><div class="sk-l s"></div><div class="sk-l s"></div></div>`)}</div></div>`
+        : busy ? html`<div class="cat-main" aria-busy="true" aria-label="Loading">${!on && html`<div class="sk-h"></div>`}<div class="pgrid">${[0, 1, 2, 3, 4, 5].map(i => html`<div class="sk-card" key=${i}><div class="sk-img"></div><div class="sk-l"></div><div class="sk-l s"></div><div class="sk-l s"></div></div>`)}</div></div>`
         : html`<div class="cat-main">${groups.map(g => html`<div class="cat-sec">
-          <h2 class="cat-h">${CAT_LABEL[g.cat]}</h2>
+          ${!on && html`<h2 class="cat-h">${CAT_LABEL[g.cat]}</h2>`}
           <div class="pgrid">${g.fams.map(f => html`${f.f && html`<div class="fam-h" key=${f.id}>${f.f}</div>`}${f.ps.map(p => html`<${PCard} key=${p.id} p=${p} o=${so} act=${act}/>`)}`)}</div>
         </div>`)}</div>`}
       </div>
