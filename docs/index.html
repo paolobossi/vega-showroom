@@ -333,7 +333,6 @@ input{font:inherit;color:inherit}
 .stp span{min-width:30px;text-align:center;font-weight:600;font-size:var(--fs-body)}
 .st-ok{color:var(--good)}.st-warn{color:var(--warn)}.st-bad{color:var(--bad)}.st-none{color:var(--muted)}
 .flag-txt{display:inline-flex;align-items:center;gap:4px;font-size:var(--fs-caption);font-weight:700;color:var(--good)}
-.flag-dot{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:none;color:var(--good);box-shadow:inset 0 0 0 1.5px var(--good)} /* "in the order" on a colour chip: a green outlined circle with a green check */
 /* carousel: portrait shots, swipe; tap opens them full screen (and tap there comes back) */
 .car{position:relative;display:flex;flex-direction:column}
 .car-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;border-radius:var(--r-l);background:#F0F0F0}
@@ -791,9 +790,9 @@ input{font:inherit;color:inherit}
 .ss-total{font-size:var(--fs-body)}.ss-total b{font-size:var(--fs-heading);font-variant-numeric:normal}
 .colours{position:relative;isolation:isolate;display:flex;gap:8px;overflow-x:auto;margin:0 -18px;padding:0 18px 2px;scroll-padding:0 18px;scrollbar-width:none}
 .colour{display:flex;align-items:center;gap:8px;padding:0 12px;height:40px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:var(--fs-body);white-space:nowrap;flex:none}
-.colour{padding-left:6px}.colour:has(> .flag-dot){padding-right:6px} /* with the 1px border, the swatch (and the in-order check) sit 7px in from the pill's ends */
+.colour{padding-left:6px} /* with the 1px border, the swatch sits 7px in from the pill's left end */
 .colour .sw{width:26px;height:26px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.4)} /* 26px: the 40px chip less 7px all round; a 2px light ring inside every colour swatch, on the grey chips too */
-.colour .flag-dot{width:26px;height:26px} /* the "in the order" check as big as the colour swatch */
+.colour .sw{display:grid;place-items:center} /* trial: "in the order" is a check inside the swatch itself (white on dark colours, ink on light ones), no circle */
 /* name and code are the same size and line height, both centred, so they share one baseline; the code black like the name, in regular weight */
 .colour .nm,.colour .code{display:block;font-size:var(--fs-body);line-height:20px}
 .colour .code{font-weight:400;color:var(--ink);margin-left:-2px} /* 6px from the name (the chip's gap is 8px) */
@@ -808,7 +807,6 @@ input{font:inherit;color:inherit}
 .colours .slide-copy{gap:8px;padding:0 18px}
 .colours .slide-copy > .colour,.colours .slide-copy .code{color:var(--bg)}
 .colours .slide-copy .sw{box-shadow:inset 0 0 0 2px rgba(255,255,255,.4)} /* a black swatch still shows on the black pill */
-.colours .slide-copy .flag-dot{color:#fff;box-shadow:inset 0 0 0 1.5px #fff} /* on the black pill the check is white, not green */
 .colours .slide-copy .cnt{background:var(--bg);color:var(--ink)}
 .cnt{font-size:var(--fs-caption);font-weight:700;background:var(--ink);color:var(--bg);border-radius:999px;padding:2px 6px}
 .sizes{display:flex;gap:6px;overflow-x:auto;margin:0 -18px;padding:0 18px 2px;scrollbar-width:none}
@@ -1088,6 +1086,8 @@ const REPS = {
   sofia:  {id:'sofia', name:'Sofia L.', full:'Sofia L.', ini:'SL'},
   marc:   {id:'marc', name:'Marc D.', full:'Marc D.', ini:'MD'},
 };
+// the check drawn on a colour swatch: dark on light colours, white on dark ones
+const inkOn = hex => { const h = hex.replace('#', ''), [r, g, b] = [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16) / 255); return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.62 ? '#141619' : '#FFFFFF'; };
 const COL = {
   'Carmine Red':['#9E1B24','0241'], 'Mineral Mist':['#B9BCB8','0371'], Black:['#1E1E1F','1100'], White:['#F4F4F2','2100'],
   Mocha:['#6A4B3A','9579'], 'Sunrise Orange':['#E0662A','5557'], Sand:['#CDB892','2150'], Squirrel:['#8A6E55','4927'],
@@ -2134,7 +2134,7 @@ function ProductSheet({pid, colour, orderId, back, S, ui, act}) {
   const p = P[pid], o = orderId ? S.orders[orderId] : activeOrder(S, ui), b = o && BUYERS[o.buyerId], why = o && canTake(o, p);
   const [c, setC] = useState(() => { const l = o && o.lines.find(x => x.pid === pid); return colour || (l ? l.colour : p.colours[0]); }), [colBox, colInd] = useSlide('.colour.on');
   // a colour chip: swatch, name, code and, when that colour is in the order, a green check (drawn twice: the chip and its white copy inside the sliding black pill)
-  const chip = x => html`<span class="sw" style=${{background:COL[x][0]}}></span><span class="nm">${x}</span><span class="code">${COL[x][1]}</span>${lineOf(x) && html`<span class="flag-dot" title="In order"><${Icon} n="check" s=${13} w=${2.6}/></span>`}`;
+  const chip = x => html`<span class="sw" style=${{background:COL[x][0], color:inkOn(COL[x][0])}}>${lineOf(x) && html`<${Icon} n="check" s=${15} w=${2.6}/>`}</span><span class="nm">${x}</span><span class="code">${COL[x][1]}</span>`;
   const looks = LOOKS.filter(l => l.items.some(([x]) => x === pid));
   const pick = () => act.sheet({type:'pick', item:{pid, colour:c, via:'search', ret:'product'}}); // once a client is picked, back to this page
   const lineOf = x => o && o.lines.find(l => l.pid === pid && l.colour === x), line = lineOf(c);
