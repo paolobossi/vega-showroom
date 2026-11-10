@@ -788,7 +788,7 @@ input{font:inherit;color:inherit}
 .ss-total{font-size:var(--fs-body)}.ss-total b{font-size:var(--fs-heading);font-variant-numeric:normal}
 .colours{position:relative;isolation:isolate;display:flex;gap:8px;overflow-x:auto;margin:0 -18px;padding:0 18px 2px;scroll-padding:0 18px;scrollbar-width:none}
 .colour{display:flex;align-items:center;gap:8px;padding:0 12px;height:40px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:var(--fs-body);white-space:nowrap;flex:none}
-.colour .sw{width:16px;height:16px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.4)} /* a 2px light ring inside every colour swatch, on the grey chips too */
+.colour .sw{width:16px;height:16px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.4)} /* a 1px light ring inside every colour swatch, on the grey chips too */
 .colour .flag-dot{width:16px;height:16px} /* the "in the order" check as big as the colour swatch */
 /* name and code are the same size and line height, both centred, so they share one baseline; the code black like the name, in regular weight */
 .colour .nm,.colour .code{display:block;font-size:var(--fs-body);line-height:20px}
@@ -804,7 +804,7 @@ input{font:inherit;color:inherit}
 .colours .slide-ind[data-anim]{transition:left .32s cubic-bezier(.3,.7,.2,1),width .32s cubic-bezier(.3,.7,.2,1),background-color .32s ease}
 .colours .slide-copy{gap:8px;padding:0 18px}
 .colours .slide-copy > .colour,.colours .slide-copy .code{color:var(--pill-ink,var(--bg));transition:color .32s ease}
-.colours .slide-copy .sw{box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--pill-ink,#fff) 45%,transparent)} /* the swatch, the same colour as the pill, shows by its ring */
+.colours .slide-copy .sw{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pill-ink,#fff) 45%,transparent)} /* the swatch, the same colour as the pill, shows by its ring */
 .colours .slide-copy .flag-dot{color:var(--pill-ink,#fff);box-shadow:inset 0 0 0 1.5px var(--pill-ink,#fff)} /* the in-order check in the pill's text colour, not green */
 .colours .slide-copy .cnt{background:var(--pill-ink,var(--bg));color:var(--pill,var(--ink))}
 @media (prefers-reduced-motion:reduce){.colours .slide-ind[data-anim]{transition:none}}
