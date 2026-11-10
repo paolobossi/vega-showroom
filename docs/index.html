@@ -73,6 +73,10 @@ html::before{content:"";position:fixed;z-index:100;top:0;left:0;right:0;height:e
 *,*::before,*::after{touch-action:manipulation}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
 button:disabled{cursor:default;opacity:.45}
+button.busy:disabled{opacity:1} /* the button stays black while its spinner turns */
+.spin{display:inline-block;width:20px;height:20px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation-duration:1.6s}}
 :focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 input{font:inherit;color:inherit}
 .num{font-variant-numeric:normal}
@@ -729,6 +733,7 @@ input{font:inherit;color:inherit}
 /* fade: the buttons float over the content on a white gradient, so what scrolls under them fades out instead of stopping at a hard white band */
 .sheet.fade .sheet-foot{position:absolute;left:0;right:0;bottom:0;padding-top:40px;background:linear-gradient(to bottom,color-mix(in srgb,var(--bg) 0%,transparent),color-mix(in srgb,var(--bg) 85%,transparent) 36px);pointer-events:none} /* the page colour (white, or the dark page in dark mode) at 85%, so what scrolls under the button shows faintly */
 .sheet.fade .sheet-foot > *{pointer-events:auto}
+.sheet.fade .sheet-foot .btn:disabled:not(.busy){opacity:1;background:var(--surface-2);color:var(--faint)} /* a done or unavailable button floating over the content is solid grey, not see-through */
 .sheet.fade .sheet-body{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))}
 /* sheet sections (Order, Budget, Notes): one heading style, 10px to what follows */
 .sh-sec{display:flex;flex-direction:column;gap:10px}
@@ -1665,10 +1670,14 @@ const BudRows = ({b, d}) => html`<div class="g-box"><div class="list gapped g1">
 
 // The black "Add look to order" button at the bottom of a look's sheet: with a client checked in it adds every piece they can buy (no quantities yet);
 // with nobody checked in it asks which client, like adding a single style
+// with a client: a spinner turns inside the button for a moment, then the pieces go in and the button reads "Added to order", greyed out; the sheet stays open
 function LookAdd({l, o, act, cls='btn primary'}) {
+  const [busy, setBusy] = useState(false);
   if (!o) return html`<button class=${cls} onClick=${() => act.sheet({type:'pick', item:{look:l.id}})}>Add look to order</button>`;
   const out = l.items.filter(([pid, c]) => !o.lines.some(x => x.pid === pid && x.colour === c)), can = out.filter(([pid]) => !canTake(o, P[pid]));
-  return html`<button class=${cls} disabled=${!can.length} onClick=${() => act.selectLook(o.id, l)}>${can.length ? 'Add look to order' : out.length ? canTake(o, P[out[0][0]]) : 'Look is in the order'}</button>`;
+  const add = () => { setBusy(true); setTimeout(() => { act.selectLook(o.id, l, true); setBusy(false); }, 900); };
+  if (busy) return html`<button class=${cls + ' busy'} disabled aria-label="Adding the look to the order"><span class="spin" aria-hidden="true"></span></button>`;
+  return html`<button class=${cls} disabled=${!can.length} onClick=${add}>${can.length ? 'Add look to order' : out.length ? canTake(o, P[out[0][0]]) : 'Added to order'}</button>`;
 }
 
 function Today({S, ui, act}) {
@@ -1797,12 +1806,12 @@ function LookSheet({id, S, ui, act}) {
     foot=${html`<${LookAdd} l=${l} o=${o} act=${act} cls="btn primary"/>`}>
     <div class="pd-head"><h1 class="pd-name">${lookNo(l)}</h1><span class="pc-fam look-sub">${SEASONS[0].short} ${DIV_LABEL[l.div]} Lookbook</span></div>
     <h2 class="cat-h sh-h">In this look</h2>
-    <div class="g-box"><div class="list look-rows">${l.items.map(([pid, c]) => { const p = P[pid], why = o && canTake(o, p), has = o && o.lines.some(x => x.pid === pid && x.colour === c);
+    <div class="g-box"><div class="list look-rows">${l.items.map(([pid, c]) => { const p = P[pid], why = o && canTake(o, p);
       return html`<button class="row" onClick=${() => act.sheet({type:'product', pid, colour:c, orderId:o && o.id, back:{type:'look', id:l.id}})}>
         <${Thumb} pid=${pid} colour=${c}/>
         <div class="row-main"><div class="row-title">${p.name}</div><div class="row-sub"><${Colour} c=${c}/></div></div>
         <div class="row-side"><span class="row-val">${fmt(p.price)}</span>
-          ${why ? html`<span class="lock">${why}</span>` : has && html`<span class="flag-txt"><${Icon} n="flag" s=${13} w=${2.2}/>Added</span>`}</div>
+          ${why && html`<span class="lock">${why}</span>`}</div>
         <${Icon} n="next" s=${18}/>
       </button>`; })}</div></div>
   <//>`;
@@ -2681,11 +2690,11 @@ function makeActs(setS, setUi, onReset) {
       log(o, 'salesperson', `${u ? 'Added' : 'Selected'} ${p.name} · ${cname(colour)}${u ? ' ×' + u : ''}${via === 'photo' ? ' (photo match)' : ''}`); });
     a.toast(u ? `Added to order · ${u} ${u === 1 ? 'unit' : 'units'}` : 'Added to order', u > 0, u > 0 && {o:id, pid}); buzz(); };
   // the whole runway look in one go: every piece the client can buy that isn't in the order yet
-  a.selectLook = (id, look) => { let k = 0; if (!a.divOk(id, look.div)) return;
+  a.selectLook = (id, look, stay) => { let k = 0; if (!a.divOk(id, look.div)) return;
     a.mut(id, o => { look.items.forEach(([pid, colour]) => { if (canTake(o, P[pid]) || o.lines.some(l => l.pid === pid && l.colour === colour)) return;
       o.lines.push({id:uid(), pid, colour, qty:{}, via:'look', by:'salesperson', at:Date.now()}); k++; });
       log(o, 'salesperson', `Added ${lookNo(look)} · ${k} pieces`); });
-    a.close(); a.toast('Added to order'); };
+    if (!stay) { a.close(); a.toast('Added to order'); } }; // stay: from the look's own button, which says it itself
   a.unselect = (id, pid, colour, by='salesperson') => { const p = P[pid];
     a.mut(id, o => { o.lines = o.lines.filter(l => !(l.pid === pid && (!colour || l.colour === colour))); log(o, by, `Removed ${p.name}${colour ? ' · ' + cname(colour) : ''}`); });
     setUi(u => u.sheet && u.sheet.type === 'size' ? {...u, sheet:null} : u); a.toast('Removed from order', true); }; // from the top, like the quantity messages
