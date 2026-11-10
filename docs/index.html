@@ -452,7 +452,9 @@ input{font:inherit;color:inherit}
 .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 /* collection: category rail on the left, products grouped by category and family */
 /* category tabs stick under the top while the grid scrolls; sub-categories of the current one sit beneath */
-.cat-nav{position:sticky;top:0;z-index:5;margin:0 -18px;padding:6px 0 8px;transition:transform .28s cubic-bezier(.2,.8,.2,1);background:color-mix(in srgb,var(--bg) 88%,transparent);-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%)}
+.cat-nav{position:sticky;top:0;z-index:5;margin:0 -18px -12px;padding:6px 0 20px;transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+/* its see-through backdrop (the page colour at 88%, blurred) runs 12px further down than before and fades out over its last 20px, instead of stopping in a hard edge right under the pills; the -12px margin keeps the page where it was */
+.cat-nav::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:color-mix(in srgb,var(--bg) 88%,transparent);-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 20px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 20px),transparent)}
 .cn-row{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:0 18px;scroll-padding:0 18px}
 .cn-row::-webkit-scrollbar{display:none}
 .cn-cat{flex:none;position:relative;display:flex;align-items:baseline;gap:6px;font-size:var(--fs-body);font-weight:600;color:var(--muted);padding:10px 6px 10px;margin-right:8px;white-space:nowrap}
