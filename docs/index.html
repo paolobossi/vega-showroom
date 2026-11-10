@@ -148,7 +148,7 @@ input{font:inherit;color:inherit}
    on white that fades in from a gradient above it, like the buttons at the bottom of a sheet; no shadow */
 .ov .ov-actions{left:0;right:0;width:auto;transform:none;bottom:0;padding:40px 18px max(14px,env(safe-area-inset-bottom,0px));
   background:linear-gradient(to bottom,color-mix(in srgb,var(--bg) 0%,transparent),var(--bg) 36px);pointer-events:none}
-.ord-tab .ov-actions{bottom:0;padding-bottom:calc(76px + max(10px,env(safe-area-inset-bottom,0px)));
+.ord-tab .ov-actions{bottom:0;padding-bottom:calc(71px + max(10px,env(safe-area-inset-bottom,0px))); /* 8px above the 63px tab bar, the same gap as the client pill on the other tabs */
   background:linear-gradient(to bottom,color-mix(in srgb,var(--bg) 0%,transparent),color-mix(in srgb,var(--bg) 70%,transparent) 36px)}
 /* on the Order tab the button's backdrop runs on down behind the tab bar, in the tab bar's own 70% white, so the two read as one even fade with no gap; the tab bar adds none of its own */
 .ord-tab ~ .dock{background:none}
@@ -167,7 +167,7 @@ input{font:inherit;color:inherit}
 .alert-btns .btn.danger{background:var(--bad-bg);color:var(--bad)}
 .no-ord-page{display:flex;flex-direction:column;min-height:100%}
 .no-ord{display:flex;flex-direction:column;align-items:center;gap:8px;margin:auto 18px;padding:28px 18px;text-align:center;color:var(--muted)}
-.no-ord b{color:var(--ink);font-size:var(--fs-heading)}
+.no-ord b{color:var(--ink);font-size:var(--fs-heading)}.no-ord b + div{margin-top:-6px}.pd-pick b + div{margin-top:-4px} /* the grey line 2px under the title in both (their 8px / 6px gaps are for the icon and the button) */
 .no-ord .btn{margin-top:8px;border-radius:999px;min-height:46px;padding:0 28px}
 .top{padding:14px 18px 6px}
 /* Profile: the seller, their orders, passcode and sign out */
@@ -947,7 +947,7 @@ input.qty.xl{width:64px} /* room for three digits */
   .round{width:42px}
   .tab{flex-direction:row;justify-content:center;gap:6px;padding:8px 0}
   .screen.tabbed{padding-bottom:calc(64px + max(10px,env(safe-area-inset-bottom,0px)))}
-  .ord-tab .ov-actions{bottom:0;padding-bottom:calc(62px + max(10px,env(safe-area-inset-bottom,0px)))}
+  .ord-tab .ov-actions{bottom:0;padding-bottom:calc(57px + max(10px,env(safe-area-inset-bottom,0px)))}
   .app.docked .toast:not(.top){bottom:calc(62px + max(10px,env(safe-area-inset-bottom,0px)))}
   .ov-body{padding-bottom:72px}
   .ov-actions{bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 8px))}
@@ -1471,7 +1471,7 @@ const IC = {
   pic:'<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>', // image
   bin:'<path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>', // trash-2
   user:'<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>', // user
-  checkin:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M16 11h6"/><path d="m19 8 3 3-3 3"/>', // a client with an arrow: check a client in (empty states with nobody checked in)
+  checkin:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3"/><path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"/>', // circle-user: a simple profile in a circle (empty states with nobody checked in)
   out:'<path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>', // log-out
   spark:'<path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/>', // sparkles
   info:'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>', // info
@@ -2177,7 +2177,7 @@ function ProductSheet({pid, colour, orderId, back, S, ui, act}) {
 `}
     </div>`}
     <div class="pd-cta">${!o ? html`<div class="g-box"><div class="pd-pick"><${Icon} n="checkin" s=${28}/><b>No client checked in</b><div>Pieces you add go into their order.</div>
-        <button class="btn black" onClick=${pick}>Check in</button></div></div>`
+        <button class="btn black" onClick=${pick}>Select client</button></div></div>`
       : why ? html`${line && html`<div class="pd-in">In order · ${u ? val(u) : 'no quantity'}</div>`}<button class="btn black" disabled>${b.shop} · ${why}</button>`
       : line ? html`<button class="btn outline danger" onClick=${() => act.unselect(o.id, pid, c)}>Remove from order</button>`
       : null}</div>
@@ -2592,7 +2592,7 @@ function SessionPill({so, hid, act}) {
 function NoOrder({act}) {
   return html`<div class="no-ord-page"><header class="top top-bar mid"><h1 class="h1">Order</h1></header>
     <div class="no-ord"><${Icon} n="checkin" s=${32}/><b>No client checked in</b><div>Their order shows up here.</div>
-      <button class="btn primary" onClick=${() => act.sheet({type:'pick'})}>Check in</button></div></div>`;
+      <button class="btn primary" onClick=${() => act.sheet({type:'pick'})}>Select client</button></div></div>`;
 }
 
 function makeActs(setS, setUi, onReset) {
