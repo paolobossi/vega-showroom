@@ -122,6 +122,21 @@ input{font:inherit;color:inherit}
 /* client checked in: number of items in their order as a black badge on Order (a green dot while it is empty) */
 .tab-n{position:absolute;top:-5px;left:calc(100% - 8px);min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:var(--ink);color:var(--bg);font-size:11px;font-weight:400;display:grid;place-items:center;box-shadow:0 0 0 2px var(--bg)} /* 11px regular, proportional figures (Inter's tabular 1 has a foot) */
 .tab-dot{position:absolute;top:-1px;right:-3px;width:8px;height:8px;border-radius:50%;background:#3CCB7F;box-shadow:0 0 0 2px var(--bg)}
+/* client in session: a black pill (black in light and dark mode) floating 8px above the tab bar, as wide as it; hidden on the Order tab, where it slides down out of sight */
+.dock-in{position:relative}
+.sess{position:absolute;left:0;right:0;bottom:calc(100% + 8px);z-index:0;display:flex;align-items:center;gap:12px;min-height:54px;padding:8px 14px 8px 18px;border-radius:999px;background:var(--band);color:var(--band-ink);text-align:left;pointer-events:auto;
+  box-shadow:0 6px 24px rgba(0,0,0,.18);transition:transform .34s cubic-bezier(.3,.7,.2,1),opacity .25s;animation:sess-in .34s cubic-bezier(.3,.7,.2,1)}
+.sess.hid{transform:translateY(calc(100% + 80px));opacity:0;pointer-events:none;animation:none}
+@keyframes sess-in{from{transform:translateY(calc(100% + 80px));opacity:0}}
+@media (prefers-reduced-motion:reduce){.sess{transition:none;animation:none}}
+.sess-dot{flex:none;width:9px;height:9px;border-radius:50%;background:#3CCB7F;box-shadow:0 0 0 4px rgba(60,203,127,.22);animation:pulse 1.1s ease-in-out infinite alternate}
+.sess-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.sess-t b{font-size:var(--fs-body);font-weight:600;line-height:var(--lh-tight);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sess-t span{font-size:var(--fs-caption);line-height:var(--lh-tight);color:rgba(255,255,255,.6)}
+.sess svg{flex:none;color:rgba(255,255,255,.6)}
+.sess:active{transform:scale(.98)}
+.app.with-pill .screen.tabbed{padding-bottom:calc(146px + max(10px,env(safe-area-inset-bottom,0px)))}
+.app.docked.with-pill .toast:not(.top){bottom:calc(138px + max(10px,env(safe-area-inset-bottom,0px)))}
 /* messages sit just above the tab bar while it shows */
 .app.docked .toast:not(.top){bottom:calc(76px + max(10px,env(safe-area-inset-bottom,0px)))}
 /* Order tab: the order of the client in session, with the tab bar under it */
@@ -311,7 +326,7 @@ input{font:inherit;color:inherit}
 .stp span{min-width:30px;text-align:center;font-weight:600;font-size:var(--fs-body)}
 .st-ok{color:var(--good)}.st-warn{color:var(--warn)}.st-bad{color:var(--bad)}.st-none{color:var(--muted)}
 .flag-txt{display:inline-flex;align-items:center;gap:4px;font-size:var(--fs-caption);font-weight:700;color:var(--good)}
-.flag-dot{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--good);color:#fff}
+.flag-dot{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:none;color:var(--good);box-shadow:inset 0 0 0 1.5px var(--good)} /* "in the order" on a colour chip: a green outlined circle with a green check */
 /* carousel: portrait shots, swipe; tap opens them full screen (and tap there comes back) */
 .car{position:relative;display:flex;flex-direction:column}
 .car-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;border-radius:var(--r-l);background:#F0F0F0}
@@ -796,6 +811,7 @@ input.qty.xl{width:64px} /* room for three digits */
 .qbtn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:var(--fs-caption);font-weight:600}
 .qbtn:disabled{color:var(--faint)}
 .qbtn:active{background:var(--surface-2)}
+.qbtn{background:var(--bg);box-shadow:inset 0 0 0 1px var(--line)} /* Copy scale, Paste scale, Clear: white pills with a grey outline */
 .impact{display:flex;flex-direction:column;gap:6px;font-size:var(--fs-body)}
 /* product facts: grey label on the left, value on the right, one size throughout */
 /* product facts: styled like the Budget box: a white list inside a 1px grey outline (.g-box), 22px squircle corners, 14px regular text,
@@ -2519,6 +2535,18 @@ function TabBar({tab, so, act}) {
         <span class="tab-ic"><${Icon} n=${i}/>${k === 'order' && so && (n ? html`<b class="tab-n" aria-hidden="true">${n}</b>` : html`<i class="tab-dot" aria-hidden="true"></i>`)}</span>${l}</button>`)}</nav>`;
 }
 
+// Client in session: a black pill above the tab bar on every tab but Order (the order already shows the client's name at the top):
+// a pulsing green dot, the client's name and, under it in grey, how many items the order has; tapping it opens the Order tab
+function SessionPill({so, hid, act}) {
+  const b = BUYERS[so.buyerId], n = so.lines.length;
+  return html`<button class=${'sess' + (hid ? ' hid' : '')} onClick=${() => act.tab('order')} aria-hidden=${hid ? 'true' : null} tabindex=${hid ? -1 : null}
+    aria-label=${`${b.shop}, ${n} ${n === 1 ? 'item' : 'items'}. Open the order`}>
+    <i class="sess-dot" aria-hidden="true"></i>
+    <span class="sess-t"><b>${b.shop}</b><span>${n} ${n === 1 ? 'item' : 'items'}</span></span>
+    <${Icon} n="next" s=${18} w=${2}/>
+  </button>`;
+}
+
 // Order tab with nobody checked in: one button to the list of clients; picking one checks them in and shows their order here
 function NoOrder({act}) {
   return html`<div class="no-ord-page"><header class="top top-bar mid"><h1 class="h1">Order</h1></header>
@@ -2667,7 +2695,8 @@ function App({onReset}) {
   const so = activeOrder(S, ui), capDiv = so && (BUYERS[so.buyerId].divs.includes(ui.capDiv) ? ui.capDiv : BUYERS[so.buyerId].divs[0]);
   if (buyerView) return html`<div class="app"><${BuyerView} S=${S} ui=${ui} act=${act}/>${sheet}${toast}</div>`;
   if (S.signedOut) return html`<div class="app"><${SignIn} S=${S} act=${act}/>${toast}</div>`;
-  return html`<div class=${'app' + (order ? '' : ' docked')}>
+  const pill = !!(so && !order && ui.tab !== 'order');
+  return html`<div class=${'app' + (order ? '' : ' docked') + (pill ? ' with-pill' : '')}>
     ${order ? html`<${OrderView} S=${S} ui=${ui} act=${act} order=${order}/>`
       : ui.tab === 'order' && so ? html`<div class="ord-tab"><${OrderView} S=${S} ui=${ui} act=${act} order=${so} tabbed/></div>` : html`
       <div class="screen tabbed">
@@ -2676,7 +2705,7 @@ function App({onReset}) {
         ${ui.tab === 'today' && html`<${Today} S=${S} ui=${ui} act=${act}/>`}
         ${ui.tab === 'catalogue' && html`<${CatalogueTab} key=${so ? so.id : 'none'} S=${S} ui=${ui} act=${act}/>`}
       </div>`}
-    ${!order && html`<div class="dock"><${TabBar} tab=${ui.tab} so=${so} act=${act}/></div>`}
+    ${!order && html`<div class="dock"><div class="dock-in">${so && html`<${SessionPill} key=${so.id} so=${so} hid=${ui.tab === 'order'} act=${act}/>`}<${TabBar} tab=${ui.tab} so=${so} act=${act}/></div></div>`}
     ${ui.search && !order && html`<${SearchPage} S=${S} ui=${ui} act=${act}/>`}
     ${ui.capture && html`<${Capture} order=${so} div=${capDiv || 'W'} act=${act}/>`}
     ${ui.zoom && html`<${Zoom} z=${ui.zoom} act=${act}/>`}
