@@ -34,7 +34,7 @@
   --avatar-top:#9A9FA5; --avatar:#64696F; --avatar-ink:#FFFFFF; /* profile circles: grey, lighter at the top and darker at the bottom, white initials */
   --bg:#FFFFFF; --surface:#F2F3F0; --surface-2:#E7E8E4; --studio:#E3E4DF; --card:#FFFFFF;
   --ink:#141619; --muted:#62666B; --faint:#808489; --line:#DCDED8;
-  --band:#000000; --band-ink:#FFFFFF; /* status-bar strip and the Must have tag: black in light and dark mode */
+  --band:#000000; --band-ink:#FFFFFF; --must:#C8643F; --ess:#5E4A99; /* trial tag text: Claude orange, dark lilac */ /* status-bar strip and the Must have tag: black in light and dark mode */
   --accent:#2238A6; --accent-ink:#FFFFFF; --accent-soft:#E3E7F8;
   --good:#1D7448; --good-bg:#E0EFE6; --warn:#946000; --warn-bg:#F7EAD2; --bad:#AE281C; --bad-bg:#F7E1DE;
   --scrim:rgba(10,12,16,.42);
@@ -49,7 +49,7 @@
   --ink:#ECEDEA; --muted:#A0A4A9; --faint:#6E7277; --line:#2C3036;
   --accent:#8C9DFF; --accent-ink:#0F1113; --accent-soft:#222A4C;
   --good:#58C48D; --good-bg:#15291E; --warn:#E5A93E; --warn-bg:#2E2414; --bad:#F27D72; --bad-bg:#331A18;
-  --scrim:rgba(0,0,0,.6); --sw-ring:rgba(255,255,255,.22); color-scheme:dark;
+  --scrim:rgba(0,0,0,.6); --sw-ring:rgba(255,255,255,.22); --must:#E58E6D; --ess:#B7A3EE; color-scheme:dark;
 }}
 :root[data-theme="dark"]{
   --stage:#050607; --frame:#2A2C30;
@@ -58,7 +58,7 @@
   --ink:#ECEDEA; --muted:#A0A4A9; --faint:#6E7277; --line:#2C3036;
   --accent:#8C9DFF; --accent-ink:#0F1113; --accent-soft:#222A4C;
   --good:#58C48D; --good-bg:#15291E; --warn:#E5A93E; --warn-bg:#2E2414; --bad:#F27D72; --bad-bg:#331A18;
-  --scrim:rgba(0,0,0,.6); --sw-ring:rgba(255,255,255,.22); color-scheme:dark;
+  --scrim:rgba(0,0,0,.6); --sw-ring:rgba(255,255,255,.22); --must:#E58E6D; --ess:#B7A3EE; color-scheme:dark;
 }
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
@@ -130,7 +130,7 @@ input{font:inherit;color:inherit}
 .sess.hid{transform:translateY(calc(100% + 80px));opacity:0;pointer-events:none;animation:none}
 @keyframes sess-in{from{transform:translateY(calc(100% + 80px));opacity:0}}
 @media (prefers-reduced-motion:reduce){.sess{transition:none;animation:none}}
-.sess-dot{flex:none;width:9px;height:9px;margin-right:10.5px; /* its centre 27px in: the centre of the pill's rounded end (54px tall), so it sits concentric with the curve; the name starts 27px after it, at 54px, as far from the dot as the dot is from the edge */border-radius:50%;background:#3CCB7F;box-shadow:0 0 0 4px rgba(60,203,127,.22);animation:pulse 1.1s ease-in-out infinite alternate}
+.sess-dot{flex:none;width:9px;height:9px;margin-right:8.5px; /* its centre 27px in: the centre of the pill's rounded end (54px tall), so it sits concentric with the curve; the name starts at 52px */border-radius:50%;background:#3CCB7F;box-shadow:0 0 0 4px rgba(60,203,127,.22);animation:pulse 1.1s ease-in-out infinite alternate}
 .sess-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
 .sess-t b{font-size:var(--fs-body);font-weight:600;line-height:var(--lh-tight);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sess-t span{font-size:var(--fs-caption);line-height:var(--lh-tight);color:rgba(255,255,255,.6)}
@@ -528,6 +528,10 @@ input{font:inherit;color:inherit}
 .ptags{position:absolute;z-index:2;left:6px;top:6px;display:flex;flex-wrap:wrap;gap:4px;max-width:calc(100% - 40px);pointer-events:none}
 .ptag{display:inline-flex;align-items:center;height:var(--tag-h);padding:0 7px;border-radius:999px;font-size:11px;line-height:1.3;font-weight:400;letter-spacing:.01em;white-space:nowrap;pointer-events:none}
 .ptag.must{background:var(--band);color:var(--band-ink)}
+/* trial: the tag as text above the name: semibold, a step under the name; Must have in Claude orange, Essential in a dark lilac that goes with it, Permanent grey */
+.ptxt{display:block;font-size:var(--fs-caption);font-weight:600;line-height:var(--lh-tight);color:var(--muted)}
+.ptxt .must{color:var(--must)}.ptxt .ess{color:var(--ess)}
+.pd-head .ptxt{font-size:var(--fs-body);margin-bottom:-2px}
 .ptag.ess,.ptag.perm{background:#fff;color:#141619}
 .pd-media{position:relative}
 .pd-media .ptags{left:0;top:auto;bottom:14px}.pd-media .ptag{font-size:var(--fs-caption);height:22px;padding:0 9px}
@@ -1183,6 +1187,8 @@ const TAG_OF = {must:['w-amazona-s','w-puzzle-mini','w-flamenco','w-shirt-dress'
   ess:['w-puzzle-fold','w-pebble-lace','w-scarf','w-cord','m-tee','m-ballet','m-wallet','m-card','m-belt']};
 PRODUCTS.forEach(p => { p.tag = Object.keys(TAG_OF).find(k => TAG_OF[k].includes(p.id)) || null; p.perm = PERMANENT.includes(p.id); });
 // the Collection cards show only the priority tag; Permanent appears on the product page alone
+// trial: Must have / Essential as coloured text above the style's name (Collection card and product page) instead of a tag on the photo
+const TagLine = ({p, perm=true}) => (p.tag || (perm && p.perm)) && html`<span class="ptxt">${p.tag && html`<span class=${p.tag}>${TAGS[p.tag]}</span>`}${p.tag && perm && p.perm ? ' · ' : ''}${perm && p.perm && html`<span class="perm">Permanent</span>`}</span>`;
 const Tag = ({p, perm=true}) => (p.tag || (perm && p.perm)) && html`<span class="ptags">${p.tag && html`<span class=${'ptag ' + p.tag}>${TAGS[p.tag]}</span>`}${perm && p.perm && html`<span class="ptag perm">Permanent</span>`}</span>`;
 // Composition shown on the product page, and keywords sellers search by (short sleeve, crossbody…); both come from the back office
 const MAT = {
@@ -1887,10 +1893,11 @@ function PCard({p, o, act}) {
   return html`<div class="pc-wrap"><button class=${'pcard' + (lock && !has ? ' locked' : '')} onClick=${() => act.sheet({type:'product', pid:p.id, colour:c})} aria-label=${p.name + (has ? ', in the order' : '')}>
     <div class="pc-photo">
       <span class="pc-img"><${Thumb} pid=${p.id} colour=${c}/></span>
-      ${lock ? html`<span class="pc-lock"><${Icon} n="lock" s=${11} w=${2.4}/>${lock}</span>` : html`<${Tag} p=${p} perm=${false}/>`}
+      ${lock && html`<span class="pc-lock"><${Icon} n="lock" s=${11} w=${2.4}/>${lock}</span>`}
       ${has && html`<span class="pc-in" aria-hidden="true"><${Icon} n="check" s=${11} w=${3}/></span>`}
     </div>
     <span class="pc-info">
+      <${TagLine} p=${p} perm=${false}/>
       <span class="pname">${p.name}</span>
       <${Prices} p=${p}/>
       <span class="dots">${p.colours.map(x => html`<span class="sw" style=${{background:COL[x][0]}}></span>`)}</span>
@@ -2163,8 +2170,8 @@ function ProductSheet({pid, colour, orderId, back, S, ui, act}) {
     aria-label=${sz === 'U' ? 'Quantity' : 'Quantity, size ' + sz} onFocus=${e => e.target.select()} onKeyDown=${e => e.key === 'Enter' && e.target.blur()}
     onInput=${e => setQty(sz, Math.min(999, parseInt(e.target.value.replace(/\D/g, ''), 10) || 0))}/>`;
   return html`<${Sheet} tall title=${p.name} onClose=${close}
-    media=${html`<div class="pd-media"><${Carousel} p=${p} colour=${c} at=${ui.photoAt} onOpen=${i => act.set({zoom:{pid, colour:c, i}})}/><${Tag} p=${p}/></div>`}>
-    <div class="pd-head"><h1 class="pd-name">${p.name}</h1></div>
+    media=${html`<div class="pd-media"><${Carousel} p=${p} colour=${c} at=${ui.photoAt} onOpen=${i => act.set({zoom:{pid, colour:c, i}})}/></div>`}>
+    <div class="pd-head"><${TagLine} p=${p}/><h1 class="pd-name">${p.name}</h1></div>
     <div class="colours" ref=${colBox}>${p.colours.map(x => html`<button class=${'colour' + (x === c ? ' on' : '')} onClick=${() => setC(x)}>${chip(x)}</button>`)}
       <span class="slide-ind" ref=${colInd} aria-hidden="true"><span class="slide-copy">${p.colours.map(x => html`<button class="colour" tabindex="-1">${chip(x)}</button>`)}</span></span></div>
     ${edit && html`<div class="pd-qty">
@@ -2589,11 +2596,11 @@ function TabBar({tab, so, act}) {
 // Client in session: a black pill above the tab bar on every tab but Order (the order already shows the client's name at the top):
 // a pulsing green dot, the client's name and, under it in grey, how many items the order has; tapping it opens the Order tab
 function SessionPill({so, hid, act}) {
-  const b = BUYERS[so.buyerId], n = so.lines.length;
+  const b = BUYERS[so.buyerId], n = so.lines.length, tot = so.lines.reduce((a, l) => a + lineValue(l), 0);
   return html`<button class=${'sess' + (hid ? ' hid' : '')} onClick=${() => act.tab('order')} aria-hidden=${hid ? 'true' : null} tabindex=${hid ? -1 : null}
-    aria-label=${`${b.shop}, ${n} ${n === 1 ? 'item' : 'items'}. Open the order`}>
+    aria-label=${`${b.shop}, ${n} ${n === 1 ? 'item' : 'items'}, ${fmt(tot)}. Open the order`}>
     <i class="sess-dot" aria-hidden="true"></i>
-    <span class="sess-t"><b>${b.shop}</b><span>${n} ${n === 1 ? 'item' : 'items'}</span></span>
+    <span class="sess-t"><b>${b.shop}</b><span>${n} ${n === 1 ? 'item' : 'items'} · <span class="num">${fmt(tot)}</span></span></span>
     <${Icon} n="next" s=${18} w=${2}/>
   </button>`;
 }

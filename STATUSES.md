@@ -24,7 +24,7 @@ Every client gets one tier. It is back-office logic only: the seller never sees 
 | Status | Meaning |
 |---|---|
 | Scheduled (no tag) | The appointment is on the calendar and the client hasn't arrived yet. Only Check in is offered. |
-| Ongoing (`Ongoing`) | The seller checked the client in. That client is in session: a black pill floats above the tab bar on every tab except Order, with a pulsing green dot (centred on the pill's rounded left end, concentric with the curve, and the name as far from the dot as the dot is from the edge), the client's name and, under it in grey, how many items the order has; tapping it opens the Order tab, and on the Order tab it slides down out of sight (the client's name is the page title there). The Order tab shows their order (with the number of items as a black badge on its icon), and the Collection shows what they can buy. Only one client per seller can be ongoing. |
+| Ongoing (`Ongoing`) | The seller checked the client in. That client is in session: a black pill floats above the tab bar on every tab except Order, with a pulsing green dot (centred on the pill's rounded left end, concentric with the curve), the client's name 52px in and, under it in grey, how many items the order has and its value ("12 items · €27.650"); tapping it opens the Order tab, and on the Order tab it slides down out of sight (the client's name is the page title there). The Order tab shows their order (with the number of items as a black badge on its icon), and the Collection shows what they can buy. Only one client per seller can be ongoing. |
 | Checked out (order status, e.g. `Sent`) | The visit ended: Finalize order in the order (sent to the commercial team or to the client to finish), or Leave in the ongoing client's sheet on Home. The row on Home shows where that client's order stands; the seller can view it or check the client in again. |
 | Checked in again (`Ongoing`) | Same as Ongoing, but the visit keeps its first start time. |
 
@@ -66,8 +66,8 @@ The whole order's status is worked out from its parts: all the same → that sta
 
 | Tag | Meaning |
 |---|---|
-| Must have (`Must have`, black) | One of the season's hero pieces. |
-| Essential (`Essential`, white) | A core style. |
+| Must have (`Must have`, orange text above the name; trial) | One of the season's hero pieces. |
+| Essential (`Essential`, dark lilac text above the name; trial) | A core style. |
 | Standard (no tag) | No tag on the photo. |
 
 A style that can't be bought shows why instead of its tag.
@@ -141,7 +141,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 4.4 Filters → Drop (All drops; Drop 1 "Delivers 15 January 2027"; Drop 2 "Delivers 20 February 2027"), Priority (All, Must have, Essential, Standard) and Material (All materials, Leather, Cotton, Wool, Cashmere, Silk & viscose, Nylon) → the grid updates; a chip under the title for each filter, each clears its own. The Filters button sits at the top right beside the magnifying glass, not in the pill row (the pills start with All): just the icon while nothing is filtered, a black circle with a white icon while any filter is on (the collection tabs don't count). With filters that match nothing, the row stays so the filters can be changed.
 - [ ] 4.4b Priority: Must have shows only black-tagged styles, Essential only white-tagged ones, Standard only untagged ones; the three together add up to All. Material: Leather shows bags, shoes and leather goods; Cashmere (SS27 Pre-collection) shows the beanie, scarf and short coat.
 - [ ] 4.4c Collection cards: white, no shadow, with 24px squircle corners (the photo's top corners round the same as the card's bottom ones, on iPhone too: only the squircle mask shapes the card, so Safari no longer draws the bottom corners rounder); the photo runs to the card's edges (top and sides, no white frame around it), name, code, prices and colour dots under it with their margin; a soft drop shadow lifts each card off the white page.
-- [ ] 4.5 Product tags on the photos: small pills in regular weight (not bold), Must have in black (e.g. Small Amazona 180), Essential in white (e.g. Medium Puzzle Fold tote), and **Permanent** in white for the permanent styles (icons and leather goods reordered every season: strap, sunglasses, Puzzle bifold wallet, Puzzle cardholder, belt), which sit in SS27; **Permanent shows on the product page only, not on the Collection cards** (a card shows just its priority tag, Must have or Essential); on the product page a style can carry two tags (e.g. Essential and Permanent), the second under the first. None on the others.
+- [ ] 4.5 Trial: product tags are coloured text above the style's name, no longer pills on the photo: **Must have** in Claude orange (e.g. Small Amazona 180), **Essential** in a dark lilac (e.g. Medium Puzzle Fold tote), semibold, a step smaller than the name (12px on the Collection card, 15px on the product page; lighter shades in dark mode). **Permanent** (strap, sunglasses, Puzzle bifold wallet, Puzzle cardholder, belt) shows on the product page only, in grey after the priority ("Essential · Permanent"); a card shows just Must have or Essential. On a card with a tag the name sits one line lower than on an untagged card next to it. None on the others.
 - [ ] 4.6 With nobody in session, the Collection shows Women and Men and every style.
 
 ### 5. Client tiers (what each client can see)
