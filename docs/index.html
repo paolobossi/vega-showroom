@@ -352,6 +352,7 @@ input{font:inherit;color:inherit}
 .zoom .car{flex:1;min-height:0}
 .zoom .car-track{flex:1;min-height:0;border-radius:0}
 .zoom .car-slide{aspect-ratio:auto;max-height:none;height:100%}
+.zoom-foot .prices small{font-size:var(--fs-caption);font-weight:400;color:var(--muted)}.zoom-foot .prices b{font-size:20px;font-weight:700;line-height:var(--lh-tight);letter-spacing:-.01em} /* the same sizes as the price tiles in the product details */
 .zoom-foot{flex:none;display:flex;flex-direction:column;gap:8px;padding:10px 18px max(14px,env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--surface)}
 
 /* ---------- today ---------- */
@@ -722,7 +723,7 @@ input{font:inherit;color:inherit}
 .sheet-head.center .sheet-sub{grid-column:2;margin-top:2px}
 .sheet-head.center .icon-btn{margin:-10px 0}
 /* fade: the buttons float over the content on a white gradient, so what scrolls under them fades out instead of stopping at a hard white band */
-.sheet.fade .sheet-foot{position:absolute;left:0;right:0;bottom:0;padding-top:40px;background:linear-gradient(to bottom,color-mix(in srgb,var(--bg) 0%,transparent),var(--bg) 36px);pointer-events:none}
+.sheet.fade .sheet-foot{position:absolute;left:0;right:0;bottom:0;padding-top:40px;background:linear-gradient(to bottom,color-mix(in srgb,var(--bg) 0%,transparent),color-mix(in srgb,var(--bg) 85%,transparent) 36px);pointer-events:none} /* the page colour (white, or the dark page in dark mode) at 85%, so what scrolls under the button shows faintly */
 .sheet.fade .sheet-foot > *{pointer-events:auto}
 .sheet.fade .sheet-body{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))}
 /* sheet sections (Order, Budget, Notes): one heading style, 10px to what follows */
@@ -1049,6 +1050,7 @@ input.qty.xl{width:64px} /* room for three digits */
 .g-box > .look-rows > .row:first-child{background:none;padding-top:10px}
 .look-rows .row-title{font-size:var(--fs-body);font-weight:600;line-height:var(--lh-tight)} /* as the Collection card name */
 .look-rows .row-val{font-size:var(--fs-caption);font-weight:600} /* as the Collection card price */
+.look-rows .row > svg:last-child{color:var(--faint)} /* grey chevron, in light and dark mode */
 .look-rows .thumb{width:72px;height:72px;border-radius:0;-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}
 .list.gapped{background:none;border:0;gap:2px}.list.gapped > .row{background:var(--surface);border-top:0}
 /* Collection cards: the photo runs to the card's edges (top and sides), the text keeps its margin; a soft drop shadow lifts the card off the grey page */
@@ -1550,7 +1552,7 @@ function Zoom({z, act}) {
       <button class="icon-btn" onClick=${() => act.set({zoom:null})} aria-label="Close photos"><${Icon} n="x"/></button></div>
     ${l ? html`<${Carousel} full src=${lookSrc(l)} alt=${t} start=${z.i || 0} onOpen=${back} openLabel="Back to details"/>`
       : html`<${Carousel} full p=${p} colour=${z.colour} start=${z.i || 0} onOpen=${back} openLabel="Back to details"/>
-    <div class="zoom-foot"><span class="pc-code">${p.code}</span><${Prices} p=${p}/></div>`}
+    <div class="zoom-foot"><${Prices} p=${p}/></div>`}
   </div>`;
 }
 const Pill = ({s}) => html`<span class=${'pill s-' + s}>${STATUS[s]}</span>`;
@@ -1784,10 +1786,10 @@ function ApptOrder({o, b, act}) {
 function LookSheet({id, S, ui, act}) {
   const l = LOOKS.find(x => x.id === id);
   const o = activeOrder(S, ui);
-  return html`<${Sheet} tall title=${lookNo(l)} onClose=${act.close}
+  return html`<${Sheet} tall fade title=${lookNo(l)} onClose=${act.close}
     media=${html`<${Carousel} cover src=${lookSrc(l)} alt=${lookNo(l)} at=${ui.photoAt} onOpen=${i => act.set({zoom:{look:l.id, i}})}/>`}
     foot=${html`<${LookAdd} l=${l} o=${o} act=${act} cls="btn primary"/>`}>
-    <div class="pd-head"><h1 class="pd-name">${lookNo(l)}</h1><span class="pc-fam look-sub">${SEASONS[0].short} ${DIV_LABEL[l.div]} Lookbook${l.req ? ' · required look' : ''}</span></div>
+    <div class="pd-head"><h1 class="pd-name">${lookNo(l)}</h1><span class="pc-fam look-sub">${SEASONS[0].short} ${DIV_LABEL[l.div]} Lookbook</span></div>
     <h2 class="cat-h sh-h">In this look</h2>
     <div class="g-box"><div class="list look-rows">${l.items.map(([pid, c]) => { const p = P[pid], why = o && canTake(o, p), has = o && o.lines.some(x => x.pid === pid && x.colour === c);
       return html`<button class="row" onClick=${() => act.sheet({type:'product', pid, colour:c, orderId:o && o.id, back:{type:'look', id:l.id}})}>
@@ -2089,7 +2091,7 @@ function PickBuyerSheet({S, sh, act}) {
     </button>`; };
   // a section per part of the show, each in a white box with a grey outline, the date under every name, Today's too (no time or city)
   const thumb = !it ? null : look ? html`<img src=${lookSrc(look)[0]} alt=""/>` : html`<${Thumb} pid=${it.pid} colour=${it.colour}/>`;
-  return html`<${Sheet} tall grouped thumb=${thumb} title=${it ? 'Add to order' : 'Choose a client'} sub=${!it ? null : look ? `${lookNo(look)} · ${look.items.length} pieces` : `${p.name} · ${cname(it.colour)}`} onClose=${act.close}>
+  return html`<${Sheet} tall grouped thumb=${thumb} title=${it ? 'Add to order' : 'Select client'} sub=${!it ? null : look ? `${lookNo(look)} · ${look.items.length} pieces` : `${p.name} · ${cname(it.colour)}`} onClose=${act.close}>
     ${secs.filter(([, l]) => l.length).map(([h, l]) => html`<section class="grp-sec"><h3 class="grp-h">${h}</h3><div class="grp pick"><div class="grp-in">${l.map(row)}</div></div></section>`)}
   <//>`;
 }
