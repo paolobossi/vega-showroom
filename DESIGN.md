@@ -24,6 +24,7 @@ Four sizes, each with one job. Hierarchy beyond these comes from weight, colour,
 - **Order status banner icon:** a 38px circle in a 14% tint of the status colour with the icon in the status colour (the budget bars' icon logic), not a solid circle with a white icon.
 - **No quantity yet:** a tag like the status tags (18px tall, 11px regular), light yellow (`--warn-bg`) with `--warn` text.
 - **A part already sent:** `canTake` says "Women's order submitted" / "Men's order submitted"; Collection cards show it only by the faded photo (the lock tag was dropped), the product page's disabled button carries the words alone (no shop name).
+- **Size tags on order lines** ("36 x2"): `--surface`, the segmented control's grey (was the darker `--surface-2`).
 - **Order line amounts:** units on top, 12px grey; the value under them, 12px semibold ink; the division Total stacks the same way, the word Total bottom-aligned with the value (last baseline).
 - **Code pad:** "Enter Roberto's code" uses the first name only; the dots are 14px with a 1px inset ring (a 1.5px border drew unevenly), filled `--ink`; Cancel and delete in `--ink`.
 - **Who's selling?** (sign-in): no Vega wordmark; the sellers in a `.grp` box like Select client, rules from under the names (62px).
