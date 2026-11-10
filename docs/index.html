@@ -340,6 +340,7 @@ input{font:inherit;color:inherit}
 .car-slide{position:relative;flex:0 0 100%;scroll-snap-align:center;aspect-ratio:4/5;max-height:52cqh;background:#F0F0F0}
 .car-slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block}
 .car.cover .car-slide img{object-fit:cover;object-position:50% 30%}
+.car.cover .car-slide{background:none} /* runway photos fill the frame: no grey behind them, which showed as a hairline under the photo when the frame height fell on a fraction of a pixel */
 .car-dots{position:absolute;z-index:2;left:50%;bottom:12px;transform:translateX(-50%);display:flex;gap:6px;padding:6px 8px;border-radius:999px;background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);pointer-events:none}
 .car-dots i{width:6px;height:6px;border-radius:50%;background:rgba(20,22,25,.25);transition:background .2s,width .2s}
 .car-dots i.on{background:#141619;width:16px;border-radius:var(--r-xs)}
@@ -509,7 +510,7 @@ input{font:inherit;color:inherit}
 .cat-h{margin:0;display:flex;align-items:baseline;gap:8px;font:700 var(--fs-heading)/var(--lh-tight) var(--f-display);letter-spacing:-.02em}
 .cat-h span{font-size:var(--fs-caption);font-weight:600;color:var(--muted)}
 .pc-fam{font-size:var(--fs-caption);font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
-.pc-fam.look-sub{text-transform:none;letter-spacing:0;font-weight:600}
+.pc-fam.look-sub{text-transform:none;letter-spacing:0;font-weight:400} /* under the look's name, regular grey */
 .pgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 8px} /* more room between one row of cards and the next */
 .pcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:6px;display:flex;flex-direction:column;gap:6px;min-width:0}
 .pc-photo{position:relative}
@@ -1779,7 +1780,7 @@ function LookSheet({id, S, ui, act}) {
   return html`<${Sheet} tall title=${lookNo(l)} onClose=${act.close}
     media=${html`<${Carousel} cover src=${lookSrc(l)} alt=${lookNo(l)} at=${ui.photoAt} onOpen=${i => act.set({zoom:{look:l.id, i}})}/>`}
     foot=${html`<${LookAdd} l=${l} o=${o} act=${act} cls="btn primary"/>`}>
-    <div class="pd-head"><span class="pc-fam look-sub">${DIV_LABEL[l.div]} · ${SHOW}${l.req ? ' · required look' : ''}</span><h1 class="pd-name">${lookNo(l)}</h1></div>
+    <div class="pd-head"><h1 class="pd-name">${lookNo(l)}</h1><span class="pc-fam look-sub">${DIV_LABEL[l.div]} · ${SHOW}${l.req ? ' · required look' : ''}</span></div>
     <h2 class="cat-h sh-h">In this look</h2>
     <div class="list look-rows">${l.items.map(([pid, c]) => { const p = P[pid], why = o && canTake(o, p), has = o && o.lines.some(x => x.pid === pid && x.colour === c);
       return html`<button class="row" onClick=${() => act.sheet({type:'product', pid, colour:c, orderId:o && o.id, back:{type:'look', id:l.id}})}>
