@@ -2730,9 +2730,12 @@ function App({onReset}) {
   const ongoing = ongoingBuyer(S), sessionOk = !!activeOrder(S, ui);
   useEffect(() => { if (ongoing && !sessionOk && !buyerView) act.startSession(ongoing.id); }, [ongoing && ongoing.id, sessionOk, !!buyerView]);
   // an order opened from Home or history is full screen, without the tab bar; the client in session's order is the Order tab
-  // camera open: the status bar area goes black with the viewfinder (page background and the browser's theme colour)
+  // the browser's theme colour (the strip around the notch in Safari): black with the camera; with a sheet open, the same grey as the dimmed page
+  // (the scrim over the page: rgba(10,12,16,.42) over white = #98999B, rgba(0,0,0,.6) over the dark page = #060707); otherwise the page colour
   useEffect(() => { const root = document.documentElement; root.classList.toggle('cam', !!ui.capture);
-    document.querySelectorAll('meta[name="theme-color"]').forEach(m => { m.dataset.base = m.dataset.base || m.content; m.content = ui.capture ? '#000000' : m.dataset.base; }); }, [!!ui.capture]);
+    const dim = !ui.capture && !!document.querySelector('.scrim');
+    document.querySelectorAll('meta[name="theme-color"]').forEach(m => { m.dataset.base = m.dataset.base || m.content;
+      m.content = ui.capture ? '#000000' : dim ? (/dark/.test(m.media) ? '#060707' : '#98999B') : m.dataset.base; }); });
   const so = activeOrder(S, ui), capDiv = so && (BUYERS[so.buyerId].divs.includes(ui.capDiv) ? ui.capDiv : BUYERS[so.buyerId].divs[0]);
   if (buyerView) return html`<div class="app"><${BuyerView} S=${S} ui=${ui} act=${act}/>${sheet}${toast}</div>`;
   if (S.signedOut) return html`<div class="app"><${SignIn} S=${S} act=${act}/>${toast}</div>`;
