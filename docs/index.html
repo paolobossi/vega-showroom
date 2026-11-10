@@ -1042,6 +1042,13 @@ input.qty.xl{width:64px} /* room for three digits */
 .list.look-rows{background:none;border:0;gap:0;overflow:visible;-webkit-mask-box-image:none}
 .look-rows > .row{width:auto;background:none;margin:0 -18px;padding:14px 12px 14px 18px;border-top:1px solid color-mix(in srgb,var(--line) 55%,var(--bg))}
 .look-rows > .row:first-child{border-top:0;padding-top:4px}
+/* the look's pieces sit in one white box with a 1px grey outline and squircle corners (.g-box), split by a light rule from 14px in to the right edge; name and price in the Collection card sizes */
+.g-box > .list.look-rows{background:var(--bg);padding:4px 0;border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
+@supports (-webkit-mask-box-image:none){.g-box > .list.look-rows{border-radius:0}}
+.g-box > .look-rows > .row{margin:0;padding:10px 12px 10px 14px;border-top:0;background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 14px 0 / calc(100% - 14px) 1px no-repeat}
+.g-box > .look-rows > .row:first-child{background:none;padding-top:10px}
+.look-rows .row-title{font-size:var(--fs-body);font-weight:600;line-height:var(--lh-tight)} /* as the Collection card name */
+.look-rows .row-val{font-size:var(--fs-caption);font-weight:600} /* as the Collection card price */
 .look-rows .thumb{width:72px;height:72px;border-radius:0;-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}
 .list.gapped{background:none;border:0;gap:2px}.list.gapped > .row{background:var(--surface);border-top:0}
 /* Collection cards: the photo runs to the card's edges (top and sides), the text keeps its margin; a soft drop shadow lifts the card off the grey page */
@@ -1780,16 +1787,16 @@ function LookSheet({id, S, ui, act}) {
   return html`<${Sheet} tall title=${lookNo(l)} onClose=${act.close}
     media=${html`<${Carousel} cover src=${lookSrc(l)} alt=${lookNo(l)} at=${ui.photoAt} onOpen=${i => act.set({zoom:{look:l.id, i}})}/>`}
     foot=${html`<${LookAdd} l=${l} o=${o} act=${act} cls="btn primary"/>`}>
-    <div class="pd-head"><h1 class="pd-name">${lookNo(l)}</h1><span class="pc-fam look-sub">${DIV_LABEL[l.div]} · ${SHOW}${l.req ? ' · required look' : ''}</span></div>
+    <div class="pd-head"><h1 class="pd-name">${lookNo(l)}</h1><span class="pc-fam look-sub">${SEASONS[0].short} ${DIV_LABEL[l.div]} Lookbook${l.req ? ' · required look' : ''}</span></div>
     <h2 class="cat-h sh-h">In this look</h2>
-    <div class="list look-rows">${l.items.map(([pid, c]) => { const p = P[pid], why = o && canTake(o, p), has = o && o.lines.some(x => x.pid === pid && x.colour === c);
+    <div class="g-box"><div class="list look-rows">${l.items.map(([pid, c]) => { const p = P[pid], why = o && canTake(o, p), has = o && o.lines.some(x => x.pid === pid && x.colour === c);
       return html`<button class="row" onClick=${() => act.sheet({type:'product', pid, colour:c, orderId:o && o.id, back:{type:'look', id:l.id}})}>
         <${Thumb} pid=${pid} colour=${c}/>
         <div class="row-main"><div class="row-title">${p.name}</div><div class="row-sub"><${Colour} c=${c}/></div></div>
         <div class="row-side"><span class="row-val">${fmt(p.price)}</span>
           ${why ? html`<span class="lock">${why}</span>` : has && html`<span class="flag-txt"><${Icon} n="flag" s=${13} w=${2.2}/>Added</span>`}</div>
         <${Icon} n="next" s=${18}/>
-      </button>`; })}</div>
+      </button>`; })}</div></div>
   <//>`;
 }
 
