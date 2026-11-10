@@ -226,6 +226,11 @@ input{font:inherit;color:inherit}
 .pd-in{display:flex;align-items:center;justify-content:center;gap:6px;min-height:46px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-weight:600;font-size:var(--fs-body)}
 .pd-in svg{color:var(--good)}
 .pd-cta:empty{display:none}
+/* nobody checked in: the same message as the empty Order tab (icon, title, line, Choose a client), in a white box with a 1px grey outline and squircle corners (.g-box, like the details) */
+.pd-pick{display:flex;flex-direction:column;align-items:center;gap:6px;padding:20px 16px 16px;text-align:center;color:var(--muted);background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
+@supports (-webkit-mask-box-image:none){.pd-pick{border-radius:0}}
+.pd-pick b{color:var(--ink);font-size:var(--fs-heading)}
+.pd-cta .pd-pick .btn{margin-top:10px}
 .pin{display:flex;flex-direction:column;align-items:center;gap:14px;padding:4px 0 6px}
 .pin-t{font-size:var(--fs-heading);font-weight:600}
 .pin-dots{display:flex;gap:16px;margin:2px 0 6px}
@@ -2170,7 +2175,8 @@ function ProductSheet({pid, colour, orderId, back, S, ui, act}) {
         </div>
 `}
     </div>`}
-    <div class="pd-cta">${!o ? html`<button class="btn black" onClick=${pick}>Choose a client</button>`
+    <div class="pd-cta">${!o ? html`<div class="g-box"><div class="pd-pick"><${Icon} n="orders" s=${28}/><b>No client checked in</b><div>Choose a client to add this piece.</div>
+        <button class="btn black" onClick=${pick}>Choose a client</button></div></div>`
       : why ? html`${line && html`<div class="pd-in">In order · ${u ? val(u) : 'no quantity'}</div>`}<button class="btn black" disabled>${b.shop} · ${why}</button>`
       : line ? html`<button class="btn outline danger" onClick=${() => act.unselect(o.id, pid, c)}>Remove from order</button>`
       : null}</div>
