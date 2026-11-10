@@ -60,7 +60,7 @@ The whole order's status is worked out from its parts: all the same → that sta
 | In order (green ✓ in the photo's top-right corner, a 22px green circle) | Already in the client's selection, in at least one colour. The card has no buttons; tapping it opens the product page on the colour in the order. |
 | Not available (`Not available`) | Not open to this client's tier (see Client tier). Hidden from the Collection during a visit. |
 | Division not bought (no mark) | The client doesn't buy that division, but it is still shown. Adding a style from it asks "[Client] doesn't buy Men. Add Men to this order?"; on OK that division opens on the order with no budget. |
-| Division submitted (`Women's order submitted` / `Men's order submitted`) | That part of the order is sent, so nothing more can be added to it. In the Collection its styles show only as faded photos (no tag); the product page's button reads the same words, off. |
+| Division submitted (`Women's order submitted` / `Men's order submitted`) | That part of the order is sent, so nothing more can be added to it. In the Collection all its styles show as faded photos (no tag), those already in the order too (they keep their green ✓ at full strength); the product page's button reads the same words, off. |
 
 ## Product priority (set in the back office, shown on the photo; the Priority filter)
 
@@ -209,7 +209,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 10.5 Continue → checked out, back to Home, no toast; the row shows Sent.
 - [ ] 10.6 Send only Women for a Women + Men client to the commercial team → also checked out and back to Home; the row shows Partly sent.
 - [ ] 10.7 Open that order → banner "Partly sent" with one line "Women signed · Men still a draft"; the tick is centred in its circle; Women lines are read-only, with the note that the women's order has been sent.
-- [ ] 10.8 Check the client in again → in the Collection, women's styles have faded photos and no tag, and can't be added; their product page shows a greyed-out button "Women's order submitted"; Men can still be completed and signed.
+- [ ] 10.8 Check the client in again → in the Collection, every women's style has a faded photo and no tag (those already in the order too, still with their green ✓), and can't be added; their product page shows a greyed-out button "Women's order submitted"; Men can still be completed and signed.
 - [ ] 10.8b The status banner on the order (With client, Sent, Partly sent, Confirmed) is white with a 1px grey outline and soft squircle corners, like the Budget box; the colour is only in the round icon on the left, like the budget bars' icon tiles: a light tint of the colour behind and the icon in the colour itself (amber for With client, blue for Sent and Partly sent, green for Confirmed), the title in black and the line under it in grey.
 - [ ] 10.9 Fully sent order → banner "Sent" with one line "Signed by [name] · [date, time]". A confirmed order → "Confirmed" with "Ready for production". The line under a banner title never repeats the title and never wraps.
 

@@ -1910,7 +1910,7 @@ function ProductList({div, q, b, season, onPick}) {
 function PCard({p, o, act}) {
   const mine = o && o.lines.find(l => l.pid === p.id), has = !!mine, c = mine ? mine.colour : p.colours[0], lock = o && canTake(o, p);
   // the wrapper carries the drop shadow: the card's squircle mask would clip a shadow on the card itself
-  return html`<div class="pc-wrap"><button class=${'pcard' + (lock && !has ? ' locked' : '')} onClick=${() => act.sheet({type:'product', pid:p.id, colour:c})} aria-label=${p.name + (has ? ', in the order' : '')}>
+  return html`<div class="pc-wrap"><button class=${'pcard' + (lock ? ' locked' : '')} onClick=${() => act.sheet({type:'product', pid:p.id, colour:c})} aria-label=${p.name + (has ? ', in the order' : '')}>
     <div class="pc-photo">
       <span class="pc-img"><${Thumb} pid=${p.id} colour=${c}/></span>
       ${has && html`<span class="pc-in" aria-hidden="true"><${Icon} n="check" s=${13} w=${3}/></span>`}
