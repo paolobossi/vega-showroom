@@ -796,7 +796,8 @@ input{font:inherit;color:inherit}
 .colours .slide-ind{border-radius:999px;background:var(--ink)}
 .colours .slide-copy{gap:8px;padding:0 18px}
 .colours .slide-copy > .colour,.colours .slide-copy .code{color:var(--bg)}
-.colours .slide-copy .sw{box-shadow:inset 0 0 0 1px rgba(255,255,255,.4)} /* a black swatch still shows on the black pill */
+.colours .slide-copy .sw{box-shadow:inset 0 0 0 2px rgba(255,255,255,.4)} /* a black swatch still shows on the black pill */
+.colours .slide-copy .flag-dot{color:#fff;box-shadow:inset 0 0 0 1.5px #fff} /* on the black pill the check is white, not green */
 .colours .slide-copy .cnt{background:var(--bg);color:var(--ink)}
 .cnt{font-size:var(--fs-caption);font-weight:700;background:var(--ink);color:var(--bg);border-radius:999px;padding:2px 6px}
 .sizes{display:flex;gap:6px;overflow-x:auto;margin:0 -18px;padding:0 18px 2px;scrollbar-width:none}
@@ -1092,8 +1093,8 @@ const COL = {
   'Black Brown':['#2E2620','0202'], 'White Blue':['#DDE4EE','2105'], 'Khaki Yellow':['#8C8450','4157'], 'Blue Grey':['#6E7C8C','0362'],
   'Dark Cigar':['#5A3A28','8779'], 'Shell Grey':['#BDB8AE','6579'],
 };
-const SZ = {wr:['34','36','38','40','42','44'], mr:['46','48','50','52','54','56'], // at least six sizes per style, so the size row scrolls sideways on a phone
-   ws:['36','37','38','39','40','41'], ms:['40','41','42','43','44','45'], u:['U']};
+const SZ = {wr:['32','34','36','38','40','42','44','46'], mr:['44','46','48','50','52','54','56','58'], // eight sizes per style, so the size row scrolls sideways on a phone
+   ws:['35','36','37','38','39','40','41','42'], ms:['39','40','41','42','43','44','45','46'], u:['U']};
 const CATS = ['rtw','bags','shoes','acc'];
 const CAT_LABEL = {bags:'Bags', rtw:'Ready-to-wear', shoes:'Shoes', acc:'Accessories'};
 const CAT_SHORT = {bags:'Bags', rtw:'RTW', shoes:'Shoes', acc:'Acc.'};
