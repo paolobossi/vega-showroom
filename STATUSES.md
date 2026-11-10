@@ -232,7 +232,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 13.1 Close and reopen the app (home-screen icon): orders, notes, the client in session and the passcode are kept.
 - [ ] 13.2 Every bottom sheet closes with × and by tapping the dimmed page behind it.
 - [ ] 13.3 Landscape (iPad or the side panel's Landscape switch): layouts hold, nothing overlaps the tab bar or the floating buttons.
-- [ ] 13.4 Dark mode on the phone: text stays readable; the status bar strip and the Must have tag stay black.
+- [ ] 13.4 Dark mode on the phone: text stays readable; the status bar strip and the Must have tag stay black. Collection cards have no lighter band behind the name and prices (the card is the page colour, as in light mode), and black or navy colour dots show by a faint light ring.
 - [ ] 13.5 Nothing sits under the notch or the home indicator; the last card in the Collection scrolls clear of the tab bar.
 - [ ] 13.6 Messages (toasts) slide up from the bottom edge and sit just above it, the same on every screen: just above the tab bar, over a product page and over the order buttons. The exceptions are a quantity change ("Saved · N units", "Added to order · N units") and "Removed from order", which drop in at the top (just under the status bar) so they are seen while the thumb is on the sizes or the order.
 - [ ] 13.7 Close buttons are easy to hit: the × on the product page (a 44px circle, and a near miss just outside it still closes), on the full-screen photos and on the full-screen pages (Set passcode, Sign the order, sign-in).

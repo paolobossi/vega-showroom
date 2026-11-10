@@ -49,7 +49,7 @@
   --ink:#ECEDEA; --muted:#A0A4A9; --faint:#6E7277; --line:#2C3036;
   --accent:#8C9DFF; --accent-ink:#0F1113; --accent-soft:#222A4C;
   --good:#58C48D; --good-bg:#15291E; --warn:#E5A93E; --warn-bg:#2E2414; --bad:#F27D72; --bad-bg:#331A18;
-  --scrim:rgba(0,0,0,.6); color-scheme:dark;
+  --scrim:rgba(0,0,0,.6); --sw-ring:rgba(255,255,255,.22); color-scheme:dark;
 }}
 :root[data-theme="dark"]{
   --stage:#050607; --frame:#2A2C30;
@@ -58,7 +58,7 @@
   --ink:#ECEDEA; --muted:#A0A4A9; --faint:#6E7277; --line:#2C3036;
   --accent:#8C9DFF; --accent-ink:#0F1113; --accent-soft:#222A4C;
   --good:#58C48D; --good-bg:#15291E; --warn:#E5A93E; --warn-bg:#2E2414; --bad:#F27D72; --bad-bg:#331A18;
-  --scrim:rgba(0,0,0,.6); color-scheme:dark;
+  --scrim:rgba(0,0,0,.6); --sw-ring:rgba(255,255,255,.22); color-scheme:dark;
 }
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
@@ -408,7 +408,7 @@ input{font:inherit;color:inherit}
 .row-sub{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:var(--fs-caption);color:var(--muted)}
 .row-side{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none;text-align:right}
 .row-val{font-weight:600;font-variant-numeric:normal}
-.sw{display:inline-block;width:11px;height:11px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.2);flex:none}
+.sw{display:inline-block;width:11px;height:11px;border-radius:50%;box-shadow:inset 0 0 0 1px var(--sw-ring,rgba(0,0,0,.2));flex:none} /* in dark mode the ring is light, so black and navy dots still show */
 .szs{display:flex;gap:4px;flex-wrap:wrap}
 .sz-chip{font:400 var(--fs-caption) var(--f-ui);font-variant-numeric:normal;padding:2px 6px;border-radius:var(--r-xs);background:var(--surface-2);color:var(--muted)}
 .lock{display:inline-flex;align-items:center;gap:4px;font-size:var(--fs-caption);font-weight:600;color:var(--warn)}
@@ -1049,7 +1049,7 @@ input.qty.xl{width:64px} /* room for three digits */
 .pc-wrap{display:flex;min-width:0} /* no shadow on the Collection cards */
 /* only the squircle mask shapes the card: with a border-radius too, Safari (no corner-shape) paints the white bottom with round corners
    while the photo on top follows the mask, so the bottom corners looked rounder on iPhone than the top ones */
-.pc-wrap > .pcard{flex:1;padding:0 0 4px;gap:10px;border:0;background:var(--card);border-radius:0;corner-shape:round;-webkit-mask-box-image:none}
+.pc-wrap > .pcard{flex:1;padding:0 0 4px;gap:10px;border:0;background:none;border-radius:0;corner-shape:round;-webkit-mask-box-image:none}
 /* the card has no box of its own any more: the photo carries the 24px squircle and the details line up with its edges */
 .pcard .pc-photo{-webkit-mask-box-image:var(--squircle) 20 / 24px stretch}
 .pcard .pc-photo .thumb{border-radius:0}
