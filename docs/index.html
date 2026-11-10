@@ -356,8 +356,8 @@ input{font:inherit;color:inherit}
 .zoom .car{flex:1;min-height:0}
 .zoom .car-track{flex:1;min-height:0;border-radius:0}
 .zoom .car-slide{aspect-ratio:auto;max-height:none;height:100%}
-/* a style's photos are square: the grey block is only as tall as the photo, centred, and white bands above and below take the rest (looks keep the full height) */
-.zoom.prod .car{justify-content:center}.zoom.prod .car-track{flex:none}.zoom.prod .car-slide{aspect-ratio:1;max-height:100%;height:auto}
+/* a style's photos: the grey block is 2:3 (taller than the square photo, a little shorter than the full height), centred, with thin white bands above and below (looks keep the full height) */
+.zoom.prod .car{justify-content:center}.zoom.prod .car-track{flex:none}.zoom.prod .car-slide{aspect-ratio:2/3;max-height:100%;height:auto}
 .zoom-foot .prices small{font-size:var(--fs-caption);font-weight:400;color:var(--muted)}.zoom-foot .prices b{font-size:20px;font-weight:700;line-height:var(--lh-tight);letter-spacing:-.01em} /* the same sizes as the price tiles in the product details */
 .zoom-foot{flex:none;display:flex;flex-direction:column;gap:8px;padding:10px 18px max(14px,env(safe-area-inset-bottom,0px));background:var(--bg)}
 
