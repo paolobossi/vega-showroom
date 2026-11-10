@@ -791,9 +791,9 @@ input{font:inherit;color:inherit}
 .ss-total{font-size:var(--fs-body)}.ss-total b{font-size:var(--fs-heading);font-variant-numeric:normal}
 .colours{position:relative;isolation:isolate;display:flex;gap:8px;overflow-x:auto;margin:0 -18px;padding:0 18px 2px;scroll-padding:0 18px;scrollbar-width:none}
 .colour{display:flex;align-items:center;gap:8px;padding:0 12px;height:40px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:var(--fs-body);white-space:nowrap;flex:none}
-.colour{padding-left:4px}.colour:has(> .flag-dot){padding-right:4px} /* with the 1px border, the swatch (and the in-order check) sit 5px in from the pill's ends */
-.colour .sw{width:30px;height:30px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.4)} /* 30px: the 40px chip less 5px all round; a 2px light ring inside every colour swatch, on the grey chips too */
-.colour .flag-dot{width:30px;height:30px} /* the "in the order" check as big as the colour swatch */
+.colour{padding-left:6px}.colour:has(> .flag-dot){padding-right:6px} /* with the 1px border, the swatch (and the in-order check) sit 7px in from the pill's ends */
+.colour .sw{width:26px;height:26px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.4)} /* 26px: the 40px chip less 7px all round; a 2px light ring inside every colour swatch, on the grey chips too */
+.colour .flag-dot{width:26px;height:26px} /* the "in the order" check as big as the colour swatch */
 /* name and code are the same size and line height, both centred, so they share one baseline; the code black like the name, in regular weight */
 .colour .nm,.colour .code{display:block;font-size:var(--fs-body);line-height:20px}
 .colour .code{font-weight:400;color:var(--ink);margin-left:-2px} /* 6px from the name (the chip's gap is 8px) */
@@ -2133,7 +2133,7 @@ function ProductSheet({pid, colour, orderId, back, S, ui, act}) {
   const p = P[pid], o = orderId ? S.orders[orderId] : activeOrder(S, ui), b = o && BUYERS[o.buyerId], why = o && canTake(o, p);
   const [c, setC] = useState(() => { const l = o && o.lines.find(x => x.pid === pid); return colour || (l ? l.colour : p.colours[0]); }), [colBox, colInd] = useSlide('.colour.on');
   // a colour chip: swatch, name, code and, when that colour is in the order, a green check (drawn twice: the chip and its white copy inside the sliding black pill)
-  const chip = x => html`<span class="sw" style=${{background:COL[x][0]}}></span><span class="nm">${x}</span><span class="code">${COL[x][1]}</span>${lineOf(x) && html`<span class="flag-dot" title="In order"><${Icon} n="check" s=${14} w=${2.6}/></span>`}`;
+  const chip = x => html`<span class="sw" style=${{background:COL[x][0]}}></span><span class="nm">${x}</span><span class="code">${COL[x][1]}</span>${lineOf(x) && html`<span class="flag-dot" title="In order"><${Icon} n="check" s=${13} w=${2.6}/></span>`}`;
   const looks = LOOKS.filter(l => l.items.some(([x]) => x === pid));
   const pick = () => act.sheet({type:'pick', item:{pid, colour:c, via:'search', ret:'product'}}); // once a client is picked, back to this page
   const lineOf = x => o && o.lines.find(l => l.pid === pid && l.colour === x), line = lineOf(c);
