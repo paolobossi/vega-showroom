@@ -2626,7 +2626,8 @@ function makeActs(setS, setUi, onReset) {
   const a = {
     // bar: {o, pid} or {o, line} adds that style's category budget bar under the message (quantity saved)
     // after 2.2s it slides back out the way it came (toastOut), then goes; a new message while it is leaving brings in a fresh one
-    toast: (msg, top, bar) => { setUi(u => ({...u, toast:msg, toastBar:bar || null, toastTop:!!top, toastOut:false, toastId: top && u.toast && u.toastTop && !u.toastOut ? u.toastId : Date.now()}));
+    // every message drops in from the top (Added to order, Saved, Scale copied, Checked out…); the second argument is kept for the callers but no longer sends one to the bottom
+    toast: (msg, _top, bar) => { const top = true; setUi(u => ({...u, toast:msg, toastBar:bar || null, toastTop:top, toastOut:false, toastId: u.toast && u.toastTop && !u.toastOut ? u.toastId : Date.now()}));
       clearTimeout(toastT); toastT = setTimeout(() => { setUi(u => ({...u, toastOut:true})); toastT = setTimeout(() => setUi(u => ({...u, toast:null, toastOut:false})), 300); }, 2200); },
     // opening an order only shows it; the client in session changes only with a check-in
     openOrder: bid => { const id = 'o-' + bid;
