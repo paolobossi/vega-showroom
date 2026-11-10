@@ -182,6 +182,8 @@ input{font:inherit;color:inherit}
 .row-ic{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:var(--r-s);background:var(--surface-2);color:var(--ink)}
 .row.out{color:var(--bad)}
 .row.out .row-ic{background:color-mix(in srgb,var(--bad) 12%,transparent);color:var(--bad)}
+.prof-grp .row-ic{width:auto;height:auto;background:none;color:var(--ink)}.prof-grp .row.out .row-ic,.prof-grp .row.out .row-title{color:var(--bad);background:none}
+.prof-grp .grp-in > .row{background-position:48px 0;background-size:calc(100% - 48px) 1px} /* the rule starts under the text, not under the icon */
 /* a page inside a tab (Profile → Orders): back on the left, small centred title, like the order page; stays on top while scrolling */
 .sub-bar{position:sticky;top:0;z-index:5;background:var(--bg)}
 .sub-bar h1{margin:0}
@@ -580,7 +582,7 @@ input{font:inherit;color:inherit}
 .sel-val{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;line-height:var(--lh-tight)}
 /* units and value on an order line: the size of the size tags (12px), same colours and weights */
 .sel-val{font-size:var(--fs-caption)}.sel-val small{font-size:var(--fs-caption);color:var(--muted)}
-.sel-val b{font-weight:600}
+.sel-val b{font-weight:600;color:var(--ink)} /* the value bold in ink, the units above it small and grey */
 /* the delivery drop: white tag with a grey outline next to the item code */
 .sel.open .sel-val small{color:var(--warn);font-weight:600}
 /* Women / Men on the order: underlined tabs; the budget summary below opens Guidelines */
@@ -792,9 +794,10 @@ input{font:inherit;color:inherit}
 .ov-state{display:flex;gap:12px;align-items:center;padding:14px 16px;background:var(--bg);color:var(--ink);box-shadow:none !important;border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
 @supports (-webkit-mask-box-image:none){.ov-state{border-radius:0}}
 .ov-state > div{min-width:0}
-.ov-state-ic{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--muted)}
-.ov-state-ic svg{color:#fff}
-.s-shared .ov-state-ic{background:var(--warn)}.s-submitted .ov-state-ic,.s-partial .ov-state-ic{background:var(--accent)}.s-confirmed .ov-state-ic{background:var(--good)}
+/* like the budget bars' icon tiles: a light tint of the status colour behind, the icon itself in the status colour */
+.ov-state-ic{--c:var(--muted);flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:color-mix(in srgb,var(--c) 14%,var(--bg))}
+.ov-state-ic svg{color:var(--c)}
+.s-shared .ov-state-ic{--c:var(--warn)}.s-submitted .ov-state-ic,.s-partial .ov-state-ic{--c:var(--accent)}.s-confirmed .ov-state-ic{--c:var(--good)}
 .ov-state b{display:block;font:600 var(--fs-heading)/var(--lh-tight) var(--f-display);letter-spacing:-.01em}
 .ov-state div span{display:block;font-size:var(--fs-caption);line-height:var(--lh-body);margin-top:2px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:14px;display:flex;flex-direction:column;gap:10px}
@@ -1028,7 +1031,8 @@ input.qty.xl{width:64px} /* room for three digits */
 /* no box around a line: lines sit on the page, split by a 1px grey rule; the photo starts flush with the Order heading and is larger (72px) */
 /* the division's total under the last line: the same edge-to-edge rule above it, Total on the left, units and value on the right */
 .ord-tot{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:0 -16px;padding:15px 16px 14px;background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 16px 0 / calc(100% - 16px) 1px no-repeat;font-size:var(--fs-body)}
-.ord-tot-v{display:flex;align-items:baseline;gap:10px}.ord-tot-v span{font-size:var(--fs-caption);color:var(--muted)}
+.ord-tot-v{display:flex;flex-direction:column;align-items:flex-end;gap:0;line-height:var(--lh-tight)}.ord-tot-v span{font-size:var(--fs-caption);color:var(--muted)} /* stacked like each line: units small and grey, the value bold under them */
+.ord-tot{align-items:center}
 .ov-lines .grp-box .list > .sel{background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 16px 0 / calc(100% - 16px) 1px no-repeat;margin:0 -16px;padding:15px 16px 14px;border-top:0} /* the rule, a shade lighter than --line, starts where the photo starts and runs to the right edge */
 .ov-lines .grp-box .list > .sel:first-child{background:none;padding-top:4px}
 .grp-box .sel .thumb{width:72px;height:72px}
@@ -1827,18 +1831,18 @@ function LookSheet({id, S, ui, act}) {
 function ProfileSheet({S, act}) {
   const rep = REPS[S.rep];
   // no sheet title: the seller's name heads it, with the close × on its line
-  return html`<${Sheet} bare title="Profile" onClose=${act.close}>
+  // laid out like Select client: the rows in white boxes with a grey outline and light rules between them; plain icons, no tile behind them
+  const row = (onClick, ic, t) => html`<button class="row" onClick=${onClick}><span class="row-ic"><${Icon} n=${ic} s=${20}/></span>
+        <div class="row-main"><div class="row-title">${t}</div></div><span class="chev"><${Icon} n="next" s=${18} w=${2}/></span></button>`;
+  return html`<${Sheet} bare grouped title="Profile" onClose=${act.close}>
     <div class="prof"><span class="avatar">${rep.ini}</span><div class="prof-n">${rep.name}</div>
       <button class="icon-btn" onClick=${act.close} aria-label="Close"><${Icon} n="x"/></button></div>
-    <div class="list gapped">
-      <button class="row" onClick=${() => act.sheet({type:'history'})}><span class="row-ic"><${Icon} n="orders" s=${19}/></span>
-        <div class="row-main"><div class="row-title">Order history</div></div><${Icon} n="next" s=${18}/></button>
-      <button class="row" onClick=${() => act.sheet({type:'passcode'})}><span class="row-ic"><${Icon} n="lock" s=${19}/></span>
-        <div class="row-main"><div class="row-title">${S.pins[S.rep] ? 'Change passcode' : 'Set passcode'}</div></div><${Icon} n="next" s=${18}/></button>
-      <button class="row" onClick=${() => act.sheet({type:'feedback'})}><span class="row-ic"><${Icon} n="msg" s=${19}/></span>
-        <div class="row-main"><div class="row-title">App feedback</div></div><${Icon} n="next" s=${18}/></button>
-    </div>
-    <div class="list"><button class="row out" onClick=${act.signOut}><span class="row-ic"><${Icon} n="out" s=${19}/></span><div class="row-main"><div class="row-title">Sign out</div></div></button></div>
+    <div class="grp prof-grp"><div class="grp-in">
+      ${row(() => act.sheet({type:'history'}), 'orders', 'Order history')}
+      ${row(() => act.sheet({type:'passcode'}), 'lock', S.pins[S.rep] ? 'Change passcode' : 'Set passcode')}
+      ${row(() => act.sheet({type:'feedback'}), 'msg', 'App feedback')}
+    </div></div>
+    <div class="grp prof-grp"><div class="grp-in"><button class="row out" onClick=${act.signOut}><span class="row-ic"><${Icon} n="out" s=${20}/></span><div class="row-main"><div class="row-title">Sign out</div></div></button></div></div>
   <//>`;
 }
 
@@ -2393,7 +2397,7 @@ function SelLine({l, o, act, locked}) {
       ${sized ? html`${!locked && html`<button class="pc-act sel-edit" onClick=${edit}>${u ? 'Edit sizes' : 'Enter sizes'}</button>`}`
         : locked ? html`<span class="small muted num">×${u}</span>`
         : html`<${Stepper} n=${u} label=${p.name} on=${n => act.setUnits(o.id, l.id, n)}/>`}
-      <span class="sel-val num">${u ? html`<b>${u} ${u === 1 ? 'unit' : 'units'}</b><small>${fmt(lineValue(l))}</small>` : html`<small>No quantity yet</small>`}</span>
+      <span class="sel-val num">${u ? html`<small>${u} ${u === 1 ? 'unit' : 'units'}</small><b>${fmt(lineValue(l))}</b>` : html`<small>No quantity yet</small>`}</span>
     </div>
   </div>`;
 }
