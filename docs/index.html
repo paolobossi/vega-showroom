@@ -2176,8 +2176,8 @@ function ProductSheet({pid, colour, orderId, back, S, ui, act}) {
         </div>
 `}
     </div>`}
-    <div class="pd-cta">${!o ? html`<div class="g-box"><div class="pd-pick"><${Icon} n="checkin" s=${28}/><b>Who's it for?</b><div>This piece goes straight into their order.</div>
-        <button class="btn black" onClick=${pick}>Check in a client</button></div></div>`
+    <div class="pd-cta">${!o ? html`<div class="g-box"><div class="pd-pick"><${Icon} n="checkin" s=${28}/><b>No client checked in</b><div>Pieces you add go into their order.</div>
+        <button class="btn black" onClick=${pick}>Check in</button></div></div>`
       : why ? html`${line && html`<div class="pd-in">In order · ${u ? val(u) : 'no quantity'}</div>`}<button class="btn black" disabled>${b.shop} · ${why}</button>`
       : line ? html`<button class="btn outline danger" onClick=${() => act.unselect(o.id, pid, c)}>Remove from order</button>`
       : null}</div>
@@ -2591,8 +2591,8 @@ function SessionPill({so, hid, act}) {
 // Order tab with nobody checked in: one button to the list of clients; picking one checks them in and shows their order here
 function NoOrder({act}) {
   return html`<div class="no-ord-page"><header class="top top-bar mid"><h1 class="h1">Order</h1></header>
-    <div class="no-ord"><${Icon} n="checkin" s=${32}/><b>Who's in the showroom?</b><div>Their order opens here.</div>
-      <button class="btn primary" onClick=${() => act.sheet({type:'pick'})}>Check in a client</button></div></div>`;
+    <div class="no-ord"><${Icon} n="checkin" s=${32}/><b>No client checked in</b><div>Their order shows up here.</div>
+      <button class="btn primary" onClick=${() => act.sheet({type:'pick'})}>Check in</button></div></div>`;
 }
 
 function makeActs(setS, setUi, onReset) {
