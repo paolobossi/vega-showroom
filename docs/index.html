@@ -194,6 +194,8 @@ input{font:inherit;color:inherit}
 .fb-add{display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;border-radius:999px;border:1px dashed var(--muted);color:var(--ink);font-weight:600;cursor:pointer}
 .fb-add input{display:none}
 .signin .fpage-body{justify-content:center}
+/* the sellers laid out like Select client: one white box with a grey outline, light rules from under the names, 17px regular names, grey chevrons */
+.signin-grp .grp-in > .row{gap:12px;background-position:62px 0;background-size:calc(100% - 62px) 1px}.signin-grp .grp-in > .row:first-child{background:none}
 .maison{font:600 var(--fs-caption) var(--f-display);letter-spacing:.28em;text-transform:uppercase}
 .eyebrow{font-size:var(--fs-caption);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:10px}
 .h1{font:700 var(--fs-title)/var(--lh-tight) var(--f-display);margin:4px 0 0;letter-spacing:-.03em}
@@ -1033,7 +1035,7 @@ input.qty.xl{width:64px} /* room for three digits */
 /* the division's total under the last line: the same edge-to-edge rule above it, Total on the left, units and value on the right */
 .ord-tot{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:0 -16px;padding:15px 16px 14px;background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 16px 0 / calc(100% - 16px) 1px no-repeat;font-size:var(--fs-body)}
 .ord-tot-v{display:flex;flex-direction:column;align-items:flex-end;gap:0;line-height:var(--lh-tight)}.ord-tot-v span{font-size:var(--fs-caption);color:var(--muted)} /* stacked like each line: units small and grey, the value bold under them */
-.ord-tot{align-items:center}
+.ord-tot{align-items:flex-end;align-items:last baseline} /* Total sits on the value's line, at the bottom */
 .ov-lines .grp-box .list > .sel{background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 16px 0 / calc(100% - 16px) 1px no-repeat;margin:0 -16px;padding:15px 16px 14px;border-top:0} /* the rule, a shade lighter than --line, starts where the photo starts and runs to the right edge */
 .ov-lines .grp-box .list > .sel:first-child{background:none;padding-top:4px}
 .grp-box .sel .thumb{width:72px;height:72px}
@@ -2074,12 +2076,12 @@ function SignIn({S, act}) {
   return html`<div class="fpage signin" role="dialog" aria-modal="true" aria-label="Sign in">
     <div class="fpage-head">${to ? html`<button class="icon-btn" onClick=${() => setTo(null)} aria-label="Back"><${Icon} n="back"/></button>` : html`<span></span>`}</div>
     <div class="fpage-body">${to ? html`<${PinPad} key=${to} rep=${REPS[to]} check=${pinCheck(S, to)} onDone=${() => act.switchRep(to)} onBack=${() => setTo(null)}/>` : html`
-      <div><div class="maison">Vega</div><h1 class="h1">Who’s selling?</h1></div>
-      <div class="list">${Object.values(REPS).map(r => html`<button class="row opt" onClick=${() => setTo(r.id)}>
+      <h1 class="h1">Who’s selling?</h1>
+      <div class="grp signin-grp"><div class="grp-in">${Object.values(REPS).map(r => html`<button class="row" onClick=${() => setTo(r.id)}>
         <span class="avatar sm">${r.ini}</span>
         <div class="row-main"><div class="row-title">${r.name}</div></div>
-        <${Icon} n="next" s=${18}/>
-      </button>`)}</div>`}</div>
+        <span class="chev"><${Icon} n="next" s=${18} w=${2}/></span>
+      </button>`)}</div></div>`}</div>
   </div>`;
 }
 
