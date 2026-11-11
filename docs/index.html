@@ -1861,7 +1861,7 @@ function HistorySheet({S, ui, act}) {
   const secs = [['Draft', all.filter(r => !SENT.includes(r.status))], ['Sent', all.filter(r => SENT.includes(r.status))]];
   const row = r => html`<button class="row" onClick=${() => act.openOrder(r.buyerId)}>
       <div class="row-main"><div class="row-title">${r.shop}</div>
-        <div class="row-sub"><span>${`${r.city} · ${fmt(r.value)}${r.hoursLeft != null ? ` · ${r.hoursLeft}h left` : ''}`}</span></div></div>
+        <div class="row-sub"><span>${`${fmt(r.value)}${r.hoursLeft != null ? ` · ${r.hoursLeft}h left` : ''}`}</span></div></div>
       <div class="row-side">${r.status !== 'none' && html`<${Pill} s=${r.status}/>`}<span class="chev"><${Icon} n="next" s=${18} w=${2}/></span></div>
     </button>`;
   return html`<${Sheet} title="Order history" tall grouped onClose=${act.close}>
