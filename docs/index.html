@@ -728,7 +728,7 @@ input{font:inherit;color:inherit}
 .sheet-head:not(.center) > .icon-btn{margin-top:-10px;margin-bottom:-10px}
 /* as much room under the title block as above it (about 20px to the first content) */
 .sheet-head:not(.center){padding-bottom:16px}
-.sheet-title{font:700 var(--fs-heading)/var(--lh-tight) var(--f-display);letter-spacing:-.02em;text-wrap:balance}
+.sheet-title{font:700 22px/var(--lh-tight) var(--f-display);letter-spacing:-.02em;text-wrap:balance} /* 22px: a step up from the 17px headings inside the sheet */
 .sheet-sub{font-size:var(--fs-caption);color:var(--muted);margin-top:4px}
 /* a sheet about one piece (Add to order) shows its photo left of the title: a 48px squircle tile */
 .sheet-tt{display:flex;align-items:center;gap:12px;min-width:0}
@@ -1070,7 +1070,9 @@ input.qty.xl{width:64px} /* room for three digits */
 .g-box > .look-rows > .row:first-child{background:none;padding-top:10px}
 .look-rows .row-title{font-size:var(--fs-body);font-weight:600;line-height:var(--lh-tight)} /* as the Collection card name */
 .look-rows .row-val{font-size:var(--fs-caption);font-weight:600} /* as the Collection card price */
-.look-rows .row > svg:last-child{color:var(--faint);margin-left:-8px} /* grey chevron, in light and dark mode, 4px after the price */
+.look-rows .row > svg:last-child{color:var(--faint)} /* grey chevron, in light and dark mode */
+/* Wholesale and Retail stacked under the colour, as on the Collection cards: "Wholesale €600", 12px, the label regular grey and the price bold */
+.lk-prices{grid-template-columns:1fr;gap:0;margin-top:4px}.lk-prices span{flex-direction:row;justify-content:flex-start;align-items:baseline;gap:4px}.lk-prices small{font-size:var(--fs-caption);font-weight:400;color:var(--muted)}.lk-prices b{font-size:var(--fs-caption);font-weight:600}
 .look-rows .thumb{width:72px;height:72px;border-radius:0;-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}
 .list.gapped{background:none;border:0;gap:2px}.list.gapped > .row{background:var(--surface);border-top:0}
 /* Collection cards: the photo runs to the card's edges (top and sides), the text keeps its margin; a soft drop shadow lifts the card off the grey page */
@@ -1820,9 +1822,8 @@ function LookSheet({id, S, ui, act}) {
     <div class="g-box"><div class="list look-rows">${l.items.map(([pid, c]) => { const p = P[pid], why = o && canTake(o, p);
       return html`<button class="row" onClick=${() => act.sheet({type:'product', pid, colour:c, orderId:o && o.id, back:{type:'look', id:l.id}})}>
         <${Thumb} pid=${pid} colour=${c}/>
-        <div class="row-main"><div class="row-title">${p.name}</div><div class="row-sub"><${Colour} c=${c}/></div></div>
-        <div class="row-side"><span class="row-val">${fmt(p.price)}</span>
-          ${why && html`<span class="lock">${why}</span>`}</div>
+        <div class="row-main"><div class="row-title">${p.name}</div><div class="row-sub"><${Colour} c=${c}/></div><${Prices} p=${p} cls="lk-prices"/></div>
+        ${why && html`<div class="row-side"><span class="lock">${why}</span></div>`}
         <${Icon} n="next" s=${18}/>
       </button>`; })}</div></div>
   <//>`;
@@ -1849,16 +1850,16 @@ function ProfileSheet({S, act}) {
   <//>`;
 }
 
-// Profile → Order history: every order of the signed-in seller, in two sections (Draft, Sent) like Select client; a row opens the order
+// Profile → Order history: every order of the signed-in seller in one list, newest first, styled like Select client; a row opens the order
 const SENT = ['submitted', 'partial', 'confirmed'];
 function HistorySheet({S, ui, act}) {
   const so = activeOrder(S, ui);
   const all = Object.values(S.orders).filter(o => BUYERS[o.buyerId].rep === S.rep || (so && o.id === so.id)).map(o => { const b = BUYERS[o.buyerId];
-    return {id:o.id, buyerId:o.buyerId, shop:b.shop, city:b.city, status:o.status,
+    return {id:o.id, buyerId:o.buyerId, shop:b.shop, city:b.city, status:o.status, last:Math.max(0, ...(o.log || []).map(x => x.at)),
       value:b.divs.reduce((a, d) => a + kpi(o, d).total, 0), units:b.divs.reduce((a, d) => a + kpi(o, d).units, 0),
       hoursLeft:o.status === 'shared' ? Math.max(0, 48 - Math.floor((Date.now() - o.sharedAt) / 36e5)) : null}; });
-  // laid out like Select client: a grey heading per part (Draft, Sent), the orders in a white box with a grey outline, light rules between them
-  const secs = [['Draft', all.filter(r => !SENT.includes(r.status))], ['Sent', all.filter(r => SENT.includes(r.status))]];
+  // one list in a white box with a grey outline (like Select client), the most recently touched order first
+  const rows = [...all].sort((x, y) => y.last - x.last);
   const row = r => html`<button class="row" onClick=${() => act.openOrder(r.buyerId)}>
       <div class="row-main"><div class="row-title">${r.shop}</div>
         <div class="row-sub"><span>${`${fmt(r.value)}${r.hoursLeft != null ? ` · ${r.hoursLeft}h left` : ''}`}</span></div></div>
@@ -1866,7 +1867,7 @@ function HistorySheet({S, ui, act}) {
     </button>`;
   return html`<${Sheet} title="Order history" tall grouped onClose=${act.close}>
     ${!all.length ? html`<div class="empty">No orders yet. Check in a client from Home to start one.</div>`
-      : secs.filter(([, l]) => l.length).map(([h, l]) => html`<section class="grp-sec"><h3 class="grp-h">${h}</h3><div class="grp pick"><div class="grp-in">${l.map(row)}</div></div></section>`)}
+      : html`<div class="grp pick"><div class="grp-in">${rows.map(row)}</div></div>`}
   <//>`;
 }
 
