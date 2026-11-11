@@ -32,7 +32,7 @@
   --shadow-raised:0 1px 3px rgba(0,0,0,.12); --shadow-float:0 8px 24px rgba(0,0,0,.16); --shadow-sheet:0 -8px 32px rgba(0,0,0,.18);
   --stage:#E1E2DE; --frame:#17181A;
   --avatar-top:#9A9FA5; --avatar:#64696F; --avatar-ink:#FFFFFF; /* profile circles: grey, lighter at the top and darker at the bottom, white initials */
-  --bg:#FFFFFF; --surface:#F2F3F0; --surface-2:#E7E8E4; --studio:#E3E4DF; --card:#FFFFFF;
+  --bg:#FFFFFF; --surface:#F2F3F0; --surface-2:#E7E8E4; --studio:#E3E4DF; --card:#FFFFFF; --seg-on:#FFFFFF;
   --ink:#141619; --muted:#62666B; --faint:#808489; --line:#DCDED8;
   --band:#000000; --band-ink:#FFFFFF; --must:#F2612B; --ess:#635BFF; /* trial tag text: a vivid Claude orange, a Stripe-like blurple, equally saturated */ /* status-bar strip and the Must have tag: black in light and dark mode */
   --accent:#2238A6; --accent-ink:#FFFFFF; --accent-soft:#E3E7F8;
@@ -45,7 +45,7 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --stage:#050607; --frame:#2A2C30;
   --avatar-top:#575C63; --avatar:#30343A; --avatar-ink:#ECEDEA;
-  --bg:#0F1113; --surface:#181A1E; --surface-2:#202328; --studio:#43464B; --card:#181A1E;
+  --bg:#0F1113; --surface:#181A1E; --surface-2:#202328; --studio:#43464B; --card:#181A1E; --seg-on:#34383F;
   --ink:#ECEDEA; --muted:#A0A4A9; --faint:#6E7277; --line:#2C3036;
   --accent:#8C9DFF; --accent-ink:#0F1113; --accent-soft:#222A4C;
   --good:#58C48D; --good-bg:#15291E; --warn:#E5A93E; --warn-bg:#2E2414; --bad:#F27D72; --bad-bg:#331A18;
@@ -54,7 +54,7 @@
 :root[data-theme="dark"]{
   --stage:#050607; --frame:#2A2C30;
   --avatar-top:#575C63; --avatar:#30343A; --avatar-ink:#ECEDEA;
-  --bg:#0F1113; --surface:#181A1E; --surface-2:#202328; --studio:#43464B; --card:#181A1E;
+  --bg:#0F1113; --surface:#181A1E; --surface-2:#202328; --studio:#43464B; --card:#181A1E; --seg-on:#34383F;
   --ink:#ECEDEA; --muted:#A0A4A9; --faint:#6E7277; --line:#2C3036;
   --accent:#8C9DFF; --accent-ink:#0F1113; --accent-soft:#222A4C;
   --good:#58C48D; --good-bg:#15291E; --warn:#E5A93E; --warn-bg:#2E2414; --bad:#F27D72; --bad-bg:#331A18;
@@ -299,11 +299,11 @@ input{font:inherit;color:inherit}
 .chip.ai{background:var(--accent-soft);color:var(--accent)}
 .seg{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:2px;gap:2px}
 .seg button{padding:6px 14px;border-radius:999px;font-size:var(--fs-body);font-weight:600;color:var(--muted);white-space:nowrap}
-.seg button.on{background:var(--card);color:var(--ink);box-shadow:var(--shadow-raised)}
+.seg button.on{background:var(--seg-on);color:var(--ink);box-shadow:var(--shadow-raised)}
 .seg.full{display:flex;position:relative}.seg.full button{flex:1;position:relative;z-index:1;transition:color .2s}
 /* equal segments: the white pill is one indicator that slides to the chosen segment instead of jumping */
 .seg.full button.on{background:none;box-shadow:none}
-.seg-ind{position:absolute;top:2px;bottom:2px;left:2px;width:calc((100% - 4px - (var(--n) - 1) * 2px) / var(--n));border-radius:999px;background:var(--card);box-shadow:var(--shadow-raised);transform:translateX(calc(var(--i) * (100% + 2px)));transition:transform .32s cubic-bezier(.3,.7,.2,1)}
+.seg-ind{position:absolute;top:2px;bottom:2px;left:2px;width:calc((100% - 4px - (var(--n) - 1) * 2px) / var(--n));border-radius:999px;background:var(--seg-on);box-shadow:var(--shadow-raised);transform:translateX(calc(var(--i) * (100% + 2px)));transition:transform .32s cubic-bezier(.3,.7,.2,1)}
 @media (prefers-reduced-motion:reduce){.seg-ind{transition:none}}
 
 /* ---------- buttons ---------- */
@@ -698,7 +698,7 @@ input{font:inherit;color:inherit}
 .bpill.ok{--c:var(--good);--t:#2BBF6A}
 /* a bar that just reached its budget: a springy bounce, bigger then back (0.5s), on the order page and in the quantity toast */
 @keyframes pop{0%{transform:scale(1)}30%{transform:scale(1.06)}55%{transform:scale(.98)}78%{transform:scale(1.02)}100%{transform:scale(1)}}
-.bpill.pop,.toast-bar.pop{animation:pop .5s cubic-bezier(.3,.7,.3,1.2)}.bpill.warn{--c:var(--warn);--t:#F2B705}.bpill.bad{--c:var(--bad);--t:#F2553F}
+.bpill.pop{animation:pop .5s cubic-bezier(.3,.7,.3,1.2)}.bpill.warn{--c:var(--warn);--t:#F2B705}.bpill.bad{--c:var(--bad);--t:#F2553F}
 .bpill-fill{position:absolute;inset:0 auto 0 0;z-index:-1;background:color-mix(in srgb,var(--t,var(--c)) 34%,var(--bg));transition:width .35s ease}
 /* the category icon on a lighter tile at the bar's left edge, over the fill */
 .bpill-ic{align-self:center;display:grid;place-items:center;width:34px;height:40px;border-radius:15px;corner-shape:squircle;background:color-mix(in srgb,var(--t,var(--c)) 7%,var(--bg));color:var(--c)}
@@ -973,14 +973,6 @@ input.qty.xl{width:64px} /* room for three digits */
 @keyframes toast-top-out{to{transform:translate(-50%,calc(-100% - 40px))}}
 .toast-msg{display:flex;gap:6px;align-items:center;min-width:0;overflow:hidden;text-overflow:ellipsis}
 /* with a category bar: a rounded card instead of a pill, the message on top and the category's budget bar under it */
-.toast.has-bar{flex-direction:column;align-items:stretch;gap:8px;width:min(340px,calc(100% - 36px));max-width:none;padding:12px 16px 14px;border-radius:32px;-webkit-mask-box-image:var(--squircle) 20 / 32px stretch} /* Apple squircle corners, rounder than the boxes */
-@supports (-webkit-mask-box-image:none){.toast.has-bar{border-radius:0}}
-.toast-bar{--t:color-mix(in srgb,var(--bg) 50%,transparent);display:flex;flex-direction:column;gap:6px}
-.toast-bar.ok{--t:#2BBF6A}.toast-bar.warn{--t:#F2B705}.toast-bar.bad{--t:#F2553F}
-.toast-bar-t{display:flex;justify-content:space-between;gap:12px;font-size:var(--fs-caption);font-weight:400}
-.toast-bar-t span:first-child{opacity:.75}.toast-bar-t b{font-weight:700}
-.toast-track{height:6px;border-radius:999px;background:color-mix(in srgb,var(--bg) 20%,transparent);overflow:hidden}
-.toast-fill{display:block;height:100%;border-radius:999px;background:var(--t);transition:width .35s ease}
 
 /* ---------- landscape: horizontal working layout ---------- */
 @container app (orientation: landscape){
@@ -2669,7 +2661,7 @@ function NoOrder({act}) {
 function makeActs(setS, setUi, onReset) {
   let toastT = 0;
   const a = {
-    // bar: {o, pid} or {o, line} adds that style's category budget bar under the message (quantity saved)
+    // (the third argument, a budget bar under the message, is no longer shown: the order page has the bars)
     // after 2.2s it slides back out the way it came (toastOut), then goes; a new message while it is leaving brings in a fresh one
     // every message drops in from the top (Added to order, Saved, Scale copied, Checked out…); the second argument is kept for the callers but no longer sends one to the bottom
     toast: (msg, _top, bar) => { const top = true; setUi(u => ({...u, toast:msg, toastBar:bar || null, toastTop:top, toastOut:false, toastId: u.toast && u.toastTop && !u.toastOut ? u.toastId : Date.now()}));
@@ -2793,14 +2785,8 @@ function App({onReset}) {
     : sh.type === 'pick' ? html`<${PickBuyerSheet} S=${S} sh=${sh} act=${act}/>`
     : sh.type === 'leave' ? html`<${LeaveAlert} S=${S} sh=${sh} act=${act}/>`
     : sh.type === 'appt' ? html`<${ApptSheet} key=${sh.bid} sh=${sh} S=${S} ui=${ui} act=${act}/>` : null;
-  // a quantity toast also shows the budget bar of that style's category, live, so the seller sees the category fill up towards its budget
-  const tb = (() => { const t = ui.toastBar, o = t && S.orders[t.o]; if (!o) return null;
-    const pid = t.pid || (o.lines.find(l => l.id === t.line) || {}).pid, p = pid && P[pid]; if (!p) return null;
-    const m = kpi(o, p.div).mix.find(x => x.cat === p.cat); return m && {...m, label:CAT_LABEL[p.cat], pop:isPop(o.id + '|' + p.div + '|' + p.cat)}; })();
-  const toast = ui.toast && html`<div class=${'toast' + (ui.toastTop ? ' top' : '') + (tb ? ' has-bar' : '') + (ui.toastOut ? ' out' : '')} key=${ui.toastId} role="status">
+  const toast = ui.toast && html`<div class=${'toast' + (ui.toastTop ? ' top' : '') + (ui.toastOut ? ' out' : '')} key=${ui.toastId} role="status">
     <span class="toast-msg"><${Icon} n="check" s=${16} w=${2.4}/>${ui.toast}</span>
-    ${tb && html`<span class=${'toast-bar ' + tb.st + (tb.pop ? ' pop' : '')}><span class="toast-bar-t"><span>${tb.label}</span><span><b>${fmt(tb.value)}</b> ${tb.budget ? 'of ' + fmtK(tb.budget) : 'no budget'}</span></span>
-      <span class="toast-track"><span class="toast-fill" style=${{width: Math.min(tb.used, 100) + '%'}}></span></span></span>`}
   </div>`;
 
   const buyerView = ui.role === 'buyer' && S.orders[ui.buyerOrder];
