@@ -1266,9 +1266,9 @@ const hash = s => [...s].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
 const BUYERS = {
   dubois: {id:'dubois', rep:'roberto', shop:'Maison Dubois', city:'Paris', cluster:'Platinum', divs:['W','M'], budget:{W:60000, M:30000}, time:'10:00', code:'DUB01'},
   linea:  {id:'linea', rep:'roberto', shop:'Linea Concept', city:'Milan', cluster:'Gold', divs:['W'], budget:{W:40000}, time:'12:30', code:'LIN04',
-           cat:{W:{bags:20000, rtw:0, shoes:10000, acc:10000}}},
+           cat:{W:{bags:18000, rtw:8000, shoes:7000, acc:7000}}},
   harbour:{id:'harbour', rep:'roberto', shop:'Harbour & Co.', city:'London', cluster:'Silver', divs:['M'], budget:{M:20000}, time:'15:00', code:'HAR02',
-           cat:{M:{bags:0, rtw:12000, shoes:6000, acc:2000}}},
+           cat:{M:{bags:3000, rtw:10000, shoes:5000, acc:2000}}},
   kanda:  {id:'kanda', rep:'roberto', shop:'Kanda Select', city:'Tokyo', cluster:'Diamond', divs:['W','M'], budget:{W:120000, M:65000}, time:'17:00', code:'KAN07'},
   nove:   {id:'nove', rep:'sofia', shop:'Atelier Nove', city:'Rome', cluster:'Gold', divs:['W','M'], budget:{W:45000, M:20000}, time:'11:00', code:'NOV03'},
   prisma: {id:'prisma', rep:'sofia', shop:'Casa Prisma', city:'Madrid', cluster:'Platinum', divs:['W'], budget:{W:55000}, time:'14:30', code:'PRI05'},
@@ -2137,7 +2137,7 @@ function NewBuyerSheet({S, sh, act}) {
   const [f, setF] = useState({shop:'', city:'', divs:'WM', W:'40000', M:'20000'});
   const set = k => e => setF(x => ({...x, [k]: e.target.value}));
   const divs = f.divs === 'WM' ? ['W', 'M'] : [f.divs];
-  const ok = f.shop.trim();
+  const ok = f.shop.trim() && divs.every(d => Number(f[d]) > 0); // every division needs a budget
   const start = () => {
     const shop = f.shop.trim(), id = 'n' + uid();
     const code = (shop.replace(/[^A-Za-z]/g, '').slice(0, 3).toUpperCase() || 'NEW') + String(10 + hash(id) % 90);
@@ -2704,10 +2704,13 @@ function makeActs(setS, setUi, onReset) {
   };
   a.saveDraft = (id, pid, draft, via, by) => a.mut(id, o => applyDraft(o, pid, draft, via, by));
   // selection without quantity: the style-colour joins the order at zero units
-  // adding a style from a division the client doesn't buy asks first, then opens that division on the order with no budget
+  // adding a style from a division the client doesn't buy asks for that division's budget first (there is always a budget):
+  // the amount is split by category with the Maison guideline, like a new client's; Cancel or no amount adds nothing
   a.divOk = (id, d) => { const b = BUYERS[id.slice(2)]; if (b.divs.includes(d)) return true;
-    if (!confirm(`${b.shop} doesn’t buy ${DIV_TAB[d]}. Add ${DIV_TAB[d]} to this order?`)) return false;
-    const nb = {...b, divs:['W', 'M'].filter(x => x === d || b.divs.includes(x)), budget:{...b.budget, [d]:0}};
+    const ans = prompt(`${b.shop} doesn’t buy ${DIV_TAB[d]}. To add ${DIV_TAB[d]} to this order, enter the ${DIV_LABEL[d].toLowerCase()} budget (€):`, '');
+    const amt = Math.round(Number(String(ans || '').replace(/[^0-9]/g, '')));
+    if (!amt) return false;
+    const nb = {...b, divs:['W', 'M'].filter(x => x === d || b.divs.includes(x)), budget:{...b.budget, [d]:amt}};
     BUYERS[b.id] = nb; setS(s => ({...s, buyers:{...s.buyers, [b.id]:nb}})); return true; };
   a.select = (id, pid, colour, via, qty={}) => { const p = P[pid], u = units(qty); if (!a.divOk(id, p.div)) return false;
     a.mut(id, o => { if (o.lines.some(l => l.pid === pid && l.colour === colour)) return;
