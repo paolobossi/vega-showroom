@@ -1085,8 +1085,6 @@ input.qty.xl{width:64px} /* room for three digits */
 .look-rows .row-title{font-size:var(--fs-body);font-weight:600;line-height:var(--lh-tight)} /* as the Collection card name */
 .look-rows .row-val{font-size:var(--fs-caption);font-weight:600} /* as the Collection card price */
 .look-rows .row > svg:last-child{color:var(--faint)} /* grey chevron, in light and dark mode */
-/* Wholesale and Retail stacked under the colour, as on the Collection cards: "Wholesale €600", 12px, the label regular grey and the price bold */
-.lk-prices{grid-template-columns:1fr;gap:0;margin-top:4px}.lk-prices span{flex-direction:row;justify-content:flex-start;align-items:baseline;gap:4px}.lk-prices small{font-size:var(--fs-caption);font-weight:400;color:var(--muted)}.lk-prices b{font-size:var(--fs-caption);font-weight:600}
 .look-rows .thumb{width:72px;height:72px;border-radius:0;-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}
 .list.gapped{background:none;border:0;gap:2px}.list.gapped > .row{background:var(--surface);border-top:0}
 /* Collection cards: the photo runs to the card's edges (top and sides), the text keeps its margin; a soft drop shadow lifts the card off the grey page */
@@ -1858,7 +1856,7 @@ function LookSheet({id, S, ui, act}) {
     <div class="g-box"><div class="list look-rows">${l.items.map(([pid, c]) => { const p = P[pid], why = o && canTake(o, p);
       return html`<button class="row" onClick=${() => act.sheet({type:'product', pid, colour:c, orderId:o && o.id, back:{type:'look', id:l.id}})}>
         <${Thumb} pid=${pid} colour=${c}/>
-        <div class="row-main"><div class="row-title">${p.name}</div><div class="row-sub"><${Colour} c=${c}/></div><${Prices} p=${p} cls="lk-prices"/></div>
+        <div class="row-main"><div class="row-title">${p.name}</div><div class="row-sub"><${Colour} c=${c}/></div></div>
         ${why && html`<div class="row-side"><span class="lock">${why}</span></div>`}
         <${Icon} n="next" s=${18}/>
       </button>`; })}</div></div>
