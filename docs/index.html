@@ -768,6 +768,7 @@ input{font:inherit;color:inherit}
 .sh-tiles > .list{-webkit-mask-box-image:var(--squircle) 20 / var(--r-xl) stretch} /* 22px corners, like the Budget and Guidelines boxes */
 .sh-tiles .row{height:100%;align-items:flex-start}.sh-tiles .row-title{white-space:normal}
 .sh-tiles .row-main > svg{margin-bottom:6px}
+.ov-lines .sh-tiles > .list{background:var(--line);gap:0} /* the Guidelines tile on the order keeps its grey outline */
 .sh-tiles .row{position:relative}.sh-tiles .pill{position:absolute;top:14px;right:14px} /* the order's status tag, top right, like on Home */
 /* the Notes placeholder is body size, like the budget rows (the text you type stays 17px so iOS doesn't zoom) */
 .inp.area::placeholder{font-size:14px}
@@ -1831,6 +1832,21 @@ function ApptOrder({o, b, act}) {
     <div class="row-main"><${Icon} n="orders" s=${22}/><div class="row-title">Order</div><div class="row-sub">${u} ${u === 1 ? 'unit' : 'units'} · ${fmt(v)}</div></div></button></div>`;
 }
 
+// Guidelines tile on the order, styled like the Order tile in the client sheet: an icon, "Guidelines" and, in grey, how many need a look;
+// it opens the guidelines in a bottom sheet instead of listing them on the page
+function GuideTile({o, d, act}) {
+  const n = issuesOf(o, [d]).length;
+  return html`<div class="list"><button class="row" onClick=${() => act.sheet({type:'guides', orderId:o.id, div:d})}>
+    <div class="row-main"><${Icon} n="note" s=${22}/><div class="row-title">Guidelines</div><div class="row-sub">${n ? `${n} to check` : 'All on track'}</div></div></button></div>`;
+}
+// the division's guidelines (mix rules, required looks, drops) in a bottom sheet, opened from the Guidelines tile on the order
+function GuidesSheet({sh, S, act}) {
+  const o = S.orders[sh.orderId], b = BUYERS[o.buyerId];
+  return html`<${Sheet} title="Guidelines" sub=${b.divs.length > 1 ? `${b.shop} · ${DIV_LABEL[sh.div]}` : b.shop} onClose=${act.close}>
+    <${MixChecks} o=${o} d=${sh.div}/>
+  <//>`;
+}
+
 // Each piece opens its product page (closing it comes back to the look); the button adds every piece not in the order yet
 function LookSheet({id, S, ui, act}) {
   const l = LOOKS.find(x => x.id === id);
@@ -2446,9 +2462,7 @@ function OrderView({S, ui, act, order, tabbed}) {
           <span class="ov-state-ic"><${Icon} n=${st === 'shared' ? 'clock' : 'check'} s=${20} w=${2.6}/></span>
           <div><b>${STATUS[st]}</b><span>${stateSub}</span></div></div></div>`}
         ${b.divs.length > 1 && html`<${DivSwitch} b=${b} div=${div} act=${act}/>`}
-        <div class="ov-sum">
-          <${Guides} o=${order} d=${div}/>
-        </div>
+        <div class="sh-tiles"><${GuideTile} o=${order} d=${div} act=${act}/></div>
         ${locked && !allSent && html`<div class="callout info"><${Icon} n="lock" s=${18}/><div>The ${DIV_LABEL[div].toLowerCase()} order has been sent. You can see it here but no longer change it.</div></div>`}
         ${lines.length === 0 && !groups.length && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div><div class="small">Tap any style in the Collection and enter its quantities.</div></div>`}
         ${lines.length === 0 && groups.length > 0 && html`<div class="ord-none">No ${DIV_LABEL[div].toLowerCase()} products yet. Tap any style in the Collection and enter its quantities.</div>`}
@@ -2760,6 +2774,7 @@ function App({onReset}) {
     : sh.type === 'picker' ? html`<${PickerSheet} sh=${sh} act=${act}/>`
     : sh.type === 'finish' ? html`<${FinishSheet} sh=${sh} S=${S} act=${act}/>`
     : sh.type === 'sign' ? html`<${SignSheet} sh=${sh} S=${S} act=${act}/>`
+    : sh.type === 'guides' ? html`<${GuidesSheet} sh=${sh} S=${S} act=${act}/>`
     : sh.type === 'look' ? html`<${LookSheet} id=${sh.id} S=${S} ui=${ui} act=${act}/>`
     : sh.type === 'product' ? html`<${ProductSheet} key=${sh.pid} pid=${sh.pid} colour=${sh.colour} orderId=${sh.orderId} back=${sh.back} S=${S} ui=${ui} act=${act}/>`
     : sh.type === 'filter' ? html`<${FilterSheet} ui=${ui} act=${act}/>`
