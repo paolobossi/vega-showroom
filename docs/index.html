@@ -1962,7 +1962,7 @@ function CatalogueTab({S, ui, act}) {
         <button class="icon-btn hd-ic" onClick=${() => { primeKeyboard(); act.set({search:true}); }} aria-label="Search the collection"><${Icon} n="search" s=${24} w=${2}/></button></div></header>
     <section class="sec">
       ${(ui.catDrop || ui.catTag || ui.catMat) && html`<div class="fchips">
-        ${ui.catDrop && html`<button class="fchip" onClick=${() => act.set({catDrop:null})} aria-label="Clear drop filter">${DROPS[ui.catDrop].split(' · ')[0]} · ${dropWhen(ui.catDrop).replace('Delivers ', '')}<${Icon} n="x" s=${14} w=${2.2}/></button>`}
+        ${ui.catDrop && html`<button class="fchip" onClick=${() => act.set({catDrop:null})} aria-label="Clear drop filter">${DROPS[ui.catDrop].split(' · ')[0]}<${Icon} n="x" s=${14} w=${2.2}/></button>`}
         ${ui.catTag && html`<button class="fchip" onClick=${() => act.set({catTag:null})} aria-label="Clear priority filter">${TAG_OPTS.find(x => x[0] === ui.catTag)[1]}<${Icon} n="x" s=${14} w=${2.2}/></button>`}
         ${ui.catMat && html`<button class="fchip" onClick=${() => act.set({catMat:null})} aria-label="Clear material filter">${MATS.find(x => x[0] === ui.catMat)[1]}<${Icon} n="x" s=${14} w=${2.2}/></button>`}
       </div>`}
