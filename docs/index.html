@@ -616,6 +616,9 @@ input{font:inherit;color:inherit}
    (10px in from the box, padding 10px 12px 11px, 12px squircle), then the category's lines, their photos 10px in so they line up with the grey tile */
 .ord-in{display:flow-root;background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
 .obh{display:flex;flex-direction:column;gap:9px;margin:10px 10px 0;padding:10px 12px 11px;background:var(--surface);border-radius:12px;-webkit-mask-box-image:var(--squircle) 20 / 12px stretch}
+/* sticky: while you scroll through a category its budget header stays 8px under the top of the page, until the category's box ends;
+   a 10px ring of the page colour round it hides the lines passing behind (the box's mask clips it to the box) */
+.ord-in > .obh{position:sticky;top:8px;z-index:2;box-shadow:0 0 0 10px var(--bg)}
 .ord-empty{display:grid;place-items:center;min-height:138px;padding:10px;font-size:var(--fs-body);color:var(--muted);text-align:center} /* a category with nothing in it yet: a grey line where its lines would be, the box as tall as with one line */
 @supports (-webkit-mask-box-image:none){.ord-in,.obh{border-radius:0}}
 .ord-cat .ord-in > .list{background:none}
