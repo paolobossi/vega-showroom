@@ -609,14 +609,15 @@ input{font:inherit;color:inherit}
 .ov-lines > .empty{flex:1;justify-content:center;background:none;border:0;-webkit-mask-box-image:none}
 /* the Order heading sits under the budget card, 10px above what follows (like Order, Budget, Notes in the sheet) */
 .ov-ord-h{margin:6px 0 -4px}
-/* the order by category: the category name, its budget bar, then its lines in a white box with a 1px grey outline (.g-box); 26px between categories */
+/* the order by category: the category name, then one white box with a 1px grey outline (.g-box) holding its budget bar at the top and its lines under it; 26px between categories */
 .ord-cat{display:flex;flex-direction:column;gap:8px}.ov-ord-h + .ord-cat{margin-top:4px}.ord-cat + .ord-cat{margin-top:12px}
 .ord-cat-h{margin:0;display:flex;align-items:baseline;gap:8px;font:700 var(--fs-body)/var(--lh-tight) var(--f-display);letter-spacing:-.01em}.ord-cat-h span{font-size:var(--fs-caption);font-weight:400;color:var(--muted)}
-.ord-cat > .bpill{margin:0 0 6px}
-.ord-cat .ord-box > .list{background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
-.ov-lines .ord-cat .ord-box > .list > .sel{margin:0;padding:14px 14px 14px;background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 14px 0 / calc(100% - 14px) 1px no-repeat} /* rules from 14px in to the box's right edge */
-.ov-lines .ord-cat .ord-box > .list > .sel:first-child{background:none;padding-top:14px}
-@supports (-webkit-mask-box-image:none){.ord-cat .ord-box > .list{border-radius:0}}
+.ord-in{background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch;padding-top:8px}
+.ord-in > .bpill{margin:0 8px}.ord-in > .bpill:last-child{margin-bottom:8px} /* the bar inset 8px in the box; alone (no lines yet) 8px all round */
+.ord-cat .ord-in > .list{background:none}
+.ov-lines .ord-cat .ord-in > .list > .sel{margin:0;padding:14px 14px 14px;background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 14px 0 / calc(100% - 14px) 1px no-repeat} /* rules from 14px in to the box's right edge */
+.ov-lines .ord-cat .ord-in > .list > .sel:first-child{background:none;padding-top:14px}
+@supports (-webkit-mask-box-image:none){.ord-in{border-radius:0}}
 .lines-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:8px}
 .grp-head{display:flex;justify-content:space-between;align-items:baseline;font-size:var(--fs-heading);font-weight:600;letter-spacing:-.01em;color:var(--ink);padding:0 2px 8px}
 .empty{background:var(--surface);border:1px dashed var(--line);border-radius:var(--r-l);padding:22px 18px;text-align:center;color:var(--muted);display:flex;flex-direction:column;gap:8px;align-items:center}
@@ -2446,8 +2447,8 @@ function OrderView({S, ui, act, order, tabbed}) {
         ${lines.length === 0 && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div><div class="small">Tap any style in the Collection and enter its quantities.</div></div>`}
         ${lines.length > 0 && html`${groups.map(g => html`<section class="ord-cat grp-box" key=${g.key}>
             <h3 class="ord-cat-h">${g.label}</h3>
-            ${catBar(b, div, k, g.key, 'Budget')}
-            ${g.lines.length > 0 && html`<div class="g-box ord-box"><div class="list">${g.lines.map(l => html`<${SelLine} key=${l.id} l=${l} o=${order} act=${act} locked=${locked}/>`)}</div></div>`}
+            <div class="g-box ord-box"><div class="ord-in">${catBar(b, div, k, g.key, 'Budget')}
+              ${g.lines.length > 0 && html`<div class="list">${g.lines.map(l => html`<${SelLine} key=${l.id} l=${l} o=${order} act=${act} locked=${locked}/>`)}</div>`}</div></div>
           </section>`)}
           <div class="grp-box"><div class="ord-tot"><b>Total</b><span class="ord-tot-v"><span>${k.units} ${k.units === 1 ? 'unit' : 'units'}</span><b>${fmt(k.total)}</b></span></div></div>`}
       </div>
