@@ -612,15 +612,16 @@ input{font:inherit;color:inherit}
 .ord-cat-h{margin:0;display:flex;align-items:baseline;gap:8px;font:700 var(--fs-body)/var(--lh-tight) var(--f-display);letter-spacing:-.01em}.ord-cat-h span{font-size:var(--fs-caption);font-weight:400;color:var(--muted)}
 /* trial: the budget over each box: title in ink, figures 12px regular on the right (spend in ink, "of €18K" grey), a 6px bar under them, 6px below the title and 10px above the box;
    the bar: a light tint of its colour with the deeper colour filling the share spent (red under half, yellow from half, green once reached; grey with nothing spent) */
-/* trial: each category is one white box with a grey outline (.g-box > .ord-in); at its top, 6px in, the budget on a light grey squircle (.obh), then the category's lines */
+/* trial: each category is one white box with a grey outline (.g-box > .ord-in); at its top the budget on a light grey squircle (.obh) set like the product page's price tiles
+   (10px in from the box, padding 10px 12px 11px, 12px squircle), then the category's lines, their photos 10px in so they line up with the grey tile */
 .ord-in{display:flow-root;background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
-.obh{display:flex;flex-direction:column;gap:9px;margin:6px 6px 0;padding:12px 12px 14px;background:var(--surface);border-radius:16px;-webkit-mask-box-image:var(--squircle) 20 / 16px stretch}
-.ord-in > .obh:last-child{margin-bottom:6px} /* a category with no lines yet: the grey budget alone, 6px all round */
+.obh{display:flex;flex-direction:column;gap:9px;margin:10px 10px 0;padding:10px 12px 11px;background:var(--surface);border-radius:12px;-webkit-mask-box-image:var(--squircle) 20 / 12px stretch}
+.ord-in > .obh:last-child{margin-bottom:10px} /* a category with no lines yet: the grey budget alone, 10px all round */
 @supports (-webkit-mask-box-image:none){.ord-in,.obh{border-radius:0}}
 .ord-cat .ord-in > .list{background:none}
-.ov-lines .ord-cat .ord-in > .list > .sel{margin:0;padding:14px;background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 14px 0 / calc(100% - 14px) 1px no-repeat} /* rules from 14px in to the box's right edge */
+.ov-lines .ord-cat .ord-in > .list > .sel{margin:0;padding:14px 10px;background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 10px 0 / calc(100% - 10px) 1px no-repeat} /* rules from 10px in (where the photos and the grey tile start) to the box's right edge */
 .ov-lines .ord-cat .ord-in > .list > .sel:first-child{background:none;padding-top:14px}
-.ord-in > .ord-tot{margin:0;padding:14px;background:none} /* the order's Total row under the Total budget, in the same box */
+.ord-in > .ord-tot{margin:0;padding:14px 10px;background:none} /* the order's Total row under the Total budget, in the same box */
 .obh-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
 .obh-v{font-size:var(--fs-caption);font-weight:400;color:var(--muted);white-space:nowrap;font-variant-numeric:normal}.obh-v span{color:var(--ink)}
 .obh-bar{--t:var(--muted);height:6px;border-radius:999px;overflow:hidden;background:color-mix(in srgb,var(--t) 22%,var(--surface))}
