@@ -612,14 +612,20 @@ input{font:inherit;color:inherit}
 .ord-cat-h{margin:0;display:flex;align-items:baseline;gap:8px;font:700 var(--fs-body)/var(--lh-tight) var(--f-display);letter-spacing:-.01em}.ord-cat-h span{font-size:var(--fs-caption);font-weight:400;color:var(--muted)}
 /* trial: the budget over each box: title in ink, figures 12px regular on the right (spend in ink, "of €18K" grey), a 6px bar under them, 6px below the title and 10px above the box;
    the bar: a light tint of its colour with the deeper colour filling the share spent (red under half, yellow from half, green once reached; grey with nothing spent) */
-.obh{display:flex;flex-direction:column;gap:9px;padding:14px 14px 16px;background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
-@supports (-webkit-mask-box-image:none){.obh{border-radius:0}}
-.obh-box + .ord-tot{background:none;padding-top:6px} /* the order's Total right under the Total budget box: no rule */
+/* trial: each category is one white box with a grey outline (.g-box > .ord-in); at its top, 6px in, the budget on a light grey squircle (.obh), then the category's lines */
+.ord-in{display:flow-root;background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
+.obh{display:flex;flex-direction:column;gap:9px;margin:6px 6px 0;padding:12px 12px 14px;background:var(--surface);border-radius:16px;-webkit-mask-box-image:var(--squircle) 20 / 16px stretch}
+.ord-in > .obh:last-child{margin-bottom:6px} /* a category with no lines yet: the grey budget alone, 6px all round */
+@supports (-webkit-mask-box-image:none){.ord-in,.obh{border-radius:0}}
+.ord-cat .ord-in > .list{background:none}
+.ov-lines .ord-cat .ord-in > .list > .sel{margin:0;padding:14px;background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 14px 0 / calc(100% - 14px) 1px no-repeat} /* rules from 14px in to the box's right edge */
+.ov-lines .ord-cat .ord-in > .list > .sel:first-child{background:none;padding-top:14px}
+.ord-in > .ord-tot{margin:0;padding:14px;background:none} /* the order's Total row under the Total budget, in the same box */
 .obh-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
 .obh-v{font-size:var(--fs-caption);font-weight:400;color:var(--muted);white-space:nowrap;font-variant-numeric:normal}.obh-v span{color:var(--ink)}
-.obh-bar{--t:var(--muted);height:6px;border-radius:999px;overflow:hidden;background:color-mix(in srgb,var(--t) 18%,var(--bg))}
+.obh-bar{--t:var(--muted);height:6px;border-radius:999px;overflow:hidden;background:color-mix(in srgb,var(--t) 22%,var(--surface))}
 .obh-bar i{display:block;height:100%;border-radius:999px;background:var(--t);transition:width .35s ease}
-.obh-bar.none{background:var(--surface-2)}.obh-bar.ok{--t:#2BBF6A}.obh-bar.warn{--t:#F2B705}.obh-bar.bad{--t:#F2553F}
+.obh-bar.none{background:color-mix(in srgb,var(--ink) 9%,var(--surface))}.obh-bar.ok{--t:#2BBF6A}.obh-bar.warn{--t:#F2B705}.obh-bar.bad{--t:#F2553F}
 .obh-bar.pop{animation:pop .5s cubic-bezier(.3,.7,.3,1.2)}
 .ov-sum > .gl-h:first-child{margin-top:0} /* the order page opens on Guidelines now that the budget sits with the lines */
 .ord-none{font-size:var(--fs-body);color:var(--muted);line-height:var(--lh-body)} /* empty order: one grey line under the Order heading, then the budget boxes with empty bars */
@@ -1645,10 +1651,10 @@ const catBar = (b, d, k, c, label) => { const cb = catBudget(b, d, c), m = k.mix
   return budBar(b, d, c, m.st, m.used, c, label || CAT_LABEL[c], m.value, cb ? 'of ' + fmtK(cb) : 'no budget', 2); };
 const totBar = (b, d, k, label) => { const db = divBudget(b, d);
   return budBar(b, d, 'tot', 'bpill-tot ' + usedSt(k.total, db), db ? k.total / db * 100 : 0, 'wallet', label || 'Total', k.total, db ? 'of ' + fmtK(db) : 'no budget'); };
-// trial, order page: a category's (or the division's) title in ink with "€10.340 of €18K" small and regular on the right, and a thin bar under it (no icon, nothing inside), all in a box with a grey outline
+// trial, order page: a category's (or the division's) title in ink with "€10.340 of €18K" small and regular on the right, and a thin bar under it (no icon, nothing inside), on a light grey squircle at the top of the category's white box
 const budHead = (b, d, key, label, value, bud) => { const st = usedSt(value, bud), used = bud ? value / bud * 100 : 0;
-  return html`<div class="g-box obh-box"><div class="obh"><div class="obh-top"><h3 class="ord-cat-h">${label}</h3><span class="obh-v num"><span>${fmt(value)}</span> ${bud ? 'of ' + fmtK(bud) : 'no budget'}</span></div>
-    <div class=${'obh-bar ' + st + (isPop('o-' + b.id + '|' + d + '|' + key) ? ' pop' : '')} role="progressbar" aria-label=${label + ' budget'} aria-valuenow=${Math.round(used)} aria-valuemin="0" aria-valuemax="100"><i style=${{width: Math.min(used, 100) + '%'}}></i></div></div></div>`; };
+  return html`<div class="obh"><div class="obh-top"><h3 class="ord-cat-h">${label}</h3><span class="obh-v num"><span>${fmt(value)}</span> ${bud ? 'of ' + fmtK(bud) : 'no budget'}</span></div>
+    <div class=${'obh-bar ' + st + (isPop('o-' + b.id + '|' + d + '|' + key) ? ' pop' : '')} role="progressbar" aria-label=${label + ' budget'} aria-valuenow=${Math.round(used)} aria-valuemin="0" aria-valuemax="100"><i style=${{width: Math.min(used, 100) + '%'}}></i></div></div>`; };
 function BudDiv({b, d, k, head=true}) {
   const db = divBudget(b, d), cats = CATS.filter(c => catBudget(b, d, c) > 0 || (k && k.mix.find(x => x.cat === c).value));
   if (!k) return html`<div class="bud-div">
@@ -2467,11 +2473,11 @@ function OrderView({S, ui, act, order, tabbed}) {
         ${lines.length === 0 && !groups.length && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div><div class="small">Tap any style in the Collection and enter its quantities.</div></div>`}
         ${lines.length === 0 && groups.length > 0 && html`<div class="ord-none">No ${DIV_LABEL[div].toLowerCase()} products yet. Tap any style in the Collection and enter its quantities.</div>`}
         ${groups.length > 0 && html`${groups.map(g => html`<section class="ord-cat grp-box" key=${g.key}>
-            ${budHead(b, div, g.key, g.label, k.mix.find(x => x.cat === g.key).value, catBudget(b, div, g.key))}
-            ${g.lines.length > 0 && html`<div class="list">${g.lines.map(l => html`<${SelLine} key=${l.id} l=${l} o=${order} act=${act} locked=${locked}/>`)}</div>`}
+            <div class="g-box ord-box"><div class="ord-in">${budHead(b, div, g.key, g.label, k.mix.find(x => x.cat === g.key).value, catBudget(b, div, g.key))}
+            ${g.lines.length > 0 && html`<div class="list">${g.lines.map(l => html`<${SelLine} key=${l.id} l=${l} o=${order} act=${act} locked=${locked}/>`)}</div>`}</div></div>
           </section>`)}
-          <section class="ord-cat grp-box">${budHead(b, div, 'tot', 'Total budget', k.total, divBudget(b, div))}
-            <div class="ord-tot"><b>Total</b><span class="ord-tot-v"><span>${k.units} ${k.units === 1 ? 'unit' : 'units'}</span><b>${fmt(k.total)}</b></span></div></section>`}
+          <section class="ord-cat grp-box"><div class="g-box ord-box"><div class="ord-in">${budHead(b, div, 'tot', 'Total budget', k.total, divBudget(b, div))}
+            <div class="ord-tot"><b>Total</b><span class="ord-tot-v"><span>${k.units} ${k.units === 1 ? 'unit' : 'units'}</span><b>${fmt(k.total)}</b></span></div></div></div></section>`}
       </div>
     </div>
     <div class="ov-actions">
