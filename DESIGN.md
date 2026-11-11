@@ -28,6 +28,7 @@ Four sizes, each with one job. Hierarchy beyond these comes from weight, colour,
 - **Order line amounts:** units on top, 12px grey; the value under them, 12px semibold ink; the division Total stacks the same way, the word Total bottom-aligned with the value (last baseline).
 - **Code pad:** "Enter Roberto's code" uses the first name only; the dots are 14px with a 1px inset ring (a 1.5px border drew unevenly), filled `--ink`; Cancel and delete in `--ink`.
 - **Who's selling?** (sign-in): no Vega wordmark; the sellers in a `.grp` box like Select client, rules from under the names (62px).
+- **Order history:** grouped like Select client: Draft and Sent sections in `.grp` boxes; row = shop (17px regular), city · value (· hours left) under it, status tag and grey chevron; the tiles and filter tabs were dropped.
 - **Profile sheet:** grouped like Select client (`.grp` boxes, rules from under the text at 48px), plain 20px icons with no tile, grey chevrons, Sign out red in its own box.
 - **Active filter pills** (`.fchip`): the Collection category pill style (30px, `--surface`, 12px regular ink), padding 0 10px 0 14px, a 14px × in `--muted` on the right; a drop shows just "Drop 1", no date.
 - **Toasts from the top:** every message drops in at the top and slides back up (Added to order, Saved, Removed from order, Scale copied, Checked out, Signed in…); none comes from the bottom any more (a bottom message sat high above the client pill and the tab bar, almost mid-screen).

@@ -1849,35 +1849,24 @@ function ProfileSheet({S, act}) {
   <//>`;
 }
 
-// Profile → Order history: every order of the signed-in seller, newest status first, filtered All / Draft / Sent; a row opens the order
+// Profile → Order history: every order of the signed-in seller, in two sections (Draft, Sent) like Select client; a row opens the order
 const SENT = ['submitted', 'partial', 'confirmed'];
 function HistorySheet({S, ui, act}) {
-  const so = activeOrder(S, ui), [f, setF] = useState('all');
+  const so = activeOrder(S, ui);
   const all = Object.values(S.orders).filter(o => BUYERS[o.buyerId].rep === S.rep || (so && o.id === so.id)).map(o => { const b = BUYERS[o.buyerId];
     return {id:o.id, buyerId:o.buyerId, shop:b.shop, city:b.city, status:o.status,
       value:b.divs.reduce((a, d) => a + kpi(o, d).total, 0), units:b.divs.reduce((a, d) => a + kpi(o, d).units, 0),
       hoursLeft:o.status === 'shared' ? Math.max(0, 48 - Math.floor((Date.now() - o.sharedAt) / 36e5)) : null}; });
-  const sent = all.filter(r => SENT.includes(r.status)).length;
-  const F = [['all', 'All', () => true], ['draft', 'Draft', r => !SENT.includes(r.status)], ['sent', 'Sent', r => SENT.includes(r.status)]];
-  const cur = F.find(x => x[0] === f) || F[0], rows = all.filter(cur[2]);
-  return html`<${Sheet} title="Order history" tall onClose=${act.close}>
-    <div class="live">
-      <div class="tile"><b>${fmt(all.reduce((a, r) => a + r.value, 0) / 1000)}k</b><span>${all.length} ${all.length === 1 ? 'order' : 'orders'}</span></div>
-      <div class="tile"><b>${sent}</b><span>sent</span></div>
-      <div class="tile"><b>${all.length - sent}</b><span>in draft</span></div>
-    </div>
-    <div class="ftabs" role="tablist" aria-label="Show orders">${F.map(([k, l, test]) => html`<button role="tab" aria-selected=${cur[0] === k} class=${'ftab' + (cur[0] === k ? ' on' : '')} onClick=${() => setF(k)}>${l}<span class="num">${all.filter(test).length}</span></button>`)}</div>
+  // laid out like Select client: a grey heading per part (Draft, Sent), the orders in a white box with a grey outline, light rules between them
+  const secs = [['Draft', all.filter(r => !SENT.includes(r.status))], ['Sent', all.filter(r => SENT.includes(r.status))]];
+  const row = r => html`<button class="row" onClick=${() => act.openOrder(r.buyerId)}>
+      <div class="row-main"><div class="row-title">${r.shop}</div>
+        <div class="row-sub"><span>${`${r.city} · ${fmt(r.value)}${r.hoursLeft != null ? ` · ${r.hoursLeft}h left` : ''}`}</span></div></div>
+      <div class="row-side">${r.status !== 'none' && html`<${Pill} s=${r.status}/>`}<span class="chev"><${Icon} n="next" s=${18} w=${2}/></span></div>
+    </button>`;
+  return html`<${Sheet} title="Order history" tall grouped onClose=${act.close}>
     ${!all.length ? html`<div class="empty">No orders yet. Check in a client from Home to start one.</div>`
-      : !rows.length && html`<div class="empty">No ${cur[1].toLowerCase()} orders.</div>`}
-    ${rows.length > 0 && html`<div class="list">
-      ${rows.map(r => html`<button class="row" onClick=${() => act.openOrder(r.buyerId)}>
-        <div class="row-main">
-          <div class="row-title">${r.shop} <span class="muted" style="font-weight:400">· ${r.city}</span></div>
-          <div class="row-sub"><${Pill} s=${r.status}/>${r.hoursLeft != null && html`<span class="by"><${Icon} n="clock" s=${13} w=${2}/>${r.hoursLeft}h left</span>`}</div>
-        </div>
-        <div class="row-side"><span class="row-val">${fmt(r.value)}</span><span class="small muted num">${r.units} units</span></div>
-      </button>`)}
-    </div>`}
+      : secs.filter(([, l]) => l.length).map(([h, l]) => html`<section class="grp-sec"><h3 class="grp-h">${h}</h3><div class="grp pick"><div class="grp-in">${l.map(row)}</div></div></section>`)}
   <//>`;
 }
 
