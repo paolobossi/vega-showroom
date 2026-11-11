@@ -616,11 +616,11 @@ input{font:inherit;color:inherit}
    (10px in from the box, padding 10px 12px 11px, 12px squircle), then the category's lines, their photos 10px in so they line up with the grey tile */
 .ord-in{display:flow-root;background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
 .obh{display:flex;flex-direction:column;gap:9px;margin:10px 10px 0;padding:10px 12px 11px;background:var(--surface);border-radius:12px;-webkit-mask-box-image:var(--squircle) 20 / 12px stretch}
-.ord-empty{display:grid;place-items:center;min-height:146px;padding:14px 10px;font-size:var(--fs-body);color:var(--muted);text-align:center} /* a category with nothing in it yet: a grey line where its lines would be, the box as tall as with one line */
+.ord-empty{display:grid;place-items:center;min-height:138px;padding:10px;font-size:var(--fs-body);color:var(--muted);text-align:center} /* a category with nothing in it yet: a grey line where its lines would be, the box as tall as with one line */
 @supports (-webkit-mask-box-image:none){.ord-in,.obh{border-radius:0}}
 .ord-cat .ord-in > .list{background:none}
-.ov-lines .ord-cat .ord-in > .list > .sel{margin:0;padding:14px 10px;background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 10px 0 / calc(100% - 10px) 1px no-repeat} /* rules from 10px in (where the photos and the grey tile start) to the box's right edge */
-.ov-lines .ord-cat .ord-in > .list > .sel:first-child{background:none;padding-top:14px}
+.ov-lines .ord-cat .ord-in > .list > .sel{margin:0;padding:10px;background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 10px 0 / calc(100% - 10px) 1px no-repeat} /* rules from 10px in (where the photos and the grey tile start) to the box's right edge */
+.ov-lines .ord-cat .ord-in > .list > .sel:first-child{background:none;padding-top:10px} /* 10px above, below and to the left of each photo: the grey header, the rules and the box edge sit as far from it */
 .ord-in > .ord-tot{margin:0;padding:14px 10px;background:none} /* the order's Total row under the Total budget, in the same box */
 .obh-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
 .obh-v{font-size:var(--fs-caption);font-weight:400;color:var(--muted);white-space:nowrap;font-variant-numeric:normal}.obh-v span{color:var(--ink)}
