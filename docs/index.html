@@ -612,11 +612,12 @@ input{font:inherit;color:inherit}
 /* the order by category: the category name, then one white box with a 1px grey outline (.g-box) holding its budget bar at the top and its lines under it; 26px between categories */
 .ord-cat{display:flex;flex-direction:column;gap:8px}.ov-ord-h + .ord-cat{margin-top:4px}.ord-cat + .ord-cat{margin-top:12px}
 .ord-cat-h{margin:0;display:flex;align-items:baseline;gap:8px;font:700 var(--fs-body)/var(--lh-tight) var(--f-display);letter-spacing:-.01em}.ord-cat-h span{font-size:var(--fs-caption);font-weight:400;color:var(--muted)}
-.ord-in{background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch;padding-top:8px}
+.ord-in{display:flow-root;background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch;padding-top:8px}
 .ord-in > .bpill{margin:0 8px}.ord-in > .bpill:last-child{margin-bottom:8px} /* the bar inset 8px in the box; alone (no lines yet) 8px all round */
 .ord-cat .ord-in > .list{background:none}
 .ord-in > .ord-tot{margin:0;padding:14px 14px 14px;background:none} /* the order's Total row under the division's budget bar, in the same box */
 .ov-sum > .gl-h:first-child{margin-top:0} /* the order page opens on Guidelines now that the budget sits with the lines */
+.ord-none{font-size:var(--fs-body);color:var(--muted);line-height:var(--lh-body)} /* empty order: one grey line under the Order heading, then the budget boxes with empty bars */
 .ov-lines .ord-cat .ord-in > .list > .sel{margin:0;padding:14px 14px 14px;background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 14px 0 / calc(100% - 14px) 1px no-repeat} /* rules from 14px in to the box's right edge */
 .ov-lines .ord-cat .ord-in > .list > .sel:first-child{background:none;padding-top:14px}
 @supports (-webkit-mask-box-image:none){.ord-in{border-radius:0}}
@@ -2444,8 +2445,9 @@ function OrderView({S, ui, act, order, tabbed}) {
         </div>
         <h2 class="cat-h ov-ord-h">Order</h2>
         ${locked && !allSent && html`<div class="callout info"><${Icon} n="lock" s=${18}/><div>The ${DIV_LABEL[div].toLowerCase()} order has been sent. You can see it here but no longer change it.</div></div>`}
-        ${lines.length === 0 && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div><div class="small">Tap any style in the Collection and enter its quantities.</div></div>`}
-        ${lines.length > 0 && html`${groups.map(g => html`<section class="ord-cat grp-box" key=${g.key}>
+        ${lines.length === 0 && !groups.length && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div><div class="small">Tap any style in the Collection and enter its quantities.</div></div>`}
+        ${lines.length === 0 && groups.length > 0 && html`<div class="ord-none">No ${DIV_LABEL[div].toLowerCase()} products yet. Tap any style in the Collection and enter its quantities.</div>`}
+        ${groups.length > 0 && html`${groups.map(g => html`<section class="ord-cat grp-box" key=${g.key}>
             <h3 class="ord-cat-h">${g.label}</h3>
             <div class="g-box ord-box"><div class="ord-in">${catBar(b, div, k, g.key, 'Budget')}
               ${g.lines.length > 0 && html`<div class="list">${g.lines.map(l => html`<${SelLine} key=${l.id} l=${l} o=${order} act=${act} locked=${locked}/>`)}</div>`}</div></div>
