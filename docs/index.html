@@ -610,6 +610,7 @@ input{font:inherit;color:inherit}
 .ov-lines > .empty{flex:1;justify-content:center;background:none;border:0;-webkit-mask-box-image:none}
 /* the order by category: a box with a 1px grey outline (.g-box) holding the category's name, figures and bar, then its lines straight on the page as before; 26px between categories */
 .ord-cat{display:flex;flex-direction:column;gap:10px} /* the category name, 8px under it the budget in its box, then 10px under it the box with the category's lines */
+.tot-sec > .ord-cat-h{margin:0;font:600 var(--fs-heading)/var(--lh-body) var(--f-ui);letter-spacing:-.01em}
 .ord-cat > .ord-cat-h{margin-bottom:-2px;font:600 var(--fs-heading)/var(--lh-body) var(--f-ui);letter-spacing:-.01em} /* the category name set like Home's Now / Today headings: 17px semibold */.ov-lines > .ord-cat{margin-top:12px} /* 26px above each category (the page gap plus 12) */
 .ord-cat-h{margin:0;display:flex;align-items:baseline;gap:8px;font:700 var(--fs-body)/var(--lh-tight) var(--f-display);letter-spacing:-.01em}.ord-cat-h span{font-size:var(--fs-caption);font-weight:400;color:var(--muted)}
 /* trial: the budget over each box: title in ink, figures 12px regular on the right (spend in ink, "of €18K" grey), a 6px bar under them, 6px below the title and 10px above the box;
@@ -640,7 +641,7 @@ input{font:inherit;color:inherit}
 .obh-bar.none .br{background:var(--surface)}.obh-bar.ok{--t:#2BBF6A}.obh-bar.warn{--t:#F2B705}.obh-bar.bad{--t:#F2553F}
 .obh-bar.pop{animation:pop .5s cubic-bezier(.3,.7,.3,1.2)}
 .ov-sum > .gl-h:first-child{margin-top:0} /* the order page opens on Guidelines now that the budget sits with the lines */
-.ord-none{font-size:var(--fs-body);color:var(--muted);line-height:var(--lh-body)} /* empty order: one grey line under the Order heading, then the budget boxes with empty bars */
+.ord-none{font-size:var(--fs-body);color:var(--muted);line-height:var(--lh-body)} /* empty order: one grey line under the Total, "No women's products yet" */
 .lines-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:8px}
 .grp-head{display:flex;justify-content:space-between;align-items:baseline;font-size:var(--fs-heading);font-weight:600;letter-spacing:-.01em;color:var(--ink);padding:0 2px 8px}
 .empty{background:var(--surface);border:1px dashed var(--line);border-radius:var(--r-l);padding:22px 18px;text-align:center;color:var(--muted);display:flex;flex-direction:column;gap:8px;align-items:center}
@@ -787,7 +788,9 @@ input{font:inherit;color:inherit}
 .sh-tiles .row{height:100%;align-items:flex-start}.sh-tiles .row-title{white-space:normal}
 .sh-tiles .row-main > svg{margin-bottom:6px}
 .ov-lines .sh-tiles > .list{background:var(--line);gap:0} /* the Guidelines and Total tiles on the order keep their grey outline */
-.tot-tile .obh-bar{margin-top:8px} /* the Total tile: the figures all grey like the others (spend and budget alike), its budget bar under it */
+/* the division's total, above the Guidelines tile and outside any box: "Total" set like the category names, then the figures (14px, ink) with the bar on the right half */
+.tot-sec{display:flex;flex-direction:column;gap:6px}.tot-line{display:flex;align-items:center;gap:14px}
+.tot-fig{flex:1;min-width:0;font-size:14px;color:var(--ink);white-space:nowrap;font-variant-numeric:normal}.tot-line > .obh-bar{flex:none;width:50%}
 .sh-tiles .row{position:relative}.sh-tiles .pill{position:absolute;top:14px;right:14px} /* the order's status tag, top right, like on Home */
 /* the Notes placeholder is body size, like the budget rows (the text you type stays 17px so iOS doesn't zoom) */
 .inp.area::placeholder{font-size:14px}
@@ -1852,13 +1855,12 @@ function ApptOrder({o, b, act}) {
 
 // Guidelines tile on the order, styled like the Order tile in the client sheet: an icon, "Guidelines" and, in grey, how many need a look;
 // it opens the guidelines in a bottom sheet instead of listing them on the page
-// the division's total next to Guidelines, a tile of the same kind: a wallet icon, "Total", the spend against the budget in grey and a thin bar under it (not tappable)
+// the division's total above the Guidelines tile, outside any box: "Total" set like the category names, then the spend against the budget (ink) with the bar on the right half (not tappable)
 function TotalTile({b, d, k}) {
   const db = divBudget(b, d), st = usedSt(k.total, db), used = db ? k.total / db * 100 : 0;
-  return html`<div class="list"><div class="row tot-tile">
-    <div class="row-main"><${Icon} n="wallet" s=${22}/><div class="row-title">Total</div>
-      <div class="row-sub"><span class="tot-v">${fmt(k.total)}</span> of ${fmtK(db)}</div>
-      <div class=${'obh-bar ' + st + (isPop('o-' + b.id + '|' + d + '|tot') ? ' pop' : '')} role="progressbar" aria-label="Total budget" aria-valuenow=${Math.round(used)} aria-valuemin="0" aria-valuemax="100">${barParts(used)}</div></div></div></div>`;
+  return html`<section class="tot-sec"><h3 class="ord-cat-h">Total</h3>
+    <div class="tot-line"><span class="tot-fig num">${fmt(k.total)} ${db ? 'of ' + fmtK(db) : '· no budget'}</span>
+      <div class=${'obh-bar ' + st + (isPop('o-' + b.id + '|' + d + '|tot') ? ' pop' : '')} role="progressbar" aria-label="Total budget" aria-valuenow=${Math.round(used)} aria-valuemin="0" aria-valuemax="100">${barParts(used)}</div></div></section>`;
 }
 function GuideTile({o, d, act}) {
   const n = issuesOf(o, [d]).length;
@@ -2488,10 +2490,11 @@ function OrderView({S, ui, act, order, tabbed}) {
           <span class="ov-state-ic"><${Icon} n=${st === 'shared' ? 'clock' : 'check'} s=${20} w=${2.6}/></span>
           <div><b>${STATUS[st]}</b><span>${stateSub}</span></div></div></div>`}
         ${b.divs.length > 1 && html`<${DivSwitch} b=${b} div=${div} act=${act}/>`}
-        <div class="sh-tiles"><${GuideTile} o=${order} d=${div} act=${act}/><${TotalTile} b=${b} d=${div} k=${k}/></div>
+        <${TotalTile} b=${b} d=${div} k=${k}/>
+        ${lines.length === 0 && groups.length > 0 && html`<div class="ord-none">No ${DIV_LABEL[div].toLowerCase()} products yet</div>`}
+        <div class="sh-tiles"><${GuideTile} o=${order} d=${div} act=${act}/></div>
         ${locked && !allSent && html`<div class="callout info"><${Icon} n="lock" s=${18}/><div>The ${DIV_LABEL[div].toLowerCase()} order has been sent. You can see it here but no longer change it.</div></div>`}
-        ${lines.length === 0 && !groups.length && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div><div class="small">Tap any style in the Collection and enter its quantities.</div></div>`}
-        ${lines.length === 0 && groups.length > 0 && html`<div class="ord-none">No ${DIV_LABEL[div].toLowerCase()} products yet. Tap any style in the Collection and enter its quantities.</div>`}
+        ${lines.length === 0 && !groups.length && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div></div>`}
         ${groups.length > 0 && html`${groups.map(g => html`<section class="ord-cat grp-box" key=${g.key}>
             ${budHead(b, div, g.key, g.label, k.mix.find(x => x.cat === g.key).value, catBudget(b, div, g.key))}
             <div class="g-box ord-box"><div class="ord-in">${g.lines.length > 0 ? html`<div class="list">${g.lines.map(l => html`<${SelLine} key=${l.id} l=${l} o=${order} act=${act} locked=${locked}/>`)}</div>`
