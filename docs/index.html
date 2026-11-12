@@ -609,7 +609,7 @@ input{font:inherit;color:inherit}
 .ov-lines > .empty{flex:1;justify-content:center;background:none;border:0;-webkit-mask-box-image:none}
 /* the order by category: a box with a 1px grey outline (.g-box) holding the category's name, figures and bar, then its lines straight on the page as before; 26px between categories */
 .ord-cat{display:flex;flex-direction:column;gap:10px} /* the category name, 8px under it the budget in its box, then 10px under it the category's lines straight on the page */
-.ord-cat > .ord-cat-h{margin-bottom:-2px}.ov-lines > .ord-cat{margin-top:12px} /* 26px above each category (the page gap plus 12) */
+.ord-cat > .ord-cat-h{margin-bottom:-2px;font:600 var(--fs-heading)/var(--lh-body) var(--f-ui);letter-spacing:-.01em} /* the category name set like Home's Now / Today headings: 17px semibold */.ov-lines > .ord-cat{margin-top:12px} /* 26px above each category (the page gap plus 12) */
 .ord-cat-h{margin:0;display:flex;align-items:baseline;gap:8px;font:700 var(--fs-body)/var(--lh-tight) var(--f-display);letter-spacing:-.01em}.ord-cat-h span{font-size:var(--fs-caption);font-weight:400;color:var(--muted)}
 /* trial: the budget over each box: title in ink, figures 12px regular on the right (spend in ink, "of €18K" grey), a 6px bar under them, 6px below the title and 10px above the box;
    the bar: a light tint of its colour with the deeper colour filling the share spent (red under half, yellow from half, green once reached; grey with nothing spent) */
