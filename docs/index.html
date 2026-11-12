@@ -608,20 +608,26 @@ input{font:inherit;color:inherit}
 /* empty order: the placeholder has no box and sits centred between the Order heading and the bottom button */
 .ov-lines > .empty{flex:1;justify-content:center;background:none;border:0;-webkit-mask-box-image:none}
 /* the order by category: a box with a 1px grey outline (.g-box) holding the category's name, figures and bar, then its lines straight on the page as before; 26px between categories */
-.ord-cat{display:flex;flex-direction:column;gap:8px}.ov-lines > .ord-cat{margin-top:12px} /* 26px above each category (the page gap plus 12) */
+.ord-cat{display:grid}.ord-cat > *{grid-area:1/1;min-width:0} /* the sticky budget header lies over the top of the category's box (a hidden copy inside the box keeps its room) */.ov-lines > .ord-cat{margin-top:12px} /* 26px above each category (the page gap plus 12) */
 .ord-cat-h{margin:0;display:flex;align-items:baseline;gap:8px;font:700 var(--fs-body)/var(--lh-tight) var(--f-display);letter-spacing:-.01em}.ord-cat-h span{font-size:var(--fs-caption);font-weight:400;color:var(--muted)}
 /* trial: the budget over each box: title in ink, figures 12px regular on the right (spend in ink, "of €18K" grey), a 6px bar under them, 6px below the title and 10px above the box;
    the bar: a light tint of its colour with the deeper colour filling the share spent (red under half, yellow from half, green once reached; grey with nothing spent) */
-/* trial: each category is one white box with a grey outline (.g-box > .ord-in); at its top the budget (.obh) on white, the full width of the box, its text 14px in
-   like the photos, split from the lines by a continuous 1px grey line (--line, the outline's grey) from edge to edge; then the category's lines */
+/* trial: each category is one white box with a grey outline (.g-box > .ord-in); at its top the budget in its own block set like the product page's price tiles
+   (10px in from the box, padding 10px 12px 11px, 12px squircle) but white with a 1px grey outline (.obh-box grey, .obh-in white, like .g-box); then the category's lines */
 .ord-in{display:flow-root;background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
-.obh{display:flex;flex-direction:column;gap:9px;margin:0;padding:14px;background:var(--bg);border-bottom:1px solid var(--line)}
+.obh{position:relative;padding:11px 11px 4px} /* the block plus the room round it: 10px from the box's edges (and its 1px outline), 4px under it (with the line's 10px: 14px to the first photo) */
+.obh-ph{visibility:hidden;padding:10px 10px 4px}
+/* stuck at the top: a white bar the full width of the screen with a continuous grey line under it; the block's outline fades so the bar reads as one */
+.obh::before{content:'';position:absolute;z-index:-1;top:0;bottom:0;left:-16px;right:-16px;background:var(--bg);border-bottom:1px solid var(--line);opacity:0;transition:opacity .15s ease}
+.obh.stuck::before{opacity:1}.obh .obh-box{transition:background-color .15s ease}.obh.stuck .obh-box{background-color:var(--bg)}
+.obh-box{padding:1px;background:var(--line);border-radius:12px;-webkit-mask-box-image:var(--squircle) 20 / 12px stretch}
+.obh-in{display:flex;flex-direction:column;gap:9px;padding:9px 11px 10px;background:var(--bg);border-radius:11px;-webkit-mask-box-image:var(--squircle) 20 / 11px stretch}
 /* sticky: while you scroll through a category its budget header stays 8px under the top of the page, until the category's box ends;
-   a 10px band of the page colour above it hides the lines passing behind (the box's mask clips it to the box) */
-.ord-in > .obh{position:sticky;top:8px;z-index:2;box-shadow:0 -10px 0 0 var(--bg)}
+   once stuck it is a full-width white bar (above) that hides the lines passing behind */
+.ord-cat > .obh{position:sticky;top:0;z-index:2;align-self:start}
 .ord-empty{display:grid;place-items:center;min-height:138px;padding:10px;font-size:var(--fs-body);color:var(--muted);text-align:center} /* a category with nothing in it yet: a grey line where its lines would be, the box as tall as with one line */
-@supports (-webkit-mask-box-image:none){.ord-in{border-radius:0}}
-.ord-cat .ord-in > .list{background:none;padding:4px 0} /* with the lines' 10px: 14px from the photos to the header's grey line and to the box's bottom edge, as in the look sheet's "In this look" */
+@supports (-webkit-mask-box-image:none){.ord-in,.obh-box,.obh-in{border-radius:0}}
+.ord-cat .ord-in > .list{background:none;padding:0 0 4px} /* with the lines' 10px: 14px from the photos to the budget block and to the box's bottom edge, as in the look sheet's "In this look" */
 .ov-lines .ord-cat .ord-in > .list > .sel{margin:0;padding:10px 12px 10px 14px;background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 14px 0 / calc(100% - 14px) 1px no-repeat} /* set like the look sheet's "In this look" rows: 72px photo 14px in, 10px above and below, 12px on the right; rules from 14px in to the box's right edge */
 .ov-lines .ord-cat .ord-in > .list > .sel:first-child{background:none;padding-top:10px}
 .obh-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
@@ -1652,9 +1658,9 @@ const catBar = (b, d, k, c, label) => { const cb = catBudget(b, d, c), m = k.mix
 const totBar = (b, d, k, label) => { const db = divBudget(b, d);
   return budBar(b, d, 'tot', 'bpill-tot ' + usedSt(k.total, db), db ? k.total / db * 100 : 0, 'wallet', label || 'Total', k.total, db ? 'of ' + fmtK(db) : 'no budget'); };
 // trial, order page: a category's (or the division's) title in ink with "€10.340 of €18K" small and regular on the right, and a thin bar under it (no icon, nothing inside), on a light grey squircle at the top of the category's white box
-const budHead = (b, d, key, label, value, bud) => { const st = usedSt(value, bud), used = bud ? value / bud * 100 : 0;
-  return html`<div class="obh"><div class="obh-top"><h3 class="ord-cat-h">${label}</h3><span class="obh-v num"><span>${fmt(value)}</span> ${bud ? 'of ' + fmtK(bud) : 'no budget'}</span></div>
-    <div class=${'obh-bar ' + st + (isPop('o-' + b.id + '|' + d + '|' + key) ? ' pop' : '')} role="progressbar" aria-label=${label + ' budget'} aria-valuenow=${Math.round(used)} aria-valuemin="0" aria-valuemax="100"><i style=${{width: Math.min(used, 100) + '%'}}></i></div></div>`; };
+const budHead = (b, d, key, label, value, bud, ph) => { const st = usedSt(value, bud), used = bud ? value / bud * 100 : 0;
+  return html`<div class=${ph ? 'obh obh-ph' : 'obh'} aria-hidden=${ph ? 'true' : undefined}><div class="obh-box"><div class="obh-in"><div class="obh-top"><h3 class="ord-cat-h">${label}</h3><span class="obh-v num"><span>${fmt(value)}</span> ${bud ? 'of ' + fmtK(bud) : 'no budget'}</span></div>
+    <div class=${'obh-bar ' + st + (isPop('o-' + b.id + '|' + d + '|' + key) ? ' pop' : '')} role="progressbar" aria-label=${label + ' budget'} aria-valuenow=${Math.round(used)} aria-valuemin="0" aria-valuemax="100"><i style=${{width: Math.min(used, 100) + '%'}}></i></div></div></div></div>`; };
 function BudDiv({b, d, k, head=true}) {
   const db = divBudget(b, d), cats = CATS.filter(c => catBudget(b, d, c) > 0 || (k && k.mix.find(x => x.cat === c).value));
   if (!k) return html`<div class="bud-div">
@@ -2455,6 +2461,10 @@ function OrderView({S, ui, act, order, tabbed}) {
   const locked = partLocked(order, div), allSent = b.divs.every(d => partLocked(order, d));
   // products are added during the visit: for another client, Check in switches the visit to them
   const inVisit = ui.session === order.id;
+  // a category's budget header turns into a full-width bar while it is stuck at the top (.stuck: its category has scrolled under the top of the page)
+  useEffect(() => { const sc = document.querySelector('.ov-body'); if (!sc) return;
+    const f = () => { const t = sc.getBoundingClientRect().top; sc.querySelectorAll('.ord-cat > .obh').forEach(h => h.classList.toggle('stuck', h.parentElement.getBoundingClientRect().top < t - 1)); };
+    f(); sc.addEventListener('scroll', f, {passive:true}); return () => sc.removeEventListener('scroll', f); });
   const st = order.status, when = t => new Date(t).toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
   // the line under the banner title: one short line that never repeats the title
   const last = b.divs.map(d => partOf(order, d)).filter(x => x.at).sort((x, y) => y.at - x.at)[0];
@@ -2481,7 +2491,8 @@ function OrderView({S, ui, act, order, tabbed}) {
         ${lines.length === 0 && !groups.length && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div><div class="small">Tap any style in the Collection and enter its quantities.</div></div>`}
         ${lines.length === 0 && groups.length > 0 && html`<div class="ord-none">No ${DIV_LABEL[div].toLowerCase()} products yet. Tap any style in the Collection and enter its quantities.</div>`}
         ${groups.length > 0 && html`${groups.map(g => html`<section class="ord-cat grp-box" key=${g.key}>
-            <div class="g-box ord-box"><div class="ord-in">${budHead(b, div, g.key, g.label, k.mix.find(x => x.cat === g.key).value, catBudget(b, div, g.key))}
+            ${budHead(b, div, g.key, g.label, k.mix.find(x => x.cat === g.key).value, catBudget(b, div, g.key))}
+            <div class="g-box ord-box"><div class="ord-in">${budHead(b, div, g.key, g.label, k.mix.find(x => x.cat === g.key).value, catBudget(b, div, g.key), true)}
             ${g.lines.length > 0 ? html`<div class="list">${g.lines.map(l => html`<${SelLine} key=${l.id} l=${l} o=${order} act=${act} locked=${locked}/>`)}</div>`
               : html`<div class="ord-empty">No ${g.label.toLowerCase()} added yet</div>`}</div></div>
           </section>`)}`}
