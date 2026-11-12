@@ -610,7 +610,6 @@ input{font:inherit;color:inherit}
 .ov-lines > .empty{flex:1;justify-content:center;background:none;border:0;-webkit-mask-box-image:none}
 /* the order by category: a box with a 1px grey outline (.g-box) holding the category's name, figures and bar, then its lines straight on the page as before; 26px between categories */
 .ord-cat{display:flex;flex-direction:column;gap:10px} /* the category name, 8px under it the budget in its box, then 10px under it the box with the category's lines */
-.tot-sec > .ord-cat-h{margin:0;font:600 var(--fs-heading)/var(--lh-body) var(--f-ui);letter-spacing:-.01em}
 .ord-cat > .ord-cat-h{margin-bottom:-2px;font:600 var(--fs-heading)/var(--lh-body) var(--f-ui);letter-spacing:-.01em} /* the category name set like Home's Now / Today headings: 17px semibold */.ov-lines > .ord-cat{margin-top:12px} /* 26px above each category (the page gap plus 12) */
 .ord-cat-h{margin:0;display:flex;align-items:baseline;gap:8px;font:700 var(--fs-body)/var(--lh-tight) var(--f-display);letter-spacing:-.01em}.ord-cat-h span{font-size:var(--fs-caption);font-weight:400;color:var(--muted)}
 /* trial: the budget over each box: title in ink, figures 12px regular on the right (spend in ink, "of €18K" grey), a 6px bar under them, 6px below the title and 10px above the box;
@@ -788,9 +787,17 @@ input{font:inherit;color:inherit}
 .sh-tiles .row{height:100%;align-items:flex-start}.sh-tiles .row-title{white-space:normal}
 .sh-tiles .row-main > svg{margin-bottom:6px}
 .ov-lines .sh-tiles > .list{background:var(--line);gap:0} /* the Guidelines and Total tiles on the order keep their grey outline */
-/* the division's total, above the Guidelines tile and outside any box: "Total" set like the category names, then the figures (14px, ink) with the bar on the right half */
-.tot-sec{display:flex;flex-direction:column;gap:6px}.tot-line{display:flex;align-items:center;gap:14px}
-.tot-fig{flex:1;min-width:0;font-size:14px;color:var(--ink);white-space:nowrap;font-variant-numeric:normal}.tot-line > .obh-bar{flex:none;width:50%}
+/* the top of the order (OrderHead): one white box with a grey outline (.g-box > .ov-head) holding the status banner (once the order has left the draft)
+   and, under a light 1px rule, the Budget: a 15px semibold heading, then one row per division: "Women" 12px grey over "€23.630 of €60K" 14px ink, the bar on the right half */
+.ov-head{background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
+@supports (-webkit-mask-box-image:none){.ov-head{border-radius:0}}
+.ov-head > .ov-state{border-radius:0;-webkit-mask-box-image:none}
+.ov-bud{display:flex;flex-direction:column;gap:12px;padding:14px 16px 16px}
+.ov-state + .ov-bud{border-top:1px solid color-mix(in srgb,var(--line) 55%,var(--bg))}
+.ov-bud-h{font-size:var(--fs-body);font-weight:600;line-height:var(--lh-tight);color:var(--ink)}
+.ov-bud-row{display:flex;align-items:center;gap:14px}
+.ov-bud-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;font-size:14px;line-height:var(--lh-tight);color:var(--ink);white-space:nowrap;font-variant-numeric:normal}
+.ov-bud-row > .obh-bar{flex:none;width:50%}
 .sh-tiles .row{position:relative}.sh-tiles .pill{position:absolute;top:14px;right:14px} /* the order's status tag, top right, like on Home */
 /* the Notes placeholder is body size, like the budget rows (the text you type stays 17px so iOS doesn't zoom) */
 .inp.area::placeholder{font-size:14px}
@@ -1855,12 +1862,18 @@ function ApptOrder({o, b, act}) {
 
 // Guidelines tile on the order, styled like the Order tile in the client sheet: an icon, "Guidelines" and, in grey, how many need a look;
 // it opens the guidelines in a bottom sheet instead of listing them on the page
-// the division's total above the Guidelines tile, outside any box: "Total" set like the category names, then the spend against the budget (ink) with the bar on the right half (not tappable)
-function TotalTile({b, d, k}) {
-  const db = divBudget(b, d), st = usedSt(k.total, db), used = db ? k.total / db * 100 : 0;
-  return html`<section class="tot-sec"><h3 class="ord-cat-h">Total</h3>
-    <div class="tot-line"><span class="tot-fig num">${fmt(k.total)} ${db ? 'of ' + fmtK(db) : '· no budget'}</span>
-      <div class=${'obh-bar ' + st + (isPop('o-' + b.id + '|' + d + '|tot') ? ' pop' : '')} role="progressbar" aria-label="Total budget" aria-valuenow=${Math.round(used)} aria-valuemin="0" aria-valuemax="100">${barParts(used)}</div></div></section>`;
+// the top of the order: one white box with a grey outline holding where the order stands (once it has left the draft: icon, status, one line under it)
+// and, under a light rule, the Budget: one row per division the client buys, "Women" in grey over "€23.630 of €60K", the division's bar on the right half
+function OrderHead({b, o, st, sub}) {
+  return html`<div class="g-box ov-head-box"><div class="ov-head">
+    ${!['draft', 'none'].includes(st) && html`<div class=${'ov-state s-' + st} role="status">
+      <span class="ov-state-ic"><${Icon} n=${st === 'shared' ? 'clock' : 'check'} s=${20} w=${2.6}/></span>
+      <div><b>${STATUS[st]}</b><span>${sub}</span></div></div>`}
+    <div class="ov-bud"><div class="ov-bud-h">Budget</div>
+      ${b.divs.map(d => { const t = kpi(o, d).total, db = divBudget(b, d), bs = usedSt(t, db), used = db ? t / db * 100 : 0;
+        return html`<div class="ov-bud-row" key=${d}><div class="ov-bud-t num"><span class="obh-lbl">${DIV_TAB[d]}</span><span>${fmt(t)} ${db ? 'of ' + fmtK(db) : '· no budget'}</span></div>
+          <div class=${'obh-bar ' + bs + (isPop('o-' + b.id + '|' + d + '|tot') ? ' pop' : '')} role="progressbar" aria-label=${DIV_LABEL[d] + ' budget'} aria-valuenow=${Math.round(used)} aria-valuemin="0" aria-valuemax="100">${barParts(used)}</div></div>`; })}
+    </div></div></div>`;
 }
 function GuideTile({o, d, act}) {
   const n = issuesOf(o, [d]).length;
@@ -2486,13 +2499,10 @@ function OrderView({S, ui, act, order, tabbed}) {
       ${tabbed && html`<header class="top top-bar mid"><h1 class="h1 ov-h1">${b.shop}</h1>
       ${inVisit && html`<button class="leave" onClick=${() => act.sheet({type:'leave', bid:b.id})}>Leave</button>`}</header>`}
       <div class="ov-lines">
-        ${!['draft', 'none'].includes(st) && html`<div class="g-box ov-state-box"><div class=${'ov-state s-' + st} role="status">
-          <span class="ov-state-ic"><${Icon} n=${st === 'shared' ? 'clock' : 'check'} s=${20} w=${2.6}/></span>
-          <div><b>${STATUS[st]}</b><span>${stateSub}</span></div></div></div>`}
+        <${OrderHead} b=${b} o=${order} st=${st} sub=${stateSub}/>
         ${b.divs.length > 1 && html`<${DivSwitch} b=${b} div=${div} act=${act}/>`}
-        <${TotalTile} b=${b} d=${div} k=${k}/>
-        ${lines.length === 0 && groups.length > 0 && html`<div class="ord-none">No ${DIV_LABEL[div].toLowerCase()} products yet</div>`}
         <div class="sh-tiles"><${GuideTile} o=${order} d=${div} act=${act}/></div>
+        ${lines.length === 0 && groups.length > 0 && html`<div class="ord-none">No ${DIV_LABEL[div].toLowerCase()} products yet</div>`}
         ${locked && !allSent && html`<div class="callout info"><${Icon} n="lock" s=${18}/><div>The ${DIV_LABEL[div].toLowerCase()} order has been sent. You can see it here but no longer change it.</div></div>`}
         ${lines.length === 0 && !groups.length && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div></div>`}
         ${groups.length > 0 && html`${groups.map(g => html`<section class="ord-cat grp-box" key=${g.key}>
