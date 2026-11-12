@@ -612,17 +612,20 @@ input{font:inherit;color:inherit}
 .ord-cat-h{margin:0;display:flex;align-items:baseline;gap:8px;font:700 var(--fs-body)/var(--lh-tight) var(--f-display);letter-spacing:-.01em}.ord-cat-h span{font-size:var(--fs-caption);font-weight:400;color:var(--muted)}
 /* trial: the budget over each box: title in ink, figures 12px regular on the right (spend in ink, "of €18K" grey), a 6px bar under them, 6px below the title and 10px above the box;
    the bar: a light tint of its colour with the deeper colour filling the share spent (red under half, yellow from half, green once reached; grey with nothing spent) */
-/* trial: each category's budget (name, figures, bar) in a white box with a 1px grey outline and squircle corners (.g-box > .obh-in, 14px padding, 16 at the bottom);
+/* trial: each category's budget in a white box with a 1px grey outline and squircle corners (.g-box > .obh-in, 14px padding): name with the figures under it on the left, the bar on the right half;
    10px under it the category's lines straight on the page, as before the boxes: a light rule from the page margin to the screen's right edge, 14px from each rule to the photo under it */
-.obh-in{display:flex;flex-direction:column;gap:9px;padding:14px 14px 16px;background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
+.obh-in{display:flex;align-items:center;gap:14px;padding:14px;background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
 @supports (-webkit-mask-box-image:none){.obh-in{border-radius:0}}
 .ord-empty{padding:4px 0 0;font-size:var(--fs-body);color:var(--muted)} /* a category with nothing in it yet: one grey line under its budget box */
 .ov-lines .ord-cat.grp-box > .list > .sel{padding-top:14px}.ov-lines .ord-cat.grp-box > .list > .sel:first-child{padding-top:4px} /* 14px from each rule to the photo; the first photo 14px under the budget box (10px gap + 4px) */
-.obh-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.obh-top{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.obh-in > .obh-bar{flex:none;width:50%} /* the bar takes the right half of the box */
 .obh-v{font-size:var(--fs-caption);font-weight:400;color:var(--muted);white-space:nowrap;font-variant-numeric:normal}.obh-v span{color:var(--ink)}
-.obh-bar{--t:var(--muted);height:6px;border-radius:999px;overflow:hidden;background:color-mix(in srgb,var(--t) 22%,var(--bg))}
-.obh-bar i{display:block;height:100%;border-radius:999px;background:var(--t);transition:width .35s ease}
-.obh-bar.none{background:var(--surface)}.obh-bar.ok{--t:#2BBF6A}.obh-bar.warn{--t:#F2B705}.obh-bar.bad{--t:#F2553F}
+/* the bar: two pieces, each fully round at both ends, 3px of white between them: spent (.bd, the solid colour) and left to spend (.br, its light tint) */
+.obh-bar{--t:var(--muted);height:6px;display:flex;gap:3px}
+.obh-bar i{display:block;height:100%;border-radius:999px;min-width:6px}
+.obh-bar .bd{flex:0 1 auto;background:var(--t);transition:flex-basis .35s ease}.obh-bar .br{flex:1 1 0;background:color-mix(in srgb,var(--t) 22%,var(--bg))}
+.obh-bar.none .br{background:var(--surface)}.obh-bar.ok{--t:#2BBF6A}.obh-bar.warn{--t:#F2B705}.obh-bar.bad{--t:#F2553F}
 .obh-bar.pop{animation:pop .5s cubic-bezier(.3,.7,.3,1.2)}
 .ov-sum > .gl-h:first-child{margin-top:0} /* the order page opens on Guidelines now that the budget sits with the lines */
 .ord-none{font-size:var(--fs-body);color:var(--muted);line-height:var(--lh-body)} /* empty order: one grey line under the Order heading, then the budget boxes with empty bars */
@@ -772,7 +775,7 @@ input{font:inherit;color:inherit}
 .sh-tiles .row{height:100%;align-items:flex-start}.sh-tiles .row-title{white-space:normal}
 .sh-tiles .row-main > svg{margin-bottom:6px}
 .ov-lines .sh-tiles > .list{background:var(--line);gap:0} /* the Guidelines and Total tiles on the order keep their grey outline */
-.tot-tile .tot-v{color:var(--ink);font-weight:600}.tot-tile .obh-bar{margin-top:8px;background:color-mix(in srgb,var(--t) 22%,var(--bg))}.tot-tile .obh-bar.none{background:var(--surface)} /* the Total tile: spend in ink, its budget bar under it */
+.tot-tile .tot-v{color:var(--ink);font-weight:600}.tot-tile .obh-bar{margin-top:8px} /* the Total tile: spend in ink, its budget bar under it */
 .sh-tiles .row{position:relative}.sh-tiles .pill{position:absolute;top:14px;right:14px} /* the order's status tag, top right, like on Home */
 /* the Notes placeholder is body size, like the budget rows (the text you type stays 17px so iOS doesn't zoom) */
 .inp.area::placeholder{font-size:14px}
@@ -1645,10 +1648,13 @@ const catBar = (b, d, k, c, label) => { const cb = catBudget(b, d, c), m = k.mix
   return budBar(b, d, c, m.st, m.used, c, label || CAT_LABEL[c], m.value, cb ? 'of ' + fmtK(cb) : 'no budget', 2); };
 const totBar = (b, d, k, label) => { const db = divBudget(b, d);
   return budBar(b, d, 'tot', 'bpill-tot ' + usedSt(k.total, db), db ? k.total / db * 100 : 0, 'wallet', label || 'Total', k.total, db ? 'of ' + fmtK(db) : 'no budget'); };
-// trial, order page: a category's (or the division's) title in ink with "€10.340 of €18K" small and regular on the right, and a thin bar under it (no icon, nothing inside), on a light grey squircle at the top of the category's white box
+// a thin budget bar in two rounded pieces with a gap between: what is spent (the solid colour) and what is left (its light tint); one piece alone at 0 and at 100%
+const barParts = used => { const u = Math.max(0, Math.min(used, 100)), both = u > 0 && u < 100;
+  return html`${u > 0 && html`<i class="bd" style=${{flexBasis: both ? `calc(${u}% - 1.5px)` : '100%'}}></i>`}${u < 100 && html`<i class="br"></i>`}`; };
+// trial, order page: in an outlined box, the category's title in ink with "€10.340 of €18K" small and regular under it, and on the right half the bar (no icon, nothing inside)
 const budHead = (b, d, key, label, value, bud) => { const st = usedSt(value, bud), used = bud ? value / bud * 100 : 0;
   return html`<div class="obh g-box"><div class="obh-in"><div class="obh-top"><h3 class="ord-cat-h">${label}</h3><span class="obh-v num"><span>${fmt(value)}</span> ${bud ? 'of ' + fmtK(bud) : 'no budget'}</span></div>
-    <div class=${'obh-bar ' + st + (isPop('o-' + b.id + '|' + d + '|' + key) ? ' pop' : '')} role="progressbar" aria-label=${label + ' budget'} aria-valuenow=${Math.round(used)} aria-valuemin="0" aria-valuemax="100"><i style=${{width: Math.min(used, 100) + '%'}}></i></div></div></div>`; };
+    <div class=${'obh-bar ' + st + (isPop('o-' + b.id + '|' + d + '|' + key) ? ' pop' : '')} role="progressbar" aria-label=${label + ' budget'} aria-valuenow=${Math.round(used)} aria-valuemin="0" aria-valuemax="100">${barParts(used)}</div></div></div>`; };
 function BudDiv({b, d, k, head=true}) {
   const db = divBudget(b, d), cats = CATS.filter(c => catBudget(b, d, c) > 0 || (k && k.mix.find(x => x.cat === c).value));
   if (!k) return html`<div class="bud-div">
@@ -1840,7 +1846,7 @@ function TotalTile({b, d, k}) {
   return html`<div class="list"><div class="row tot-tile">
     <div class="row-main"><${Icon} n="wallet" s=${22}/><div class="row-title">Total</div>
       <div class="row-sub"><span class="tot-v">${fmt(k.total)}</span> of ${fmtK(db)}</div>
-      <div class=${'obh-bar ' + st + (isPop('o-' + b.id + '|' + d + '|tot') ? ' pop' : '')} role="progressbar" aria-label="Total budget" aria-valuenow=${Math.round(used)} aria-valuemin="0" aria-valuemax="100"><i style=${{width: Math.min(used, 100) + '%'}}></i></div></div></div></div>`;
+      <div class=${'obh-bar ' + st + (isPop('o-' + b.id + '|' + d + '|tot') ? ' pop' : '')} role="progressbar" aria-label="Total budget" aria-valuenow=${Math.round(used)} aria-valuemin="0" aria-valuemax="100">${barParts(used)}</div></div></div></div>`;
 }
 function GuideTile({o, d, act}) {
   const n = issuesOf(o, [d]).length;
