@@ -619,6 +619,9 @@ input{font:inherit;color:inherit}
    10px under it the category's lines straight on the page, as before the boxes: a light rule from the page margin to the screen's right edge, 14px from each rule to the photo under it */
 .obh-in{display:flex;align-items:center;gap:14px;padding:14px;background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
 @supports (-webkit-mask-box-image:none){.obh-in{border-radius:0}}
+/* trial: the budget box on the light grey (--surface) instead of white with a grey outline; the bar's light pieces tinted on that grey */
+.obh.g-box{padding:0;background:none}.obh-in{background:var(--surface);border-radius:var(--r-xl);-webkit-mask-box-image:var(--squircle) 20 / var(--r-xl) stretch}
+.obh .obh-bar .br{background:color-mix(in srgb,var(--t) 22%,var(--surface))}.obh .obh-bar.none .br{background:color-mix(in srgb,var(--ink) 9%,var(--surface))}
 .ord-empty{padding:4px 0 0;font-size:var(--fs-body);color:var(--muted)} /* a category with nothing in it yet: one grey line under its budget box */
 .ov-lines .ord-cat.grp-box > .list > .sel{padding-top:14px}.ov-lines .ord-cat.grp-box > .list > .sel:first-child{padding-top:10px} /* 14px from each rule to the photo; the first photo 20px under the budget box (10px gap + 10px) */
 .obh-top{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;font-size:14px;line-height:var(--lh-tight);color:var(--ink);white-space:nowrap;font-variant-numeric:normal}
