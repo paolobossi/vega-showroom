@@ -615,13 +615,7 @@ input{font:inherit;color:inherit}
 /* trial: each category is its budget straight on the page, no box or outline, its name, figures and bar 15px in from the page margins, in line with the photos,
    then 10px under it one white box with a grey outline (.g-box > .ord-in) holding the category's lines */
 .ord-in{display:flow-root;background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
-/* stuck at the top: the budget sits on a white bar the full width of the screen, no line under it, 16px of white under its bar (the page margin) */
-.obh::before{content:'';position:absolute;z-index:-1;top:-8px;bottom:-16px;left:-16px;right:-16px;background:var(--bg);opacity:0;transition:opacity .15s ease}
-.obh.stuck::before{opacity:1}
 .obh-in{display:flex;flex-direction:column;gap:9px;padding:0 15px} /* name, figures and bar 15px in: in line with the photos in the box below (its 1px outline + 14px) */
-/* sticky: while you scroll through a category its budget stays 8px under the top of the page, until the category's box ends;
-   once stuck it sits on a full-width white bar (above, 8px past it above and below) that hides the lines passing behind */
-.ord-cat > .obh{position:sticky;top:8px;z-index:2}
 .ord-empty{display:grid;place-items:center;min-height:138px;padding:10px;font-size:var(--fs-body);color:var(--muted);text-align:center} /* a category with nothing in it yet: a grey line where its lines would be, the box as tall as with one line */
 @supports (-webkit-mask-box-image:none){.ord-in{border-radius:0}}
 .ord-cat .ord-in > .list{background:none;padding:0}
@@ -2458,10 +2452,6 @@ function OrderView({S, ui, act, order, tabbed}) {
   const locked = partLocked(order, div), allSent = b.divs.every(d => partLocked(order, d));
   // products are added during the visit: for another client, Check in switches the visit to them
   const inVisit = ui.session === order.id;
-  // a category's budget header turns into a full-width bar while it is stuck at the top (.stuck: its category has scrolled under the top of the page)
-  useEffect(() => { const sc = document.querySelector('.ov-body'); if (!sc) return;
-    const f = () => { const t = sc.getBoundingClientRect().top; sc.querySelectorAll('.ord-cat > .obh').forEach(h => h.classList.toggle('stuck', h.parentElement.getBoundingClientRect().top < t - 1)); };
-    f(); sc.addEventListener('scroll', f, {passive:true}); return () => sc.removeEventListener('scroll', f); });
   const st = order.status, when = t => new Date(t).toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
   // the line under the banner title: one short line that never repeats the title
   const last = b.divs.map(d => partOf(order, d)).filter(x => x.at).sort((x, y) => y.at - x.at)[0];
