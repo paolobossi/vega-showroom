@@ -612,23 +612,23 @@ input{font:inherit;color:inherit}
 .ord-cat-h{margin:0;display:flex;align-items:baseline;gap:8px;font:700 var(--fs-body)/var(--lh-tight) var(--f-display);letter-spacing:-.01em}.ord-cat-h span{font-size:var(--fs-caption);font-weight:400;color:var(--muted)}
 /* trial: the budget over each box: title in ink, figures 12px regular on the right (spend in ink, "of €18K" grey), a 6px bar under them, 6px below the title and 10px above the box;
    the bar: a light tint of its colour with the deeper colour filling the share spent (red under half, yellow from half, green once reached; grey with nothing spent) */
-/* trial: each category is one white box with a grey outline (.g-box > .ord-in); at its top the budget on a light grey squircle (.obh) set like the product page's price tiles
-   (10px in from the box, padding 10px 12px 11px, 12px squircle), then the category's lines, their photos 10px in so they line up with the grey tile */
+/* trial: each category is one white box with a grey outline (.g-box > .ord-in); at its top the budget (.obh) on white, the full width of the box, its text 14px in
+   like the photos, split from the lines by a continuous 1px grey line (--line, the outline's grey) from edge to edge; then the category's lines */
 .ord-in{display:flow-root;background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
-.obh{display:flex;flex-direction:column;gap:9px;margin:10px 10px 0;padding:10px 12px 11px;background:var(--surface);border-radius:12px;-webkit-mask-box-image:var(--squircle) 20 / 12px stretch}
+.obh{display:flex;flex-direction:column;gap:9px;margin:0;padding:14px;background:var(--bg);border-bottom:1px solid var(--line)}
 /* sticky: while you scroll through a category its budget header stays 8px under the top of the page, until the category's box ends;
-   a 10px ring of the page colour round it hides the lines passing behind (the box's mask clips it to the box) */
-.ord-in > .obh{position:sticky;top:8px;z-index:2;box-shadow:0 0 0 10px var(--bg)}
+   a 10px band of the page colour above it hides the lines passing behind (the box's mask clips it to the box) */
+.ord-in > .obh{position:sticky;top:8px;z-index:2;box-shadow:0 -10px 0 0 var(--bg)}
 .ord-empty{display:grid;place-items:center;min-height:138px;padding:10px;font-size:var(--fs-body);color:var(--muted);text-align:center} /* a category with nothing in it yet: a grey line where its lines would be, the box as tall as with one line */
-@supports (-webkit-mask-box-image:none){.ord-in,.obh{border-radius:0}}
-.ord-cat .ord-in > .list{background:none;padding:4px 0} /* with the lines' 10px: 14px from the photos to the grey header and to the box's bottom edge, as in the look sheet's "In this look" */
+@supports (-webkit-mask-box-image:none){.ord-in{border-radius:0}}
+.ord-cat .ord-in > .list{background:none;padding:4px 0} /* with the lines' 10px: 14px from the photos to the header's grey line and to the box's bottom edge, as in the look sheet's "In this look" */
 .ov-lines .ord-cat .ord-in > .list > .sel{margin:0;padding:10px 12px 10px 14px;background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 14px 0 / calc(100% - 14px) 1px no-repeat} /* set like the look sheet's "In this look" rows: 72px photo 14px in, 10px above and below, 12px on the right; rules from 14px in to the box's right edge */
 .ov-lines .ord-cat .ord-in > .list > .sel:first-child{background:none;padding-top:10px}
 .obh-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
 .obh-v{font-size:var(--fs-caption);font-weight:400;color:var(--muted);white-space:nowrap;font-variant-numeric:normal}.obh-v span{color:var(--ink)}
-.obh-bar{--t:var(--muted);height:6px;border-radius:999px;overflow:hidden;background:color-mix(in srgb,var(--t) 22%,var(--surface))}
+.obh-bar{--t:var(--muted);height:6px;border-radius:999px;overflow:hidden;background:color-mix(in srgb,var(--t) 22%,var(--bg))}
 .obh-bar i{display:block;height:100%;border-radius:999px;background:var(--t);transition:width .35s ease}
-.obh-bar.none{background:color-mix(in srgb,var(--ink) 9%,var(--surface))}.obh-bar.ok{--t:#2BBF6A}.obh-bar.warn{--t:#F2B705}.obh-bar.bad{--t:#F2553F}
+.obh-bar.none{background:var(--surface)}.obh-bar.ok{--t:#2BBF6A}.obh-bar.warn{--t:#F2B705}.obh-bar.bad{--t:#F2553F}
 .obh-bar.pop{animation:pop .5s cubic-bezier(.3,.7,.3,1.2)}
 .ov-sum > .gl-h:first-child{margin-top:0} /* the order page opens on Guidelines now that the budget sits with the lines */
 .ord-none{font-size:var(--fs-body);color:var(--muted);line-height:var(--lh-body)} /* empty order: one grey line under the Order heading, then the budget boxes with empty bars */
