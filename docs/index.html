@@ -787,17 +787,23 @@ input{font:inherit;color:inherit}
 .sh-tiles .row{height:100%;align-items:flex-start}.sh-tiles .row-title{white-space:normal}
 .sh-tiles .row-main > svg{margin-bottom:6px}
 .ov-lines .sh-tiles > .list{background:var(--line);gap:0} /* the Guidelines and Total tiles on the order keep their grey outline */
-/* the top of the order (OrderHead): one white box with a grey outline (.g-box > .ov-head) holding the status banner (once the order has left the draft)
-   and, under a light 1px rule, the Budget: a 15px semibold heading, then one row per division: "Women" 12px grey over "€23.630 of €60K" 14px ink, the bar on the right half */
+/* the top of the order (OrderHead), once it has left the draft: the status banner in a white box with a grey outline (.g-box > .ov-head) */
 .ov-head{background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
 @supports (-webkit-mask-box-image:none){.ov-head{border-radius:0}}
 .ov-head > .ov-state{border-radius:0;-webkit-mask-box-image:none}
-.ov-bud{display:flex;flex-direction:column;gap:12px;padding:14px 16px 16px}
-.ov-state + .ov-bud{border-top:1px solid color-mix(in srgb,var(--line) 55%,var(--bg))}
-.ov-bud-h{font-size:var(--fs-body);font-weight:600;line-height:var(--lh-tight);color:var(--ink)}
-.ov-bud-row{display:flex;align-items:center;gap:14px}
-.ov-bud-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;font-size:14px;line-height:var(--lh-tight);color:var(--ink);white-space:nowrap;font-variant-numeric:normal}
-.ov-bud-row > .obh-bar{flex:none;width:50%}
+/* trial: the division's total as a light grey tile left of Guidelines, the same size, with a fitness-app ring: a 9px stroke with round ends
+   on a light tint of its colour, the percentage in the middle; under it "Total" 12px grey, the spend 20px bold, "of €60K" 12px grey */
+.ov-lines .sh-tiles{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)} /* Total and Guidelines exactly the same width */
+.tot-tile{--t:var(--muted);min-width:0;display:flex;flex-direction:column;gap:12px;padding:14px;background:var(--surface);border-radius:var(--r-xl);-webkit-mask-box-image:var(--squircle) 20 / var(--r-xl) stretch}
+@supports (-webkit-mask-box-image:none){.tot-tile{border-radius:0}}
+.tot-tile.ok{--t:#2BBF6A}.tot-tile.warn{--t:#F2B705}.tot-tile.bad{--t:#F2553F}
+.tot-ring{position:relative;width:76px;height:76px}.tot-ring svg{display:block;width:100%;height:100%;transform:rotate(-90deg)}
+.tot-ring circle{fill:none;stroke-width:9}.tr-track{stroke:color-mix(in srgb,var(--t) 22%,var(--surface))}.tot-tile.none .tr-track{stroke:color-mix(in srgb,var(--ink) 9%,var(--surface))}
+.tr-fill{stroke:var(--t);stroke-linecap:round;transition:stroke-dashoffset .5s ease}
+.tr-pct{position:absolute;inset:0;display:grid;place-items:center;font-size:var(--fs-body);font-weight:600;color:var(--ink);font-variant-numeric:normal}
+.tot-ring.pop{animation:pop .5s cubic-bezier(.3,.7,.3,1.2)}
+.tot-txt{display:flex;flex-direction:column;gap:2px;min-width:0}.tot-lbl,.tot-of{font-size:var(--fs-caption);color:var(--muted)}
+.tot-txt b{font-size:20px;font-weight:700;line-height:var(--lh-tight);color:var(--ink);letter-spacing:-.01em;font-variant-numeric:normal}
 .sh-tiles .row{position:relative}.sh-tiles .pill{position:absolute;top:14px;right:14px} /* the order's status tag, top right, like on Home */
 /* the Notes placeholder is body size, like the budget rows (the text you type stays 17px so iOS doesn't zoom) */
 .inp.area::placeholder{font-size:14px}
@@ -1862,18 +1868,22 @@ function ApptOrder({o, b, act}) {
 
 // Guidelines tile on the order, styled like the Order tile in the client sheet: an icon, "Guidelines" and, in grey, how many need a look;
 // it opens the guidelines in a bottom sheet instead of listing them on the page
-// the top of the order: one white box with a grey outline holding where the order stands (once it has left the draft: icon, status, one line under it)
-// and, under a light rule, the Budget: one row per division the client buys, "Women" in grey over "€23.630 of €60K", the division's bar on the right half
-function OrderHead({b, o, st, sub}) {
-  return html`<div class="g-box ov-head-box"><div class="ov-head">
-    ${!['draft', 'none'].includes(st) && html`<div class=${'ov-state s-' + st} role="status">
-      <span class="ov-state-ic"><${Icon} n=${st === 'shared' ? 'clock' : 'check'} s=${20} w=${2.6}/></span>
-      <div><b>${STATUS[st]}</b><span>${sub}</span></div></div>`}
-    <div class="ov-bud"><div class="ov-bud-h">Budget</div>
-      ${b.divs.map(d => { const t = kpi(o, d).total, db = divBudget(b, d), bs = usedSt(t, db), used = db ? t / db * 100 : 0;
-        return html`<div class="ov-bud-row" key=${d}><div class="ov-bud-t num"><span class="obh-lbl">${DIV_TAB[d]}</span><span>${fmt(t)} ${db ? 'of ' + fmtK(db) : '· no budget'}</span></div>
-          <div class=${'obh-bar ' + bs + (isPop('o-' + b.id + '|' + d + '|tot') ? ' pop' : '')} role="progressbar" aria-label=${DIV_LABEL[d] + ' budget'} aria-valuenow=${Math.round(used)} aria-valuemin="0" aria-valuemax="100">${barParts(used)}</div></div>`; })}
-    </div></div></div>`;
+// the top of the order, once it has left the draft: where it stands (icon, status, one grey line under it) in a white box with a grey outline
+function OrderHead({st, sub}) {
+  if (['draft', 'none'].includes(st)) return null;
+  return html`<div class="g-box ov-head-box"><div class="ov-head"><div class=${'ov-state s-' + st} role="status">
+    <span class="ov-state-ic"><${Icon} n=${st === 'shared' ? 'clock' : 'check'} s=${20} w=${2.6}/></span>
+    <div><b>${STATUS[st]}</b><span>${sub}</span></div></div></div></div>`;
+}
+// trial: the division's total, left of the Guidelines tile: a light grey tile with a ring like a fitness app's (the share of the budget spent, round ends,
+// on a light tint of its colour; red under half, yellow from half, green once reached) with the percentage inside, then "Total", the spend big and "of €60K" in grey
+function TotalRing({b, d, k}) {
+  const db = divBudget(b, d), st = usedSt(k.total, db), used = db ? k.total / db * 100 : 0, R = 31, C = 2 * Math.PI * R, f = Math.min(used, 100) / 100;
+  return html`<div class=${'tot-tile ' + st}>
+    <div class=${'tot-ring' + (isPop('o-' + b.id + '|' + d + '|tot') ? ' pop' : '')} role="progressbar" aria-label="Total budget" aria-valuenow=${Math.round(used)} aria-valuemin="0" aria-valuemax="100">
+      <svg viewBox="0 0 80 80" aria-hidden="true"><circle class="tr-track" cx="40" cy="40" r=${R}/>${f > 0 && html`<circle class="tr-fill" cx="40" cy="40" r=${R} stroke-dasharray=${C} stroke-dashoffset=${C * (1 - f)}/>`}</svg>
+      <span class="tr-pct num">${Math.round(used)}%</span></div>
+    <div class="tot-txt"><span class="tot-lbl">Total</span><b class="num">${fmt(k.total)}</b><span class="tot-of">${db ? 'of ' + fmtK(db) : 'No budget'}</span></div></div>`;
 }
 function GuideTile({o, d, act}) {
   const n = issuesOf(o, [d]).length;
@@ -2499,9 +2509,9 @@ function OrderView({S, ui, act, order, tabbed}) {
       ${tabbed && html`<header class="top top-bar mid"><h1 class="h1 ov-h1">${b.shop}</h1>
       ${inVisit && html`<button class="leave" onClick=${() => act.sheet({type:'leave', bid:b.id})}>Leave</button>`}</header>`}
       <div class="ov-lines">
-        <${OrderHead} b=${b} o=${order} st=${st} sub=${stateSub}/>
+        <${OrderHead} st=${st} sub=${stateSub}/>
         ${b.divs.length > 1 && html`<${DivSwitch} b=${b} div=${div} act=${act}/>`}
-        <div class="sh-tiles"><${GuideTile} o=${order} d=${div} act=${act}/></div>
+        <div class="sh-tiles"><${TotalRing} b=${b} d=${div} k=${k}/><${GuideTile} o=${order} d=${div} act=${act}/></div>
         ${lines.length === 0 && groups.length > 0 && html`<div class="ord-none">No ${DIV_LABEL[div].toLowerCase()} products yet</div>`}
         ${locked && !allSent && html`<div class="callout info"><${Icon} n="lock" s=${18}/><div>The ${DIV_LABEL[div].toLowerCase()} order has been sent. You can see it here but no longer change it.</div></div>`}
         ${lines.length === 0 && !groups.length && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div></div>`}
