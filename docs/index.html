@@ -1100,7 +1100,7 @@ input.qty.xl{width:64px} /* room for three digits */
 .grp-box .sel .thumb{-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}
 @supports (-webkit-mask-box-image:none){.grp-box .list,.ov-lines .grp-box .list > .sel,.grp-box .sel .thumb{border-radius:0}}
 .grp-box .sel-edit{background:var(--bg);border:0;box-shadow:inset 0 0 0 1px var(--line);border-radius:999px;corner-shape:round} /* Edit sizes / Enter sizes: a true pill (round ends, not squircle), its label semibold as before */
-.ov-lines .ord-cat .sel-ctl .sel-edit{height:32px;padding:0 13px;font-size:13px} /* on the order a smaller pill: 13px label, still semibold, 32px tall */
+.ov-lines .ord-cat .sel-ctl .sel-edit{height:32px;padding:2px 13px 0;font-size:13px} /* on the order a smaller pill: 13px label, still semibold, 32px tall; 2px on top so the label sits 1px lower than centred */
 /* budget rows (Buying guidelines, client sheet): 1px apart, names and amounts 14px regular, Total bold */
 /* guidelines rows (client sheet, order, client view): like the budget rows, the tag next to the name and the rule in grey under it */
 .list.gl .row{align-items:flex-start}.list.gl .row-title{display:flex;align-items:center;gap:8px;flex-wrap:wrap;white-space:normal}.list.gl .row-val{white-space:nowrap}
