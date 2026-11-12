@@ -1035,6 +1035,12 @@ input.qty.xl{width:64px} /* room for three digits */
 /* Home: the day's appointments sit straight on the white page, no box or shadow; a light 1px rule (as between order lines) starts at the page margin and runs to the right edge */
 .appts{gap:0;margin:0 -18px;-webkit-mask-box-image:none}
 .appts .appt{background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 18px 0 / calc(100% - 18px) 1px no-repeat;border:0;border-radius:0;padding:15px 18px 14px}.appts .appt:first-child{background:none;padding-top:6px}
+/* trial: each group (Now, Today) is one white box with a 1px grey outline and squircle corners (.g-box, like the order's category boxes),
+   inside the page margins; its appointments split by a light rule from 14px in to the box's right edge */
+.appts-sh.g-box > .appts{margin:0;background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
+@supports (-webkit-mask-box-image:none){.appts-sh.g-box > .appts{border-radius:0}}
+.appts-sh.g-box > .appts > .appt{padding:14px;background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 14px 0 / calc(100% - 14px) 1px no-repeat}
+.appts-sh.g-box > .appts > .appt:first-child{background:none;padding-top:14px}
 /* order (basket): each style is its own grey row, split by a 2px white gap instead of a line */
 .ov-lines .list{background:none;gap:2px}
 .ov-lines .list > .sel{background:var(--surface);border-top:0}
@@ -1783,7 +1789,7 @@ function CalendarTab({S, act}) {
   // open with today in view, one past day showing to its left
   useEffect(() => { const el = strip.current, t = el && el.children[TODAY_IDX]; if (t) el.scrollLeft = t.offsetLeft - el.offsetLeft - t.offsetWidth - 8; }, []);
   const all = myBuyers(S).filter(b => dayOf(b) === DAY_OFFS[day]), now = all.filter(b => isOngoing(S.appts[b.id])), list = all.filter(b => !now.includes(b));
-  const row = b => html`<button class="appt" onClick=${() => act.sheet({type:'appt', bid:b.id})}>
+  const row = b => html`<button class="appt" key=${b.id} onClick=${() => act.sheet({type:'appt', bid:b.id})}>
           <div class="appt-time">${b.time}</div>
           <div class="appt-main">
             <div class="appt-head"><span class="appt-shop">${b.shop}</span><${CheckPill} a=${S.appts[b.id]} o=${S.orders['o-' + b.id]}/></div>
@@ -1799,8 +1805,8 @@ function CalendarTab({S, act}) {
       <div class="days" role="tablist" ref=${strip}>${SHOW_DAYS.map((d, i) => html`<button role="tab" aria-selected=${i === day} class=${'day' + (i === day ? ' on' : '')} onClick=${() => setDay(i)}>${dayFace(d, i)}</button>`)}
         <span class="slide-ind" ref=${dayInd} aria-hidden="true"><span class="slide-copy">${SHOW_DAYS.map((d, i) => html`<button class="day" tabindex="-1">${dayFace(d, i)}</button>`)}</span></span></div>
       ${!all.length && html`<div class="empty">No appointments on this day.</div>`}
-      ${now.length > 0 && html`<div class="lbl appt-lbl">Now</div><div class="appts-sh"><div class="appts now">${now.map(row)}</div></div>`}
-      ${list.length > 0 && html`${now.length > 0 && html`<div class="lbl appt-lbl">Today</div>`}<div class="appts-sh"><div class="appts">${list.map(row)}</div></div>`}
+      ${now.length > 0 && html`<div class="lbl appt-lbl">Now</div><div class="appts-sh g-box"><div class="appts now">${now.map(row)}</div></div>`}
+      ${list.length > 0 && html`${now.length > 0 && html`<div class="lbl appt-lbl">Today</div>`}<div class="appts-sh g-box"><div class="appts">${list.map(row)}</div></div>`}
     </section>`;
 }
 
