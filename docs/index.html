@@ -608,19 +608,20 @@ input{font:inherit;color:inherit}
 /* empty order: the placeholder has no box and sits centred between the Order heading and the bottom button */
 .ov-lines > .empty{flex:1;justify-content:center;background:none;border:0;-webkit-mask-box-image:none}
 /* the order by category: a box with a 1px grey outline (.g-box) holding the category's name, figures and bar, then its lines straight on the page as before; 26px between categories */
-.ord-cat{display:flex;flex-direction:column;gap:10px} /* the budget in its box, then 10px under it the category's lines straight on the page */.ov-lines > .ord-cat{margin-top:12px} /* 26px above each category (the page gap plus 12) */
+.ord-cat{display:flex;flex-direction:column;gap:10px} /* the category name, 8px under it the budget in its box, then 10px under it the category's lines straight on the page */
+.ord-cat > .ord-cat-h{margin-bottom:-2px}.ov-lines > .ord-cat{margin-top:12px} /* 26px above each category (the page gap plus 12) */
 .ord-cat-h{margin:0;display:flex;align-items:baseline;gap:8px;font:700 var(--fs-body)/var(--lh-tight) var(--f-display);letter-spacing:-.01em}.ord-cat-h span{font-size:var(--fs-caption);font-weight:400;color:var(--muted)}
 /* trial: the budget over each box: title in ink, figures 12px regular on the right (spend in ink, "of €18K" grey), a 6px bar under them, 6px below the title and 10px above the box;
    the bar: a light tint of its colour with the deeper colour filling the share spent (red under half, yellow from half, green once reached; grey with nothing spent) */
-/* trial: each category's budget in a white box with a 1px grey outline and squircle corners (.g-box > .obh-in, 14px padding): name with the figures under it on the left, the bar on the right half;
+/* trial: each category's name above its budget box; the budget in a white box with a 1px grey outline and squircle corners (.g-box > .obh-in, 14px padding):
+   on the left two black lines, what is achieved and what is left ("€10.340 achieved", "€7.660 left"), on the right half the bar;
    10px under it the category's lines straight on the page, as before the boxes: a light rule from the page margin to the screen's right edge, 14px from each rule to the photo under it */
 .obh-in{display:flex;align-items:center;gap:14px;padding:14px;background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
 @supports (-webkit-mask-box-image:none){.obh-in{border-radius:0}}
 .ord-empty{padding:4px 0 0;font-size:var(--fs-body);color:var(--muted)} /* a category with nothing in it yet: one grey line under its budget box */
 .ov-lines .ord-cat.grp-box > .list > .sel{padding-top:14px}.ov-lines .ord-cat.grp-box > .list > .sel:first-child{padding-top:4px} /* 14px from each rule to the photo; the first photo 14px under the budget box (10px gap + 4px) */
-.obh-top{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.obh-top{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;font-size:14px;line-height:var(--lh-tight);color:var(--ink);white-space:nowrap;font-variant-numeric:normal}
 .obh-in > .obh-bar{flex:none;width:50%} /* the bar takes the right half of the box */
-.obh-v{font-size:var(--fs-caption);font-weight:400;color:var(--muted);white-space:nowrap;font-variant-numeric:normal} /* the figures all grey, spend and budget alike */
 /* the bar: two pieces, each fully round at both ends, 3px of white between them: spent (.bd, the solid colour) and left to spend (.br, its light tint) */
 .obh-bar{--t:var(--muted);height:6px;display:flex;gap:3px}
 .obh-bar i{display:block;height:100%;border-radius:999px;min-width:6px}
@@ -1653,7 +1654,8 @@ const barParts = used => { const u = Math.max(0, Math.min(used, 100)), both = u 
   return html`${u > 0 && html`<i class="bd" style=${{flexBasis: both ? `calc(${u}% - 1.5px)` : '100%'}}></i>`}${u < 100 && html`<i class="br"></i>`}`; };
 // trial, order page: in an outlined box, the category's title in ink with "€10.340 of €18K" small and regular under it, and on the right half the bar (no icon, nothing inside)
 const budHead = (b, d, key, label, value, bud) => { const st = usedSt(value, bud), used = bud ? value / bud * 100 : 0;
-  return html`<div class="obh g-box"><div class="obh-in"><div class="obh-top"><h3 class="ord-cat-h">${label}</h3><span class="obh-v num"><span>${fmt(value)}</span> ${bud ? 'of ' + fmtK(bud) : 'no budget'}</span></div>
+  const left = bud - value, leftTxt = !bud ? 'No budget' : left > 0 ? `${fmt(left)} left` : left < 0 ? `${fmt(-left)} over` : 'Budget reached';
+  return html`<h3 class="ord-cat-h">${label}</h3><div class="obh g-box"><div class="obh-in"><div class="obh-top num"><span>${fmt(value)} achieved</span><span>${leftTxt}</span></div>
     <div class=${'obh-bar ' + st + (isPop('o-' + b.id + '|' + d + '|' + key) ? ' pop' : '')} role="progressbar" aria-label=${label + ' budget'} aria-valuenow=${Math.round(used)} aria-valuemin="0" aria-valuemax="100">${barParts(used)}</div></div></div>`; };
 function BudDiv({b, d, k, head=true}) {
   const db = divBudget(b, d), cats = CATS.filter(c => catBudget(b, d, c) > 0 || (k && k.mix.find(x => x.cat === c).value));
