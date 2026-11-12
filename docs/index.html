@@ -575,7 +575,7 @@ input{font:inherit;color:inherit}
 .sel:first-child{border-top:0}
 /* the photo sits at the top, 14px from the top and the left of the line's card */
 .sel-info{display:flex;gap:12px;align-items:flex-start;text-align:left;min-width:0}
-.sel-x{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--muted);align-self:start}
+.sel-x{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--muted);align-self:start;margin-top:-6.5px} /* centred on the item name's first line (21px), not on the top of the row */
 .sel-ctl{grid-column:1 / -1;display:flex;align-items:center;gap:10px;padding-left:68px;padding-right:6px;flex-wrap:wrap}
 /* sized lines: Enter sizes / Edit sizes in the stepper's place (see .sel-ctl .sel-edit) */
 /* sized lines: the size chips on their own line, then Edit sizes where the stepper sits, with units and value on its right */
@@ -754,6 +754,7 @@ input{font:inherit;color:inherit}
 .grp .row-title{font-size:var(--fs-heading);font-weight:400}
 .grp .row-side{flex-direction:row;align-items:center;gap:8px}
 .grp .chev{display:flex;color:var(--faint)}
+.guide-chev{display:flex;flex:none;align-self:center;color:var(--faint)} /* grey chevron on the right of the Guidelines box */
 .sheet-grab{width:38px;height:5px;border-radius:var(--r-xs);background:var(--line);margin:8px auto 0;flex:none}
 .sheet-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:8px 10px 6px 18px;flex:none}
 /* the close × centred on the title's (first) line */
@@ -805,6 +806,7 @@ input{font:inherit;color:inherit}
 .tr-pct{position:absolute;inset:0;display:grid;place-items:center;font-size:var(--fs-heading);font-weight:600;color:var(--ink);font-variant-numeric:normal}
 .tot-ring.pop{animation:pop .5s cubic-bezier(.3,.7,.3,1.2)}
 .tot-txt{display:flex;flex-direction:column;gap:2px;min-width:0}.tot-lbl{font-size:var(--fs-caption);color:var(--muted);line-height:var(--lh-tight)}
+.tot-of{font-size:15px;font-weight:400;color:var(--muted);line-height:var(--lh-tight)}
 .tot-txt b{font-size:22px;font-weight:600;line-height:var(--lh-tight);color:var(--ink);letter-spacing:-.01em;text-wrap:balance;font-variant-numeric:normal}
 .sh-tiles .row{position:relative}.sh-tiles .pill{position:absolute;top:14px;right:14px} /* the order's status tag, top right, like on Home */
 /* the Notes placeholder is body size, like the budget rows (the text you type stays 17px so iOS doesn't zoom) */
@@ -1879,19 +1881,19 @@ function OrderHead({st, sub}) {
 }
 // trial: the division's total, laid out like a fitness app's activity widget on a light grey card across the page: "Total" on top, a ring on the left (10px stroke, the percentage inside)
 // (the share of the budget spent, round ends, on a light tint of its colour; red under half, yellow from half, green once reached) and on its right
-// "€23.630 of €60K" big in black; the Guidelines tile under it
+// "€23.630" big in black with "of €60K" under it, lighter and grey; the Guidelines tile under it
 function TotalRing({b, d, k}) {
   const db = divBudget(b, d), st = usedSt(k.total, db), used = db ? k.total / db * 100 : 0, R = 35, C = 2 * Math.PI * R, f = Math.min(used, 100) / 100;
   return html`<div class=${'tot-tile ' + st}>
     <h3 class="tot-h">Total</h3>
     <div class=${'tot-ring' + (isPop('o-' + b.id + '|' + d + '|tot') ? ' pop' : '')} role="progressbar" aria-label="Total budget" aria-valuenow=${Math.round(used)} aria-valuemin="0" aria-valuemax="100">
       <svg viewBox="0 0 80 80" aria-hidden="true"><circle class="tr-track" cx="40" cy="40" r=${R}/>${f > 0 && html`<circle class="tr-fill" cx="40" cy="40" r=${R} stroke-dasharray=${C} stroke-dashoffset=${C * (1 - f)}/>`}</svg>${db ? html`<span class="tr-pct num">${Math.round(used)}%</span>` : ''}</div>
-    <div class="tot-txt"><b class="num">${fmt(k.total)}${db ? ' of ' + fmtK(db) : ''}</b>${!db && html`<span class="tot-lbl">No budget</span>`}</div></div>`;
+    <div class="tot-txt"><b class="num">${fmt(k.total)}</b>${db ? html`<span class="tot-of num">of ${fmtK(db)}</span>` : ''}${!db && html`<span class="tot-lbl">No budget</span>`}</div></div>`;
 }
 function GuideTile({o, d, act}) {
   const n = issuesOf(o, [d]).length;
   return html`<div class="list"><button class="row" onClick=${() => act.sheet({type:'guides', orderId:o.id, div:d})}>
-    <div class="row-main"><${Icon} n="note" s=${22}/><div class="row-title">Guidelines</div><div class="row-sub">${n ? `${n} to check` : 'All on track'}</div></div></button></div>`;
+    <div class="row-main"><${Icon} n="note" s=${22}/><div class="row-title">Guidelines</div><div class="row-sub">${n ? `${n} to check` : 'All on track'}</div></div><span class="chev guide-chev"><${Icon} n="next" s=${18} w=${2}/></span></button></div>`;
 }
 // the division's guidelines (mix rules, required looks, drops) in a bottom sheet, opened from the Guidelines tile on the order
 function GuidesSheet({sh, S, act}) {
