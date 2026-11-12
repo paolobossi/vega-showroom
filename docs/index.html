@@ -1114,7 +1114,7 @@ input.qty.xl{width:64px} /* room for three digits */
    while the photo on top follows the mask, so the bottom corners looked rounder on iPhone than the top ones */
 .pc-wrap > .pcard{flex:1;padding:0 0 4px;gap:10px;border:0;background:none;border-radius:0;corner-shape:round;-webkit-mask-box-image:none}
 /* the card has no box of its own any more: the photo carries the 24px squircle and the details line up with its edges */
-.pcard .pc-photo{-webkit-mask-box-image:var(--squircle) 20 / 24px stretch}
+.pcard .pc-photo{-webkit-mask-box-image:var(--squircle) 20 / var(--r-xl) stretch} /* 22px squircle, the same corner as the order's budget boxes */
 .pcard .pc-photo .thumb{border-radius:0}
 .pcard .pc-info{padding:0;gap:4px} /* compact: the lines of text close together */
 .pcard .prices{gap:0}
@@ -1122,7 +1122,7 @@ input.qty.xl{width:64px} /* room for three digits */
 .pcard .ptags{left:8px;top:8px}.pcard .pc-in{right:8px;top:8px;width:22px;height:22px} /* 22px: a touch bigger than the 18px tag height it used to match */.pcard .pc-lock{left:8px;top:8px}
 /* loading placeholders match the cards: no box, no border, a grey 24px squircle for the photo and bare text lines flush with its edges */
 .sk-card{background:none;border:0;padding:0;gap:6px;border-radius:0;-webkit-mask-box-image:none}
-.sk-img{border-radius:0;-webkit-mask-box-image:var(--squircle) 20 / 24px stretch}
+.sk-img{border-radius:0;-webkit-mask-box-image:var(--squircle) 20 / var(--r-xl) stretch}
 .sk-card .sk-l{margin-left:0;border-radius:var(--r-xs)}
 .sk-img + .sk-l{margin-top:4px}
 .div-sw{display:flex;flex-direction:column;gap:10px;margin:6px 0 12px}
