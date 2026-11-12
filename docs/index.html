@@ -147,7 +147,7 @@ input{font:inherit;color:inherit}
 /* Order tab: the order of the client in session, with the tab bar under it */
 .ord-tab{position:relative;flex:1;min-height:0;display:flex;flex-direction:column}
 .ord-tab > .ov{flex:1;height:auto}
-.ord-tab .ov-body{padding-bottom:calc(99px + max(10px,env(safe-area-inset-bottom,0px)))} /* scrolled to the end, the last line's content ends 16px above Finalize order, the same as the page's side margin */
+.ord-tab .ov-body{padding-bottom:calc(113px + max(10px,env(safe-area-inset-bottom,0px)))} /* scrolled to the end, the last category's box ends 16px above Finalize order, the same as the page's side margin */
 /* the order's one button (Finalize order, or Check in again outside a visit): full width at the bottom (just above the tab bar on the Order tab),
    on white that fades in from a gradient above it, like the buttons at the bottom of a sheet; no shadow */
 .ov .ov-actions{left:0;right:0;width:auto;transform:none;bottom:0;padding:40px 18px max(14px,env(safe-area-inset-bottom,0px));
@@ -609,7 +609,7 @@ input{font:inherit;color:inherit}
 /* empty order: the placeholder has no box and sits centred between the Order heading and the bottom button */
 .ov-lines > .empty{flex:1;justify-content:center;background:none;border:0;-webkit-mask-box-image:none}
 /* the order by category: a box with a 1px grey outline (.g-box) holding the category's name, figures and bar, then its lines straight on the page as before; 26px between categories */
-.ord-cat{display:flex;flex-direction:column;gap:10px} /* the category name, 8px under it the budget in its box, then 10px under it the category's lines straight on the page */
+.ord-cat{display:flex;flex-direction:column;gap:10px} /* the category name, 8px under it the budget in its box, then 10px under it the box with the category's lines */
 .ord-cat > .ord-cat-h{margin-bottom:-2px;font:600 var(--fs-heading)/var(--lh-body) var(--f-ui);letter-spacing:-.01em} /* the category name set like Home's Now / Today headings: 17px semibold */.ov-lines > .ord-cat{margin-top:12px} /* 26px above each category (the page gap plus 12) */
 .ord-cat-h{margin:0;display:flex;align-items:baseline;gap:8px;font:700 var(--fs-body)/var(--lh-tight) var(--f-display);letter-spacing:-.01em}.ord-cat-h span{font-size:var(--fs-caption);font-weight:400;color:var(--muted)}
 /* trial: the budget over each box: title in ink, figures 12px regular on the right (spend in ink, "of €18K" grey), a 6px bar under them, 6px below the title and 10px above the box;
@@ -622,8 +622,14 @@ input{font:inherit;color:inherit}
 /* trial: the budget box on the light grey (--surface) instead of white with a grey outline; the bar's light pieces tinted on that grey */
 .obh.g-box{padding:0;background:none}.obh-in{background:var(--surface);border-radius:var(--r-xl);-webkit-mask-box-image:var(--squircle) 20 / var(--r-xl) stretch}
 .obh .obh-bar .br{background:color-mix(in srgb,var(--t) 22%,var(--surface))}.obh .obh-bar.none .br{background:color-mix(in srgb,var(--ink) 9%,var(--surface))}
-.ord-empty{padding:4px 0 0;font-size:var(--fs-body);color:var(--muted)} /* a category with nothing in it yet: one grey line under its budget box */
-.ov-lines .ord-cat.grp-box > .list > .sel{padding-top:14px}.ov-lines .ord-cat.grp-box > .list > .sel:first-child{padding-top:10px} /* 14px from each rule to the photo; the first photo 20px under the budget box (10px gap + 10px) */
+/* the category's lines in a white box with a 1px grey outline and squircle corners (.g-box > .ord-in), 10px under the budget box:
+   72px photo 14px from the box's left edge and 14px under the box's top edge or the rule above, 14px under each line, 12px on the right, rules from 14px in to the box's right edge */
+.ord-in{display:flow-root;background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
+@supports (-webkit-mask-box-image:none){.ord-in{border-radius:0}}
+.ord-cat .ord-in > .list{background:none;padding:0}
+.ov-lines .ord-cat .ord-in > .list > .sel{margin:0;padding:14px 12px 14px 14px;background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 14px 0 / calc(100% - 14px) 1px no-repeat}
+.ov-lines .ord-cat .ord-in > .list > .sel:first-child{background:none;padding-top:14px}
+.ord-empty{display:grid;place-items:center;min-height:138px;padding:10px;font-size:var(--fs-body);color:var(--muted);text-align:center} /* a category with nothing in it yet: a grey line centred where its lines would be, the box as tall as with one line */
 .obh-top{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;font-size:14px;line-height:var(--lh-tight);color:var(--ink);white-space:nowrap;font-variant-numeric:normal}
 .obh-lbl{font-size:var(--fs-caption);color:var(--muted)}
 .obh-in > .obh-bar{flex:none;width:50%} /* the bar takes the right half of the box */
@@ -2488,8 +2494,8 @@ function OrderView({S, ui, act, order, tabbed}) {
         ${lines.length === 0 && groups.length > 0 && html`<div class="ord-none">No ${DIV_LABEL[div].toLowerCase()} products yet. Tap any style in the Collection and enter its quantities.</div>`}
         ${groups.length > 0 && html`${groups.map(g => html`<section class="ord-cat grp-box" key=${g.key}>
             ${budHead(b, div, g.key, g.label, k.mix.find(x => x.cat === g.key).value, catBudget(b, div, g.key))}
-            ${g.lines.length > 0 ? html`<div class="list">${g.lines.map(l => html`<${SelLine} key=${l.id} l=${l} o=${order} act=${act} locked=${locked}/>`)}</div>`
-              : html`<div class="ord-empty">No ${g.label.toLowerCase()} added yet</div>`}
+            <div class="g-box ord-box"><div class="ord-in">${g.lines.length > 0 ? html`<div class="list">${g.lines.map(l => html`<${SelLine} key=${l.id} l=${l} o=${order} act=${act} locked=${locked}/>`)}</div>`
+              : html`<div class="ord-empty">No ${g.label.toLowerCase()} added yet</div>`}</div></div>
           </section>`)}`}
       </div>
     </div>
