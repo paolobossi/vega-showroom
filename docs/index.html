@@ -614,13 +614,14 @@ input{font:inherit;color:inherit}
 /* trial: the budget over each box: title in ink, figures 12px regular on the right (spend in ink, "of €18K" grey), a 6px bar under them, 6px below the title and 10px above the box;
    the bar: a light tint of its colour with the deeper colour filling the share spent (red under half, yellow from half, green once reached; grey with nothing spent) */
 /* trial: each category's name above its budget box; the budget in a white box with a 1px grey outline and squircle corners (.g-box > .obh-in, 14px padding):
-   on the left one black line, the spend and the budget ("€10.340 of €18K"), on the right half the bar;
+   on the left a grey "Budget" label (12px, like the product page's price labels) over one black line, the spend and the budget ("€10.340 of €18K"), on the right half the bar;
    10px under it the category's lines straight on the page, as before the boxes: a light rule from the page margin to the screen's right edge, 14px from each rule to the photo under it */
 .obh-in{display:flex;align-items:center;gap:14px;padding:14px;background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
 @supports (-webkit-mask-box-image:none){.obh-in{border-radius:0}}
 .ord-empty{padding:4px 0 0;font-size:var(--fs-body);color:var(--muted)} /* a category with nothing in it yet: one grey line under its budget box */
 .ov-lines .ord-cat.grp-box > .list > .sel{padding-top:14px}.ov-lines .ord-cat.grp-box > .list > .sel:first-child{padding-top:4px} /* 14px from each rule to the photo; the first photo 14px under the budget box (10px gap + 4px) */
-.obh-top{flex:1;min-width:0;font-size:14px;line-height:var(--lh-tight);color:var(--ink);white-space:nowrap;font-variant-numeric:normal}
+.obh-top{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;font-size:14px;line-height:var(--lh-tight);color:var(--ink);white-space:nowrap;font-variant-numeric:normal}
+.obh-lbl{font-size:var(--fs-caption);color:var(--muted)}
 .obh-in > .obh-bar{flex:none;width:50%} /* the bar takes the right half of the box */
 /* the bar: two pieces, each fully round at both ends, 3px of white between them: spent (.bd, the solid colour) and left to spend (.br, its light tint) */
 .obh-bar{--t:var(--muted);height:6px;display:flex;gap:3px}
@@ -1654,7 +1655,7 @@ const barParts = used => { const u = Math.max(0, Math.min(used, 100)), both = u 
   return html`${u > 0 && html`<i class="bd" style=${{flexBasis: both ? `calc(${u}% - 1.5px)` : '100%'}}></i>`}${u < 100 && html`<i class="br"></i>`}`; };
 // trial, order page: in an outlined box, the category's title in ink with "€10.340 of €18K" small and regular under it, and on the right half the bar (no icon, nothing inside)
 const budHead = (b, d, key, label, value, bud) => { const st = usedSt(value, bud), used = bud ? value / bud * 100 : 0;
-  return html`<h3 class="ord-cat-h">${label}</h3><div class="obh g-box"><div class="obh-in"><div class="obh-top num">${fmt(value)} ${bud ? 'of ' + fmtK(bud) : '· no budget'}</div>
+  return html`<h3 class="ord-cat-h">${label}</h3><div class="obh g-box"><div class="obh-in"><div class="obh-top num"><span class="obh-lbl">Budget</span><span>${fmt(value)} ${bud ? 'of ' + fmtK(bud) : '· no budget'}</span></div>
     <div class=${'obh-bar ' + st + (isPop('o-' + b.id + '|' + d + '|' + key) ? ' pop' : '')} role="progressbar" aria-label=${label + ' budget'} aria-valuenow=${Math.round(used)} aria-valuemin="0" aria-valuemax="100">${barParts(used)}</div></div></div>`; };
 function BudDiv({b, d, k, head=true}) {
   const db = divBudget(b, d), cats = CATS.filter(c => catBudget(b, d, c) > 0 || (k && k.mix.find(x => x.cat === c).value));
