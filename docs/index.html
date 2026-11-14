@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0F1113" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Vega">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <link rel="icon" type="image/png" href="icon-192.png?v=2">
@@ -64,7 +64,7 @@
 html,body{height:100%;margin:0}
 html{padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) 0 env(safe-area-inset-left,0px);background:var(--bg)}
 body{background:var(--bg);color:var(--ink);font:var(--fs-body)/var(--lh-body) var(--f-ui);-webkit-font-smoothing:antialiased;overscroll-behavior:none}
-/* home-screen app: the status bar is see-through with white icons (fixed by iOS at launch), so the strip behind it is always black */
+/* home-screen app: the status bar is iOS's own, the page colour with dark icons ("default"), and the page starts under it; this strip only shows if the style is ever see-through again */
 html::before{content:"";position:fixed;z-index:100;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:var(--band);pointer-events:none}
 @media (min-width:900px){html,body{background:var(--stage)}}
 [hidden]{display:none!important}
@@ -1151,9 +1151,10 @@ input.qty.xl{width:64px} /* room for three digits */
 /* home-screen app on iOS 26: the page comes out shorter than the screen by the status bar's height, leaving a white strip under the tab bar.
    When the app fills the screen, size the page to the screen itself and keep the document from scrolling (each view scrolls on its own). */
 (() => { const sa = navigator.standalone || matchMedia('(display-mode: standalone)').matches; if (!sa) return;
+  const under = () => parseFloat(getComputedStyle(document.documentElement).paddingTop) > 0; // only when the page runs up behind the status bar
   const fit = () => { const land = matchMedia('(orientation: landscape)').matches, s = screen,
       h = land ? Math.min(s.width, s.height) : Math.max(s.width, s.height), gap = h - innerHeight, r = document.documentElement;
-    if (gap > 0 && gap <= 80) { r.style.height = h + 'px'; r.style.overflow = 'hidden'; } else { r.style.height = ''; r.style.overflow = ''; } };
+    if (under() && gap > 0 && gap <= 80) { r.style.height = h + 'px'; r.style.overflow = 'hidden'; } else { r.style.height = ''; r.style.overflow = ''; } };
   fit(); addEventListener('resize', fit); addEventListener('orientationchange', () => setTimeout(fit, 300)); })();
 </script>
 </head>
