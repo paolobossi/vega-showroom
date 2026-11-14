@@ -799,6 +799,13 @@ input{font:inherit;color:inherit}
 .tot-tile{--t:var(--muted);min-width:0;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;column-gap:18px;row-gap:12px;padding:14px 16px 16px;background:var(--surface);border-radius:var(--r-xl);-webkit-mask-box-image:var(--squircle) 20 / var(--r-xl) stretch}
 @supports (-webkit-mask-box-image:none){.tot-tile{border-radius:0}}
 .tot-tile.ok{--t:#2BBF6A}.tot-tile.warn{--t:#F2B705}.tot-tile.bad{--t:#F2553F}
+.bud-card{display:flex;flex-direction:column;gap:14px;padding:14px 16px 18px;background:var(--surface);border-radius:var(--r-xl);-webkit-mask-box-image:var(--squircle) 20 / var(--r-xl) stretch} /* trial: the categories' budgets at the top of the order */
+@supports (-webkit-mask-box-image:none){.bud-card{border-radius:0}}
+.bc-row{display:flex;flex-direction:column;gap:7px}.bc-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:var(--fs-body);line-height:var(--lh-tight);color:var(--ink)}
+.bc-v{font-size:14px;color:var(--muted);white-space:nowrap;font-variant-numeric:normal}
+.bc-bar{--t:var(--muted);height:8px;border-radius:999px;background:color-mix(in srgb,var(--ink) 9%,var(--surface));overflow:hidden}
+.bc-bar i{display:block;height:100%;min-width:8px;border-radius:999px;background:var(--t);transition:width .35s ease}
+.bc-bar.ok{--t:#2BBF6A}.bc-bar.warn{--t:#F2B705}.bc-bar.bad{--t:#F2553F}.bc-bar.pop{animation:pop .5s cubic-bezier(.3,.7,.3,1.2)}
 .tot-h{grid-column:1/-1;margin:0;font:600 var(--fs-heading)/var(--lh-body) var(--f-ui);letter-spacing:-.01em;color:var(--ink)}
 .tot-ring{position:relative;width:96px;height:96px}.tot-ring svg{display:block;width:100%;height:100%;transform:rotate(-90deg)}
 .tot-ring circle{fill:none;stroke-width:10}.tr-track{stroke:color-mix(in srgb,var(--t) 22%,var(--surface))}.tot-tile.none .tr-track{stroke:color-mix(in srgb,var(--ink) 9%,var(--surface))}
@@ -1684,10 +1691,6 @@ const totBar = (b, d, k, label) => { const db = divBudget(b, d);
 // a thin budget bar in two rounded pieces with a gap between: what is spent (the solid colour) and what is left (its light tint); one piece alone at 0 and at 100%
 const barParts = used => { const u = Math.max(0, Math.min(used, 100)), both = u > 0 && u < 100;
   return html`${u > 0 && html`<i class="bd" style=${{flexBasis: both ? `calc(${u}% - 1.5px)` : '100%'}}></i>`}${u < 100 && html`<i class="br"></i>`}`; };
-// trial, order page: in an outlined box, the category's title in ink with "€10.340 of €18K" small and regular under it, and on the right half the bar (no icon, nothing inside)
-const budHead = (b, d, key, label, value, bud) => { const st = usedSt(value, bud), used = bud ? value / bud * 100 : 0;
-  return html`<h3 class="ord-cat-h">${label}</h3><div class="obh g-box"><div class="obh-in"><div class="obh-top num"><span class="obh-lbl">Budget</span><span>${fmt(value)} ${bud ? 'of ' + fmtK(bud) : '· no budget'}</span></div>
-    <div class=${'obh-bar ' + st + (isPop('o-' + b.id + '|' + d + '|' + key) ? ' pop' : '')} role="progressbar" aria-label=${label + ' budget'} aria-valuenow=${Math.round(used)} aria-valuemin="0" aria-valuemax="100">${barParts(used)}</div></div></div>`; };
 function BudDiv({b, d, k, head=true}) {
   const db = divBudget(b, d), cats = CATS.filter(c => catBudget(b, d, c) > 0 || (k && k.mix.find(x => x.cat === c).value));
   if (!k) return html`<div class="bud-div">
@@ -1890,6 +1893,13 @@ function TotalRing({b, d, k}) {
     <div class=${'tot-ring' + (isPop('o-' + b.id + '|' + d + '|tot') ? ' pop' : '')} role="progressbar" aria-label="Total budget" aria-valuenow=${Math.round(used)} aria-valuemin="0" aria-valuemax="100">
       <svg viewBox="0 0 80 80" aria-hidden="true"><circle class="tr-track" cx="40" cy="40" r=${R}/>${f > 0 && html`<circle class="tr-fill" cx="40" cy="40" r=${R} stroke-dasharray=${C} stroke-dashoffset=${C * (1 - f)}/>`}</svg>${db ? html`<span class="tr-pct num">${Math.round(used)}%</span>` : ''}</div>
     <div class="tot-txt"><b class="num">${fmt(k.total)}</b>${db ? html`<span class="tot-of num">of ${fmtK(db)}</span>` : ''}${!db && html`<span class="tot-lbl">No budget</span>`}</div></div>`;
+}
+// trial: the categories' budgets in one light grey card at the top of the order (like a budgeting app's Budget widget): "Budget", then per category
+// its name on the left, "€10.340 of €18K" in grey on the right, and under them a full-width bar: the spent share in the status colour on a grey track
+function BudgetCard({b, d, k, groups}) {
+  return html`<div class="bud-card"><h3 class="tot-h">Budget</h3>${groups.map(g => { const v = k.mix.find(x => x.cat === g.key).value, bud = catBudget(b, d, g.key), st = usedSt(v, bud), used = bud ? Math.min(v / bud * 100, 100) : 0;
+    return html`<div class="bc-row" key=${g.key}><div class="bc-top"><span>${g.label}</span><span class="bc-v num">${fmt(v)} ${bud ? 'of ' + fmtK(bud) : '· no budget'}</span></div>
+      <div class=${'bc-bar ' + st + (isPop('o-' + b.id + '|' + d + '|' + g.key) ? ' pop' : '')} role="progressbar" aria-label=${g.label + ' budget'} aria-valuenow=${Math.round(used)} aria-valuemin="0" aria-valuemax="100">${used > 0 && html`<i style=${{width: used + '%'}}></i>`}</div></div>`; })}</div>`;
 }
 function GuideTile({o, d, act}) {
   const n = issuesOf(o, [d]).length;
@@ -2517,12 +2527,12 @@ function OrderView({S, ui, act, order, tabbed}) {
       <div class="ov-lines">
         <${OrderHead} st=${st} sub=${stateSub}/>
         ${b.divs.length > 1 && html`<${DivSwitch} b=${b} div=${div} act=${act}/>`}
-        <div class="sh-tiles"><${TotalRing} b=${b} d=${div} k=${k}/><${GuideTile} o=${order} d=${div} act=${act}/></div>
+        <div class="sh-tiles"><${TotalRing} b=${b} d=${div} k=${k}/>${groups.length > 0 && html`<${BudgetCard} b=${b} d=${div} k=${k} groups=${groups}/>`}<${GuideTile} o=${order} d=${div} act=${act}/></div>
         ${lines.length === 0 && groups.length > 0 && html`<div class="ord-none">No ${DIV_LABEL[div].toLowerCase()} products yet</div>`}
         ${locked && !allSent && html`<div class="callout info"><${Icon} n="lock" s=${18}/><div>The ${DIV_LABEL[div].toLowerCase()} order has been sent. You can see it here but no longer change it.</div></div>`}
         ${lines.length === 0 && !groups.length && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div></div>`}
         ${groups.length > 0 && html`${groups.map(g => html`<section class="ord-cat grp-box" key=${g.key}>
-            ${budHead(b, div, g.key, g.label, k.mix.find(x => x.cat === g.key).value, catBudget(b, div, g.key))}
+            <h3 class="ord-cat-h">${g.label}</h3>
             <div class="g-box ord-box"><div class="ord-in">${g.lines.length > 0 ? html`<div class="list">${g.lines.map(l => html`<${SelLine} key=${l.id} l=${l} o=${order} act=${act} locked=${locked}/>`)}</div>`
               : html`<div class="ord-empty">No ${g.label.toLowerCase()} added yet</div>`}</div></div>
           </section>`)}`}
