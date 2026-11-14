@@ -630,6 +630,7 @@ input{font:inherit;color:inherit}
 .ov-lines .ord-cat .ord-in > .list > .sel{margin:0;padding:14px 12px 14px 14px;background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 14px 0 / calc(100% - 14px) 1px no-repeat}
 .ov-lines .ord-cat .ord-in > .list > .sel:first-child{background:none;padding-top:14px}
 .ord-empty{display:grid;place-items:center;min-height:138px;padding:10px;font-size:var(--fs-caption);color:var(--muted);text-align:center} /* a category with nothing in it yet: a small grey line (12px) centred where its lines would be, the box as tall as with one line */
+.ord-cat > .ord-empty{display:block;min-height:0;padding:2px 0 0;text-align:left} /* trial: with no box round the lines, an empty category is just its small grey line under the name */
 .obh-top{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;font-size:14px;line-height:var(--lh-tight);color:var(--ink);white-space:nowrap;font-variant-numeric:normal}
 .obh-lbl{font-size:var(--fs-caption);color:var(--muted)}
 .obh-in > .obh-bar{flex:none;width:50%} /* the bar takes the right half of the box */
@@ -2514,8 +2515,8 @@ function OrderView({S, ui, act, order, tabbed}) {
         ${lines.length === 0 && !groups.length && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div></div>`}
         ${groups.length > 0 && html`${groups.map(g => html`<section class="ord-cat grp-box" key=${g.key}>
             <h3 class="ord-cat-h">${g.label}</h3>
-            <div class="g-box ord-box"><div class="ord-in">${g.lines.length > 0 ? html`<div class="list">${g.lines.map(l => html`<${SelLine} key=${l.id} l=${l} o=${order} act=${act} locked=${locked}/>`)}</div>`
-              : html`<div class="ord-empty">No ${g.label.toLowerCase()} added yet</div>`}</div></div>
+            ${g.lines.length > 0 ? html`<div class="list">${g.lines.map(l => html`<${SelLine} key=${l.id} l=${l} o=${order} act=${act} locked=${locked}/>`)}</div>`
+              : html`<div class="ord-empty">No ${g.label.toLowerCase()} added yet</div>`}
           </section>`)}`}
       </div>
     </div>
