@@ -770,7 +770,7 @@ input{font:inherit;color:inherit}
 .sheet-thumb > img,.sheet-thumb > .thumb{display:block;width:100%;height:100%;object-fit:cover;border-radius:0;margin:0}
 /* centred head (appointment): the close button sits on the title's line, the sub line centred under the title */
 .sheet-head.center{display:grid;grid-template-columns:40px minmax(0,1fr) 40px;align-items:center;gap:0 8px;padding:10px 10px 14px;text-align:center}
-.sheet-head.center .sheet-sub{grid-column:2;margin-top:2px}
+.sheet-head.center .sheet-sub{grid-column:2;margin-top:2px}.sheet-head.center .sheet-title{font-size:var(--fs-heading)} /* the client sheet's name back at 17px, as before sheet titles went to 22px */
 .sheet-head.center .icon-btn{margin:-10px 0}
 /* fade: the buttons float over the content on a white gradient, so what scrolls under them fades out instead of stopping at a hard white band */
 .sheet.fade .sheet-foot{position:absolute;left:0;right:0;bottom:0;padding-top:40px;background:linear-gradient(to bottom,color-mix(in srgb,var(--bg) 0%,transparent),color-mix(in srgb,var(--bg) 85%,transparent) 36px);pointer-events:none} /* the page colour (white, or the dark page in dark mode) at 85%, so what scrolls under the button shows faintly */
@@ -795,13 +795,12 @@ input{font:inherit;color:inherit}
 /* trial: the division's total as a light grey tile left of Guidelines, the same size, with a fitness-app ring: a 9px stroke with round ends
    on a light tint of its colour, the percentage in the middle; under it "Total" 12px grey, the spend 20px bold, "of €60K" 12px grey */
 .ov-lines .sh-tiles{display:flex;flex-direction:column;gap:20px}.ov-lines .sh-tiles > .list{flex:none}.ov-lines .sh-tiles .row{height:auto} /* trial: the Total card across the page, the Guidelines tile under it */
-.ov-lines .sh-tiles .row-main{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:12px;align-items:center}.ov-lines .sh-tiles .row-main > svg{grid-row:1 / 3;margin:0} /* across the page, Guidelines reads as one row: icon left, title and "2 to check" beside it */
-.bud-wrap{filter:drop-shadow(0 1px 2px rgba(0,0,0,.06)) drop-shadow(0 6px 18px rgba(0,0,0,.08))} /* the shadow sits on a wrapper: the squircle mask would clip a box-shadow */
-.bud-card{display:flex;flex-direction:column;gap:14px;padding:14px 16px 18px;background:var(--card);border-radius:var(--r-xl);-webkit-mask-box-image:var(--squircle) 20 / var(--r-xl) stretch} /* trial: the categories' budgets at the top of the order, white with a soft drop shadow, no outline */
+.bud-sec{display:flex;flex-direction:column;gap:8px}.bud-sec > .ord-cat-h{font:600 var(--fs-heading)/var(--lh-body) var(--f-ui);letter-spacing:-.01em} /* trial: "Budget" outside the box, like the client sheet and the category names */
+.bud-card{display:flex;flex-direction:column;gap:14px;padding:14px;background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch} /* trial: the categories' budgets at the top of the order, in a white box with the thin grey outline (.g-box), like the client sheet's Budget */
 @supports (-webkit-mask-box-image:none){.bud-card{border-radius:0}}
-.bc-row{display:flex;flex-direction:column;gap:7px}.bc-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:var(--fs-body);line-height:var(--lh-tight);color:var(--ink)}
-.bc-v{font-size:14px;color:var(--muted);white-space:nowrap;font-variant-numeric:normal}.bc-row.tot .bc-top{font-weight:600}.bc-row.tot .bc-v{color:var(--ink)} /* the Total, last: semibold, its figures in black */
-.bc-bar{--t:var(--muted);height:8px;border-radius:999px;background:color-mix(in srgb,var(--ink) 9%,var(--card));overflow:hidden}
+.bc-row{display:flex;flex-direction:column;gap:7px}.bc-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:14px;line-height:var(--lh-tight);color:var(--ink)}
+.bc-v{font-size:14px;color:var(--ink);white-space:nowrap;font-variant-numeric:normal}.bc-row.tot .bc-top{font-weight:700} /* the Total, last: bold at the same 14px, like the client sheet's Total */
+.bc-bar{--t:var(--muted);height:8px;border-radius:999px;background:color-mix(in srgb,var(--ink) 9%,var(--bg));overflow:hidden}
 .bc-bar i{display:block;height:100%;min-width:8px;border-radius:999px;background:var(--t);transition:width .35s ease}
 .bc-bar.ok{--t:#2BBF6A}.bc-bar.warn{--t:#F2B705}.bc-bar.bad{--t:#F2553F}.bc-bar.pop{animation:pop .5s cubic-bezier(.3,.7,.3,1.2)}
 .tot-h{grid-column:1/-1;margin:0;font:600 var(--fs-heading)/var(--lh-body) var(--f-ui);letter-spacing:-.01em;color:var(--ink)}
@@ -1873,19 +1872,19 @@ function OrderHead({st, sub}) {
     <span class="ov-state-ic"><${Icon} n=${st === 'shared' ? 'clock' : 'check'} s=${20} w=${2.6}/></span>
     <div><b>${STATUS[st]}</b><span>${sub}</span></div></div></div></div>`;
 }
-// trial: the categories' budgets in one white card with a soft drop shadow at the top of the order (like a budgeting app's Budget widget): "Budget", then per category
+// trial: the categories' budgets at the top of the order styled like the client sheet's Budget: the heading outside, a white box with a thin grey outline (like a budgeting app's Budget widget): "Budget", then per category
 // its name on the left, "€10.340 of €18K" in grey on the right, and under them a full-width bar: the spent share in the status colour on a grey track;
 // the division's Total as the last bar, its name and figures semibold in black
 function BudgetCard({b, d, k, groups}) {
   const row = (key, label, v, bud, tot) => { const st = usedSt(v, bud), used = bud ? Math.min(v / bud * 100, 100) : 0;
     return html`<div class=${'bc-row' + (tot ? ' tot' : '')} key=${key}><div class="bc-top"><span>${label}</span><span class="bc-v num">${fmt(v)} ${bud ? 'of ' + fmtK(bud) : '· no budget'}</span></div>
       <div class=${'bc-bar ' + st + (isPop('o-' + b.id + '|' + d + '|' + key) ? ' pop' : '')} role="progressbar" aria-label=${label + ' budget'} aria-valuenow=${Math.round(used)} aria-valuemin="0" aria-valuemax="100">${used > 0 && html`<i style=${{width: used + '%'}}></i>`}</div></div>`; };
-  return html`<div class="bud-wrap"><div class="bud-card"><h3 class="tot-h">Budget</h3>${groups.map(g => row(g.key, g.label, k.mix.find(x => x.cat === g.key).value, catBudget(b, d, g.key)))}${row('tot', 'Total', k.total, divBudget(b, d), true)}</div></div>`;
+  return html`<div class="bud-sec"><h3 class="ord-cat-h">Budget</h3><div class="g-box bud-box"><div class="bud-card">${groups.map(g => row(g.key, g.label, k.mix.find(x => x.cat === g.key).value, catBudget(b, d, g.key)))}${row('tot', 'Total', k.total, divBudget(b, d), true)}</div></div></div>`;
 }
 function GuideTile({o, d, act}) {
-  const n = issuesOf(o, [d]).length;
+  const n = issuesOf(o, [d]).length, k = kpi(o, d), all = k.rules.length + k.looks.length;
   return html`<div class="list"><button class="row" onClick=${() => act.sheet({type:'guides', orderId:o.id, div:d})}>
-    <div class="row-main"><${Icon} n="note" s=${22}/><div class="row-title">Guidelines</div><div class="row-sub">${n ? `${n} to check` : 'All on track'}</div></div><span class="chev guide-chev"><${Icon} n="next" s=${18} w=${2}/></span></button></div>`;
+    <div class="row-main"><${Icon} n="note" s=${22}/><div class="row-title">Guidelines</div><div class="row-sub">${all} ${all === 1 ? 'guideline' : 'guidelines'} · ${n ? `${n} to check` : 'all on track'}</div></div><span class="chev guide-chev"><${Icon} n="next" s=${18} w=${2}/></span></button></div>`;
 }
 // the division's guidelines (mix rules, required looks, drops) in a bottom sheet, opened from the Guidelines tile on the order
 function GuidesSheet({sh, S, act}) {
