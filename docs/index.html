@@ -802,7 +802,7 @@ input{font:inherit;color:inherit}
 .bc-v{font-size:14px;color:var(--ink);white-space:nowrap;font-variant-numeric:normal}.bc-row.tot .bc-top{font-weight:700} /* the Total, last: bold at the same 14px, like the client sheet's Total */
 .bc-bar{--t:var(--muted);height:8px;border-radius:999px;background:color-mix(in srgb,var(--ink) 9%,var(--bg));overflow:hidden}
 .bc-bar i{display:block;height:100%;min-width:8px;border-radius:999px;background:var(--t);transition:width .35s ease}
-.bc-bar.go{--t:var(--ink)}.bc-bar.ok{--t:#2BBF6A}.bc-bar.over{--t:#F2853F} /* trial: black while filling, green once reached, orange past the budget (tried and set aside: red under half, yellow from half) */.bc-bar.pop{animation:pop .5s cubic-bezier(.3,.7,.3,1.2)}
+.bc-bar.go,.bc-bar.ok{--t:#2BBF6A}.bc-bar.over{--t:#F2853F} /* trial: green while filling and once reached, orange past the budget (tried and set aside: black while filling; red under half, yellow from half) */.bc-bar.pop{animation:pop .5s cubic-bezier(.3,.7,.3,1.2)}
 .tot-h{grid-column:1/-1;margin:0;font:600 var(--fs-heading)/var(--lh-body) var(--f-ui);letter-spacing:-.01em;color:var(--ink)}
 .sh-tiles .row{position:relative}.sh-tiles .pill{position:absolute;top:14px;right:14px} /* the order's status tag, top right, like on Home */
 /* the Notes placeholder is body size, like the budget rows (the text you type stays 17px so iOS doesn't zoom) */
@@ -1876,7 +1876,7 @@ function OrderHead({st, sub}) {
 // its name on the left, "€10.340 of €18K" in grey on the right, and under them a full-width bar: the spent share in the status colour on a grey track;
 // the division's Total as the last bar, its name and figures semibold in black
 function BudgetCard({b, d, k, groups}) {
-  // trial: one colour while a budget is being filled (black; white in dark mode), green once it is reached, orange past it
+  // trial: green while a budget is being filled and once it is reached, orange past it
   const row = (key, label, v, bud, tot) => { const st = !v ? 'none' : !bud ? 'go' : v > bud ? 'over' : v >= bud ? 'ok' : 'go', used = bud ? Math.min(v / bud * 100, 100) : 0;
     return html`<div class=${'bc-row' + (tot ? ' tot' : '')} key=${key}><div class="bc-top"><span>${label}</span><span class="bc-v num">${fmt(v)} ${bud ? 'of ' + fmtK(bud) : '· no budget'}</span></div>
       <div class=${'bc-bar ' + st + (isPop('o-' + b.id + '|' + d + '|' + key) ? ' pop' : '')} role="progressbar" aria-label=${label + ' budget'} aria-valuenow=${Math.round(used)} aria-valuemin="0" aria-valuemax="100">${used > 0 && html`<i style=${{width: used + '%'}}></i>`}</div></div>`; };
