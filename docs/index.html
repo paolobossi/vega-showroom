@@ -796,9 +796,6 @@ input{font:inherit;color:inherit}
    on a light tint of its colour, the percentage in the middle; under it "Total" 12px grey, the spend 20px bold, "of €60K" 12px grey */
 .ov-lines .sh-tiles{display:flex;flex-direction:column}.ov-lines .sh-tiles > .list{flex:none}.ov-lines .sh-tiles .row{height:auto} /* trial: the Total card across the page, the Guidelines tile under it */
 .ov-lines .sh-tiles .row-main{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:12px;align-items:center}.ov-lines .sh-tiles .row-main > svg{grid-row:1 / 3;margin:0} /* across the page, Guidelines reads as one row: icon left, title and "2 to check" beside it */
-.tot-tile{--t:var(--muted);min-width:0;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;column-gap:18px;row-gap:12px;padding:14px 16px 16px;background:var(--surface);border-radius:var(--r-xl);-webkit-mask-box-image:var(--squircle) 20 / var(--r-xl) stretch}
-@supports (-webkit-mask-box-image:none){.tot-tile{border-radius:0}}
-.tot-tile.ok{--t:#2BBF6A}.tot-tile.warn{--t:#F2B705}.tot-tile.bad{--t:#F2553F}
 .bud-card{display:flex;flex-direction:column;gap:14px;padding:14px 16px 18px;background:var(--surface);border-radius:var(--r-xl);-webkit-mask-box-image:var(--squircle) 20 / var(--r-xl) stretch} /* trial: the categories' budgets at the top of the order */
 @supports (-webkit-mask-box-image:none){.bud-card{border-radius:0}}
 .bc-row{display:flex;flex-direction:column;gap:7px}.bc-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:var(--fs-body);line-height:var(--lh-tight);color:var(--ink)}
@@ -807,14 +804,6 @@ input{font:inherit;color:inherit}
 .bc-bar i{display:block;height:100%;min-width:8px;border-radius:999px;background:var(--t);transition:width .35s ease}
 .bc-bar.ok{--t:#2BBF6A}.bc-bar.warn{--t:#F2B705}.bc-bar.bad{--t:#F2553F}.bc-bar.pop{animation:pop .5s cubic-bezier(.3,.7,.3,1.2)}
 .tot-h{grid-column:1/-1;margin:0;font:600 var(--fs-heading)/var(--lh-body) var(--f-ui);letter-spacing:-.01em;color:var(--ink)}
-.tot-ring{position:relative;width:96px;height:96px}.tot-ring svg{display:block;width:100%;height:100%;transform:rotate(-90deg)}
-.tot-ring circle{fill:none;stroke-width:10}.tr-track{stroke:color-mix(in srgb,var(--t) 22%,var(--surface))}.tot-tile.none .tr-track{stroke:color-mix(in srgb,var(--ink) 9%,var(--surface))}
-.tr-fill{stroke:var(--t);stroke-linecap:round;transition:stroke-dashoffset .5s ease}
-.tr-pct{position:absolute;inset:0;display:grid;place-items:center;font-size:var(--fs-heading);font-weight:600;color:var(--ink);font-variant-numeric:normal}
-.tot-ring.pop{animation:pop .5s cubic-bezier(.3,.7,.3,1.2)}
-.tot-txt{display:flex;flex-direction:column;gap:2px;min-width:0}.tot-lbl{font-size:var(--fs-caption);color:var(--muted);line-height:var(--lh-tight)}
-.tot-of{font-size:15px;font-weight:400;color:var(--muted);line-height:var(--lh-tight)}
-.tot-txt b{font-size:22px;font-weight:600;line-height:var(--lh-tight);color:var(--ink);letter-spacing:-.01em;text-wrap:balance;font-variant-numeric:normal}
 .sh-tiles .row{position:relative}.sh-tiles .pill{position:absolute;top:14px;right:14px} /* the order's status tag, top right, like on Home */
 /* the Notes placeholder is body size, like the budget rows (the text you type stays 17px so iOS doesn't zoom) */
 .inp.area::placeholder{font-size:14px}
@@ -1883,17 +1872,6 @@ function OrderHead({st, sub}) {
     <span class="ov-state-ic"><${Icon} n=${st === 'shared' ? 'clock' : 'check'} s=${20} w=${2.6}/></span>
     <div><b>${STATUS[st]}</b><span>${sub}</span></div></div></div></div>`;
 }
-// trial: the division's total, laid out like a fitness app's activity widget on a light grey card across the page: "Total" on top, a ring on the left (10px stroke, the percentage inside)
-// (the share of the budget spent, round ends, on a light tint of its colour; red under half, yellow from half, green once reached) and on its right
-// "€23.630" big in black with "of €60K" under it, lighter and grey; the Guidelines tile under it
-function TotalRing({b, d, k}) {
-  const db = divBudget(b, d), st = usedSt(k.total, db), used = db ? k.total / db * 100 : 0, R = 35, C = 2 * Math.PI * R, f = Math.min(used, 100) / 100;
-  return html`<div class=${'tot-tile ' + st}>
-    <h3 class="tot-h">Total</h3>
-    <div class=${'tot-ring' + (isPop('o-' + b.id + '|' + d + '|tot') ? ' pop' : '')} role="progressbar" aria-label="Total budget" aria-valuenow=${Math.round(used)} aria-valuemin="0" aria-valuemax="100">
-      <svg viewBox="0 0 80 80" aria-hidden="true"><circle class="tr-track" cx="40" cy="40" r=${R}/>${f > 0 && html`<circle class="tr-fill" cx="40" cy="40" r=${R} stroke-dasharray=${C} stroke-dashoffset=${C * (1 - f)}/>`}</svg>${db ? html`<span class="tr-pct num">${Math.round(used)}%</span>` : ''}</div>
-    <div class="tot-txt"><b class="num">${fmt(k.total)}</b>${db ? html`<span class="tot-of num">of ${fmtK(db)}</span>` : ''}${!db && html`<span class="tot-lbl">No budget</span>`}</div></div>`;
-}
 // trial: the categories' budgets in one light grey card at the top of the order (like a budgeting app's Budget widget): "Budget", then per category
 // its name on the left, "€10.340 of €18K" in grey on the right, and under them a full-width bar: the spent share in the status colour on a grey track;
 // the division's Total as the last bar, its name and figures semibold in black
@@ -2529,7 +2507,7 @@ function OrderView({S, ui, act, order, tabbed}) {
       <div class="ov-lines">
         <${OrderHead} st=${st} sub=${stateSub}/>
         ${b.divs.length > 1 && html`<${DivSwitch} b=${b} div=${div} act=${act}/>`}
-        <div class="sh-tiles"><${TotalRing} b=${b} d=${div} k=${k}/>${groups.length > 0 && html`<${BudgetCard} b=${b} d=${div} k=${k} groups=${groups}/>`}<${GuideTile} o=${order} d=${div} act=${act}/></div>
+        <div class="sh-tiles">${groups.length > 0 && html`<${BudgetCard} b=${b} d=${div} k=${k} groups=${groups}/>`}<${GuideTile} o=${order} d=${div} act=${act}/></div>
         ${lines.length === 0 && groups.length > 0 && html`<div class="ord-none">No ${DIV_LABEL[div].toLowerCase()} products yet</div>`}
         ${locked && !allSent && html`<div class="callout info"><${Icon} n="lock" s=${18}/><div>The ${DIV_LABEL[div].toLowerCase()} order has been sent. You can see it here but no longer change it.</div></div>`}
         ${lines.length === 0 && !groups.length && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div></div>`}
