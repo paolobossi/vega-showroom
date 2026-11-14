@@ -1875,12 +1875,12 @@ function OrderHead({st, sub}) {
 // trial: the categories' budgets at the top of the order styled like the client sheet's Budget: the heading outside, a white box with a thin grey outline (like a budgeting app's Budget widget): "Budget", then per category
 // its name on the left, "€10.340 of €18K" in grey on the right, and under them a full-width bar: the spent share in the status colour on a grey track;
 // the division's Total as the last bar, its name and figures semibold in black
+// one budget row: the name and "€10.340 of €18K", a full-width bar under them; trial: the bar is always green (filling, reached or past the budget)
+const bcRow = (b, d, key, label, v, bud, tot) => { const st = !v ? 'none' : !bud ? 'go' : v > bud ? 'over' : v >= bud ? 'ok' : 'go', used = bud ? Math.min(v / bud * 100, 100) : 0;
+  return html`<div class=${'bc-row' + (tot ? ' tot' : '')} key=${key}><div class="bc-top"><span>${label}</span><span class="bc-v num">${fmt(v)} ${bud ? 'of ' + fmtK(bud) : '· no budget'}</span></div>
+    <div class=${'bc-bar ' + st + (isPop('o-' + b.id + '|' + d + '|' + key) ? ' pop' : '')} role="progressbar" aria-label=${label + ' budget'} aria-valuenow=${Math.round(used)} aria-valuemin="0" aria-valuemax="100">${used > 0 && html`<i style=${{width: used + '%'}}></i>`}</div></div>`; };
 function BudgetCard({b, d, k, groups}) {
-  // trial: the bar is always green (filling, reached or past the budget)
-  const row = (key, label, v, bud, tot) => { const st = !v ? 'none' : !bud ? 'go' : v > bud ? 'over' : v >= bud ? 'ok' : 'go', used = bud ? Math.min(v / bud * 100, 100) : 0;
-    return html`<div class=${'bc-row' + (tot ? ' tot' : '')} key=${key}><div class="bc-top"><span>${label}</span><span class="bc-v num">${fmt(v)} ${bud ? 'of ' + fmtK(bud) : '· no budget'}</span></div>
-      <div class=${'bc-bar ' + st + (isPop('o-' + b.id + '|' + d + '|' + key) ? ' pop' : '')} role="progressbar" aria-label=${label + ' budget'} aria-valuenow=${Math.round(used)} aria-valuemin="0" aria-valuemax="100">${used > 0 && html`<i style=${{width: used + '%'}}></i>`}</div></div>`; };
-  return html`<div class="bud-sec"><h3 class="ord-cat-h">Budget</h3><div class="g-box bud-box"><div class="bud-card">${groups.map(g => row(g.key, g.label, k.mix.find(x => x.cat === g.key).value, catBudget(b, d, g.key)))}${row('tot', 'Total', k.total, divBudget(b, d), true)}</div></div></div>`;
+  return html`<div class="bud-sec"><h3 class="ord-cat-h">Budget</h3><div class="g-box bud-box"><div class="bud-card">${groups.map(g => bcRow(b, d, g.key, g.label, k.mix.find(x => x.cat === g.key).value, catBudget(b, d, g.key)))}${bcRow(b, d, 'tot', 'Total', k.total, divBudget(b, d), true)}</div></div></div>`;
 }
 function GuideTile({o, d, act}) {
   const n = issuesOf(o, [d]).length, k = kpi(o, d), all = k.rules.length + k.looks.length;
@@ -2299,6 +2299,7 @@ function ProductSheet({pid, colour, orderId, back, S, ui, act}) {
       : why ? html`${line && html`<div class="pd-in">In order · ${u ? val(u) : 'no quantity'}</div>`}<button class="btn black" disabled>${why}</button>`
       : line ? html`<button class="btn outline danger" onClick=${() => act.unselect(o.id, pid, c)}>Remove from order</button>`
       : null}</div>
+    ${o && b && b.divs.includes(p.div) && html`<div class="g-box pd-bud"><div class="bud-card">${bcRow(b, p.div, p.cat, CAT_LABEL[p.cat], kpi(o, p.div).mix.find(x => x.cat === p.cat).value, catBudget(b, p.div, p.cat))}</div></div>`}
     <div class="g-box"><div class="facts">
       <div class="pd-hl"><div><small>Wholesale</small><b class="num">${fmt(p.price)}</b></div><div><small>Retail</small><b class="num">${fmt(p.rrp)}</b></div></div>
       <div><span>Code</span><span>${p.code}</span></div>
