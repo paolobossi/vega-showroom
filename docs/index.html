@@ -1147,6 +1147,15 @@ input.qty.xl{width:64px} /* room for three digits */
 /* a heading straight in a sheet (In this look): black, sentence case, 26px above and 10px above its box, like Budget and Notes */
 .sheet-body > .sh-h{margin:12px 0 -4px}
 </style>
+<script>
+/* home-screen app on iOS 26: the page comes out shorter than the screen by the status bar's height, leaving a white strip under the tab bar.
+   When the app fills the screen, size the page to the screen itself and keep the document from scrolling (each view scrolls on its own). */
+(() => { const sa = navigator.standalone || matchMedia('(display-mode: standalone)').matches; if (!sa) return;
+  const fit = () => { const land = matchMedia('(orientation: landscape)').matches, s = screen,
+      h = land ? Math.min(s.width, s.height) : Math.max(s.width, s.height), gap = h - innerHeight, r = document.documentElement;
+    if (gap > 0 && gap <= 80) { r.style.height = h + 'px'; r.style.overflow = 'hidden'; } else { r.style.height = ''; r.style.overflow = ''; } };
+  fit(); addEventListener('resize', fit); addEventListener('orientationchange', () => setTimeout(fit, 300)); })();
+</script>
 </head>
 <body>
 <div id="root"></div>
