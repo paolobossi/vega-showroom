@@ -2005,8 +2005,9 @@ function CatalogueTab({S, ui, act}) {
   const so = activeOrder(S, ui), sb = so && BUYERS[so.buyerId], divs = ['W', 'M'];
   const [div, setDiv] = useState(sb ? sb.divs[0] : 'W'), [cat, setCat] = useState(null), [busy, setBusy] = useState(false);
   // collection tabs sit above the category pills; All shows every collection the client can buy
-  const season = SEASONS.find(x => x.id === ui.catSeason) || {id:null, name:'All collections'}, filtered = !!(ui.catDrop || ui.catTag || ui.catMat);
-  const items = PRODUCTS.filter(p => p.div === div && (!season.id || p.season === season.id) && (!sb || available(sb, p)) && (!ui.catDrop || p.drop === ui.catDrop) && hasTag(p, ui.catTag) && hasMat(p, ui.catMat));
+  const season = SEASONS.find(x => x.id === ui.catSeason) || {id:null, name:'All collections'}, filtered = FKEYS.some(k => ui[k] && ui[k].length);
+  // several values can be on in each filter group: a style shows when it matches any of them (and every group that has some on)
+  const base = PRODUCTS.filter(p => p.div === div && (!season.id || p.season === season.id) && (!sb || available(sb, p))), items = base.filter(p => passes(p, ui));
   // category, then a sub-heading only where the family is a kind of product (Dresses, Hats); bags and shoes families are lines (Puzzle, Pebble), so they just sit together
   const all = CATS.map(c => { const ps = items.filter(p => p.cat === c), sub = SUBTYPE[c];
     return {cat:c, n:ps.length, fams:sub ? [...new Set(ps.map(sub))].map(f => ({f, id:c + '-' + slug(f), ps:ps.filter(p => sub(p) === f)}))
@@ -2033,14 +2034,9 @@ function CatalogueTab({S, ui, act}) {
   const pickSeason = id => { if (id === season.id) return; act.set({catSeason:id}); load(); };
   return html`
     <header class="top top-bar mid"><h1 class="h1 div-title" role="tablist" aria-label="Collection">${divs.map(d => html`<button role="tab" aria-selected=${d === div} class=${d === div ? 'on' : ''} onClick=${() => pickDiv(d)}>${DIV_TAB[d]}</button>`)}</h1>
-      <div class="hd-acts"><button class=${'icon-btn hd-ic hd-filter' + (filtered ? ' on' : '')} onClick=${() => act.sheet({type:'filter'})} aria-label=${['Filters', [ui.catDrop && DROPS[ui.catDrop].split(' · ')[0], ui.catTag && TAG_OPTS.find(x => x[0] === ui.catTag)[1], ui.catMat && MATS.find(x => x[0] === ui.catMat)[1]].filter(Boolean).join(', ')].filter(Boolean).join(': ')}><span class="hd-dot"><${Icon} n="filter" s=${22} w=${2}/></span></button>
+      <div class="hd-acts"><button class=${'icon-btn hd-ic hd-filter' + (filtered ? ' on' : '')} onClick=${() => act.sheet({type:'filter', count: f => base.filter(p => passes(p, f)).length})} aria-label=${['Filters', fNames(ui).join(', ')].filter(Boolean).join(': ')}><span class="hd-dot"><${Icon} n="filter" s=${22} w=${2}/></span></button>
         <button class="icon-btn hd-ic" onClick=${() => { primeKeyboard(); act.set({search:true}); }} aria-label="Search the collection"><${Icon} n="search" s=${24} w=${2}/></button></div></header>
     <section class="sec">
-      ${(ui.catDrop || ui.catTag || ui.catMat) && html`<div class="fchips">
-        ${ui.catDrop && html`<button class="fchip" onClick=${() => act.set({catDrop:null})} aria-label="Clear drop filter">${DROPS[ui.catDrop].split(' · ')[0]}<${Icon} n="x" s=${14} w=${2.2}/></button>`}
-        ${ui.catTag && html`<button class="fchip" onClick=${() => act.set({catTag:null})} aria-label="Clear priority filter">${TAG_OPTS.find(x => x[0] === ui.catTag)[1]}<${Icon} n="x" s=${14} w=${2.2}/></button>`}
-        ${ui.catMat && html`<button class="fchip" onClick=${() => act.set({catMat:null})} aria-label="Clear material filter">${MATS.find(x => x[0] === ui.catMat)[1]}<${Icon} n="x" s=${14} w=${2.2}/></button>`}
-      </div>`}
       <div ref=${ref}>
         <nav class="cat-nav" ref=${nav} aria-label="Collections and categories">
           <div class="coll-tabs" role="tablist" aria-label="Collections" ref=${collBox}>${SEASONS.map(x => [x.id, x.short, x.name]).map(([id, t, full]) => html`<button role="tab" aria-selected=${season.id === id} aria-label=${full} class=${'coll-t' + (season.id === id ? ' on' : '')} onClick=${() => pickSeason(id)}>${t}</button>`)}<span class="slide-ind" ref=${collInd} aria-hidden="true"></span></div>
@@ -2224,14 +2220,25 @@ const hasTag = (p, t) => !t || (t === 'none' ? !p.tag : p.tag === t);
 // "Delivers 15 January 2027": SS27 drops deliver in the new year
 const dropWhen = k => { const [d, m] = DROPS[k].split(' · delivers ')[1].split(' '); return `Delivers ${d} ${MONTHS[m] || m} 2027`; };
 
-function FilterSheet({ui, act}) {
-  // picking an option keeps the sheet open, so collection, drop and tag can be set together
+// the Collection's filters: Drop, Priority and Material, each a list where several values can be on at once (none on = all)
+const FKEYS = ['catDrop', 'catTag', 'catMat'];
+const anyOf = (a, f) => !a || !a.length || a.some(f);
+const passes = (p, f) => anyOf(f.catDrop, d => p.drop === d) && anyOf(f.catTag, t => hasTag(p, t)) && anyOf(f.catMat, m => hasMat(p, m));
+const fNames = f => [...(f.catDrop || []).map(k => DROPS[k].split(' · ')[0]), ...(f.catTag || []).map(t => TAG_OPTS.find(x => x[0] === t)[1]), ...(f.catMat || []).map(m => MATS.find(x => x[0] === m)[1])];
+function FilterSheet({ui, sh, act}) {
+  // the choices are a draft until Show N styles applies them; Clear all empties every group (still a draft); × leaves the filters as they were
   // laid out like Select client: a grey heading per group, its options in a white box with a grey outline and light rules between them
-  const group = (label, key, opts) => html`<section class="grp-sec"><h3 class="grp-h">${label}</h3><div class="grp"><div class="grp-in">${opts.map(([v, t, sub]) => html`<button class="row opt" onClick=${() => act.set({[key]:v})} aria-pressed=${v === ui[key]}>
+  const [f, setF] = useState(() => Object.fromEntries(FKEYS.map(k => [k, ui[k] || []])));
+  const toggle = (key, v) => setF(x => ({...x, [key]: v == null ? [] : x[key].includes(v) ? x[key].filter(y => y !== v) : [...x[key], v]}));
+  const on = (key, v) => v == null ? !f[key].length : f[key].includes(v);
+  const group = (label, key, opts) => html`<section class="grp-sec"><h3 class="grp-h">${label}</h3><div class="grp"><div class="grp-in">${opts.map(([v, t, sub]) => html`<button class="row opt" onClick=${() => toggle(key, v)} aria-pressed=${on(key, v)}>
       <div class="row-main"><div class="row-title">${t}</div>${sub && html`<div class="row-sub">${sub}</div>`}</div>
-      <div class="row-side">${v === ui[key] && html`<${Icon} n="check" s=${20} w=${2.4}/>`}</div>
+      <div class="row-side">${on(key, v) && html`<${Icon} n="check" s=${20} w=${2.4}/>`}</div>
     </button>`)}</div></div></section>`;
-  return html`<${Sheet} tall grouped title="Filters" onClose=${act.close}>
+  const n = sh.count ? sh.count(f) : null, any = FKEYS.some(k => f[k].length);
+  const foot = html`<button class="btn ring" disabled=${!any} onClick=${() => setF(Object.fromEntries(FKEYS.map(k => [k, []])))}>Clear all</button>
+    <button class="btn primary" disabled=${n === 0} onClick=${() => { act.set(f); act.close(); }}>${n == null ? 'Apply' : n === 0 ? 'No styles' : `Show ${n} ${n === 1 ? 'style' : 'styles'}`}</button>`;
+  return html`<${Sheet} tall grouped title="Filters" onClose=${act.close} foot=${foot}>
     ${group('Drop', 'catDrop', [[null, 'All drops'], ...Object.keys(DROPS).map(k => [k, DROPS[k].split(' · ')[0], dropWhen(k)])])}
     ${group('Priority', 'catTag', TAG_OPTS)}
     ${group('Material', 'catMat', MATS)}
@@ -2821,7 +2828,7 @@ function App({onReset}) {
     : sh.type === 'guides' ? html`<${GuidesSheet} sh=${sh} S=${S} act=${act}/>`
     : sh.type === 'look' ? html`<${LookSheet} id=${sh.id} S=${S} ui=${ui} act=${act}/>`
     : sh.type === 'product' ? html`<${ProductSheet} key=${sh.pid} pid=${sh.pid} colour=${sh.colour} orderId=${sh.orderId} back=${sh.back} S=${S} ui=${ui} act=${act}/>`
-    : sh.type === 'filter' ? html`<${FilterSheet} ui=${ui} act=${act}/>`
+    : sh.type === 'filter' ? html`<${FilterSheet} ui=${ui} sh=${sh} act=${act}/>`
     : sh.type === 'profile' ? html`<${ProfileSheet} S=${S} act=${act}/>`
     : sh.type === 'history' ? html`<${HistorySheet} S=${S} ui=${ui} act=${act}/>`
     : sh.type === 'passcode' ? html`<${PasscodeSheet} S=${S} act=${act}/>`
