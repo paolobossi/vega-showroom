@@ -641,7 +641,7 @@ input{font:inherit;color:inherit}
 .obh-bar.none .br{background:var(--surface)}.obh-bar.ok{--t:#2BBF6A}.obh-bar.warn{--t:#F2B705}.obh-bar.bad{--t:#F2553F}
 .obh-bar.pop{animation:pop .5s cubic-bezier(.3,.7,.3,1.2)}
 .ov-sum > .gl-h:first-child{margin-top:0} /* the order page opens on Guidelines now that the budget sits with the lines */
-.ord-none{font-size:var(--fs-body);color:var(--muted);line-height:var(--lh-body)} /* empty order: one grey line under the Total, "No women's products yet" */
+.ord-none{margin:auto 0;padding:24px 0;text-align:center;font-size:var(--fs-body);color:var(--muted);line-height:var(--lh-body)} /* empty order: one grey line, "No women's products yet", centred in the space left under Guidelines */
 .lines-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:8px}
 .grp-head{display:flex;justify-content:space-between;align-items:baseline;font-size:var(--fs-heading);font-weight:600;letter-spacing:-.01em;color:var(--ink);padding:0 2px 8px}
 .empty{background:var(--surface);border:1px dashed var(--line);border-radius:var(--r-l);padding:22px 18px;text-align:center;color:var(--muted);display:flex;flex-direction:column;gap:8px;align-items:center}
@@ -795,7 +795,7 @@ input{font:inherit;color:inherit}
 .ov-head > .ov-state{border-radius:0;-webkit-mask-box-image:none}
 /* trial: the division's total as a light grey tile left of Guidelines, the same size, with a fitness-app ring: a 9px stroke with round ends
    on a light tint of its colour, the percentage in the middle; under it "Total" 12px grey, the spend 20px bold, "of €60K" 12px grey */
-.ov-lines .sh-tiles{display:flex;flex-direction:column}.ov-lines .sh-tiles > .list{flex:none}.ov-lines .sh-tiles .row{height:auto} /* trial: the Total card across the page, the Guidelines tile under it */
+.ov-lines .sh-tiles{display:flex;flex-direction:column;gap:20px}.ov-lines .sh-tiles > .list{flex:none}.ov-lines .sh-tiles .row{height:auto} /* trial: the Total card across the page, the Guidelines tile under it */
 .ov-lines .sh-tiles .row-main{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:12px;align-items:center}.ov-lines .sh-tiles .row-main > svg{grid-row:1 / 3;margin:0} /* across the page, Guidelines reads as one row: icon left, title and "2 to check" beside it */
 .bud-wrap{filter:drop-shadow(0 1px 2px rgba(0,0,0,.06)) drop-shadow(0 6px 18px rgba(0,0,0,.08))} /* the shadow sits on a wrapper: the squircle mask would clip a box-shadow */
 .bud-card{display:flex;flex-direction:column;gap:14px;padding:14px 16px 18px;background:var(--card);border-radius:var(--r-xl);-webkit-mask-box-image:var(--squircle) 20 / var(--r-xl) stretch} /* trial: the categories' budgets at the top of the order, white with a soft drop shadow, no outline */
@@ -2513,7 +2513,7 @@ function OrderView({S, ui, act, order, tabbed}) {
         ${lines.length === 0 && groups.length > 0 && html`<div class="ord-none">No ${DIV_LABEL[div].toLowerCase()} products yet</div>`}
         ${locked && !allSent && html`<div class="callout info"><${Icon} n="lock" s=${18}/><div>The ${DIV_LABEL[div].toLowerCase()} order has been sent. You can see it here but no longer change it.</div></div>`}
         ${lines.length === 0 && !groups.length && html`<div class="empty"><${Icon} n="grid" s=${28}/><div><b style="color:var(--ink)">No ${DIV_LABEL[div].toLowerCase()} products yet</b></div></div>`}
-        ${groups.length > 0 && html`${groups.map(g => html`<section class="ord-cat grp-box" key=${g.key}>
+        ${groups.length > 0 && html`${groups.filter(g => g.lines.length > 0).map(g => html`<section class="ord-cat grp-box" key=${g.key}>
             <h3 class="ord-cat-h">${g.label}</h3>
             ${g.lines.length > 0 ? html`<div class="list">${g.lines.map(l => html`<${SelLine} key=${l.id} l=${l} o=${order} act=${act} locked=${locked}/>`)}</div>`
               : html`<div class="ord-empty">No ${g.label.toLowerCase()} added yet</div>`}
