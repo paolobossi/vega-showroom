@@ -802,7 +802,7 @@ input{font:inherit;color:inherit}
 .bc-v{font-size:14px;color:var(--ink);white-space:nowrap;font-variant-numeric:normal}.bc-row.tot .bc-top{font-weight:700} /* the Total, last: bold at the same 14px, like the client sheet's Total */
 .bc-bar{--t:var(--muted);height:8px;border-radius:999px;background:color-mix(in srgb,var(--ink) 9%,var(--bg));overflow:hidden}
 .bc-bar i{display:block;height:100%;min-width:8px;border-radius:999px;background:var(--t);transition:width .35s ease}
-.bc-bar.go,.bc-bar.ok{--t:#2BBF6A}.bc-bar.over{--t:#F2853F} /* trial: green while filling and once reached, orange past the budget (tried and set aside: black while filling; red under half, yellow from half) */.bc-bar.pop{animation:pop .5s cubic-bezier(.3,.7,.3,1.2)}
+.bc-bar.go,.bc-bar.ok,.bc-bar.over{--t:#2BBF6A} /* trial: always green, past the budget too (tried and set aside: orange past the budget; black while filling; red under half, yellow from half) */.bc-bar.pop{animation:pop .5s cubic-bezier(.3,.7,.3,1.2)}
 .tot-h{grid-column:1/-1;margin:0;font:600 var(--fs-heading)/var(--lh-body) var(--f-ui);letter-spacing:-.01em;color:var(--ink)}
 .sh-tiles .row{position:relative}.sh-tiles .pill{position:absolute;top:14px;right:14px} /* the order's status tag, top right, like on Home */
 /* the Notes placeholder is body size, like the budget rows (the text you type stays 17px so iOS doesn't zoom) */
@@ -1876,7 +1876,7 @@ function OrderHead({st, sub}) {
 // its name on the left, "€10.340 of €18K" in grey on the right, and under them a full-width bar: the spent share in the status colour on a grey track;
 // the division's Total as the last bar, its name and figures semibold in black
 function BudgetCard({b, d, k, groups}) {
-  // trial: green while a budget is being filled and once it is reached, orange past it
+  // trial: the bar is always green (filling, reached or past the budget)
   const row = (key, label, v, bud, tot) => { const st = !v ? 'none' : !bud ? 'go' : v > bud ? 'over' : v >= bud ? 'ok' : 'go', used = bud ? Math.min(v / bud * 100, 100) : 0;
     return html`<div class=${'bc-row' + (tot ? ' tot' : '')} key=${key}><div class="bc-top"><span>${label}</span><span class="bc-v num">${fmt(v)} ${bud ? 'of ' + fmtK(bud) : '· no budget'}</span></div>
       <div class=${'bc-bar ' + st + (isPop('o-' + b.id + '|' + d + '|' + key) ? ' pop' : '')} role="progressbar" aria-label=${label + ' budget'} aria-valuenow=${Math.round(used)} aria-valuemin="0" aria-valuemax="100">${used > 0 && html`<i style=${{width: used + '%'}}></i>`}</div></div>`; };
@@ -2007,7 +2007,7 @@ function CatalogueTab({S, ui, act}) {
   // collection tabs sit above the category pills; All shows every collection the client can buy
   const season = SEASONS.find(x => x.id === ui.catSeason) || {id:null, name:'All collections'}, filtered = FKEYS.some(k => ui[k] && ui[k].length);
   // several values can be on in each filter group: a style shows when it matches any of them (and every group that has some on)
-  const base = PRODUCTS.filter(p => p.div === div && (!season.id || p.season === season.id) && (!sb || available(sb, p))), items = base.filter(p => passes(p, ui));
+  const items = PRODUCTS.filter(p => p.div === div && (!season.id || p.season === season.id) && (!sb || available(sb, p)) && passes(p, ui));
   // category, then a sub-heading only where the family is a kind of product (Dresses, Hats); bags and shoes families are lines (Puzzle, Pebble), so they just sit together
   const all = CATS.map(c => { const ps = items.filter(p => p.cat === c), sub = SUBTYPE[c];
     return {cat:c, n:ps.length, fams:sub ? [...new Set(ps.map(sub))].map(f => ({f, id:c + '-' + slug(f), ps:ps.filter(p => sub(p) === f)}))
@@ -2034,7 +2034,7 @@ function CatalogueTab({S, ui, act}) {
   const pickSeason = id => { if (id === season.id) return; act.set({catSeason:id}); load(); };
   return html`
     <header class="top top-bar mid"><h1 class="h1 div-title" role="tablist" aria-label="Collection">${divs.map(d => html`<button role="tab" aria-selected=${d === div} class=${d === div ? 'on' : ''} onClick=${() => pickDiv(d)}>${DIV_TAB[d]}</button>`)}</h1>
-      <div class="hd-acts"><button class=${'icon-btn hd-ic hd-filter' + (filtered ? ' on' : '')} onClick=${() => act.sheet({type:'filter', count: f => base.filter(p => passes(p, f)).length})} aria-label=${['Filters', fNames(ui).join(', ')].filter(Boolean).join(': ')}><span class="hd-dot"><${Icon} n="filter" s=${22} w=${2}/></span></button>
+      <div class="hd-acts"><button class=${'icon-btn hd-ic hd-filter' + (filtered ? ' on' : '')} onClick=${() => act.sheet({type:'filter'})} aria-label=${['Filters', fNames(ui).join(', ')].filter(Boolean).join(': ')}><span class="hd-dot"><${Icon} n="filter" s=${22} w=${2}/></span></button>
         <button class="icon-btn hd-ic" onClick=${() => { primeKeyboard(); act.set({search:true}); }} aria-label="Search the collection"><${Icon} n="search" s=${24} w=${2}/></button></div></header>
     <section class="sec">
       <div ref=${ref}>
@@ -2226,7 +2226,7 @@ const anyOf = (a, f) => !a || !a.length || a.some(f);
 const passes = (p, f) => anyOf(f.catDrop, d => p.drop === d) && anyOf(f.catTag, t => hasTag(p, t)) && anyOf(f.catMat, m => hasMat(p, m));
 const fNames = f => [...(f.catDrop || []).map(k => DROPS[k].split(' · ')[0]), ...(f.catTag || []).map(t => TAG_OPTS.find(x => x[0] === t)[1]), ...(f.catMat || []).map(m => MATS.find(x => x[0] === m)[1])];
 function FilterSheet({ui, sh, act}) {
-  // the choices are a draft until Show N styles applies them; Clear all empties every group (still a draft); × leaves the filters as they were
+  // the choices are a draft until Apply filters applies them; Clear all empties every group (still a draft); × leaves the filters as they were
   // laid out like Select client: a grey heading per group, its options in a white box with a grey outline and light rules between them
   const [f, setF] = useState(() => Object.fromEntries(FKEYS.map(k => [k, ui[k] || []])));
   const toggle = (key, v) => setF(x => ({...x, [key]: v == null ? [] : x[key].includes(v) ? x[key].filter(y => y !== v) : [...x[key], v]}));
@@ -2235,9 +2235,9 @@ function FilterSheet({ui, sh, act}) {
       <div class="row-main"><div class="row-title">${t}</div>${sub && html`<div class="row-sub">${sub}</div>`}</div>
       <div class="row-side">${on(key, v) && html`<${Icon} n="check" s=${20} w=${2.4}/>`}</div>
     </button>`)}</div></div></section>`;
-  const n = sh.count ? sh.count(f) : null, any = FKEYS.some(k => f[k].length);
+  const any = FKEYS.some(k => f[k].length);
   const foot = html`<button class="btn ring" disabled=${!any} onClick=${() => setF(Object.fromEntries(FKEYS.map(k => [k, []])))}>Clear all</button>
-    <button class="btn primary" disabled=${n === 0} onClick=${() => { act.set(f); act.close(); }}>${n == null ? 'Apply' : n === 0 ? 'No styles' : `Show ${n} ${n === 1 ? 'style' : 'styles'}`}</button>`;
+    <button class="btn primary" onClick=${() => { act.set(f); act.close(); }}>Apply filters</button>`;
   return html`<${Sheet} tall grouped title="Filters" onClose=${act.close} foot=${foot}>
     ${group('Drop', 'catDrop', [[null, 'All drops'], ...Object.keys(DROPS).map(k => [k, DROPS[k].split(' · ')[0], dropWhen(k)])])}
     ${group('Priority', 'catTag', TAG_OPTS)}
