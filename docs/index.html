@@ -2618,7 +2618,7 @@ function FinishSheet({sh, S, act}) {
       ${!sel.length && html`<div class="callout warn"><${Icon} n="alert" s=${18}/><div>Add quantities before sending the order.</div></div>`}
       ${noQty > 0 && html`<div class="callout warn"><${Icon} n="alert" s=${18}/><div><b>${noQty} ${noQty === 1 ? 'style has' : 'styles have'} no quantity.</b> Add quantities or remove ${noQty === 1 ? 'it' : 'them'} from the order to send it to the commercial team. You can still send it to the client to finish.</div></div>`}
       <section class="fin-sec"><h2 class="cat-h">Client</h2>
-        <${OField} label="Name of the person signing" value=${name} onInput=${e => setName(e.target.value)} autocomplete="off"/>
+        <${OField} label="Full name" value=${name} onInput=${e => setName(e.target.value)} autocomplete="off"/>
         <${OField} label="Email" type="email" inputmode="email" autocapitalize="off" value=${email} onInput=${e => setEmail(e.target.value)}/></section>
       <section class="fin-sec"><h2 class="cat-h">Signature</h2><${SignPad} onSigned=${setSigned}/></section>`}
   <//>`;
