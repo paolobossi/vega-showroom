@@ -979,9 +979,10 @@ input.qty.xl{width:64px} /* room for three digits */
 .shutter{width:72px;height:72px;border-radius:999px;border:4px solid var(--vf-ink);display:grid;place-items:center}
 .shutter span{width:56px;height:56px;border-radius:999px;background:var(--vf-ink);transition:transform .15s}
 .shutter:active span{transform:scale(.9)}
-/* the match is a bottom sheet like Add to order: grab handle, the style's 48px photo left of its name (22px) with the colour dot and name under it,
+/* the match is a bottom sheet like Add to order: grab handle, the style's 72px photo left of its name (17px) with the colour dot and name under it,
    × closes the camera; "Wholesale €… Retail €…" as plain text under the colour, like the Collection cards; "Not this one?" laid out like In this look; Retake (camera icon) and Add to order as two pill buttons at the foot */
 .capture .match{color:var(--ink)}
+.match .sheet-thumb{width:72px;height:72px;-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}.match .sheet-tt{gap:12px}.match .sheet-title{font-size:var(--fs-heading)} /* the photo as big as the Not this one? photos (72px), the name 17px */
 .prices.plain{display:flex;gap:14px;margin-top:4px}.prices.plain span{flex-direction:row;align-items:baseline;gap:4px}.prices.plain small{font-weight:400}.prices.plain b{font-size:var(--fs-caption)} /* "Wholesale €1.080  Retail €2.580" as plain 12px text, like the Collection cards */
 .m-alts{display:flex;flex-direction:column;gap:10px} /* "Not this one?" like In this look: the black 17px heading 10px above a white outlined box of rows (72px photo, name, colour dot and name, grey chevron) */
 .alts{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);overflow:hidden}
