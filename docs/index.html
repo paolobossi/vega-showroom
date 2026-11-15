@@ -980,12 +980,10 @@ input.qty.xl{width:64px} /* room for three digits */
 .shutter span{width:56px;height:56px;border-radius:999px;background:var(--vf-ink);transition:transform .15s}
 .shutter:active span{transform:scale(.9)}
 /* the match is a bottom sheet like Add to order: grab handle, the style's 48px photo left of its name (22px) with code · colour under it,
-   × to retake; the prices as the product page's two grey tiles in a white box with a grey outline; "Not this one?" as a grey heading over a
-   white box of rows (light rules, grey chevrons); View item and Add to order as two pill buttons at the foot */
+   × to retake; the prices as the product page's two grey tiles in a white box with a grey outline; "Not this one?" laid out like In this look; View item and Add to order as two pill buttons at the foot */
 .capture .match{color:var(--ink)}
 .match .facts > .pd-hl{padding-bottom:10px}
-.match .grp-in > .row{min-height:68px;background-position:72px 0;background-size:calc(100% - 72px) 1px}.match .grp-in > .row:first-child{background:none} /* the rule starts under the name, not under the photo */
-.match .grp .row-title{white-space:normal}
+.m-alts{display:flex;flex-direction:column;gap:10px} /* "Not this one?" like In this look: the black 17px heading 10px above a white outlined box of rows (72px photo, name, colour dot and name, grey chevron) */
 .alts{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);overflow:hidden}
 
 /* ---------- buyer view ---------- */
@@ -2441,9 +2439,11 @@ function Capture({order, div, act}) {
       <div class="sheet-body">
         <div class="g-box"><div class="facts"><div class="pd-hl"><div><small>Wholesale</small><b class="num">${fmt(p.price)}</b></div><div><small>Retail</small><b class="num">${fmt(p.rrp)}</b></div></div></div></div>
         ${why && html`<div class="callout bad"><${Icon} n="lock" s=${18}/><div>${b.shop} · ${why}, so this style can’t go on the order.</div></div>`}
-        <section class="grp-sec"><h3 class="grp-h">Not this one?</h3><div class="grp"><div class="grp-in">${alts.map(a => { const c = a.colours.includes(s.colour) ? s.colour : a.colours[0];
-          return html`<button class="row" onClick=${() => pick(a.id, c)}><${Thumb} cls="sm" pid=${a.id} colour=${c}/>
-          <div class="row-main"><div class="row-title">${a.name}</div><div class="row-sub">${a.code}</div></div><div class="row-side"><span class="chev"><${Icon} n="next" s=${18} w=${2}/></span></div></button>`; })}</div></div></section>
+        <section class="m-alts"><h2 class="cat-h">Not this one?</h2>
+          <div class="g-box"><div class="list look-rows">${alts.map(a => { const c = a.colours.includes(s.colour) ? s.colour : a.colours[0];
+          return html`<button class="row" onClick=${() => pick(a.id, c)}><${Thumb} pid=${a.id} colour=${c}/>
+            <div class="row-main"><div class="row-title">${a.name}</div><div class="row-sub"><span class="cc"><span class="sw" style=${{background:COL[c][0]}}></span>${c}</span></div></div>
+            <${Icon} n="next" s=${18}/></button>`; })}</div></div></section>
       </div>
       <div class="sheet-foot"><button class="btn ring" onClick=${() => view(p.id, s.colour)}>View item</button>
         <button class="btn primary" disabled=${!!why} onClick=${() => pick(p.id, s.colour)}>Add to order</button></div>
