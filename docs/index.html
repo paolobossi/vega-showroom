@@ -253,13 +253,10 @@ input{font:inherit;color:inherit}
 .pin-k.txt{background:none;border:0;font-size:var(--fs-body);font-weight:600;color:var(--ink)} /* Cancel and delete in ink, not blue */
 .top-acts{display:flex;align-items:center;gap:10px}.top-acts .round-btn{margin-top:0}
 .field{display:flex;flex-direction:column;gap:6px}
-/* classic fields (Finalize order): the label above in 14px (sentence case, ink), 6px over a white box with a 1px grey outline, 48px tall,
-   12px corners; focus: a 2px black outline */
-:root{--field-line:color-mix(in srgb,var(--ink) 22%,var(--bg))}
+/* form fields everywhere (Finalize order, Sign, New session): the label above in 14px (sentence case, black, not the grey uppercase .lbl),
+   6px over the grey filled .inp box, like the client's Notes */
 .cfield{display:flex;flex-direction:column;gap:6px}
 .flbl{font-size:14px;font-weight:500;line-height:var(--lh-tight);color:var(--ink)}
-.oinp{display:block;width:100%;height:48px;padding:0 14px;border:1px solid var(--field-line);border-radius:12px;background:var(--bg);font:var(--fs-heading) var(--f-ui);color:var(--ink);outline:0}
-.oinp:focus,.oinp:focus-visible{outline:0;border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
 /* Finalize order: each part under a black 17px heading, 10px above it, like Not this one? */
 .fin-sec{display:flex;flex-direction:column;gap:10px}.fin-sec > .cfield + .cfield{margin-top:6px}.fin-sec > .cat-h + .cfield{margin-top:4px} /* 16px between the Client fields, 14px under the Client heading */.fin-sec + .fin-sec,.callout + .fin-sec{margin-top:6px}
 .inp.area{height:auto;min-height:104px;padding:12px 14px;font-size:14px;line-height:var(--lh-body);resize:vertical} /* typed text and placeholder 14px, like the Budget and Guidelines rows */
@@ -729,7 +726,7 @@ input{font:inherit;color:inherit}
 .bpill-v{font-size:var(--fs-heading);font-weight:400;letter-spacing:-.01em}.bpill-v b{font-weight:700} /* only the spend is bold; "of €18K" is regular */
 .kpi > .bud-div:first-child{border-top:0;padding-top:0}
 .sign{position:relative}
-.sign-pad{display:block;width:100%;height:170px;border-radius:12px;border:1px solid var(--field-line);background:var(--bg);color:var(--ink);touch-action:none;cursor:crosshair}
+.sign-pad{display:block;width:100%;height:170px;border-radius:var(--r-m);border:1px solid var(--line);background:var(--surface);color:var(--ink);touch-action:none;cursor:crosshair}
 .sign-hint{position:absolute;left:14px;bottom:10px;font-size:var(--fs-caption);color:var(--faint);pointer-events:none}
 .sign-clear{position:absolute;right:12px;top:8px}
 .bud-row.off{color:var(--muted);grid-template-columns:1fr auto;font-size:var(--fs-caption)}
@@ -2229,10 +2226,10 @@ function NewBuyerSheet({S, sh, act}) {
   };
   return html`<${Sheet} tall title="New session" sub="Start an order with a client" onClose=${act.close}
     foot=${html`<button class=${'btn ' + (sh.appt ? 'primary' : 'go')} disabled=${!ok} onClick=${start}>${!sh.appt && html`<${Icon} n="check" s=${18} w=${2.2}/>`}Start session</button>`}>
-    <label class="field"><span class="lbl">Shop</span><input class="inp" placeholder="e.g. Maison Dubois" value=${f.shop} onInput=${set('shop')} autocomplete="off"/></label>
-    <label class="field"><span class="lbl">City</span><input class="inp" placeholder="e.g. Paris" value=${f.city} onInput=${set('city')} autocomplete="off"/></label>
-    <div class="field"><span class="lbl">Buying for</span><${Seg} full opts=${[['WM', 'Women + Men'], ['W', 'Women'], ['M', 'Men']]} val=${f.divs} on=${v => setF(x => ({...x, divs:v}))}/></div>
-    ${divs.map(d => html`<label class="field"><span class="lbl">${DIV_TAB[d]} budget (€)</span><input class="inp" inputmode="numeric" value=${f[d]} onInput=${set(d)}/></label>`)}
+    <label class="cfield"><span class="flbl">Shop</span><input class="inp" placeholder="e.g. Maison Dubois" value=${f.shop} onInput=${set('shop')} autocomplete="off"/></label>
+    <label class="cfield"><span class="flbl">City</span><input class="inp" placeholder="e.g. Paris" value=${f.city} onInput=${set('city')} autocomplete="off"/></label>
+    <div class="cfield"><span class="flbl">Buying for</span><${Seg} full opts=${[['WM', 'Women + Men'], ['W', 'Women'], ['M', 'Men']]} val=${f.divs} on=${v => setF(x => ({...x, divs:v}))}/></div>
+    ${divs.map(d => html`<label class="cfield"><span class="flbl">${DIV_TAB[d]} budget (€)</span><input class="inp" inputmode="numeric" value=${f[d]} onInput=${set(d)}/></label>`)}
   <//>`;
 }
 
@@ -2626,8 +2623,8 @@ function FinishSheet({sh, S, act}) {
   <//>`;
 }
 
-// a classic field: its label above, a white outlined box under it
-const OField = ({label, ...p}) => html`<label class="cfield"><span class="flbl">${label}</span><input class="oinp" ...${p}/></label>`;
+// a classic field: its label above (14px, black), the grey .inp box under it, as in every form
+const OField = ({label, ...p}) => html`<label class="cfield"><span class="flbl">${label}</span><input class="inp" ...${p}/></label>`;
 
 // Signature pad: finger or mouse, drawn on a canvas
 function SignPad({onSigned}) {
@@ -2662,8 +2659,8 @@ function SignSheet({sh, S, act}) {
       <div class="bud-head"><span>${b.shop}</span><span class="num">${fmt(value)}</span></div>
       <div class="small muted">${sh.divs.map(d => DIV_LABEL[d]).join(' and ')} · ${n} units</div>
     </div>
-    <label class="field"><span class="lbl">Name of the person signing</span><input class="inp" value=${name} onInput=${e => setName(e.target.value)} autocomplete="off"/></label>
-    <div class="field"><span class="lbl">Signature</span><${SignPad} onSigned=${setSigned}/></div>
+    <label class="cfield"><span class="flbl">Full name</span><input class="inp" value=${name} onInput=${e => setName(e.target.value)} autocomplete="off"/></label>
+    <div class="cfield"><span class="flbl">Signature</span><${SignPad} onSigned=${setSigned}/></div>
     <div class="small muted">Quantities are produced exactly as ordered. A copy of the order is sent to ${b.shop}.</div>
   <//>`;
 }
