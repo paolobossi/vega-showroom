@@ -979,10 +979,13 @@ input.qty.xl{width:64px} /* room for three digits */
 .shutter{width:72px;height:72px;border-radius:999px;border:4px solid var(--vf-ink);display:grid;place-items:center}
 .shutter span{width:56px;height:56px;border-radius:999px;background:var(--vf-ink);transition:transform .15s}
 .shutter:active span{transform:scale(.9)}
-.match{position:absolute;left:0;right:0;bottom:0;margin:0 auto;max-width:640px;max-height:86%;overflow-y:auto;z-index:5;background:var(--bg);color:var(--ink);border-radius:var(--r-xl) var(--r-xl) 0 0;padding:16px 18px max(16px,env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px;animation:up .26s cubic-bezier(.2,.8,.2,1)}
-.match-main{display:flex;gap:14px;align-items:center}
-.match-acts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.m-name{font:700 var(--fs-heading)/var(--lh-tight) var(--f-display);letter-spacing:-.02em}
+/* the match is a bottom sheet like Add to order: grab handle, the style's 48px photo left of its name (22px) with code · colour under it,
+   × to retake; the prices as the product page's two grey tiles in a white box with a grey outline; "Not this one?" as a grey heading over a
+   white box of rows (light rules, grey chevrons); View item and Add to order as two pill buttons at the foot */
+.capture .match{color:var(--ink)}
+.match .facts > .pd-hl{padding-bottom:10px}
+.match .grp-in > .row{min-height:68px;background-position:72px 0;background-size:calc(100% - 72px) 1px}.match .grp-in > .row:first-child{background:none} /* the rule starts under the name, not under the photo */
+.match .grp .row-title{white-space:normal}
 .alts{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);overflow:hidden}
 
 /* ---------- buyer view ---------- */
@@ -2430,17 +2433,20 @@ function Capture({order, div, act}) {
     ${stage !== 'match' && html`<div class="vf-bottom">
       <div class="shutter-row"><button class="shutter" onClick=${shoot} disabled=${stage !== 'aim'} aria-label="Take photo"><span></span></button></div>
     </div>`}
-    ${stage === 'match' && html`<div class="match" role="dialog" aria-label=${p.name}>
-      <div class="match-main"><${Thumb} cls="lg" pid=${p.id} colour=${s.colour}/>
-        <div style="min-width:0;display:flex;flex-direction:column;gap:4px"><div class="m-name">${p.name}</div><span class="pc-code">${p.code}</span><span class="small muted"><${Colour} c=${s.colour}/></span><${Prices} p=${p}/></div></div>
-      ${why && html`<div class="callout bad"><${Icon} n="lock" s=${18}/><div>${b.shop} · ${why}, so this style can’t go on the order.</div></div>`}
-      <div class="match-acts"><button class="btn secondary" onClick=${() => view(p.id, s.colour)}>View item</button>
+    ${stage === 'match' && html`<div class="match sheet grouped" role="dialog" aria-label=${p.name}>
+      <div class="sheet-grab"></div>
+      <div class="sheet-head"><div class="sheet-tt"><div class="sheet-thumb"><${Thumb} pid=${p.id} colour=${s.colour}/></div>
+        <div style="min-width:0"><div class="sheet-title">${p.name}</div><div class="sheet-sub">${p.code} · ${cname(s.colour)}</div></div></div>
+        <button class="icon-btn" onClick=${() => setStage('aim')} aria-label="Retake photo"><${Icon} n="x"/></button></div>
+      <div class="sheet-body">
+        <div class="g-box"><div class="facts"><div class="pd-hl"><div><small>Wholesale</small><b class="num">${fmt(p.price)}</b></div><div><small>Retail</small><b class="num">${fmt(p.rrp)}</b></div></div></div></div>
+        ${why && html`<div class="callout bad"><${Icon} n="lock" s=${18}/><div>${b.shop} · ${why}, so this style can’t go on the order.</div></div>`}
+        <section class="grp-sec"><h3 class="grp-h">Not this one?</h3><div class="grp"><div class="grp-in">${alts.map(a => { const c = a.colours.includes(s.colour) ? s.colour : a.colours[0];
+          return html`<button class="row" onClick=${() => pick(a.id, c)}><${Thumb} cls="sm" pid=${a.id} colour=${c}/>
+          <div class="row-main"><div class="row-title">${a.name}</div><div class="row-sub">${a.code}</div></div><div class="row-side"><span class="chev"><${Icon} n="next" s=${18} w=${2}/></span></div></button>`; })}</div></div></section>
+      </div>
+      <div class="sheet-foot"><button class="btn ring" onClick=${() => view(p.id, s.colour)}>View item</button>
         <button class="btn primary" disabled=${!!why} onClick=${() => pick(p.id, s.colour)}>Add to order</button></div>
-      <div class="lbl" style="margin-top:2px">Not this one?</div>
-      <div class="alts">${alts.map((a, i) => html`<button class="row" onClick=${() => pick(a.id, a.colours.includes(s.colour) ? s.colour : a.colours[0])}>
-        <${Thumb} cls="sm" pid=${a.id} colour=${a.colours.includes(s.colour) ? s.colour : a.colours[0]}/>
-        <div class="row-main"><div class="row-title">${a.name}</div><div class="code">${a.code}</div></div></button>`)}</div>
-      <button class="btn ghost block" onClick=${() => setStage('aim')}>Retake photo</button>
     </div>`}
   </div>`;
 }

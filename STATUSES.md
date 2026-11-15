@@ -183,9 +183,10 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 ### 8. Scan (photo match)
 - [ ] 8.1 **Scan** is the middle item of the tab bar, with the four-corner scan icon; it opens the viewfinder on every tab. On the phone the camera picture runs up to the top edge, behind the notch and the status bar: no white strip above it, and Safari's bar turns black while it is open. At the top, centred, just the client in session's name (no Women / Men), or "Scan a sample" with nobody checked in. The Collection has no camera button.
 - [ ] 8.2 Scan → viewfinder with "Frame the sample"; the title is the client and division when one is checked in, "Scan a sample" when nobody is. Shutter → "Finding the style…" → the match (Mini Amazona 180, Sunrise Orange) and alternatives.
-- [ ] 8.3 Under the match, two buttons side by side: **View item** on the left (white) and **Add to order** on the right (black). View item closes the camera and opens the style's product page on the matched colour. With a client checked in, Add to order, or an alternative, closes the camera and the style is in the order.
+- [ ] 8.2b The match comes up as a bottom sheet laid out like Add to order: grab handle, the style's photo (a small squircle) left of its name in 22px bold, "code · colour" under it, × on the right; then Wholesale and Retail as the product page's two grey tiles in a white box with a thin grey outline; then **Not this one?** as a grey heading over a white box of the alternatives (photo, name 17px, code, grey chevron, light rules starting under the names). Same look in light and dark.
+- [ ] 8.3 At the foot of the sheet, two pill buttons side by side: **View item** on the left (white with a grey outline) and **Add to order** on the right (black). View item closes the camera and opens the style's product page on the matched colour. With a client checked in, Add to order, or an alternative, closes the camera and the style is in the order.
 - [ ] 8.3b With nobody checked in: Add to order, or an alternative, closes the camera and opens "Add to order" to pick the client; picking one checks them in and adds the style.
-- [ ] 8.4 Retake photo → back to the viewfinder; × closes the camera.
+- [ ] 8.4 The sheet's × (Retake photo) → back to the viewfinder; the round × top left closes the camera. There is no separate Retake photo link any more.
 
 ### 9. Order page
 - [ ] 9.1 The header shows only the client name (no order code) and a back button.
