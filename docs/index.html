@@ -253,17 +253,15 @@ input{font:inherit;color:inherit}
 .pin-k.txt{background:none;border:0;font-size:var(--fs-body);font-weight:600;color:var(--ink)} /* Cancel and delete in ink, not blue */
 .top-acts{display:flex;align-items:center;gap:10px}.top-acts .round-btn{margin-top:0}
 .field{display:flex;flex-direction:column;gap:6px}
-/* Google-style outlined fields (Finalize order): white, a 1px grey outline, 56px tall, 12px corners; the label is inside the empty field
-   (17px grey) and moves up onto the outline (12px) on focus or once there is text; focus: a 2px black outline */
+/* classic fields (Finalize order): the label above in 14px (sentence case, ink), 6px over a white box with a 1px grey outline, 48px tall,
+   12px corners; focus: a 2px black outline */
 :root{--field-line:color-mix(in srgb,var(--ink) 22%,var(--bg))}
-.ofield{position:relative;display:block}
-.oinp{display:block;width:100%;height:56px;padding:0 16px;border:1px solid var(--field-line);border-radius:12px;background:var(--bg);font:var(--fs-heading) var(--f-ui);color:var(--ink);outline:0}
+.cfield{display:flex;flex-direction:column;gap:6px}
+.flbl{font-size:14px;font-weight:500;line-height:var(--lh-tight);color:var(--ink)}
+.oinp{display:block;width:100%;height:48px;padding:0 14px;border:1px solid var(--field-line);border-radius:12px;background:var(--bg);font:var(--fs-heading) var(--f-ui);color:var(--ink);outline:0}
 .oinp:focus,.oinp:focus-visible{outline:0;border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
-.olbl{position:absolute;left:12px;top:28px;transform:translateY(-50%);padding:0 4px;background:var(--bg);font-size:var(--fs-heading);line-height:1;color:var(--muted);pointer-events:none;transition:top .15s ease,font-size .15s ease,color .15s ease}
-.oinp:focus + .olbl,.oinp:not(:placeholder-shown) + .olbl{top:0;font-size:var(--fs-caption)}
-.oinp:focus + .olbl{color:var(--ink)}
 /* Finalize order: each part under a black 17px heading, 10px above it, like Not this one? */
-.fin-sec{display:flex;flex-direction:column;gap:10px}.fin-sec + .fin-sec,.callout + .fin-sec{margin-top:6px}
+.fin-sec{display:flex;flex-direction:column;gap:10px}.fin-sec > .cfield + .cfield{margin-top:6px}.fin-sec > .cat-h + .cfield{margin-top:4px} /* 16px between the Client fields, 14px under the Client heading */.fin-sec + .fin-sec,.callout + .fin-sec{margin-top:6px}
 .inp.area{height:auto;min-height:104px;padding:12px 14px;font-size:14px;line-height:var(--lh-body);resize:vertical} /* typed text and placeholder 14px, like the Budget and Guidelines rows */
 .days{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;margin:0 -18px 12px;padding:0 18px;scroll-padding:0 18px}
 .days::-webkit-scrollbar{display:none}
@@ -2623,13 +2621,13 @@ function FinishSheet({sh, S, act}) {
           </button>`)}</div></div></section>`}
       <section class="fin-sec"><h2 class="cat-h">Client</h2>
         <${OField} label="Full name" value=${name} onInput=${e => setName(e.target.value)} autocomplete="off"/>
-        <${OField} label="Email" type="email" inputmode="email" autocapitalize="off" value=${email} onInput=${e => setEmail(e.target.value)}/></section>
-      <section class="fin-sec"><h2 class="cat-h">Signature</h2><${SignPad} onSigned=${setSigned}/></section>`}
+        <${OField} label="Email" type="email" inputmode="email" autocapitalize="off" value=${email} onInput=${e => setEmail(e.target.value)}/>
+        <div class="cfield"><span class="flbl">Signature</span><${SignPad} onSigned=${setSigned}/></div></section>`}
   <//>`;
 }
 
-// Google-style outlined field: the label sits inside the empty field and moves up onto the outline when it has focus or text
-const OField = ({label, ...p}) => html`<label class="ofield"><input class="oinp" placeholder=" " ...${p}/><span class="olbl">${label}</span></label>`;
+// a classic field: its label above, a white outlined box under it
+const OField = ({label, ...p}) => html`<label class="cfield"><span class="flbl">${label}</span><input class="oinp" ...${p}/></label>`;
 
 // Signature pad: finger or mouse, drawn on a canvas
 function SignPad({onSigned}) {
