@@ -982,9 +982,9 @@ input.qty.xl{width:64px} /* room for three digits */
 /* the match is a bottom sheet like Add to order: grab handle, the style's 72px photo left of its name (17px) with the colour dot and name under it,
    × closes the camera; "Wholesale €… Retail €…" as plain text under the colour, like the Collection cards; "Not this one?" laid out like In this look; Retake (camera icon) and Add to order as two pill buttons at the foot */
 .capture .match{color:var(--ink)}
-.match .sheet-thumb{width:72px;height:72px;-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}.match .sheet-tt{gap:12px;text-align:left;flex:1}.m-chev{display:inline-flex;vertical-align:-2px;margin-left:4px;color:var(--faint)} /* the style block is a button to its product page: a grey chevron after the name */.match .sheet-title{font-size:var(--fs-heading)} /* the photo as big as the Not this one? photos (72px), the name 17px */
+.match .sheet-thumb{width:72px;height:72px;-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}.match .sheet-tt{gap:12px;text-align:left;flex:1}.m-chev{display:inline-flex;vertical-align:-2px;margin-left:4px;color:var(--faint)} /* the style block is a button to its product page: a grey chevron after the name */.match .sheet-title{font-size:var(--fs-heading)} /* the matched style's photo 72px (bigger than the 52px Not this one? photos), the name 17px */
 .prices.plain{display:flex;gap:14px;margin-top:4px}.prices.plain span{flex-direction:row;align-items:baseline;gap:4px}.prices.plain small{font-weight:400}.prices.plain b{font-size:var(--fs-caption)} /* "Wholesale €1.080  Retail €2.580" as plain 12px text, like the Collection cards */
-.m-alts{display:flex;flex-direction:column;gap:10px}.m-alts .look-rows .thumb{width:52px;height:52px}.m-alts .look-rows > .row{padding-top:8px;padding-bottom:8px}.m-alts .look-rows > .row:first-child{padding-top:8px} /* smaller than the style above: 52px photos, rows about 72px tall */ /* "Not this one?" like In this look: the black 17px heading 10px above a white outlined box of rows (72px photo, name, colour dot and name, grey chevron) */
+.m-alts{display:flex;flex-direction:column;gap:10px} /* "Not this one?" like In this look: the black 17px heading 10px above the same white outlined box of rows */
 .alts{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);overflow:hidden}
 
 /* ---------- buyer view ---------- */
@@ -1117,12 +1117,12 @@ input.qty.xl{width:64px} /* room for three digits */
 /* the look's pieces sit in one white box with a 1px grey outline and squircle corners (.g-box), split by a light rule from 14px in to the right edge; name and price in the Collection card sizes */
 .g-box > .list.look-rows{background:var(--bg);padding:4px 0;border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
 @supports (-webkit-mask-box-image:none){.g-box > .list.look-rows{border-radius:0}}
-.g-box > .look-rows > .row{margin:0;padding:10px 12px 10px 14px;border-top:0;background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 14px 0 / calc(100% - 14px) 1px no-repeat}
-.g-box > .look-rows > .row:first-child{background:none;padding-top:10px}
+.g-box > .look-rows > .row{margin:0;padding:8px 12px 8px 14px;border-top:0;background:linear-gradient(color-mix(in srgb,var(--line) 55%,var(--bg)),color-mix(in srgb,var(--line) 55%,var(--bg))) 14px 0 / calc(100% - 14px) 1px no-repeat}
+.g-box > .look-rows > .row:first-child{background:none;padding-top:8px}
 .look-rows .row-title{font-size:var(--fs-body);font-weight:600;line-height:var(--lh-tight)} /* as the Collection card name */
 .look-rows .row-val{font-size:var(--fs-caption);font-weight:600} /* as the Collection card price */
 .look-rows .row > svg:last-child{color:var(--faint)} /* grey chevron, in light and dark mode */
-.look-rows .thumb{width:72px;height:72px;border-radius:0;-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}
+.look-rows .thumb{width:52px;height:52px;border-radius:0;-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}
 .list.gapped{background:none;border:0;gap:2px}.list.gapped > .row{background:var(--surface);border-top:0}
 /* Collection cards: the photo runs to the card's edges (top and sides), the text keeps its margin; a soft drop shadow lifts the card off the grey page */
 .pc-wrap{display:flex;min-width:0} /* no shadow on the Collection cards */
