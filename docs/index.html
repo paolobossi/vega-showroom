@@ -2149,10 +2149,10 @@ function LeaveAlert({S, sh, act}) {
     </div>`;
 }
 
-function FullPage({title, onClose, onBack, children, foot}) {
+function FullPage({title, onClose, onBack, children, foot, noClose}) {
   return html`<div class="fpage" role="dialog" aria-modal="true" aria-label=${title}>
     <div class="fpage-head">${onBack ? html`<button class="icon-btn" onClick=${onBack} aria-label="Back"><${Icon} n="back"/></button>` : html`<span></span>`}
-      <button class="icon-btn" onClick=${onClose} aria-label="Close"><${Icon} n="x"/></button></div>
+      ${noClose ? html`<span></span>` : html`<button class="icon-btn" onClick=${onClose} aria-label="Close"><${Icon} n="x"/></button>`}</div>
     <div class="fpage-body">${children}</div>
     ${foot && html`<div class="sheet-foot fpage-foot">${foot}</div>`}
   </div>`;
@@ -2579,16 +2579,15 @@ function FinishSheet({sh, S, act}) {
   // where it goes: one choice in the page, one button at the bottom; the commercial team can't be picked while a style has no quantity
   const [to, setTo] = useState('team'), dest = noQty > 0 ? 'client' : to;
   const ok = sel.length > 0 && name.trim() && /^\S+@\S+\.\S+$/.test(email.trim()) && signed;
-  const visit = isOngoing(S.appts[b.id]), shared = open.some(d => partOf(o, d).status === 'shared');
+  const visit = isOngoing(S.appts[b.id]);
   const toTeam = () => { act.send(o.id, sel, 'client', name.trim(), email.trim());
     setDone({title:'Sent to the commercial team', line:`${visit ? b.shop + ' is checked out. ' : ''}A copy is on its way to ${email.trim()}.`}); };
   const toClient = () => { act.share(o.id, sel, name.trim(), email.trim());
     setDone({title:`Sent to ${b.shop}`, line:`The link is on its way to ${email.trim()}.`, client:true}); };
   // Continue ends the visit and goes back to Home, ready for the next client
   const next = () => visit ? act.endVisit(b.id, null) : act.close();
-  if (done) return html`<${FullPage} title=${done.title} onClose=${next}
-    foot=${html`<div class="finish-btns"><button class="btn black" onClick=${next}>Continue</button>
-      ${done.client && html`<button class="btn ghost" onClick=${() => act.role('buyer', o.id)}>Open as the client (demo)</button>`}</div>`}>
+  if (done) return html`<${FullPage} noClose title=${done.title} onClose=${next}
+    foot=${html`<div class="finish-btns"><button class="btn black" onClick=${next}>Continue</button></div>`}>
     <div class="done" role="status"><span class="done-ic"><${Icon} n="check" s=${46} w=${3}/></span>
       <h1 class="h1">${done.title}</h1><p class="muted">${done.line}</p></div>
   <//>`;
@@ -2602,7 +2601,6 @@ function FinishSheet({sh, S, act}) {
     </div>`}>
     <div><h1 class="h1">Finalize order</h1><div class="small muted">${b.shop}</div></div>
     ${!open.length ? html`<div class="callout good"><${Icon} n="check" s=${18}/><div>Everything is sent. The commercial team reviews the order and confirms it for production.</div></div>` : html`
-      ${shared && html`<button class="btn secondary block" onClick=${() => act.role('buyer', o.id)}>Open as the client (demo)</button>`}
       ${b.divs.length > 1 && html`<section class="fin-sec"><h2 class="cat-h">What to send</h2>
         <div class="grp"><div class="grp-in">${b.divs.map(d => { const k = kpi(o, d), st = partOf(o, d).status, can = open.includes(d) && filled(d);
           return html`<button class="row opt" disabled=${!can} aria-pressed=${sel.includes(d)} onClick=${() => toggle(d)}>

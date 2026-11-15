@@ -213,7 +213,7 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 10.2 **Client** holds three fields, each with its label above in 14px (sentence case, black, no uppercase): **Full name**, **Email** and **Signature**. Name and email are grey filled boxes like the client's Notes (light grey fill, thin grey line), with nothing written inside an empty one; while you type the outline is black. Email is filled in with the client's office email, editable. The signature box is grey filled too, with a thin solid line (not dashed), Clear top right, "Sign here" bottom left. 16px between fields, 14px under the Client heading. The other forms (New session, the client signing) use the same labels above grey boxes.
 - [ ] 10.2b **Send to** (after What to send): a white box like the Filters sheet with two choices, one ticked at a time: **Commercial team** ("Closes the order · the client gets a copy") and **Client to finish** ("Stays a draft · the client finishes it by email"). Commercial team is ticked to start. If a style in what is being sent has no quantity, Commercial team is greyed out with "N styles have no quantity" under it and Client to finish is ticked (no separate warning box); untick that division (e.g. Women's at Maison Dubois) or fix the styles and Commercial team can be picked again.
 - [ ] 10.3 At the bottom, one black button that follows the choice: **Send to commercial team** or **Send to client** (no grey lines under it). It stays disabled until a full name, a valid email and a signature are in.
-- [ ] 10.4 Send to commercial team → a screen with a big green check, "Sent to the commercial team", "[Client] is checked out. A copy is on its way to [email]." and **Continue**. The order history says "… sent · copy to [email]".
+- [ ] 10.4 Send to commercial team → a screen with no × at the top (Continue is the only way on), a big green check, "Sent to the commercial team", "[Client] is checked out. A copy is on its way to [email]." and **Continue**. The order history says "… sent · copy to [email]".
 - [ ] 10.5 Continue → checked out, back to Home, no toast; the row shows Sent.
 - [ ] 10.6 Send only Women for a Women + Men client to the commercial team → also checked out and back to Home; the row shows Partly sent.
 - [ ] 10.7 Open that order → banner "Partly sent" with one line "Women signed · Men still a draft"; the tick is centred in its circle; Women lines are read-only, with the note that the women's order has been sent.
@@ -222,9 +222,9 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 10.9 Fully sent order → banner "Sent" with one line "Signed by [name] · [date, time]". A confirmed order → "Confirmed" with "Ready for production". The line under a banner title never repeats the title and never wraps.
 
 ### 11. Sent to the client to finish
-- [ ] 11.1 Finalize order → sign → **Send to client to finish** → green check, "Sent to [client]", "The link is on its way to [email].", Continue and Open as the client (demo). Continue → checked out, back to Home; the row shows With client; the order's banner says "Link sent · 48h left to finish".
-- [ ] 11.2 Open that order → Finalize order → Open as the client (demo) is at the top.
-- [ ] 11.3 Open as the client (demo) → "Your SS27 order" with "Closes in 48h", budgets and mix checks, the lines, Add a style, and Review and sign.
+- [ ] 11.1 Finalize order → Send to: Client to finish → sign → **Send to client** → green check, "Sent to [client]", "The link is on its way to [email]." and only **Continue** at the bottom (no × at the top, no Open as the client). Continue → checked out, back to Home; the row shows With client; the order's banner says "Link sent · 48h left to finish".
+- [ ] 11.2 Open that order → Finalize order → no Open as the client (demo) button.
+- [ ] 11.3 (no way in from the seller app now: the Open as the client (demo) buttons are removed) The client view → "Your SS27 order" with "Closes in 48h", budgets and mix checks, the lines, Add a style, and Review and sign.
 - [ ] 11.4 As the client, change a quantity or add a style → the change shows on the seller's order; in the client view the line is marked as the client's.
 - [ ] 11.5 As the client, Review and sign → the order is sent; the client sees the thank-you note; Back to salesperson returns to the seller app.
 
