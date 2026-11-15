@@ -2443,7 +2443,7 @@ function Capture({order, div, act}) {
         <section class="m-alts"><h2 class="cat-h">Not this one?</h2>
           <div class="g-box"><div class="list look-rows">${alts.map(a => { const c = a.colours.includes(s.colour) ? s.colour : a.colours[0];
           return html`<button class="row" onClick=${() => pick(a.id, c)}><${Thumb} pid=${a.id} colour=${c}/>
-            <div class="row-main"><div class="row-title">${a.name}</div><div class="row-sub"><span class="cc"><span class="sw" style=${{background:COL[c][0]}}></span>${c}</span></div></div>
+            <div class="row-main"><div class="row-title">${a.name}</div><div class="row-sub"><${Colour} c=${c}/></div></div>
             <${Icon} n="next" s=${18}/></button>`; })}</div></div></section>
       </div>
       <div class="sheet-foot"><button class="btn ring" onClick=${() => setStage('aim')}><${Icon} n="camera" s=${20}/>Retake</button>
