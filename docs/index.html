@@ -253,6 +253,17 @@ input{font:inherit;color:inherit}
 .pin-k.txt{background:none;border:0;font-size:var(--fs-body);font-weight:600;color:var(--ink)} /* Cancel and delete in ink, not blue */
 .top-acts{display:flex;align-items:center;gap:10px}.top-acts .round-btn{margin-top:0}
 .field{display:flex;flex-direction:column;gap:6px}
+/* Google-style outlined fields (Finalize order): white, a 1px grey outline, 56px tall, 12px corners; the label is inside the empty field
+   (17px grey) and moves up onto the outline (12px) on focus or once there is text; focus: a 2px black outline */
+:root{--field-line:color-mix(in srgb,var(--ink) 22%,var(--bg))}
+.ofield{position:relative;display:block}
+.oinp{display:block;width:100%;height:56px;padding:0 16px;border:1px solid var(--field-line);border-radius:12px;background:var(--bg);font:var(--fs-heading) var(--f-ui);color:var(--ink);outline:0}
+.oinp:focus,.oinp:focus-visible{outline:0;border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.olbl{position:absolute;left:12px;top:28px;transform:translateY(-50%);padding:0 4px;background:var(--bg);font-size:var(--fs-heading);line-height:1;color:var(--muted);pointer-events:none;transition:top .15s ease,font-size .15s ease,color .15s ease}
+.oinp:focus + .olbl,.oinp:not(:placeholder-shown) + .olbl{top:0;font-size:var(--fs-caption)}
+.oinp:focus + .olbl{color:var(--ink)}
+/* Finalize order: each part under a black 17px heading, 10px above it, like Not this one? */
+.fin-sec{display:flex;flex-direction:column;gap:10px}.fin-sec + .fin-sec,.callout + .fin-sec{margin-top:6px}
 .inp.area{height:auto;min-height:104px;padding:12px 14px;font-size:14px;line-height:var(--lh-body);resize:vertical} /* typed text and placeholder 14px, like the Budget and Guidelines rows */
 .days{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;margin:0 -18px 12px;padding:0 18px;scroll-padding:0 18px}
 .days::-webkit-scrollbar{display:none}
@@ -720,7 +731,7 @@ input{font:inherit;color:inherit}
 .bpill-v{font-size:var(--fs-heading);font-weight:400;letter-spacing:-.01em}.bpill-v b{font-weight:700} /* only the spend is bold; "of €18K" is regular */
 .kpi > .bud-div:first-child{border-top:0;padding-top:0}
 .sign{position:relative}
-.sign-pad{display:block;width:100%;height:170px;border-radius:var(--r-m);border:1.5px dashed var(--line);background:var(--surface);color:var(--ink);touch-action:none;cursor:crosshair}
+.sign-pad{display:block;width:100%;height:170px;border-radius:12px;border:1px solid var(--field-line);background:var(--bg);color:var(--ink);touch-action:none;cursor:crosshair}
 .sign-hint{position:absolute;left:14px;bottom:10px;font-size:var(--fs-caption);color:var(--faint);pointer-events:none}
 .sign-clear{position:absolute;right:12px;top:8px}
 .bud-row.off{color:var(--muted);grid-template-columns:1fr auto;font-size:var(--fs-caption)}
@@ -2598,19 +2609,23 @@ function FinishSheet({sh, S, act}) {
     <div><h1 class="h1">Finalize order</h1><div class="small muted">${b.shop}</div></div>
     ${!open.length ? html`<div class="callout good"><${Icon} n="check" s=${18}/><div>Everything is sent. The commercial team reviews the order and confirms it for production.</div></div>` : html`
       ${shared && html`<button class="btn secondary block" onClick=${() => act.role('buyer', o.id)}>Open as the client (demo)</button>`}
-      ${b.divs.length > 1 && html`<div class="field"><span class="lbl">What to send</span>
-        <div class="list">${b.divs.map(d => { const k = kpi(o, d), st = partOf(o, d).status, can = open.includes(d) && filled(d);
+      ${b.divs.length > 1 && html`<section class="fin-sec"><h2 class="cat-h">What to send</h2>
+        <div class="grp"><div class="grp-in">${b.divs.map(d => { const k = kpi(o, d), st = partOf(o, d).status, can = open.includes(d) && filled(d);
           return html`<button class="row opt" disabled=${!can} aria-pressed=${sel.includes(d)} onClick=${() => toggle(d)}>
             <div class="row-main"><div class="row-title">${DIV_LABEL[d]}</div><div class="row-sub"><${Pill} s=${st}/><span class="num">${k.units} units · ${fmt(k.total)}</span></div></div>
             <div class="row-side">${sel.includes(d) && html`<${Icon} n="check" s=${20} w=${2.4}/>`}</div>
-          </button>`; })}</div></div>`}
+          </button>`; })}</div></div></section>`}
       ${!sel.length && html`<div class="callout warn"><${Icon} n="alert" s=${18}/><div>Add quantities before sending the order.</div></div>`}
       ${noQty > 0 && html`<div class="callout warn"><${Icon} n="alert" s=${18}/><div><b>${noQty} ${noQty === 1 ? 'style has' : 'styles have'} no quantity.</b> Add quantities or remove ${noQty === 1 ? 'it' : 'them'} from the order to send it to the commercial team. You can still send it to the client to finish.</div></div>`}
-      <label class="field"><span class="lbl">Client name</span><input class="inp" value=${name} onInput=${e => setName(e.target.value)} autocomplete="off" placeholder="Name of the person signing"/></label>
-      <label class="field"><span class="lbl">Email</span><input class="inp" type="email" inputmode="email" autocapitalize="off" value=${email} onInput=${e => setEmail(e.target.value)}/></label>
-      <div class="field"><span class="lbl">Signature</span><${SignPad} onSigned=${setSigned}/></div>`}
+      <section class="fin-sec"><h2 class="cat-h">Client</h2>
+        <${OField} label="Name of the person signing" value=${name} onInput=${e => setName(e.target.value)} autocomplete="off"/>
+        <${OField} label="Email" type="email" inputmode="email" autocapitalize="off" value=${email} onInput=${e => setEmail(e.target.value)}/></section>
+      <section class="fin-sec"><h2 class="cat-h">Signature</h2><${SignPad} onSigned=${setSigned}/></section>`}
   <//>`;
 }
+
+// Google-style outlined field: the label sits inside the empty field and moves up onto the outline when it has focus or text
+const OField = ({label, ...p}) => html`<label class="ofield"><input class="oinp" placeholder=" " ...${p}/><span class="olbl">${label}</span></label>`;
 
 // Signature pad: finger or mouse, drawn on a canvas
 function SignPad({onSigned}) {
