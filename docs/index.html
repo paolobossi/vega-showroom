@@ -2581,6 +2581,8 @@ function FinishSheet({sh, S, act}) {
   const noQty = o.lines.filter(l => sel.includes(P[l.pid].div) && !units(l.qty)).length;
   const [name, setName] = useState(''), [email, setEmail] = useState(b.email || `buying@${b.shop.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`);
   const [signed, setSigned] = useState(false), [done, setDone] = useState(null);
+  // where it goes: one choice in the page, one button at the bottom; the commercial team can't be picked while a style has no quantity
+  const [to, setTo] = useState('team'), dest = noQty > 0 ? 'client' : to;
   const ok = sel.length > 0 && name.trim() && /^\S+@\S+\.\S+$/.test(email.trim()) && signed;
   const visit = isOngoing(S.appts[b.id]), shared = open.some(d => partOf(o, d).status === 'shared');
   const toTeam = () => { act.send(o.id, sel, 'client', name.trim(), email.trim());
@@ -2601,10 +2603,7 @@ function FinishSheet({sh, S, act}) {
         <div class="small muted">Nothing left to send: the visit ends and you go back to Home.</div>`
         : html`<button class="btn black" onClick=${act.close}>Close</button>`}</div>`
       : html`<div class="finish-btns">
-      <button class="btn black" disabled=${!ok || noQty > 0} onClick=${toTeam}>Send to commercial team</button>
-      <div class="small muted">The order is closed. The commercial team confirms it for production; the client gets a copy by email.</div>
-      <button class="btn white" disabled=${!ok} onClick=${toClient}>Send to client to finish</button>
-      <div class="small muted">It stays a draft. The client gets an email link to add or change quantities.</div>
+      <button class="btn black" disabled=${!ok} onClick=${dest === 'team' ? toTeam : toClient}>${dest === 'team' ? 'Send to commercial team' : 'Send to client'}</button>
     </div>`}>
     <div><h1 class="h1">Finalize order</h1><div class="small muted">${b.shop}</div></div>
     ${!open.length ? html`<div class="callout good"><${Icon} n="check" s=${18}/><div>Everything is sent. The commercial team reviews the order and confirms it for production.</div></div>` : html`
@@ -2616,7 +2615,12 @@ function FinishSheet({sh, S, act}) {
             <div class="row-side">${sel.includes(d) && html`<${Icon} n="check" s=${20} w=${2.4}/>`}</div>
           </button>`; })}</div></div></section>`}
       ${!sel.length && html`<div class="callout warn"><${Icon} n="alert" s=${18}/><div>Add quantities before sending the order.</div></div>`}
-      ${noQty > 0 && html`<div class="callout warn"><${Icon} n="alert" s=${18}/><div><b>${noQty} ${noQty === 1 ? 'style has' : 'styles have'} no quantity.</b> Add quantities or remove ${noQty === 1 ? 'it' : 'them'} from the order to send it to the commercial team. You can still send it to the client to finish.</div></div>`}
+      ${sel.length > 0 && html`<section class="fin-sec"><h2 class="cat-h">Send to</h2>
+        <div class="grp"><div class="grp-in">${[['team', 'Commercial team', noQty > 0 ? `${noQty} ${noQty === 1 ? 'style has' : 'styles have'} no quantity` : 'Closes the order · the client gets a copy'],
+          ['client', 'Client to finish', 'Stays a draft · the client finishes it by email']].map(([k, t, sub]) => html`<button class="row opt" disabled=${k === 'team' && noQty > 0} aria-pressed=${dest === k} onClick=${() => setTo(k)}>
+            <div class="row-main"><div class="row-title">${t}</div><div class="row-sub">${sub}</div></div>
+            <div class="row-side">${dest === k && html`<${Icon} n="check" s=${20} w=${2.4}/>`}</div>
+          </button>`)}</div></div></section>`}
       <section class="fin-sec"><h2 class="cat-h">Client</h2>
         <${OField} label="Full name" value=${name} onInput=${e => setName(e.target.value)} autocomplete="off"/>
         <${OField} label="Email" type="email" inputmode="email" autocapitalize="off" value=${email} onInput=${e => setEmail(e.target.value)}/></section>
