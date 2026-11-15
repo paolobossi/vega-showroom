@@ -62,7 +62,7 @@ add('Profile', 'history', 'Order history', 'All orders of the seller', async () 
 add('Profile', 'history-draft', 'Order history · Draft', 'Filter Draft', async () => { await act('sheet', {type: 'history'}); await click('Draft', '.sheet button'); });
 add('Profile', 'passcode', 'Set passcode', 'Choose a 4-digit code', async () => { await act('sheet', {type: 'passcode'}); });
 add('Profile', 'passcode-2', 'Set passcode · confirm', 'Enter it again', async () => { await act('sheet', {type: 'passcode'}); await keys('1234'); });
-add('Profile', 'feedback', 'App feedback', 'Note + screenshots for the Vega team', async () => { await act('sheet', {type: 'feedback'}); });
+add('Profile', 'feedback', 'App feedback', 'Title, one box, Send', async () => { await act('sheet', {type: 'feedback'}); });
 
 // 4 Browsing without a client
 add('Browse · no client', 'coll', 'Collection · Women SS27', 'No client: every style', async () => { await act('tab', 'catalogue'); });
@@ -71,7 +71,8 @@ add('Browse · no client', 'coll-pre', 'Collection · SS27 Pre-collection', 'Col
 add('Browse · no client', 'coll-perm', 'Collection · Permanent styles', 'Men, category pill Accessories: Permanent tags', async () => { await act('tab', 'catalogue'); await click('Men', '.div-title button'); await wait(500); await click('Accessories', '.cn-cat'); await wait(500); await settle(); });
 add('Browse · no client', 'coll-cat', 'Collection · Bags', 'Category pill Bags', async () => { await act('tab', 'catalogue'); await click('Bags', '.cn-cat'); await wait(500); await settle(); });
 add('Browse · no client', 'filters', 'Filters', 'Drop, Priority, Material', async () => { await act('tab', 'catalogue'); await act('sheet', {type: 'filter'}); });
-add('Browse · no client', 'coll-filtered', 'Collection · filtered', 'Must have + Leather: chips, black filter icon', async () => { await act('tab', 'catalogue'); await act('set', {catTag: 'must', catMat: 'leather'}); });
+add('Browse · no client', 'coll-filtered', 'Collection · filtered', 'Must have + Leather + Cotton: black Filters button, no chips', async () => { await act('tab', 'catalogue'); await act('set', {catTag: ['must'], catMat: ['leather', 'cotton']}); });
+add('Browse · no client', 'filters-on', 'Filters · several values', 'Leather + Cotton ticked, Clear all / Apply filters', async () => { await act('tab', 'catalogue'); await act('set', {catMat: ['leather', 'cotton']}); await act('sheet', {type: 'filter'}); });
 add('Browse · no client', 'search', 'Search', 'Magnifying glass: recents + suggestions', async () => { await act('tab', 'catalogue'); await act('set', {search: true}); });
 add('Browse · no client', 'search-res', 'Search · results', '“Puzzle”', async () => { await act('tab', 'catalogue'); await act('set', {search: true}); await type('.srch input', 'Puzzle'); await ev(() => document.activeElement.blur()); });
 add('Browse · no client', 'product', 'Product page · no client', 'Add to order asks which client', async () => { await act('sheet', {type: 'product', pid: 'w-amazona-s', colour: 'Mocha'}); });
@@ -84,7 +85,7 @@ add('Browse · no client', 'look', 'Look · no client', 'Pieces of the look, no 
 // 5 Scan
 add('Scan', 'cam-aim', 'Scan · aim', 'No client: “Scan a sample”', async () => { await act('capture', true); });
 add('Scan', 'cam-scan', 'Scan · finding the style', 'After the shutter', async () => { await act('capture', true); await page.evaluate(() => document.querySelector('.shutter').click()); await wait(350); await page.evaluate(() => document.getAnimations().forEach(a => a.pause())); });
-add('Scan', 'cam-match', 'Scan · match, no client', 'View item / Add to order (asks the client)', async () => { await act('capture', true); await click('', '.shutter'); await wait(1500); await settle(); });
+add('Scan', 'cam-match', 'Scan · match, no client', 'Retake / Add to order (asks the client); tap the style for its page', async () => { await act('capture', true); await click('', '.shutter'); await wait(1500); await settle(); });
 add('Scan', 'cam-match-client', 'Scan · match, client in session', 'Maison Dubois · Women’s', async () => { await checkIn('dubois'); await act('capture', true); await click('', '.shutter'); await wait(1500); await settle(); });
 add('Scan', 'cam-match-locked', 'Scan · women’s part already sent', 'Maison Dubois, Women sent: can’t go on the order', async () => { await ev(() => window.__v.act.send('o-dubois', ['W'], 'client', 'Claire Dubois')); await checkIn('dubois'); await act('capture', true); await click('', '.shutter'); await wait(1500); await settle(); });
 
@@ -111,12 +112,13 @@ add('Order · draft', 'order-novisit', 'Order · outside the visit', 'From Home 
 
 // 8 Finish and send
 add('Finish & send', 'finish', 'Finalize order', 'Women + Men, 2 styles without quantity', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('sheet', {type: 'finish', orderId: 'o-dubois'}); });
-add('Finish & send', 'finish-ready', 'Finalize order · signed', 'Men only, name + signature', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('sheet', {type: 'finish', orderId: 'o-dubois'});
-  await click('Women', '.fpage button.row'); await type('.fpage input[placeholder="Name of the person signing"]', 'Claire Dubois'); await sign(); });
+add('Finish & send', 'finish-bottom', 'Finalize order · Send to and Client', 'Scrolled down: Send to, Full name, Email, Signature', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('sheet', {type: 'finish', orderId: 'o-dubois'}); await scrollIn('.fpage-body'); });
+add('Finish & send', 'finish-ready', 'Finalize order · signed', 'Men only: Commercial team, name + signature', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('sheet', {type: 'finish', orderId: 'o-dubois'});
+  await click('Women', '.fpage button.row'); await type('.fpage .cfield input:not([type=email])', 'Claire Dubois'); await sign(); });
 add('Finish & send', 'sent-team', 'Sent to the commercial team', 'Send to commercial team', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('sheet', {type: 'finish', orderId: 'o-dubois'});
-  await click('Women', '.fpage button.row'); await type('.fpage input[placeholder="Name of the person signing"]', 'Claire Dubois'); await sign(); await click('Send to commercial team'); });
-add('Finish & send', 'sent-client', 'Sent to the client', 'Send to client to finish', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('sheet', {type: 'finish', orderId: 'o-dubois'});
-  await type('.fpage input[placeholder="Name of the person signing"]', 'Claire Dubois'); await sign(); await click('Send to client to finish'); });
+  await click('Women', '.fpage button.row'); await type('.fpage .cfield input:not([type=email])', 'Claire Dubois'); await sign(); await click('Send to commercial team'); });
+add('Finish & send', 'sent-client', 'Sent to the client', 'Send to: Client to finish → Send to client', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('sheet', {type: 'finish', orderId: 'o-dubois'});
+  await type('.fpage .cfield input:not([type=email])', 'Claire Dubois'); await sign(); await click('Send to client', '.fpage-foot button'); });
 add('Finish & send', 'all-sent-finish', 'Finalize order · all sent', 'Everything is sent', async () => { await ev(() => window.__v.act.send('o-dubois', ['W', 'M'], 'client', 'Claire Dubois')); await act('openOrder', 'dubois'); await act('sheet', {type: 'finish', orderId: 'o-dubois'}); });
 
 // 9 After sending
