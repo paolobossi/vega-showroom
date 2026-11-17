@@ -1129,6 +1129,9 @@ input.qty.xl{width:64px} /* room for three digits */
 .look-rows .row-val{font-size:var(--fs-caption);font-weight:600} /* as the Collection card price */
 .look-rows .row > svg:last-child{color:var(--faint)} /* grey chevron, in light and dark mode */
 .look-rows .thumb{width:52px;height:52px;border-radius:0;-webkit-mask-box-image:var(--squircle) 20 / var(--r-m) stretch}
+/* a piece already in the order: the green check from the Collection card, on the photo's top right corner */
+.lr-photo{position:relative;flex:none;display:block}
+.look-rows .pc-in{right:4px;top:4px;width:18px;height:18px}
 .list.gapped{background:none;border:0;gap:2px}.list.gapped > .row{background:var(--surface);border-top:0}
 /* Collection cards: the photo runs to the card's edges (top and sides), the text keeps its margin; a soft drop shadow lifts the card off the grey page */
 .pc-wrap{display:flex;min-width:0} /* no shadow on the Collection cards */
@@ -1914,7 +1917,8 @@ function GuidesSheet({sh, S, act}) {
   <//>`;
 }
 
-// Each piece opens its product page (closing it comes back to the look); the button adds every piece not in the order yet
+// Each piece opens its product page (closing it comes back to the look); the button adds every piece not in the order yet;
+// a piece in the order has the green check on its photo, as on the Collection card
 function LookSheet({id, S, ui, act}) {
   const l = LOOKS.find(x => x.id === id);
   const o = activeOrder(S, ui);
@@ -1924,8 +1928,9 @@ function LookSheet({id, S, ui, act}) {
     <div class="pd-head"><h1 class="pd-name">${lookNo(l)}</h1><span class="pc-fam look-sub">${SEASONS[0].short} ${DIV_LABEL[l.div]} Lookbook</span></div>
     <h2 class="cat-h sh-h">In this look</h2>
     <div class="g-box"><div class="list look-rows">${l.items.map(([pid, c]) => { const p = P[pid], why = o && canTake(o, p);
-      return html`<button class="row" onClick=${() => act.sheet({type:'product', pid, colour:c, orderId:o && o.id, back:{type:'look', id:l.id}})}>
-        <${Thumb} pid=${pid} colour=${c}/>
+      const has = o && o.lines.some(x => x.pid === pid && x.colour === c);
+      return html`<button class="row" onClick=${() => act.sheet({type:'product', pid, colour:c, orderId:o && o.id, back:{type:'look', id:l.id}})} aria-label=${p.name + (has ? ', in the order' : '')}>
+        <span class="lr-photo"><${Thumb} pid=${pid} colour=${c}/>${has && html`<span class="pc-in" aria-hidden="true"><${Icon} n="check" s=${11} w=${3}/></span>`}</span>
         <div class="row-main"><div class="row-title">${p.name}</div><div class="row-sub"><${Colour} c=${c}/></div></div>
         ${why && html`<div class="row-side"><span class="lock">${why}</span></div>`}
         <${Icon} n="next" s=${18}/>
@@ -2786,7 +2791,8 @@ function makeActs(setS, setUi, onReset) {
     // the client in session: land in the Collection to add products
     addProducts: () => setUi(u => ({...u, tab:'catalogue', view:null, sheet:null})),
     // add flow from Collection or a lookbook with nobody checked in: check that client in, then add the piece
-    addFor: (bid, item) => { a.checkIn(bid, true); if (item.look) a.selectLook('o-' + bid, LOOKS.find(x => x.id === item.look)); else a.select('o-' + bid, item.pid, item.colour, item.via);
+    // a look: back on the look, its pieces now showing the green check and the button reading Added to order
+    addFor: (bid, item) => { a.checkIn(bid, true); if (item.look) { a.selectLook('o-' + bid, LOOKS.find(x => x.id === item.look), true); a.sheet({type:'look', id:item.look}); } else a.select('o-' + bid, item.pid, item.colour, item.via);
       // from a product page: stay on it, now showing the piece in that client's order
       if (item.ret === 'product') a.sheet({type:'product', pid:item.pid, colour:item.colour}); },
     newBuyer: (b, item, appt, stay) => { BUYERS[b.id] = b; setS(s => ({...s, buyers:{...s.buyers, [b.id]:b}}));
