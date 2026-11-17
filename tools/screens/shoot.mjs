@@ -21,7 +21,9 @@ page.on('pageerror', e => console.log('PAGE ERROR', e.message));
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const settle = async (ms = 500) => { await wait(ms); await page.evaluate(() => document.getAnimations().forEach(a => { try { a.finish(); } catch (e) {} })); await wait(120); };
 const fresh = async () => { await page.goto(APP, {waitUntil: 'networkidle0'}); await page.evaluate(() => { localStorage.clear(); sessionStorage.clear(); });
-  await page.goto(APP, {waitUntil: 'networkidle0'}); await page.waitForFunction(() => window.__v); await settle(300); };
+  await page.goto(APP, {waitUntil: 'networkidle0'}); await page.waitForFunction(() => window.__v);
+  // the app opens at Who's selling? with today not started: sign Roberto in and give Maison Dubois today's order in progress, as the scenarios expect
+  await page.evaluate(() => window.__v.setS(s => ({...s, signedOut: false, orders: {...s.orders, 'o-dubois': demoDubois()}}))); await settle(300); };
 const act = async (name, ...args) => { await page.evaluate((n, a) => window.__v.act[n](...a), name, args); await settle(); };
 const ev = async (fn, ...args) => { const r = await page.evaluate(fn, ...args); await settle(); return r; };
 // click the first visible element matching sel whose text includes txt
@@ -40,13 +42,12 @@ const pastId = async (day, i = 0) => page.evaluate((d, i) => Object.values(BUYER
 const S = []; const add = (flow, id, title, note, run) => S.push({flow, id, title, note, run});
 
 // 1 Sign in
-add('Sign in', 'signin-list', 'Who’s selling?', 'After Sign out: pick a seller', async () => { await act('signOut'); });
-add('Sign in', 'signin-pin', 'Enter code', 'Tap Roberto D.: 4-digit code', async () => { await act('signOut'); await click('Roberto', 'button.row'); });
-add('Sign in', 'signin-wrong', 'Wrong code', 'Passcode set, wrong digits', async () => { await ev(() => window.__v.setS(s => ({...s, pins: {roberto: '1234'}}))); await act('signOut'); await click('Roberto', 'button.row'); await keys('1111'); });
+add('Sign in', 'signin-list', 'Who’s selling?', 'Where the app opens, and after Sign out: pick a seller', async () => { await act('signOut'); });
+add('Sign in', 'signin-pin', 'Enter code', 'Tap Roberto D.: any 4 digits sign in', async () => { await act('signOut'); await click('Roberto', 'button.row'); });
 
 // 2 Home without a client
 add('Home · no client', 'home', 'Home · today', 'Nobody checked in', async () => {});
-add('Home · no client', 'home-past', 'Home · past day', 'Day 1: orders sent / confirmed', async () => { await ev(() => document.querySelectorAll('.day')[0].click()); });
+add('Home · no client', 'home-past', 'Home · past day', 'Day 1 (4 days ago): orders confirmed for production', async () => { await ev(() => document.querySelectorAll('.day')[0].click()); });
 add('Home · no client', 'home-future', 'Home · next day', 'Upcoming appointments', async () => { await ev(() => document.querySelectorAll('.day')[4].click()); });
 add('Home · no client', 'ord-none', 'Order tab · nobody checked in', 'Choose a client button', async () => { await act('tab', 'order'); });
 add('Home · no client', 'ord-pick', 'Choose a client', 'Order tab → Choose a client', async () => { await act('tab', 'order'); await act('sheet', {type: 'pick'}); });

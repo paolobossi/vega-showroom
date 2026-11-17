@@ -90,15 +90,16 @@ Guideline issues never block sending (styles without a quantity do block Send to
 
 ## QA scenarios
 
-Run on an iPhone in portrait unless a step says otherwise. Start each run from fresh demo data: **Reset demo** in the side panel (desktop view), or clear the site data on the phone. Demo data: the seller is Roberto D.; Maison Dubois (Paris, Platinum, Women + Men) has a draft order from this morning but is not checked in; Linea Concept (Gold, Women only), Harbour & Co. (Silver, Men only) and Kanda Select (Diamond, Women + Men) are later today. Each line is: what to do → what should happen.
+Run on an iPhone in portrait unless a step says otherwise. Every new opening of the prototype (a new tab, or a fresh launch of the home-screen app) is fresh demo data; a reload in the same tab keeps the data. Demo data (user testing, the dates follow the real date): the app opens at **Who's selling?** and any 4 digits sign in; today Maison Dubois (Paris, Platinum, Women + Men), Linea Concept (Gold, Women only), Harbour & Co. (Silver, Men only) and Kanda Select (Diamond, Women + Men) have nothing started, no draft or order; the four days before today show one order stage each (2.8). Steps below that start from Maison Dubois' draft order: check Maison Dubois in and add a few styles first. Each line is: what to do → what should happen.
 
 ### 1. Sign in, sign out, passcode
 - [ ] 1.1b The Profile sheet has no "Profile" title and no "Seller · showroom" line: just the avatar and your name with the × on the same line, then, laid out like Select client, Order history, Set passcode and App feedback in one white box with a grey outline and squircle corners, light rules between them (from under the text), each with a plain icon (no grey square behind it) and a grey ›, then Sign out in red in a box of its own.
 - [ ] 1.1 Home → the round avatar with your initials (top right) → Profile sheet → Sign out → the full-screen "Who's selling?" list of sellers shows: no "Vega" above the title, the sellers (avatar, name, grey ›) in one white box with a grey outline and light rules, like Select client.
-- [ ] 1.2 Pick Roberto D. → "Enter Roberto's code" (first name only); the four dots are 14px circles with an even 1px black ring, filled black as you type; Cancel (bottom left) and delete are black, not blue. With no passcode set any 4 digits sign in; toast "Signed in as Roberto D.".
+- [ ] 1.0 Open the prototype (or reload it) → it always opens at the full-screen **Who's selling?** list, never straight on Home. On a computer (900px wide and up) only the phone shows, centred on a white page: no side panel, no explanation, no Portrait / Landscape switch, no Reset demo.
+- [ ] 1.2 Pick Roberto D. → "Enter Roberto's code" (first name only); the four dots are 14px circles with an even 1px black ring, filled black as you type; Cancel (bottom left) and delete are black, not blue. Any 4 digits sign in, passcode set or not (user testing: nobody is locked out); toast "Signed in as Roberto D.".
 - [ ] 1.3 Avatar → Set passcode → enter 4 digits, then the same 4 again → toast "Passcode set"; the row now reads Change passcode.
 - [ ] 1.4 Set passcode with a different second entry → "The codes don't match. Try again."; nothing is saved until both match.
-- [ ] 1.5 Sign out, pick Roberto D., enter a wrong code → "Wrong code. Try again." and the dots clear; the right code signs in.
+- [ ] 1.5 Set a passcode, sign out, pick Roberto D., enter different digits → it signs in anyway (no "Wrong code" while user testing). Set aside: a wrong code refused with "Wrong code. Try again.".
 - [ ] 1.6 Cancel on the PIN pad → back to the list of sellers.
 - [ ] 1.7 Open the app (or reload it) → nobody is checked in: no badge on the Order tab, nothing under Now, even if a client was checked in when the app was closed. That visit shows as checked out; its order is kept.
 - [ ] 1.8 Sign in as Sofia L. → Home shows only Sofia's clients (Atelier Nove, Casa Prisma…) and her initials in the avatar.
@@ -119,7 +120,8 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 2.6 Tap the ongoing client (check one in first) → no check-in time anywhere in the sheet; **Leave** (white, grey border, red text) and **Add products** (black, opens the Collection), each half the width, 46px like every other button.
 - [ ] 2.6b Every appointment whose client has an order shows the order's status on its row (Draft, With client, Sent, Confirmed…), past days included; the ongoing one shows Ongoing.
 - [ ] 2.6c Tap an appointment with an order → the **Order** tile: units and value in grey ("114 units · €75,470"), no status; tap it → the order opens full screen. There is no order history in the sheet. The status is not repeated at the top of the sheet.
-- [ ] 2.7 Tap the Home title → the app reloads; data and the visit are kept.
+- [ ] 2.7 Reload the page → Who's selling? again; after signing in the orders and notes are kept, and nobody is checked in.
+- [ ] 2.8 The past days in the strip (four before today), one order stage each: 4 days ago (Day 1) Studio Aalto, Maison Vert, Odeon Store **Confirmed**; 3 days ago Kiko Room, Northline, Atelier Rue **Sent**; 2 days ago Sable **Partly sent** (Men's sent, Women's still a draft) and Casa Lume **Sent**; yesterday Bloom & Field **With client** (finishing by email) and Arkade **Draft**. Today (Day 5) has no tags: nothing started.
 
 ### 3. Check in, Order tab, check out
 - [ ] 3.1 Check in Maison Dubois, then Linea Concept → no toast; the Collection opens and the Order tab shows a green dot (Linea Concept's order is empty); Maison Dubois is checked out automatically (only one client ongoing at a time).
@@ -237,9 +239,9 @@ Run on an iPhone in portrait unless a step says otherwise. Start each run from f
 - [ ] 12.5 App feedback → just the title "App feedback" (no line under it, no label above the box), the box with "What works, what doesn’t, what’s missing" in grey, and a **Send** button (same type as the client's Notes: 17px text, 15px placeholder); no screenshot attachment for now. Type a note, send → toast "Thanks · feedback sent".
 
 ### 13. General
-- [ ] 13.1 Close and reopen the app (home-screen icon): orders, notes, the client in session and the passcode are kept.
+- [ ] 13.1 Close the app fully and reopen it from the home-screen icon → a fresh demo at Who's selling? (user testing). Set aside: orders, notes, the client in session and the passcode kept across launches.
 - [ ] 13.2 Every bottom sheet closes with × and by tapping the dimmed page behind it.
-- [ ] 13.3 Landscape (iPad or the side panel's Landscape switch): layouts hold, nothing overlaps the tab bar or the floating buttons.
+- [ ] 13.3 Landscape (iPad, or turning the phone): layouts hold, nothing overlaps the tab bar or the floating buttons.
 - [ ] 13.4 Dark mode on the phone: text stays readable; the Must have tag stays black. Collection cards have no lighter band behind the name and prices (the card is the page colour, as in light mode), and black or navy colour dots show by a faint light ring.
 - [ ] 13.5 Nothing sits under the notch or the home indicator; the last card in the Collection scrolls clear of the tab bar.
 - [ ] 13.6 Messages (toasts) slide up from the bottom edge and sit just above it, the same on every screen: just above the tab bar, over a product page and over the order buttons. The exceptions are a quantity change ("Saved · N units", "Added to order · N units") and "Removed from order", which drop in at the top (just under the status bar) so they are seen while the thumb is on the sizes or the order.

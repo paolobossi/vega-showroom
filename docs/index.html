@@ -66,7 +66,7 @@ html{padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) 0 env(s
 body{background:var(--bg);color:var(--ink);font:var(--fs-body)/var(--lh-body) var(--f-ui);-webkit-font-smoothing:antialiased;overscroll-behavior:none}
 /* home-screen app: the status bar is iOS's own, the page colour with dark icons ("default"), and the page starts under it; this strip only shows if the style is ever see-through again */
 html::before{content:"";position:fixed;z-index:100;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:var(--band);pointer-events:none}
-@media (min-width:900px){html,body{background:var(--stage)}}
+@media (min-width:900px){html,body{background:#fff}} /* desktop: the phone alone, centred on white (no side panel) */
 [hidden]{display:none!important}
 #root{height:100%}
 /* no double-tap zoom anywhere; scrolling and pinch still work */
@@ -88,24 +88,15 @@ input{font:inherit;color:inherit}
 .shell{height:100%;display:flex;align-items:center;justify-content:center;gap:48px}
 .device{position:relative;height:100%;width:100%;overflow:hidden;background:var(--bg);display:flex;flex-direction:column}
 .statusbar{display:none}
-.side{display:none}
 @media (min-width:900px){
   .shell{padding:24px}
   .device{height:min(844px,calc(100vh - 48px));width:auto;aspect-ratio:390/844;border-radius:46px;box-shadow:0 0 0 11px var(--frame),0 30px 80px rgba(0,0,0,.28)}
-  .device.landscape{height:auto;width:min(844px,calc(100vw - 440px));aspect-ratio:844/390}
   .device.portrait .statusbar{display:flex;justify-content:space-between;align-items:center;height:44px;padding:0 30px 0 34px;font-weight:600;font-size:var(--fs-body);flex:none;background:var(--bg)}
-  .side{display:flex;flex-direction:column;gap:18px;width:300px;flex:none}
 }
 .sb-r{display:flex;gap:6px;align-items:center}
 .sb-r i{display:block;width:4px;border-radius:var(--r-xs);background:var(--ink)}
 .sb-batt{width:24px;height:11px;border:1.5px solid var(--ink);border-radius:var(--r-xs);padding:2px}
 .sb-batt span{display:block;height:100%;width:70%;background:var(--ink);border-radius:var(--r-xs)}
-.side-brand{font:700 var(--fs-title)/var(--lh-tight) var(--f-display);letter-spacing:-.035em}
-.side-lede{margin:0;color:var(--muted);line-height:var(--lh-body);text-wrap:pretty}
-.steps{margin:0;padding:0 0 0 20px;display:flex;flex-direction:column;gap:8px;line-height:var(--lh-body)}
-.steps li::marker{font:600 var(--fs-caption) var(--f-ui);color:var(--muted)}
-.side-ctrls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.fine{margin:0;font-size:var(--fs-caption);color:var(--muted);line-height:var(--lh-body)}
 .linkbtn{color:var(--accent);font-weight:600;font-size:var(--fs-body);padding:6px 2px}
 
 /* ---------- app frame ---------- */
@@ -1331,12 +1322,12 @@ const BUYERS = {
 };
 // The rest of the showroom campaign: one appointment per client, `day` counted from today (past days are done)
 [
-  ['roberto', 'Studio Aalto', 'Helsinki', 'Silver', 'W', 22000, 0, '10:00', -3], ['roberto', 'Maison Vert', 'Brussels', 'Gold', 'WM', 38000, 18000, '12:00', -3],
-  ['roberto', 'Odeon Store', 'Athens', 'Gold', 'WM', 35000, 15000, '15:30', -3],
-  ['roberto', 'Kiko Room', 'Osaka', 'Platinum', 'WM', 65000, 30000, '09:30', -2], ['roberto', 'Northline', 'Copenhagen', 'Silver', 'M', 0, 18000, '11:30', -2],
-  ['roberto', 'Atelier Rue', 'Geneva', 'Diamond', 'W', 90000, 0, '14:00', -2], ['roberto', 'Sable', 'Dubai', 'Platinum', 'WM', 80000, 40000, '16:30', -2],
-  ['roberto', 'Casa Lume', 'Lisbon', 'Gold', 'W', 30000, 0, '10:30', -1], ['roberto', 'Bloom & Field', 'Sydney', 'Gold', 'WM', 40000, 20000, '13:00', -1],
-  ['roberto', 'Arkade', 'Seoul', 'Diamond', 'WM', 110000, 60000, '16:00', -1],
+  ['roberto', 'Studio Aalto', 'Helsinki', 'Silver', 'W', 22000, 0, '10:00', -4], ['roberto', 'Maison Vert', 'Brussels', 'Gold', 'WM', 38000, 18000, '12:00', -4],
+  ['roberto', 'Odeon Store', 'Athens', 'Gold', 'WM', 35000, 15000, '15:30', -4],
+  ['roberto', 'Kiko Room', 'Osaka', 'Platinum', 'WM', 65000, 30000, '09:30', -3], ['roberto', 'Northline', 'Copenhagen', 'Silver', 'M', 0, 18000, '11:30', -3],
+  ['roberto', 'Atelier Rue', 'Geneva', 'Diamond', 'W', 90000, 0, '14:00', -3],
+  ['roberto', 'Sable', 'Dubai', 'Platinum', 'WM', 80000, 40000, '10:30', -2], ['roberto', 'Casa Lume', 'Lisbon', 'Gold', 'W', 30000, 0, '13:00', -2],
+  ['roberto', 'Bloom & Field', 'Sydney', 'Gold', 'WM', 40000, 20000, '11:00', -1], ['roberto', 'Arkade', 'Seoul', 'Diamond', 'WM', 110000, 60000, '15:00', -1],
   ['roberto', 'Verso', 'Florence', 'Silver', 'W', 20000, 0, '09:30', 1], ['roberto', 'The Edit Room', 'Los Angeles', 'Platinum', 'WM', 75000, 35000, '11:00', 1],
   ['roberto', 'Marchetti', 'Turin', 'Gold', 'M', 0, 22000, '14:30', 1], ['roberto', 'Lune', 'Shanghai', 'Diamond', 'WM', 120000, 55000, '16:30', 1],
   ['roberto', 'Kavala', 'Istanbul', 'Gold', 'W', 36000, 0, '10:00', 2], ['roberto', 'Høst', 'Oslo', 'Silver', 'WM', 18000, 9000, '12:30', 2],
@@ -1354,7 +1345,6 @@ const BUYERS = {
   BUYERS[id] = {id, rep, shop, city, cluster, divs, budget:Object.fromEntries(divs.map(d => [d, d === 'W' ? W : M])), time, day,
     code:(shop.replace(/[^A-Za-z]/g, '').slice(0, 3).toUpperCase()) + String(10 + hash(id) % 90)};
 });
-const BUYER_CAT0 = Object.fromEntries(Object.entries(BUYERS).map(([k, b]) => [k, b.cat]));
 // Budget per category: set in the back office with the client, read-only here; until set, the division budget split by the Maison guideline for the client's cluster.
 // The cluster itself is back-office logic only and never appears on screen.
 const catBudget = (b, d, c) => b.cat && b.cat[d] && b.cat[d][c] != null ? b.cat[d][c] : Math.round((b.budget[d] || 0) * GUIDE[b.cluster][d][c] / 100);
@@ -1485,20 +1475,23 @@ function applyDraft(o, pid, draft, via, by) {
   return msgs.length;
 }
 
-// orders from the visits on past show days: day 1 confirmed for production, day 2 sent, yesterday's still moving
+// orders from the visits on past show days, one stage per day, the oldest furthest along:
+// 4 days ago confirmed for production; 3 days ago sent to the commercial team; 2 days ago men's sent and women's still a draft (Sable), or sent (Casa Lume);
+// yesterday with the client to finish by email (Bloom & Field) or still a draft (Arkade, Lirio)
+const PAST_ST = {'Casa Lume':'submitted', 'Bloom & Field':'shared'};
 function pastOrders() {
-  const byDay = {};
   return Object.fromEntries(Object.values(BUYERS).filter(b => b.day < 0).map(b => {
-    const [h, m] = b.time.split(':').map(Number), at = dayAt(b.day, h + 1, m + 15), n = byDay[b.day] = (byDay[b.day] || 0) + 1;
-    const st = b.day === -3 ? 'confirmed' : b.day === -2 ? 'submitted' : ['shared', 'draft', 'submitted'][(n - 1) % 3];
+    const [h, m] = b.time.split(':').map(Number), at = dayAt(b.day, h + 1, m + 15);
+    const st = PAST_ST[b.shop] || {'-4':'confirmed', '-3':'submitted', '-2':'partial', '-1':'draft'}[b.day];
     const lines = PRODUCTS.filter(p => b.divs.includes(p.div) && available(b, p) && p.season === 'SS27' && hash(b.id + p.id) % 3 === 0).slice(0, 8)
       .map(p => ({id:uid(), pid:p.id, colour:p.colours[hash(p.id + b.id) % p.colours.length], via:'search', by:'salesperson', at,
         qty:p.sizes.length === 1 ? {U:2 + hash(b.id + p.code) % 4} : Object.fromEntries(p.sizes.slice(1, -1).map(z => [z, 1 + hash(z + b.id) % 2]))}));
     const o = {id:'o-' + b.id, buyerId:b.id, status:'draft', submittedBy:null, lines, parts:{},
       log:[{at:dayAt(b.day, h, m + 4), by:'salesperson', text:'Session started in the showroom'}]};
     if (st === 'shared') { b.divs.forEach(d => { o.parts[d] = {status:st, at}; }); o.sharedAt = at; }
+    else if (st === 'partial') { o.parts.M = {status:'submitted', at, by:'client', signer:'Buyer'}; o.submittedBy = 'client'; o.submittedAt = at; }
     else if (st !== 'draft') { b.divs.forEach(d => { o.parts[d] = {status:st, at, by:'client', signer:'Buyer'}; }); o.submittedBy = 'client'; o.submittedAt = at; }
-    if (st !== 'draft') o.log.push({at, by:st === 'shared' ? 'salesperson' : 'client', text:st === 'shared' ? 'Shared with the client · closes in 48h' : 'Signed and sent'});
+    if (st !== 'draft') o.log.push({at, by:st === 'shared' ? 'salesperson' : 'client', text:st === 'shared' ? 'Shared with the client · closes in 48h' : st === 'partial' ? 'Men’s signed and sent' : 'Signed and sent'});
     syncStatus(o);
     return [o.id, o]; }));
 }
@@ -1506,7 +1499,8 @@ function newOrder(bid) {
   return {id:'o-' + bid, buyerId:bid, status:'draft', submittedBy:null, lines:[], log:[{at:Date.now(), by:'salesperson', text:'Session started in the showroom'}]};
 }
 
-function seedState() {
+// Maison Dubois with an order in progress today: no longer in the demo (today starts with nothing), kept for the screen-flow tool (tools/screens)
+function demoDubois() {
   const L = (pid, colour, qty, h, m, via='photo') => ({id:uid(), pid, colour, qty, via, by:'salesperson', at:todayAt(h, m)});
   const lines = [
     L('w-amazona-s','Mocha',{U:3},10,6), L('w-amazona-s','Black',{U:2},10,7,'suggestion'),
@@ -1519,12 +1513,17 @@ function seedState() {
   const o = {id:'o-dubois', buyerId:'dubois', status:'draft', submittedBy:null, lines,
     log:[{at:todayAt(10,2), by:'salesperson', text:'Session started in the showroom'},
       ...lines.map(l => ({at:l.at, by:'salesperson', text: units(l.qty) ? `Added ${P[l.pid].name} · ${cname(l.colour)} ×${units(l.qty)}${l.via === 'photo' ? ' (photo match)' : l.via === 'suggestion' ? ' (suggestion)' : ''}` : `Selected ${P[l.pid].name} · ${cname(l.colour)}`}))]};
-  return {orders:{...pastOrders(), 'o-dubois':o}, rep:'roberto', buyers:{}, appts:pastAppts(), pins:{}, savedAt:null};
+  return o;
 }
-const KEY = 'vega-poc-v2';
+// user testing: every opening starts at Who's selling? with today's clients not started; only the past days have orders
+function seedState() {
+  return {orders:pastOrders(), rep:'roberto', buyers:{}, appts:pastAppts(), pins:{}, savedAt:null, signedOut:true};
+}
+// saved for this tab only (sessionStorage): a reload keeps the test going but goes back to Who's selling?; a new tab or a new launch of the home-screen app starts clean
+const KEY = 'vega-poc-v2', STORE = (() => { try { localStorage.removeItem(KEY); localStorage.removeItem('vega-session'); return sessionStorage; } catch (e) { return null; } })();
 function loadState() {
-  try { const s = JSON.parse(localStorage.getItem(KEY));
-    if (s && s.orders) { s.rep = REPS[s.rep] ? s.rep : 'roberto'; s.buyers = s.buyers || {}; s.appts = s.appts || {}; s.pins = s.pins || {}; delete s.budgets;
+  try { const s = JSON.parse(STORE.getItem(KEY));
+    if (s && s.orders) { s.signedOut = true; s.rep = REPS[s.rep] ? s.rep : 'roberto'; s.buyers = s.buyers || {}; s.appts = s.appts || {}; s.pins = s.pins || {}; delete s.budgets;
       Object.assign(BUYERS, s.buyers); s.appts = {...pastAppts(), ...s.appts}; s.orders = {...pastOrders(), ...s.orders}; oneOngoing(s.appts, '-');
       // older saves: bulk totals not split by size go back to "no quantity yet"
       Object.values(s.orders).forEach(o => o.lines.forEach(l => { if (l.qty && l.qty.ALL) delete l.qty.ALL; }));
@@ -1538,10 +1537,9 @@ function oneOngoing(appts, keep) {
   on.forEach(k => { if (k !== keep) appts[k] = {...appts[k], out:Date.now()}; });
   return appts;
 }
-function saveState(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
+function saveState(s) { try { STORE.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
 const SKEY = 'vega-session';
-const saveSession = id => { try { id ? localStorage.setItem(SKEY, id) : localStorage.removeItem(SKEY); } catch (e) {} };
-function clearState() { saveSession(null); Object.keys(BUYERS).forEach(k => { if (BUYERS[k].added) delete BUYERS[k]; else BUYERS[k].cat = BUYER_CAT0[k]; }); try { localStorage.removeItem(KEY); } catch (e) {} }
+const saveSession = id => { try { id ? STORE.setItem(SKEY, id) : STORE.removeItem(SKEY); } catch (e) {} };
 
 /* ---------- recognition (simulated for the POC) ---------- */
 function alternatives(p) {
@@ -1791,8 +1789,8 @@ function Today({S, ui, act}) {
 // Tapping the Home title reloads the app, so the home-screen version (no browser bar) can pick up a new release.
 // A fresh query string skips the cached page; orders and the session are kept in local storage.
 const reloadApp = () => location.replace(location.pathname + '?r=' + Date.now() + location.hash);
-// a ten-day showroom campaign: three days done, today, six to come
-const DAY_OFFS = [-3, -2, -1, 0, 1, 2, 3, 4, 5, 6];
+// an eleven-day showroom campaign around the real date: four days done (one stage of the order each), today with nothing started, six to come
+const DAY_OFFS = [-4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6];
 const SHOW_DAYS = DAY_OFFS.map(off => { const d = new Date(); d.setDate(d.getDate() + off); return d; });
 const TODAY_IDX = DAY_OFFS.indexOf(0);
 const dayOf = b => b.day || 0;
@@ -2163,7 +2161,8 @@ function FullPage({title, onClose, onBack, children, foot, noClose}) {
   </div>`;
 }
 
-const pinCheck = (S, id) => pin => S.pins[id] && pin !== S.pins[id] ? 'Wrong code. Try again.' : null;
+// user testing: any 4 digits sign in, whatever passcode was set (nobody is locked out)
+const pinCheck = () => () => null;
 
 // after Sign out: the full-screen list of sellers; the one who picks their name enters their code
 function SignIn({S, act}) {
@@ -2706,13 +2705,6 @@ function BuyerView({S, ui, act}) {
 /* =====================================================================
    App shell
    ===================================================================== */
-const GUIDE_STEPS = [
-  'The app opens with nobody checked in. In Home, open a client and tap Check in at the bottom: the Collection opens for that client.',
-  'In the Collection, tap a style to open its page, pick the colour, enter sizes and add it. A check on the photo means it is in the order; Filters choose the collection, drop, priority and material.',
-  'Tap the client bar at the top to open the order: enter sizes line by line, then see Guidelines for mix rules, required looks and drops.',
-  'Tap the send button: the client signs on the phone, or gets a link to review within 48 hours. Women’s and men’s can be sent separately.',
-  'A sent part is read-only here. The commercial team confirms it for production in the back office.',
-];
 
 // Home, Looks, Scan in the middle, Collection, Order. Order carries the client in session: their item count, or a green dot while empty
 function TabBar({tab, so, act}) {
@@ -2745,7 +2737,7 @@ function NoOrder({act}) {
       <button class="btn primary" onClick=${() => act.sheet({type:'pick'})}>Select client</button></div></div>`;
 }
 
-function makeActs(setS, setUi, onReset) {
+function makeActs(setS, setUi) {
   let toastT = 0;
   const a = {
     // (the third argument, a budget bar under the message, is no longer shown: the order page has the bars)
@@ -2801,7 +2793,6 @@ function makeActs(setS, setUi, onReset) {
       const now = [...fullKeys(o)].filter(k => !was.has(k)); if (now.length) JUST_FULL = {keys:now, at:Date.now(), buzzed:false};
       return {...s, orders:{...s.orders, [id]:o}, savedAt:Date.now()}; }),
     role: (r, id) => setUi(u => ({...u, role:r, buyerOrder:id || u.buyerOrder, sheet:null, capture:false})),
-    reset: onReset,
   };
   a.saveDraft = (id, pid, draft, via, by) => a.mut(id, o => applyDraft(o, pid, draft, via, by));
   // selection without quantity: the style-colour joins the order at zero units
@@ -2848,12 +2839,12 @@ function makeActs(setS, setUi, onReset) {
   return a;
 }
 
-function App({onReset}) {
+function App() {
   const [S, setS] = useState(loadState);
   const [ui, setUi] = useState({tab:'calendar', view:null, sheet:null, capture:false, div:'W', role:'sales', toast:null, session:null, catSeason:'SS27', catDrop:null, catTag:null, catMat:null, search:false, recents:['Amazona', 'Puzzle', 'Puffer jacket']});
   useEffect(() => { saveState(S); buzz(); }, [S]);
   useEffect(() => { saveSession(ui.session); }, [ui.session]);
-  const act = useMemo(() => makeActs(setS, setUi, onReset), []);
+  const act = useMemo(() => makeActs(setS, setUi), []);
   const order = ui.view && S.orders[ui.view];
   const sh = ui.sheet;
   const sheet = !sh ? null
@@ -2909,22 +2900,12 @@ function App({onReset}) {
   </div>`;
 }
 
+// desktop shows only the phone, centred on white; on a phone the app fills the screen
 function Shell() {
-  const [orient, setOrient] = useState('portrait');
-  const [k, setK] = useState(0);
-  const reset = () => { clearState(); setK(x => x + 1); };
   return html`<div class="shell">
-    <aside class="side">
-      <div class="side-brand">Vega</div>
-      <p class="side-lede">Showroom order capture for wholesale. A first web mockup of the iOS app: photo match, fast size entry, live guideline checks per client, and a signed record of each order sent.</p>
-      <div class="lbl">Try this</div>
-      <ol class="steps">${GUIDE_STEPS.map(s => html`<li>${s}</li>`)}</ol>
-      <div class="side-ctrls"><${Seg} opts=${[['portrait', 'Portrait'], ['landscape', 'Landscape']]} val=${orient} on=${setOrient}/><button class="linkbtn" onClick=${reset}>Reset demo</button></div>
-      <p class="fine">Prototype. Photo recognition is simulated against a catalogue built from loewe.com: real styles, colours and photos; wholesale prices are indicative. Orders save in this browser only.</p>
-    </aside>
-    <div class=${'device ' + orient}>
+    <div class="device portrait">
       <div class="statusbar"><span>9:41</span><span class="sb-r"><i style="height:5px"></i><i style="height:7px"></i><i style="height:9px"></i><i style="height:11px"></i><span class="sb-batt"><span></span></span></span></div>
-      <${App} key=${k} onReset=${reset}/>
+      <${App}/>
     </div>
   </div>`;
 }
