@@ -80,7 +80,7 @@ add('Browse · no client', 'zoom', 'Photo full screen', 'Tap the photo', async (
 add('Browse · no client', 'pick', 'Add to an order', 'Choose the client', async () => { await act('sheet', {type: 'pick', item: {pid: 'w-amazona-s', colour: 'Mocha', via: 'search'}}); });
 add('Browse · no client', 'newbuyer', 'New session', 'Client without an appointment', async () => { await act('sheet', {type: 'newbuyer', item: {pid: 'w-amazona-s', colour: 'Mocha', via: 'search'}}); });
 add('Browse · no client', 'looks', 'Looks', 'Women first, then Men', async () => { await act('tab', 'today'); });
-add('Browse · no client', 'look', 'Look · no client', 'Pieces of the look, no add button', async () => { await act('sheet', {type: 'look', id: 'L04'}); });
+add('Browse · no client', 'look', 'Look · no client', 'Pieces of the look; Add look to order asks which client', async () => { await act('sheet', {type: 'look', id: 'L04'}); });
 
 // 5 Scan
 add('Scan', 'cam-aim', 'Scan · aim', 'No client: “Scan a sample”', async () => { await act('capture', true); });
@@ -99,7 +99,8 @@ add('Client checked in', 'in-product-one', 'Product page · one size', 'Stepper 
 add('Client checked in', 'in-locked', 'Collection · Men-only client', 'Harbour & Co.: opens on Men, only styles their profile can buy', async () => { await checkIn('harbour'); });
 add('Client checked in', 'in-search', 'Search · client in session', '“Puzzle”: styles the client can buy', async () => { await checkIn('dubois'); await act('set', {search: true}); await type('.srch input', 'Puzzle'); await ev(() => document.activeElement.blur()); });
 add('Client checked in', 'in-looks', 'Looks · client in session', 'Band on top', async () => { await checkIn('dubois'); await act('tab', 'today'); });
-add('Client checked in', 'in-look', 'Look · client in session', 'Add look to basket', async () => { await checkIn('dubois'); await act('sheet', {type: 'look', id: 'L09'}); });
+add('Client checked in', 'in-look', 'Look · client in session', 'Add look to order button', async () => { await checkIn('dubois'); await act('sheet', {type: 'look', id: 'L09'}); });
+add('Client checked in', 'in-look-added', 'Look · added to order', 'After Add look to order: the look stays open, green checks on the pieces, button reads Added to order', async () => { await checkIn('dubois'); await act('sheet', {type: 'look', id: 'L09'}); await click('Add look to order', '.sheet-foot button'); await wait(1300); await settle(); });
 
 // 7 Order (draft)
 add('Order · draft', 'order', 'Order · Women', 'Order tab of the client in session', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); });
