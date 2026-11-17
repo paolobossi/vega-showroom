@@ -6,7 +6,7 @@ The screenshots go on a review page in Claude, **Vega Screen Flows**: https://cl
 
 ## Refresh
 
-1. Start the local server on port 4175 (preview "vega-main", or `python3 -m http.server 4175 --directory docs`).
+1. Start the local server on port 4175 (preview "vega-app", or `python3 -m http.server 4175 --directory docs`).
 2. In `tools/screens`: `npm install` once, then `node shoot.mjs`. One scenario: `node shoot.mjs order` (any id prefix).
 3. The PNGs land in `tools/screens/out/` (not committed), with `manifest.json` (flow, id, title, note).
 4. Review page: `node page.mjs` builds `out/review/` (index.html plus shots/*.webp, about 2 MB); ask Claude to publish that folder to the same Claude page.

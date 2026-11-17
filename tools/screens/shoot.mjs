@@ -1,5 +1,5 @@
 // Screenshots every Vega screen and state at iPhone size (390x844 @2x, light mode) into ./out, plus out/manifest.json.
-// Needs Google Chrome and the local server on port 4175 (preview "vega-main", or: python3 -m http.server 4175 --directory docs).
+// Needs Google Chrome and the local server on port 4175 (preview "vega-app", or: python3 -m http.server 4175 --directory docs).
 // Usage: npm install, then node shoot.mjs (all) or node shoot.mjs <id prefix> (one or a few, e.g. order).
 import puppeteer from 'puppeteer-core';
 import fs from 'fs';
