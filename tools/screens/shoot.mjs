@@ -119,8 +119,8 @@ add('Finish & send', 'finish-ready', 'Finalize order · signed', 'Men only: Comm
   await click('Women', '.fpage button.row'); await type('.fpage .cfield input:not([type=email])', 'Claire Dubois'); await sign(); });
 add('Finish & send', 'sent-team', 'Sent to the commercial team', 'Send to commercial team', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('sheet', {type: 'finish', orderId: 'o-dubois'});
   await click('Women', '.fpage button.row'); await type('.fpage .cfield input:not([type=email])', 'Claire Dubois'); await sign(); await click('Send to commercial team'); });
-add('Finish & send', 'sent-client', 'Shared with the client', 'Share with client to edit on → Share with client: 48h to finish', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('sheet', {type: 'finish', orderId: 'o-dubois'});
-  await click('', '.fpage [role=switch]'); await type('.fpage .cfield input:not([type=email])', 'Claire Dubois'); await sign(); await click('Share with client', '.fpage-foot button'); });
+add('Finish & send', 'sent-client', 'Sent, shared with the client', 'Share with client to edit on → Send to commercial team: 48h to edit', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('sheet', {type: 'finish', orderId: 'o-dubois'});
+  await click('', '.fpage [role=switch]'); await type('.fpage .cfield input:not([type=email])', 'Claire Dubois'); await sign(); await click('Send to commercial team', '.fpage-foot button'); });
 add('Finish & send', 'all-sent-finish', 'Finalize order · all sent', 'Everything is sent', async () => { await ev(() => window.__v.act.send('o-dubois', ['W', 'M'], 'client', 'Claire Dubois')); await act('openOrder', 'dubois'); await act('sheet', {type: 'finish', orderId: 'o-dubois'}); });
 
 // 9 After sending
