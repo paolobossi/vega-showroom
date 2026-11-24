@@ -1130,6 +1130,7 @@ input.qty.xl{width:64px} /* room for three digits */
 .pc-quick-box{position:absolute;z-index:3;left:0;right:0;top:0;aspect-ratio:1;pointer-events:none}
 .pc-quick{position:absolute;right:8px;bottom:8px;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:#fff;color:#141619;box-shadow:0 1px 4px rgba(0,0,0,.18);pointer-events:auto}
 .pc-quick::before{content:"";position:absolute;inset:-6px} /* a 44px target */
+.pc-quick.on{background:var(--good);color:#fff} /* in the order: the same spot turns into the green ✓ (the in-order check, no longer top right on these cards); tap it to take the style out */
 /* only the squircle mask shapes the card: with a border-radius too, Safari (no corner-shape) paints the white bottom with round corners
    while the photo on top follows the mask, so the bottom corners looked rounder on iPhone than the top ones */
 .pc-wrap > .pcard{flex:1;padding:0 0 4px;gap:10px;border:0;background:none;border-radius:0;corner-shape:round;-webkit-mask-box-image:none}
@@ -2008,16 +2009,20 @@ function ProductList({div, q, b, season, onPick}) {
 // Collection card: photo opens the product page; Add at the bottom puts the style in the client's order at zero units and opens its page.
 // Once it is in the order the button reads Edit with the units across all colours, and opens the page again: colours and quantities are set there, never on the card.
 // The whole card opens the product page, where colour and quantities are chosen; a check on the photo means the style is in the order.
-// Quick select: a round + at the photo's bottom right puts the style in the order in the colour shown, with no quantity, without leaving the Collection
-// (nobody checked in: it asks which client first). Once the style is in, the + goes and the green check shows; a style the client can't buy has no +.
+// Quick select, a toggle in one place: the round + at the photo's bottom right puts the style in the order in the colour shown, with no quantity, without leaving
+// the Collection (nobody checked in: it asks which client first); it turns into a green ✓, and tapping the ✓ takes the style out again
+// (straight away while it has no quantities, after a confirm once it has). A style the client can't buy has neither.
 function PCard({p, o, act}) {
   const mine = o && o.lines.find(l => l.pid === p.id), has = !!mine, c = mine ? mine.colour : p.colours[0], lock = o && canTake(o, p);
-  const quick = () => o ? act.select(o.id, p.id, c, 'collection') : act.sheet({type:'pick', item:{pid:p.id, colour:c, via:'collection'}});
+  const lines = has ? o.lines.filter(l => l.pid === p.id) : [], u = lines.reduce((a, l) => a + units(l.qty), 0);
+  const quick = () => !o ? act.sheet({type:'pick', item:{pid:p.id, colour:c, via:'collection'}})
+    : !has ? act.select(o.id, p.id, c, 'collection')
+    : (!u || confirm(`Take ${p.name} out of the order? Its ${u} ${u === 1 ? 'unit goes' : 'units go'} too.`)) && act.unselect(o.id, p.id);
   // the wrapper carries the drop shadow: the card's squircle mask would clip a shadow on the card itself
-  return html`<div class="pc-wrap">${!has && !lock && html`<span class="pc-quick-box"><button class="pc-quick" onClick=${quick} aria-label=${'Add ' + p.name + ' to the order'}><${Icon} n="plus" s=${18} w=${2.4}/></button></span>`}<button class=${'pcard' + (lock ? ' locked' : '')} onClick=${() => act.sheet({type:'product', pid:p.id, colour:c})} aria-label=${p.name + (has ? ', in the order' : '')}>
+  return html`<div class="pc-wrap">${!lock && html`<span class="pc-quick-box"><button class=${'pc-quick' + (has ? ' on' : '')} onClick=${quick} aria-pressed=${has} aria-label=${has ? p.name + ', in the order: take it out' : 'Add ' + p.name + ' to the order'}><${Icon} n=${has ? 'check' : 'plus'} s=${has ? 16 : 18} w=${has ? 3 : 2.4}/></button></span>`}<button class=${'pcard' + (lock ? ' locked' : '')} onClick=${() => act.sheet({type:'product', pid:p.id, colour:c})} aria-label=${p.name + (has ? ', in the order' : '')}>
     <div class="pc-photo">
       <span class="pc-img"><${Thumb} pid=${p.id} colour=${c}/></span>
-      ${has && html`<span class="pc-in" aria-hidden="true"><${Icon} n="check" s=${13} w=${3}/></span>`}
+      ${has && lock && html`<span class="pc-in" aria-hidden="true"><${Icon} n="check" s=${13} w=${3}/></span>`}
     </div>
     <span class="pc-info">
       <${TagLine} p=${p} perm=${false}/>
