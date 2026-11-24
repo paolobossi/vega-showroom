@@ -114,13 +114,11 @@ add('Order · draft', 'order-novisit', 'Order · outside the visit', 'From Home 
 
 // 8 Finish and send
 add('Finish & send', 'finish', 'Finalize order', 'Women + Men, 2 styles without quantity', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('sheet', {type: 'finish', orderId: 'o-dubois'}); });
-add('Finish & send', 'finish-bottom', 'Finalize order · Send to and Client', 'Scrolled down: Send to, Full name, Email, Signature', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('sheet', {type: 'finish', orderId: 'o-dubois'}); await scrollIn('.fpage-body'); });
+add('Finish & send', 'finish-bottom', 'Finalize order · Client and copy', 'Scrolled down: Full name, Signature, the copy switch and Email', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('sheet', {type: 'finish', orderId: 'o-dubois'}); await scrollIn('.fpage-body'); });
 add('Finish & send', 'finish-ready', 'Finalize order · signed', 'Men only: Commercial team, name + signature', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('sheet', {type: 'finish', orderId: 'o-dubois'});
   await click('Women', '.fpage button.row'); await type('.fpage .cfield input:not([type=email])', 'Claire Dubois'); await sign(); });
 add('Finish & send', 'sent-team', 'Sent to the commercial team', 'Send to commercial team', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('sheet', {type: 'finish', orderId: 'o-dubois'});
   await click('Women', '.fpage button.row'); await type('.fpage .cfield input:not([type=email])', 'Claire Dubois'); await sign(); await click('Send to commercial team'); });
-add('Finish & send', 'sent-client', 'Sent to the client', 'Send to: Client to finish → Send to client', async () => { await checkIn('dubois'); await act('openOrder', 'dubois'); await act('sheet', {type: 'finish', orderId: 'o-dubois'});
-  await type('.fpage .cfield input:not([type=email])', 'Claire Dubois'); await sign(); await click('Send to client', '.fpage-foot button'); });
 add('Finish & send', 'all-sent-finish', 'Finalize order · all sent', 'Everything is sent', async () => { await ev(() => window.__v.act.send('o-dubois', ['W', 'M'], 'client', 'Claire Dubois')); await act('openOrder', 'dubois'); await act('sheet', {type: 'finish', orderId: 'o-dubois'}); });
 
 // 9 After sending

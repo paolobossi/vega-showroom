@@ -249,6 +249,10 @@ input{font:inherit;color:inherit}
 .cfield{display:flex;flex-direction:column;gap:6px}
 .flbl{font-size:14px;font-weight:500;line-height:var(--lh-tight);color:var(--ink)}
 /* Finalize order: each part under a black 17px heading, 10px above it, like Not this one? */
+.tgl{flex:none;position:relative;width:51px;height:31px;border-radius:999px;background:color-mix(in srgb,var(--ink) 16%,transparent);transition:background .2s}
+.tgl::after{content:"";position:absolute;left:2px;top:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.2);transition:transform .2s}
+.tgl.on{background:var(--good)}.tgl.on::after{transform:translateX(20px)} /* an iOS switch: green when on */
+.fin-sec > .grp + .cfield{margin-top:6px}
 .fin-sec{display:flex;flex-direction:column;gap:10px}.fin-sec > .cfield + .cfield{margin-top:6px}.fin-sec > .cat-h + .cfield{margin-top:4px} /* 16px between the Client fields, 14px under the Client heading */.fin-sec + .fin-sec,.callout + .fin-sec{margin-top:6px}
 .inp.area{height:auto;min-height:104px;padding:12px 14px;font-size:14px;line-height:var(--lh-body);resize:vertical} /* typed text and placeholder 14px, like the Budget and Guidelines rows */
 .days{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;margin:0 -18px 12px;padding:0 18px;scroll-padding:0 18px}
@@ -1482,8 +1486,8 @@ function applyDraft(o, pid, draft, via, by) {
 
 // orders from the visits on past show days, one stage per day, the oldest furthest along:
 // 4 days ago confirmed for production; 3 days ago sent to the commercial team; 2 days ago men's sent and women's still a draft (Sable), or sent (Casa Lume);
-// yesterday with the client to finish by email (Bloom & Field) or still a draft (Arkade, Lirio)
-const PAST_ST = {'Casa Lume':'submitted', 'Bloom & Field':'shared'};
+// yesterday sent (Bloom & Field) or still a draft (Arkade, Lirio); nothing is with the client any more (no Client to finish)
+const PAST_ST = {'Casa Lume':'submitted', 'Bloom & Field':'submitted'};
 function pastOrders() {
   return Object.fromEntries(Object.values(BUYERS).filter(b => b.day < 0).map(b => {
     const [h, m] = b.time.split(':').map(Number), at = dayAt(b.day, h + 1, m + 15);
@@ -2581,8 +2585,9 @@ function issuesOf(o, divs) {
   return out;
 }
 
-// Finishing the visit: the client always signs, then the seller sends the order to the commercial team (closed, waiting for
-// confirmation, with a copy to the client; not while a style has no quantity) or back to the client to finish from an email link (still a draft). Women's and men's can go together or one at a time.
+// Finishing the visit: the client signs and the order always goes to the commercial team (closed, waiting for confirmation; not while a style has no quantity).
+// One switch decides whether the client also gets a copy by email (on to start; the Email field shows only then). Women's and men's can go together or one at a time.
+// Set aside: a Send to choice between the commercial team and the client finishing from an email link.
 function FinishSheet({sh, S, act}) {
   const o = S.orders[sh.orderId], b = BUYERS[o.buyerId];
   const open = b.divs.filter(d => !partLocked(o, d)), filled = d => kpi(o, d).units > 0;
@@ -2592,14 +2597,12 @@ function FinishSheet({sh, S, act}) {
   const noQty = o.lines.filter(l => sel.includes(P[l.pid].div) && !units(l.qty)).length;
   const [name, setName] = useState(''), [email, setEmail] = useState(b.email || `buying@${b.shop.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`);
   const [signed, setSigned] = useState(false), [done, setDone] = useState(null);
-  // where it goes: one choice in the page, one button at the bottom; the commercial team can't be picked while a style has no quantity
-  const [to, setTo] = useState('team'), dest = noQty > 0 ? 'client' : to;
-  const ok = sel.length > 0 && name.trim() && /^\S+@\S+\.\S+$/.test(email.trim()) && signed;
+  // always to the commercial team; the switch only says whether the client gets a copy
+  const [copy, setCopy] = useState(true);
+  const ok = sel.length > 0 && !noQty && name.trim() && (!copy || /^\S+@\S+\.\S+$/.test(email.trim())) && signed;
   const visit = isOngoing(S.appts[b.id]);
-  const toTeam = () => { act.send(o.id, sel, 'client', name.trim(), email.trim());
-    setDone({title:'Sent to the commercial team', line:`${visit ? b.shop + ' is checked out. ' : ''}A copy is on its way to ${email.trim()}.`}); };
-  const toClient = () => { act.share(o.id, sel, name.trim(), email.trim());
-    setDone({title:`Sent to ${b.shop}`, line:`The link is on its way to ${email.trim()}.`, client:true}); };
+  const toTeam = () => { act.send(o.id, sel, 'client', name.trim(), copy ? email.trim() : null);
+    setDone({title:'Sent to the commercial team', line:[visit && `${b.shop} is checked out.`, copy ? `A copy is on its way to ${email.trim()}.` : 'No copy to the client.'].filter(Boolean).join(' ')}); };
   // Continue ends the visit and goes back to Home, ready for the next client
   const next = () => visit ? act.endVisit(b.id, null) : act.close();
   if (done) return html`<${FullPage} noClose title=${done.title} onClose=${next}
@@ -2613,7 +2616,7 @@ function FinishSheet({sh, S, act}) {
         <div class="small muted">Nothing left to send: the visit ends and you go back to Home.</div>`
         : html`<button class="btn black" onClick=${act.close}>Close</button>`}</div>`
       : html`<div class="finish-btns">
-      <button class="btn black" disabled=${!ok} onClick=${dest === 'team' ? toTeam : toClient}>${dest === 'team' ? 'Send to commercial team' : 'Send to client'}</button>
+      <button class="btn black" disabled=${!ok} onClick=${toTeam}>Send to commercial team</button>
     </div>`}>
     <div><h1 class="h1">Finalize order</h1><div class="small muted">${b.shop}</div></div>
     ${!open.length ? html`<div class="callout good"><${Icon} n="check" s=${18}/><div>Everything is sent. The commercial team reviews the order and confirms it for production.</div></div>` : html`
@@ -2624,16 +2627,16 @@ function FinishSheet({sh, S, act}) {
             <div class="row-side">${sel.includes(d) && html`<${Icon} n="check" s=${20} w=${2.4}/>`}</div>
           </button>`; })}</div></div></section>`}
       ${!sel.length && html`<div class="callout warn"><${Icon} n="alert" s=${18}/><div>Add quantities before sending the order.</div></div>`}
-      ${sel.length > 0 && html`<section class="fin-sec"><h2 class="cat-h">Send to</h2>
-        <div class="grp"><div class="grp-in">${[['team', 'Commercial team', noQty > 0 ? `${noQty} ${noQty === 1 ? 'style has' : 'styles have'} no quantity` : 'Closes the order · the client gets a copy'],
-          ['client', 'Client to finish', 'Stays a draft · the client finishes it by email']].map(([k, t, sub]) => html`<button class="row opt" disabled=${k === 'team' && noQty > 0} aria-pressed=${dest === k} onClick=${() => setTo(k)}>
-            <div class="row-main"><div class="row-title">${t}</div><div class="row-sub">${sub}</div></div>
-            <div class="row-side">${dest === k && html`<${Icon} n="check" s=${20} w=${2.4}/>`}</div>
-          </button>`)}</div></div></section>`}
+      ${noQty > 0 && html`<div class="callout warn"><${Icon} n="alert" s=${18}/><div>${noQty} ${noQty === 1 ? 'style has' : 'styles have'} no quantity. Add quantities or take ${noQty === 1 ? 'it' : 'them'} out of the order before sending.</div></div>`}
       <section class="fin-sec"><h2 class="cat-h">Client</h2>
         <${OField} label="Full name" value=${name} onInput=${e => setName(e.target.value)} autocomplete="off"/>
-        <${OField} label="Email" type="email" inputmode="email" autocapitalize="off" value=${email} onInput=${e => setEmail(e.target.value)}/>
-        <div class="cfield"><span class="flbl">Signature</span><${SignPad} onSigned=${setSigned}/></div></section>`}
+        <div class="cfield"><span class="flbl">Signature</span><${SignPad} onSigned=${setSigned}/></div></section>
+      <section class="fin-sec"><h2 class="cat-h">Copy to the client</h2>
+        <div class="grp"><div class="grp-in"><button class="row" role="switch" aria-checked=${copy} onClick=${() => setCopy(c => !c)}>
+          <div class="row-main"><div class="row-title">Email a copy of the order</div><div class="row-sub">The commercial team gets it either way</div></div>
+          <span class=${'tgl' + (copy ? ' on' : '')} aria-hidden="true"></span>
+        </button></div></div>
+        ${copy && html`<${OField} label="Email" type="email" inputmode="email" autocapitalize="off" value=${email} onInput=${e => setEmail(e.target.value)}/>`}</section>`}
   <//>`;
 }
 
