@@ -913,6 +913,11 @@ input.qty.xl{width:64px} /* room for three digits */
 /* product facts: grey label on the left, value on the right, one size throughout */
 /* product facts: styled like the Budget box: a white list inside a 1px grey outline (.g-box), 22px squircle corners, 14px regular text,
    no rules, rows 10px apart with 12px above the first and below the last */
+.bnotes{display:flex;flex-direction:column;gap:10px;padding:12px 14px 14px;background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
+@supports (-webkit-mask-box-image:none){.bnotes{border-radius:0}}
+.bn-h{display:flex;align-items:center;gap:6px;font-size:var(--fs-body);font-weight:600}
+.bn-row span{display:block;font-size:var(--fs-caption);color:var(--muted);margin-bottom:2px}
+.bn-row p{margin:0;font-size:14px;line-height:var(--lh-body)} /* brand notes: a grey label (Sizing, Conformity) over the note itself */
 .facts{display:flex;flex-direction:column;background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
 @supports (-webkit-mask-box-image:none){.facts{border-radius:0}}
 .facts > div{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:5px 14px;font-size:14px;font-weight:400;line-height:var(--lh-body)}
@@ -1309,6 +1314,27 @@ const DIMS = {'w-amazona-s':[28, 20, 13], 'w-amazona-mini':[21, 15, 10], 'w-puzz
   'w-flamenco':[22, 14, 9], 'w-bilbao':[25, 26, 14], 'w-whisker':[26, 18, 9], 'm-puzzle-l':[36, 25, 18], 'm-puzzle-sling':[25, 16, 9], 'm-squad':[30, 44, 14], 'm-pebble':[32, 34, 18]};
 const HEEL = {'w-pebble-lace':2.5, 'w-oval-loafer':3, 'w-toy':9, 'w-dive':1, 'm-ballet':3, 'm-pogo':3.5, 'm-grip':4};
 const cm = n => String(n).replace('.', ',') + ' cm';
+// Brand notes from the back office, under each product: how it fits (sizing) and what is normal for the piece (conformity), so sellers can answer buyers
+const FIT = {'w-shirt-dress':'Relaxed fit: take your usual size.', 'w-viscose-dress':'Fitted at the waist: between two sizes, take the larger one.',
+  'w-puffer':'Oversized: one size down for a closer fit.', 'w-short-coat':'True to size, with room for a knit underneath.', 'w-balloon':'True to size.',
+  'w-cord':'High waist, long leg: the hem can be taken up.', 'w-pebble-lace':'True to size.', 'w-oval-loafer':'Runs small: half a size up.',
+  'w-toy':'True to size, narrow fit.', 'w-dive':'Runs large: half a size down.', 'w-beanie':'One size, stretches to fit.', 'm-tee':'Relaxed fit: take your usual size.',
+  'm-sweater':'Runs small: one size up.', 'm-shirt':'Regular fit, true to size.', 'm-cord':'Straight leg, true to size.', 'm-puffer':'Oversized: one size down for a closer fit.',
+  'm-ballet':'True to size.', 'm-pogo':'Runs large: one size down.', 'm-grip':'True to size.', 'm-belt':'Sized in cm at the middle hole.', 'm-cap':'One size, adjustable strap at the back.'};
+const CONFORM = {'w-flamenco':'Soft nappa: the knot sits a little differently on each piece.', 'm-squad':'Recycled nylon: a light sheen on the fabric is normal.',
+  'w-scarf':'Fringe length can vary by up to 1 cm.', 'w-sun':'Category 3 lenses: not for driving at night.', 'w-strap':'Fits the Amazona, Puzzle and Hammock bags.',
+  'w-cord':'Corduroy pile can look lighter or darker depending on the light.', 'm-cord':'Corduroy pile can look lighter or darker depending on the light.',
+  'w-shirt-dress':'Garment-washed: slight shade differences between pieces are normal.'};
+const CONFORM_CAT = {bags:'Natural calfskin: light grain marks and small colour variations are normal, not defects.',
+  shoes:'Finished by hand: slight differences between the two shoes of a pair are normal.', rtw:'Measurements can vary by ±1 cm, as checked at quality control.',
+  acc:'Natural materials: small variations from piece to piece are normal.'};
+PRODUCTS.forEach(p => { p.fit = FIT[p.id] || null; p.conform = CONFORM[p.id] || CONFORM_CAT[p.cat]; });
+// the brand's notes as a box of their own on the product page, under the order part and above the details
+const BrandNotes = ({p}) => (p.fit || p.conform) && html`<div class="g-box"><div class="bnotes">
+  <div class="bn-h"><${Icon} n="msg" s=${16} w=${2}/>From the brand</div>
+  ${p.fit && html`<div class="bn-row"><span>Sizing</span><p>${p.fit}</p></div>`}
+  ${p.conform && html`<div class="bn-row"><span>Conformity</span><p>${p.conform}</p></div>`}
+</div></div>`;
 PRODUCTS.forEach(p => { if (DIMS[p.id]) p.dims = DIMS[p.id]; if (HEEL[p.id] != null) p.heel = HEEL[p.id]; });
 // Material filter: a style matches when its composition names the material (polyamide counts as nylon)
 const MATS = [[null, 'All materials'], ['leather', 'Leather'], ['cotton', 'Cotton'], ['wool', 'Wool'], ['cashmere', 'Cashmere'], ['silk', 'Silk & viscose'], ['nylon', 'Nylon']];
@@ -2362,6 +2388,7 @@ function ProductSheet({pid, colour, orderId, back, S, ui, act}) {
       : line ? html`<button class="btn outline danger" onClick=${() => act.unselect(o.id, pid, c)}>Remove from order</button>`
       : null}</div>
     ${o && b && b.divs.includes(p.div) && html`<div class="g-box pd-bud"><div class="bud-card">${bcRow(b, p.div, p.cat, CAT_LABEL[p.cat], kpi(o, p.div).mix.find(x => x.cat === p.cat).value, catBudget(b, p.div, p.cat))}</div></div>`}
+    <${BrandNotes} p=${p}/>
     <div class="g-box"><div class="facts">
       <div class="pd-hl"><div><small>Wholesale</small><b class="num">${fmt(p.price)}</b></div><div><small>Retail</small><b class="num">${fmt(p.rrp)}</b></div></div>
       <div><span>Code</span><span>${p.code}</span></div>
