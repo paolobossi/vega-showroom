@@ -277,3 +277,6 @@ Run on an iPhone in portrait unless a step says otherwise. Every new opening of 
 - Must have on looks (ask Roberto): should looks carry the Must have tag too, set from the guidelines (e.g. the required looks)?
 - Mix rules to review with the maison: the men's Puzzle cap counts the Puzzle wallet and cardholder as well as the bags; and the mix rules are the same for every cluster (only the budget split changes by cluster).
 - Home layout: whether the calendar also gets a timeline view (all days in one scrolling list) instead of, or as a switch next to, the day-by-day view.
+- Linesheets (back office, not in the app): export the linesheet to Excel, and upload a filled-in sheet with sizes so the order lands in the system already linked to its client.
+- The 48h share with the client: in the real app the server closes the order for the commercial team when the time is up (the mockup checks only when the app opens).
+- Brand notes (sizing, conformity), bag measurements and heel heights come from the back office; the mockup's values are placeholders.
