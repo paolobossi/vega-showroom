@@ -549,6 +549,7 @@ input{font:inherit;color:inherit}
 .pd-head .ptxt{font-size:var(--fs-body);margin-bottom:-2px}
 .ptag.ess,.ptag.perm,.ptag.sig,.ptag.classic{background:#fff;color:#141619}
 .pd-media{position:relative}
+.pd-quick{z-index:3;right:14px;bottom:14px;width:36px;height:36px} /* the card's quick select on the product photo, a little bigger, clear of the photo dots in the middle */
 .pd-media .ptags{left:0;top:auto;bottom:14px}.pd-media .ptag{font-size:var(--fs-caption);height:22px;padding:0 9px}
 .pc-lock{background:var(--surface);color:var(--warn);border:1px solid var(--line)}
 .pc-info{display:flex;flex-direction:column;gap:8px;text-align:left;padding:2px 2px 6px;min-width:0}
@@ -2349,13 +2350,17 @@ function ProductSheet({pid, colour, orderId, back, S, ui, act}) {
   const last = sized && ui.lastScale && ui.lastScale[skey], same = last && qkey(last) === qkey(clean(q));
   const copy = () => { act.set({lastScale: {...ui.lastScale, [skey]: clean(q)}}); act.toast('Scale copied', true); }; // from the top, like the quantity messages
   const edit = o && !why;
+  // quick select, as on the Collection card: the round + on the photo puts the colour shown in the order with no quantity; its green ✓ takes that colour out again
+  const quick = () => !o ? pick() : !line ? act.select(o.id, pid, c, 'search')
+    : (!u || confirm(`Take ${p.name} · ${c} out of the order? Its ${u} ${u === 1 ? 'unit goes' : 'units go'} too.`)) && act.unselect(o.id, pid, c);
   const val = n => `${n} ${n === 1 ? 'unit' : 'units'}`;
   // tap the number to type it on the number pad (up to 999); + and − still step by one
   const num = (sz, cls = '') => html`<input class=${'qty num ' + cls + (q[sz] ? '' : ' zero')} inputmode="numeric" pattern="[0-9]*" enterkeyhint="done" value=${q[sz] || 0}
     aria-label=${sz === 'U' ? 'Quantity' : 'Quantity, size ' + sz} onFocus=${e => e.target.select()} onKeyDown=${e => e.key === 'Enter' && e.target.blur()}
     onInput=${e => setQty(sz, Math.min(999, parseInt(e.target.value.replace(/\D/g, ''), 10) || 0))}/>`;
   return html`<${Sheet} tall title=${p.name} onClose=${close}
-    media=${html`<div class="pd-media"><${Carousel} p=${p} colour=${c} at=${ui.photoAt} onOpen=${i => act.set({zoom:{pid, colour:c, i}})}/></div>`}>
+    media=${html`<div class="pd-media"><${Carousel} p=${p} colour=${c} at=${ui.photoAt} onOpen=${i => act.set({zoom:{pid, colour:c, i}})}/>
+      ${!why && html`<button class=${'pc-quick pd-quick' + (line ? ' on' : '')} onClick=${quick} aria-pressed=${!!line} aria-label=${line ? `${p.name} · ${c}, in the order: take it out` : `Add ${p.name} · ${c} to the order`}><${Icon} n=${line ? 'check' : 'plus'} s=${line ? 18 : 20} w=${line ? 3 : 2.4}/></button>`}</div>`}>
     <div class="pd-head"><${TagLine} p=${p}/><h1 class="pd-name">${p.name}</h1></div>
     <div class="colours" ref=${colBox}>${p.colours.map(x => html`<button class=${'colour' + (x === c ? ' on' : '')} onClick=${() => setC(x)}>${chip(x)}</button>`)}
       <span class="slide-ind" ref=${colInd} aria-hidden="true"><span class="slide-copy">${p.colours.map(x => html`<button class="colour" tabindex="-1">${chip(x)}</button>`)}</span></span></div>
