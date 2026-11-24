@@ -1486,8 +1486,8 @@ function applyDraft(o, pid, draft, via, by) {
 
 // orders from the visits on past show days, one stage per day, the oldest furthest along:
 // 4 days ago confirmed for production; 3 days ago sent to the commercial team; 2 days ago men's sent and women's still a draft (Sable), or sent (Casa Lume);
-// yesterday sent (Bloom & Field) or still a draft (Arkade, Lirio); nothing is with the client any more (no Client to finish)
-const PAST_ST = {'Casa Lume':'submitted', 'Bloom & Field':'submitted'};
+// yesterday shared with the client to edit, the 48h counting down (Bloom & Field), or still a draft (Arkade, Lirio)
+const PAST_ST = {'Casa Lume':'submitted', 'Bloom & Field':'shared'};
 function pastOrders() {
   return Object.fromEntries(Object.values(BUYERS).filter(b => b.day < 0).map(b => {
     const [h, m] = b.time.split(':').map(Number), at = dayAt(b.day, h + 1, m + 15);
@@ -1533,13 +1533,20 @@ const KEY = 'vega-poc-v2', STORE = (() => { try { localStorage.removeItem(KEY); 
 function loadState() {
   try { const s = JSON.parse(STORE.getItem(KEY));
     if (s && s.orders) { s.signedOut = true; s.rep = REPS[s.rep] ? s.rep : 'roberto'; s.buyers = s.buyers || {}; s.appts = s.appts || {}; s.pins = s.pins || {}; delete s.budgets;
-      Object.assign(BUYERS, s.buyers); s.appts = {...pastAppts(), ...s.appts}; s.orders = {...pastOrders(), ...s.orders}; oneOngoing(s.appts, '-');
+      Object.assign(BUYERS, s.buyers); s.appts = {...pastAppts(), ...s.appts}; s.orders = expireShared({...pastOrders(), ...s.orders}); oneOngoing(s.appts, '-');
       // older saves: bulk totals not split by size go back to "no quantity yet"
       Object.values(s.orders).forEach(o => o.lines.forEach(l => { if (l.qty && l.qty.ALL) delete l.qty.ALL; }));
       return s; } } catch (e) {}
   return seedState();
 }
 // one client visit at a time on this device: only the latest check-in stays ongoing; on launch ('-') every visit is ended, so the app always opens with nobody checked in
+// a part shared with the client for 48h goes to the commercial team by itself once the time is up (checked when the app opens)
+function expireShared(orders) {
+  Object.values(orders).forEach(o => { if (o.status !== 'shared' || !o.sharedAt || Date.now() - o.sharedAt < 48 * 36e5) return; const at = o.sharedAt + 48 * 36e5;
+    Object.entries(o.parts || {}).forEach(([d, p]) => { if (p.status === 'shared') o.parts[d] = {...p, status:'submitted', at, by:'auto'}; });
+    o.submittedBy = 'auto'; o.submittedAt = at; o.log.push({at, by:'salesperson', text:'48h passed · sent to the commercial team automatically'}); syncStatus(o); });
+  return orders;
+}
 function oneOngoing(appts, keep) {
   const on = Object.keys(appts).filter(k => appts[k] && appts[k].in && !appts[k].out);
   keep = keep || on.sort((x, y) => (appts[y].back || appts[y].in) - (appts[x].back || appts[x].in))[0];
@@ -2585,24 +2592,29 @@ function issuesOf(o, divs) {
   return out;
 }
 
-// Finishing the visit: the client signs and the order always goes to the commercial team (closed, waiting for confirmation; not while a style has no quantity).
-// One switch decides whether the client also gets a copy by email (on to start; the Email field shows only then). Women's and men's can go together or one at a time.
-// Set aside: a Send to choice between the commercial team and the client finishing from an email link.
+// Finishing the visit: the client signs and the order ends up with the commercial team either way. One switch, off to start:
+// off, it goes straight to the commercial team (closed, waiting for confirmation; not while a style has no quantity);
+// on, the client gets it by email to edit and finish within 48h (styles without a quantity are fine), then it goes to the commercial team by itself.
+// The Email field shows only while the switch is on. Women's and men's can go together or one at a time.
+// Set aside: a Send to choice (Commercial team / Client to finish); a "Copy to the client" switch that only emailed a copy.
 function FinishSheet({sh, S, act}) {
   const o = S.orders[sh.orderId], b = BUYERS[o.buyerId];
-  const open = b.divs.filter(d => !partLocked(o, d)), filled = d => kpi(o, d).units > 0;
-  const [pick, setPick] = useState(() => open.filter(filled));
-  const sel = pick.filter(d => open.includes(d));
+  // a part can go with units in it; shared with the client, styles alone are enough (they add the quantities)
+  const [share, setShare] = useState(false);
+  const open = b.divs.filter(d => !partLocked(o, d)), styled = d => o.lines.some(l => P[l.pid].div === d), filled = d => kpi(o, d).units > 0 || (share && styled(d));
+  const [pick, setPick] = useState(() => open.filter(styled));
+  const sel = pick.filter(d => open.includes(d) && filled(d));
   const toggle = d => setPick(p => p.includes(d) ? p.filter(x => x !== d) : [...p, d]);
   const noQty = o.lines.filter(l => sel.includes(P[l.pid].div) && !units(l.qty)).length;
   const [name, setName] = useState(''), [email, setEmail] = useState(b.email || `buying@${b.shop.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`);
   const [signed, setSigned] = useState(false), [done, setDone] = useState(null);
-  // always to the commercial team; the switch only says whether the client gets a copy
-  const [copy, setCopy] = useState(true);
-  const ok = sel.length > 0 && !noQty && name.trim() && (!copy || /^\S+@\S+\.\S+$/.test(email.trim())) && signed;
-  const visit = isOngoing(S.appts[b.id]);
-  const toTeam = () => { act.send(o.id, sel, 'client', name.trim(), copy ? email.trim() : null);
-    setDone({title:'Sent to the commercial team', line:[visit && `${b.shop} is checked out.`, copy ? `A copy is on its way to ${email.trim()}.` : 'No copy to the client.'].filter(Boolean).join(' ')}); };
+  // the switch (above): share with the client to edit for 48h first, or straight to the commercial team
+  const ok = sel.length > 0 && (share || !noQty) && name.trim() && (!share || /^\S+@\S+\.\S+$/.test(email.trim())) && signed;
+  const visit = isOngoing(S.appts[b.id]), out = visit ? `${b.shop} is checked out. ` : '';
+  const go = () => { if (share) { act.share(o.id, sel, name.trim(), email.trim());
+      setDone({title:`Shared with ${b.shop}`, line:`${out}They can edit it for 48h from the link sent to ${email.trim()}, then it goes to the commercial team.`}); }
+    else { act.send(o.id, sel, 'client', name.trim(), null);
+      setDone({title:'Sent to the commercial team', line:`${out}They confirm it for production.`}); } };
   // Continue ends the visit and goes back to Home, ready for the next client
   const next = () => visit ? act.endVisit(b.id, null) : act.close();
   if (done) return html`<${FullPage} noClose title=${done.title} onClose=${next}
@@ -2616,7 +2628,7 @@ function FinishSheet({sh, S, act}) {
         <div class="small muted">Nothing left to send: the visit ends and you go back to Home.</div>`
         : html`<button class="btn black" onClick=${act.close}>Close</button>`}</div>`
       : html`<div class="finish-btns">
-      <button class="btn black" disabled=${!ok} onClick=${toTeam}>Send to commercial team</button>
+      <button class="btn black" disabled=${!ok} onClick=${go}>${share ? 'Share with client' : 'Send to commercial team'}</button>
     </div>`}>
     <div><h1 class="h1">Finalize order</h1><div class="small muted">${b.shop}</div></div>
     ${!open.length ? html`<div class="callout good"><${Icon} n="check" s=${18}/><div>Everything is sent. The commercial team reviews the order and confirms it for production.</div></div>` : html`
@@ -2626,17 +2638,17 @@ function FinishSheet({sh, S, act}) {
             <div class="row-main"><div class="row-title">${DIV_LABEL[d]}</div><div class="row-sub"><${Pill} s=${st}/><span class="num">${k.units} units · ${fmt(k.total)}</span></div></div>
             <div class="row-side">${sel.includes(d) && html`<${Icon} n="check" s=${20} w=${2.4}/>`}</div>
           </button>`; })}</div></div></section>`}
-      ${!sel.length && html`<div class="callout warn"><${Icon} n="alert" s=${18}/><div>Add quantities before sending the order.</div></div>`}
-      ${noQty > 0 && html`<div class="callout warn"><${Icon} n="alert" s=${18}/><div>${noQty} ${noQty === 1 ? 'style has' : 'styles have'} no quantity. Add quantities or take ${noQty === 1 ? 'it' : 'them'} out of the order before sending.</div></div>`}
+      ${!sel.length && html`<div class="callout warn"><${Icon} n="alert" s=${18}/><div>${open.some(styled) ? 'No quantities yet. Add them, or share with the client to finish it.' : 'Add styles before sending the order.'}</div></div>`}
+      ${noQty > 0 && !share && html`<div class="callout warn"><${Icon} n="alert" s=${18}/><div>${noQty} ${noQty === 1 ? 'style has' : 'styles have'} no quantity. Add quantities, or share with the client to finish it.</div></div>`}
       <section class="fin-sec"><h2 class="cat-h">Client</h2>
         <${OField} label="Full name" value=${name} onInput=${e => setName(e.target.value)} autocomplete="off"/>
         <div class="cfield"><span class="flbl">Signature</span><${SignPad} onSigned=${setSigned}/></div></section>
-      <section class="fin-sec"><h2 class="cat-h">Copy to the client</h2>
-        <div class="grp"><div class="grp-in"><button class="row" role="switch" aria-checked=${copy} onClick=${() => setCopy(c => !c)}>
-          <div class="row-main"><div class="row-title">Email a copy of the order</div><div class="row-sub">The commercial team gets it either way</div></div>
-          <span class=${'tgl' + (copy ? ' on' : '')} aria-hidden="true"></span>
+      <section class="fin-sec">
+        <div class="grp"><div class="grp-in"><button class="row" role="switch" aria-checked=${share} onClick=${() => setShare(c => !c)}>
+          <div class="row-main"><div class="row-title">Share with client to edit</div><div class="row-sub">48h to finish, then to the commercial team</div></div>
+          <span class=${'tgl' + (share ? ' on' : '')} aria-hidden="true"></span>
         </button></div></div>
-        ${copy && html`<${OField} label="Email" type="email" inputmode="email" autocapitalize="off" value=${email} onInput=${e => setEmail(e.target.value)}/>`}</section>`}
+        ${share && html`<${OField} label="Client's email" type="email" inputmode="email" autocapitalize="off" value=${email} onInput=${e => setEmail(e.target.value)}/>`}</section>`}
   <//>`;
 }
 

@@ -1,6 +1,6 @@
 # Screen flows
 
-`shoot.mjs` opens the app in headless Chrome at iPhone size (390×844, light mode) and takes one screenshot per screen and state: 74 scenarios in 10 flows (A Sign in … J Client view). It loads `docs/index.html` with a small hook (`window.__v`) added in memory only, to drive the app's own actions; the file on disk is not changed. The app opens at Who's selling? with today's clients not started; the tool signs Roberto in and gives Maison Dubois today's order in progress (`demoDubois()` in the app) before each scenario.
+`shoot.mjs` opens the app in headless Chrome at iPhone size (390×844, light mode) and takes one screenshot per screen and state: 75 scenarios in 10 flows (A Sign in … J Client view). It loads `docs/index.html` with a small hook (`window.__v`) added in memory only, to drive the app's own actions; the file on disk is not changed. The app opens at Who's selling? with today's clients not started; the tool signs Roberto in and gives Maison Dubois today's order in progress (`demoDubois()` in the app) before each scenario.
 
 The screenshots go on a review page in Claude, **Vega Screen Flows**: https://claude.ai/artifact/CyixHhDDNJ9xneisjEHeqK (comments there reach Claude directly), and on the FigJam board **Vega · Screen flows**: https://www.figma.com/board/Ov9sjnHlEyzkQ2vK8c2jk6
 
