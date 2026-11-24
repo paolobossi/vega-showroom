@@ -913,11 +913,9 @@ input.qty.xl{width:64px} /* room for three digits */
 /* product facts: grey label on the left, value on the right, one size throughout */
 /* product facts: styled like the Budget box: a white list inside a 1px grey outline (.g-box), 22px squircle corners, 14px regular text,
    no rules, rows 10px apart with 12px above the first and below the last */
-.bnotes{display:flex;flex-direction:column;gap:10px;padding:12px 14px 14px;background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
-@supports (-webkit-mask-box-image:none){.bnotes{border-radius:0}}
-.bn-h{display:flex;align-items:center;gap:6px;font-size:var(--fs-body);font-weight:600}
-.bn-row span{display:block;font-size:var(--fs-caption);color:var(--muted);margin-bottom:2px}
-.bn-row p{margin:0;font-size:14px;line-height:var(--lh-body)} /* brand notes: a grey label (Sizing, Conformity) over the note itself */
+.facts > .fx-note{display:block} /* brand notes in the details: the grey label (Sizing, Conformity) over the note, full width */
+.fx-note span{display:block;color:var(--muted)}
+.fx-note p{margin:1px 0 0}
 .facts{display:flex;flex-direction:column;background:var(--bg);border-radius:calc(var(--r-xl) - 1px);-webkit-mask-box-image:var(--squircle) 20 / calc(var(--r-xl) - 1px) stretch}
 @supports (-webkit-mask-box-image:none){.facts{border-radius:0}}
 .facts > div{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:5px 14px;font-size:14px;font-weight:400;line-height:var(--lh-body)}
@@ -1329,12 +1327,10 @@ const CONFORM_CAT = {bags:'Natural calfskin: light grain marks and small colour 
   shoes:'Finished by hand: slight differences between the two shoes of a pair are normal.', rtw:'Measurements can vary by ±1 cm, as checked at quality control.',
   acc:'Natural materials: small variations from piece to piece are normal.'};
 PRODUCTS.forEach(p => { p.fit = FIT[p.id] || null; p.conform = CONFORM[p.id] || CONFORM_CAT[p.cat]; });
-// the brand's notes as a box of their own on the product page, under the order part and above the details
-const BrandNotes = ({p}) => (p.fit || p.conform) && html`<div class="g-box"><div class="bnotes">
-  <div class="bn-h"><${Icon} n="msg" s=${16} w=${2}/>From the brand</div>
-  ${p.fit && html`<div class="bn-row"><span>Sizing</span><p>${p.fit}</p></div>`}
-  ${p.conform && html`<div class="bn-row"><span>Conformity</span><p>${p.conform}</p></div>`}
-</div></div>`;
+// the brand's notes as a group of the product details box (after what it is, before where it sits in the collection): a grey label over each note
+const BrandNotes = ({p}) => (p.fit || p.conform) && html`<hr class="fx-sep"/>
+  ${p.fit && html`<div class="fx-note"><span>Sizing</span><p>${p.fit}</p></div>`}
+  ${p.conform && html`<div class="fx-note"><span>Conformity</span><p>${p.conform}</p></div>`}`;
 PRODUCTS.forEach(p => { if (DIMS[p.id]) p.dims = DIMS[p.id]; if (HEEL[p.id] != null) p.heel = HEEL[p.id]; });
 // Material filter: a style matches when its composition names the material (polyamide counts as nylon)
 const MATS = [[null, 'All materials'], ['leather', 'Leather'], ['cotton', 'Cotton'], ['wool', 'Wool'], ['cashmere', 'Cashmere'], ['silk', 'Silk & viscose'], ['nylon', 'Nylon']];
@@ -2388,13 +2384,13 @@ function ProductSheet({pid, colour, orderId, back, S, ui, act}) {
       : line ? html`<button class="btn outline danger" onClick=${() => act.unselect(o.id, pid, c)}>Remove from order</button>`
       : null}</div>
     ${o && b && b.divs.includes(p.div) && html`<div class="g-box pd-bud"><div class="bud-card">${bcRow(b, p.div, p.cat, CAT_LABEL[p.cat], kpi(o, p.div).mix.find(x => x.cat === p.cat).value, catBudget(b, p.div, p.cat))}</div></div>`}
-    <${BrandNotes} p=${p}/>
     <div class="g-box"><div class="facts">
       <div class="pd-hl"><div><small>Wholesale</small><b class="num">${fmt(p.price)}</b></div><div><small>Retail</small><b class="num">${fmt(p.rrp)}</b></div></div>
       <div><span>Code</span><span>${p.code}</span></div>
       ${p.material && html`<div><span>Material</span><span>${p.material}</span></div>`}
       ${p.dims && html`<div><span>Measurements</span><span>${p.dims.join(' × ')} cm <span class="muted">(W × H × D)</span></span></div>`}
       ${p.heel != null && html`<div><span>Heel</span><span>${cm(p.heel)}</span></div>`}
+      <${BrandNotes} p=${p}/>
       <hr class="fx-sep"/>
       <div><span>Division</span><span>${p.div === 'W' ? 'Womenswear' : 'Menswear'}</span></div>
       <div><span>Category</span><span>${CAT_LABEL[p.cat]}</span></div>
